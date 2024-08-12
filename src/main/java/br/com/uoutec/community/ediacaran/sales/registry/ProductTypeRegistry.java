@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.util.List;
 
+import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 
 public interface ProductTypeRegistry {
@@ -14,11 +15,10 @@ public interface ProductTypeRegistry {
 
 	void removeProductType(ProductType e) throws ProductTypeRegistryException;
 	
-	List<ProductType> getProductTypes(Integer start, 
-			Integer len) throws ProductTypeRegistryException;
+	List<ProductType> getProductTypes() throws ProductTypeRegistryException;
 	
-	ProductType getProductTypeById(int id) throws ProductTypeRegistryException;
-
-	ProductType getProductTypeByCode(String code) throws ProductTypeRegistryException;
+	ProductType getProductType(String code) throws ProductTypeRegistryException;
+	
+	ProductTypeHandler getProductTypeHandler(ProductType e) throws ProductTypeRegistryException;
 	
 }

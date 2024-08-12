@@ -2,58 +2,45 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 
+import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+
 public class ProductType implements Serializable{
 
 	private static final long serialVersionUID = -7978798526200588374L;
 
-	private int id;
+	private final String code;
 	
-	private String code;
+	private final String name;
 	
-	private String name;
+	private final int maxExtra;
 	
-	private int maxExtra;
-	
-	private String className;
-	
-	public int getId() {
-		return id;
+	private ProductTypeHandler handler;
+
+	public ProductType(String code, String name, int maxExtra, ProductTypeHandler handler) {
+		this.code = code;
+		this.name = name;
+		this.maxExtra = maxExtra;
+		this.handler = handler;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public ProductTypeHandler getHandler() {
+		return handler;
+	}
+
+	public void setHandler(ProductTypeHandler handler) {
+		this.handler = handler;
 	}
 
 	public String getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public int getMaxExtra() {
 		return maxExtra;
-	}
-
-	public void setMaxExtra(int maxExtra) {
-		this.maxExtra = maxExtra;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
 	}
 
 }

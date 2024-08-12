@@ -6,11 +6,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+
 public class Cart implements Serializable{
 
 	private static final long serialVersionUID = 7487563886270371708L;
 
 	private String id;
+	
+	private SystemUserID owner;
 	
 	private ItensCollection itens;
 
@@ -27,6 +31,19 @@ public class Cart implements Serializable{
 		this.tax      = BigDecimal.ZERO;
 	}
 	
+	public SystemUserID getOwner() {
+		return owner;
+	}
+
+	public void setOwner(SystemUserID owner) {
+		
+		if(this.owner != null) {
+			throw new IllegalStateException();
+		}
+		
+		this.owner = owner;
+	}
+
 	public String getId() {
 		return id;
 	}

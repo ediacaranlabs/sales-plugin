@@ -14,7 +14,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 
 public interface OrderRegistry {
 
@@ -49,9 +49,9 @@ public interface OrderRegistry {
 	
 	List<Order> getOrders(OrderStatus status, Integer first, Integer max) throws OrderRegistryException;
 	
-	List<Order> getOrders(SystemUser user, Integer first, Integer max) throws OrderRegistryException;
+	List<Order> getOrders(SystemUserID userID, Integer first, Integer max) throws OrderRegistryException;
 
-	List<Order> getOrders(SystemUser user, OrderStatus status, Integer first, Integer max) throws OrderRegistryException;
+	List<Order> getOrders(SystemUserID userID, OrderStatus status, Integer first, Integer max) throws OrderRegistryException;
 
 	/* product */
 	
