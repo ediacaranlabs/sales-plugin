@@ -9,6 +9,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.entity.registry.Registry;
 
 public interface CartRegistry extends Registry{
@@ -36,7 +37,7 @@ public interface CartRegistry extends Registry{
 	void destroy(Cart cart);
 
 	boolean isAvailability(Cart cart, SystemUserID user) 
-			throws ProductTypeRegistryException, ProductTypeHandlerException;
+			throws ProductTypeRegistryException, ProductTypeHandlerException, SystemUserRegistryException;
 			
 	void remove(Cart cart, ProductRequest item) 
 			throws ProductTypeRegistryException, ProductTypeHandlerException;
@@ -53,7 +54,7 @@ public interface CartRegistry extends Registry{
 			throws MaxItensException, ProductTypeRegistryException, 
 			ProductTypeHandlerException;
 	
-	Checkout checkout(Cart cart, SystemUserID user, Payment payment, 
+	Checkout checkout(Cart cart,Payment payment, 
 			String message) throws
 			OrderRegistryException, PaymentGatewayException;
 	

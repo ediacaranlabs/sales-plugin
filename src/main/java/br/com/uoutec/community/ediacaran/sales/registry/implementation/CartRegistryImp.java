@@ -26,7 +26,9 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.system.lock.NamedLock;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.filter.invoker.annotation.EnableFilters;
 
@@ -45,6 +47,15 @@ public class CartRegistryImp
 	private String shippingPublicResource;
 
 	@Inject
+	private OrderRegistry orderRegistry;
+	
+	@Inject
+	private PaymentGatewayRegistry paymentGatewayRegistry;
+	
+	@Inject
+	private SystemUserRegistry systemUserRegistry;
+	
+	@Inject
 	private NamedLock lock;
 
 	@Inject
@@ -59,8 +70,10 @@ public class CartRegistryImp
 	public void destroy(Cart cart) {
 	}
 
-	public boolean isAvailability(Cart cart, SystemUser user) 
-			throws ProductTypeHandlerException, ProductTypeRegistryException{
+	public boolean isAvailability(Cart cart, SystemUserID user) 
+			throws ProductTypeHandlerException, ProductTypeRegistryException, SystemUserRegistryException{
+		
+		SystemUser sysemUser = getSystemUser(user);
 		
 		ItensCollection itens = cart.getItensCollection();
 		
@@ -70,7 +83,7 @@ public class CartRegistryImp
 			ProductTypeHandler handler = 
 					productTypeRegistry.getProductTypeHandler(p.getProduct().getProductType());
 			
-			boolean availability = handler.isAvailability(user, cart, itens, p);
+			boolean availability = handler.isAvailability(sysemUser, cart, itens, p);
 			
 			result = result & availability;
 			p.setAvailability(availability);
@@ -147,15 +160,9 @@ public class CartRegistryImp
 	}
 	
 	@EnableFilters(CartRegistry.class)
-	public Checkout checkout(Cart cart, SystemUser user, Payment payment, 
+	public Checkout checkout(Cart cart, Payment payment, 
 			String message) throws OrderRegistryException, PaymentGatewayException{
 
-		OrderRegistry orderRegistry = 
-				EntityContextPlugin.getEntity(OrderRegistry.class);
-		
-		PaymentGatewayRegistry paymentGatewayRegistry = 
-				EntityContextPlugin.getEntity(PaymentGatewayRegistry.class);
-		
 		PaymentGateway paymentGateway = 
 				paymentGatewayRegistry.getPaymentGateway(payment.getPaymentType());
 		
@@ -168,6 +175,7 @@ public class CartRegistryImp
 		Order order;
 		boolean activeLock = false;
 		String lockID = CART_LOCK_GROUP_NAME + cart.getId();
+		
 		try{
 			activeLock = lock.lock(lockID);
 			 order = orderRegistry.createOrder(
@@ -219,5 +227,9 @@ public class CartRegistryImp
 	public void flush() {
 	}
 
+	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
+		return systemUserRegistry.getBySystemID(String.valueOf(userID));
+	}
+	
 	
 }
