@@ -467,6 +467,9 @@ public class OrderRegistryImp
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".invoice"));
+		
 		try{
 			return this.safeCreateInvoice(orderID, total, discount, discountType, message);
 		}
@@ -568,6 +571,9 @@ public class OrderRegistryImp
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException{
 		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".refound"));
+		
 		try{
 			this.safeCreateRefound(orderID, message);
 		}
@@ -637,6 +643,9 @@ public class OrderRegistryImp
 	public void revertRefound(String orderID, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".revert_refound"));
 		
 		try{
 			this.safeRevertRefound(orderID, message);
