@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
 public class Discount implements Serializable {
@@ -16,22 +17,22 @@ public class Discount implements Serializable {
 	private static final long serialVersionUID = 7140999176118548327L;
 
 	@NotNull(groups = IdValidation.class)
-	@Pattern(regexp = "[0-9A-Z]+")
-	@Length(max = 38, min = 10)
+	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
+	@Length(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 	
-	@NotNull
-	@Size(min=1, max=32)
+	@NotNull(groups = DataValidation.class)
+	@Size(min=1, max=32, groups = DataValidation.class)
 	private String name;
 	
-	@NotNull
-	@Size(min=1, max=128)
+	@NotNull(groups = DataValidation.class)
+	@Size(min=1, max=128, groups = DataValidation.class)
 	private String description;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private BigDecimal value;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private DiscountType type;
 	
 	private byte order;

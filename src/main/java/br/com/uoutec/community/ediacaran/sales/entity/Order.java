@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
 public class Order implements Serializable{
@@ -21,25 +22,25 @@ public class Order implements Serializable{
 	private static final long serialVersionUID = -3268832345080113374L;
 
 	@NotNull(groups = IdValidation.class)
-	@Pattern(regexp = "[0-9A-Z]+")
-	@Length(max = 38, min = 10)
+	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
+	@Length(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 
-	@Min(1)
+	@Min(value = 1, groups = DataValidation.class)
 	private int owner;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.UUID)
 	private String cartID;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private LocalDate date;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private OrderStatus status;
 	
 	@Valid
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private Payment payment;
 	
 	@Valid
@@ -49,7 +50,7 @@ public class Order implements Serializable{
 	private Shipping shipping;
 	
 	@Valid
-	@Size(min=1)
+	@Size(min = 1, groups = DataValidation.class)
 	private List<ProductRequest> itens;
 
 	private List<Discount> discounts;

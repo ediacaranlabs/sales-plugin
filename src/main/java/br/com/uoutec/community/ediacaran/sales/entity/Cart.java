@@ -11,28 +11,30 @@ import javax.validation.constraints.Pattern;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+import br.com.uoutec.entity.registry.DataValidation;
+import br.com.uoutec.entity.registry.IdValidation;
 
 public class Cart implements Serializable{
 
 	private static final long serialVersionUID = 7487563886270371708L;
 
-	@NotNull
-	@Pattern(regexp = CommonValidation.UUID)
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = CommonValidation.UUID, groups = IdValidation.class)
 	private String id;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private SystemUserID owner;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private ItensCollection itens;
 
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private List<Discount> discounts;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private BigDecimal discount;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private BigDecimal tax;
 	
 	public Cart(){

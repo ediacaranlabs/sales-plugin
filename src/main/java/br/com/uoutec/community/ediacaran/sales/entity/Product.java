@@ -4,26 +4,45 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.entity.registry.DataValidation;
+import br.com.uoutec.entity.registry.IdValidation;
+
 public class Product implements Serializable{
 
 	private static final long serialVersionUID = 2357774653199543812L;
 
+	@NotNull(groups = IdValidation.class)
+	@Min(value = 1, groups = IdValidation.class)
 	private int id;
 	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	@Length(max = 128, groups = DataValidation.class)
 	private String name;
 	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	@Length(max = 255)
 	private String description;
 	
+	@NotNull(groups = DataValidation.class)
 	private ProductType productType;
 	
-	private AttractivenessType attractiveness;
-	
-	private PeriodType periodType;
-	
+	@NotNull(groups = DataValidation.class)
 	private BigDecimal additionalCost;
 	
+	@NotNull(groups = DataValidation.class)
 	private BigDecimal cost;
 	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.CURRENCY, groups = DataValidation.class)
 	private String currency;
 
 	/* transaient properties */
@@ -46,14 +65,6 @@ public class Product implements Serializable{
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public AttractivenessType getAttractiveness() {
-		return attractiveness;
-	}
-
-	public void setAttractiveness(AttractivenessType attractiveness) {
-		this.attractiveness = attractiveness;
 	}
 
 	public String getDescription() {
@@ -90,14 +101,6 @@ public class Product implements Serializable{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
-	}
-
-	public PeriodType getPeriodType() {
-		return periodType;
-	}
-
-	public void setPeriodType(PeriodType periodType) {
-		this.periodType = periodType;
 	}
 
 	public BigDecimal getAdditionalCost() {

@@ -10,6 +10,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
 public class Invoice implements Serializable{
@@ -17,26 +18,26 @@ public class Invoice implements Serializable{
 	private static final long serialVersionUID = -58736758314320975L;
 
 	@NotNull(groups = IdValidation.class)
-	@Pattern(regexp = "[0-9A-Z]+")
-	@Length(max = 38, min = 10)
+	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
+	@Length(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private LocalDate date;
 
-	@NotNull
-	@Min(0)
+	@NotNull(groups = DataValidation.class)
+	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal value;
 	
-	@NotNull
-	@Min(0)
+	@NotNull(groups = DataValidation.class)
+	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal discount;
 	
-	@NotNull
+	@NotNull(groups = DataValidation.class)
 	private DiscountType discountType;
 	
-	@NotNull
-	@Min(0)
+	@NotNull(groups = DataValidation.class)
+	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal total;
 
 	public String getId() {
