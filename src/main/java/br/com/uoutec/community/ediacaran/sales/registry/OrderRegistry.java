@@ -15,30 +15,31 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
-public interface OrderRegistry {
+public interface OrderRegistry extends PublicBean {
 
-	void registryOrder(Order entity) throws OrderRegistryException;
+	void registerOrder(Order entity) throws OrderRegistryException;
 	
 	void removeOrder(Order entity) throws OrderRegistryException;
 
 	Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
 	
-	Invoice createInvoice(Order order, BigDecimal total, 
+	Invoice createInvoice(String order, BigDecimal total, 
 			BigDecimal discount, DiscountType discountType, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException;
 	
-	void createRefound(Order order, String message) 
+	void createRefound(String order, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException;
 			
-	void revertRefound(Order order, String message) 
+	void revertRefound(String order, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException;
 			
-	Shipping createShipping(Order order, 
+	Shipping createShipping(String order, 
 			boolean useAlternativeAdress, String shippingCode) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException;

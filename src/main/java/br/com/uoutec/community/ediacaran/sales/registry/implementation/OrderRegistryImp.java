@@ -16,6 +16,8 @@ import javax.inject.Singleton;
 
 import org.brandao.concurrent.LockFactory;
 
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
@@ -113,6 +115,8 @@ public class OrderRegistryImp
 		
 	}
 
+	public static final String basePermission = "app.registry.sales.order.";
+	
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
 
@@ -138,8 +142,11 @@ public class OrderRegistryImp
 	}
 
 	@Override
-	public void registryOrder(Order entity)
-			throws OrderRegistryException {
+	public void registerOrder(Order entity)	throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "register"));
+		
 		try{
 			if(entity.getId() == null){
 				this.registryNewOrder(entity);
@@ -171,8 +178,11 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	public void removeOrder(Order entity)
-			throws OrderRegistryException {
+	public void removeOrder(Order entity) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "remove"));
+		
 		try{
 			if(!entity.isRemoved()){
 				entity.setRemoved(true);
@@ -188,6 +198,10 @@ public class OrderRegistryImp
 
 	@Override
 	public Order findById(String id) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "find"));
+		
 		try{
 			return orderEntityAccess.findById(id);
 		}
@@ -200,6 +214,10 @@ public class OrderRegistryImp
 	@Override
 	public Order findByCartID(String id)
 			throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "find"));
+		
 		try{
 			return orderEntityAccess.findByCartID(id);
 		}
@@ -210,6 +228,10 @@ public class OrderRegistryImp
 	
 	public List<Order> getOrders(OrderStatus status, Integer first, Integer max)
 			throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "list"));
+		
 		try{
 			return orderEntityAccess.getOrders(status, first, max);
 		}
@@ -221,6 +243,9 @@ public class OrderRegistryImp
 	
 	public List<Order> getOrders(SystemUserID userID, Integer first, Integer max)
 			throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "list"));
 		
 		SystemUser systemUser = getSystemUser(userID);
 		
@@ -236,6 +261,9 @@ public class OrderRegistryImp
 	public List<Order> getOrders(SystemUserID userID, OrderStatus status,
 			Integer first, Integer max) throws OrderRegistryException {
 
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "list"));
+		
 		SystemUser systemUser = getSystemUser(userID);
 		
 		try{
@@ -249,6 +277,10 @@ public class OrderRegistryImp
 
 	public ProductRequest getProductRequest(Order order,
 			String id) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".product_request"));
+		
 		try{
 			return orderEntityAccess.getProductRequest(order, id);
 		}
@@ -272,6 +304,9 @@ public class OrderRegistryImp
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
 					throws OrderRegistryException, UnavailableProductException {
+
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".create"));
 		
 		try{
 			return this.safeCreateOrder(cart, payment, message, paymentGateway);
@@ -286,7 +321,7 @@ public class OrderRegistryImp
 		}
 	}
 	
-	public Order safeCreateOrder(Cart cart, Payment payment, 
+	private Order safeCreateOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
 					throws OrderRegistryException, UnavailableProductException, 
 					ExistOrderRegistryException, EmptyOrderException {
@@ -365,10 +400,10 @@ public class OrderRegistryImp
 		}
 
 		try{
-			this.registryOrder(order);
+			this.registerOrder(order);
 			this.registryLog(order.getId(), message == null? "Pedido criado." : message);
 			paymentGateway.payment(systemUser, order, order.getPayment());
-			this.registryOrder(order);
+			this.registerOrder(order);
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("falha ao registrar o pedido", e);
@@ -376,8 +411,8 @@ public class OrderRegistryImp
 
 		if(payment.getTotal().compareTo(BigDecimal.ZERO) <= 0){
 			order.setStatus(OrderStatus.PENDING_PAYMENT);
-			this.registryOrder(order);
-			this.createInvoice(order, BigDecimal.ZERO, BigDecimal.ZERO, DiscountType.PERCENTAGE, null);
+			this.registerOrder(order);
+			this.createInvoice(order.getId(), BigDecimal.ZERO, BigDecimal.ZERO, DiscountType.PERCENTAGE, null);
 		}
 		
 		try{
@@ -395,8 +430,10 @@ public class OrderRegistryImp
 		return order;
 	}
 	
-	public boolean isAvailability(Cart cart, SystemUser user) 
-			throws ProductTypeHandlerException, ProductTypeRegistryException{
+	public boolean isAvailability(Cart cart, SystemUserID userID) 
+			throws ProductTypeHandlerException, ProductTypeRegistryException, OrderRegistryException{
+		
+		SystemUser user = getSystemUser(userID);
 		
 		ItensCollection itens = cart.getItensCollection();
 		
@@ -425,13 +462,13 @@ public class OrderRegistryImp
 	 * @return Fatura.
 	 */
 	@Override
-	public Invoice createInvoice(Order order, BigDecimal total, 
+	public Invoice createInvoice(String orderID, BigDecimal total, 
 			BigDecimal discount, DiscountType discountType, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 		
 		try{
-			return this.safeCreateInvoice(order, total, discount, discountType, message);
+			return this.safeCreateInvoice(orderID, total, discount, discountType, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -443,11 +480,13 @@ public class OrderRegistryImp
 		}
 	}
 	
-	public Invoice safeCreateInvoice(Order order, BigDecimal total, 
+	private Invoice safeCreateInvoice(String orderID, BigDecimal total, 
 			BigDecimal discount, DiscountType discountType, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 
+		Order order = findById(orderID);
+		
 		if(order.getInvoice() != null){
 			throw new UnmodifiedOrderStatusRegistryException("Fatura já criada.");
 		}
@@ -511,7 +550,7 @@ public class OrderRegistryImp
 		}
 		
 		//Registra as alterações do pedido
-		this.registryOrder(order);
+		this.registerOrder(order);
 		
 		//Registra o evento no log
 		this.registryLog(order.getId(), message != null? message : "Pagamento recebido.");
@@ -525,12 +564,12 @@ public class OrderRegistryImp
 	 * @throws OrderRegistryException
 	 */
 	@Override
-	public void createRefound(Order order, String message) 
+	public void createRefound(String orderID, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException{
 		
 		try{
-			this.safeCreateRefound(order, message);
+			this.safeCreateRefound(orderID, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao fazer o reembolso", e);
@@ -542,9 +581,11 @@ public class OrderRegistryImp
 		}
 	}
 	
-	public void safeCreateRefound(Order order, String message) 
+	private void safeCreateRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
+		
+		Order order = findById(orderID);
 		
 		if(order.getStatus() == OrderStatus.REFOUND){
 			throw new UnmodifiedOrderStatusRegistryException("Reembolso já efetuado.");
@@ -585,7 +626,7 @@ public class OrderRegistryImp
 		}
 		
 		//Registra as alterações do pedido
-		this.registryOrder(order);
+		this.registerOrder(order);
 		
 		//Registra o evento no log
 		this.registryLog(order.getId(), message != null? message : "Reembolso feito.");
@@ -593,12 +634,12 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	public void revertRefound(Order order, String message) 
+	public void revertRefound(String orderID, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException{
 		
 		try{
-			this.safeRevertRefound(order, message);
+			this.safeRevertRefound(orderID, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao reserver o reembolso", e);
@@ -610,9 +651,11 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private void safeRevertRefound(Order order, String message) 
+	private void safeRevertRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
+		
+		Order order = findById(orderID);
 		
 		if(order.getStatus() == OrderStatus.CANCELED_REFOUND){
 			throw new UnmodifiedOrderStatusRegistryException("Reembolso cancelado.");
@@ -654,14 +697,14 @@ public class OrderRegistryImp
 		}
 		
 		//Registra as alterações do pedido
-		this.registryOrder(order);
+		this.registerOrder(order);
 		
 		//Registra o evento no log
 		this.registryLog(order.getId(), message != null? message : "O processo de Reemboldo foi finalizada.");
 	}
 	
 	@Override
-	public Shipping createShipping(Order order, 
+	public Shipping createShipping(String orderID, 
 			boolean useAlternativeAdress, String shippingCode) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException {
