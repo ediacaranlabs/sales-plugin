@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
@@ -56,20 +55,18 @@ public interface OrderRegistry extends PublicBean {
 
 	/* product */
 	
-	ProductRequest getProductRequest(Order entity, String id) throws OrderRegistryException;
-
-	/* lock */
-	
-	Lock lockOrder(String id);
+	ProductRequest getProductRequest(String orderID, String id) throws OrderRegistryException;
 
 	/* log */
 	
-	void registryLog(String id, String message) throws OrderRegistryException;
+	void registryLog(String orderID, String message) throws OrderRegistryException;
 
+	/*
 	void updateLog(OrderLog log) throws OrderRegistryException;
 	
 	void deleteLog(OrderLog log) throws OrderRegistryException;
+	*/
 	
-	List<OrderLog> getLogs(Order order, Integer first, Integer max) throws OrderRegistryException;
+	List<OrderLog> getLogs(String orderID, Integer first, Integer max) throws OrderRegistryException;
 	
 }

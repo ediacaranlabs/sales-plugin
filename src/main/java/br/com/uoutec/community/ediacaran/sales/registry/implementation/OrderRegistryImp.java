@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,12 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import org.brandao.concurrent.LockFactory;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.RuntimeSecurityPermission;
@@ -135,12 +132,6 @@ public class OrderRegistryImp
 	@Inject
 	private OrderEntityAccess orderEntityAccess;
 	
-	private LockFactory<String> lockfactory;
-	
-	public OrderRegistryImp(){
-		this.lockfactory = new LockFactory<String>(){};
-	}
-
 	@Override
 	public void registerOrder(Order entity)	throws OrderRegistryException {
 		
@@ -275,14 +266,14 @@ public class OrderRegistryImp
 		}
 	}
 
-	public ProductRequest getProductRequest(Order order,
+	public ProductRequest getProductRequest(String orderID,
 			String id) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(
 				new RuntimeSecurityPermission(basePermission + ".product_request"));
 		
 		try{
-			return orderEntityAccess.getProductRequest(order, id);
+			return orderEntityAccess.getProductRequest(orderID, id);
 		}
 		catch(Throwable e){
 			e.printStackTrace();
@@ -359,7 +350,7 @@ public class OrderRegistryImp
 		}
 		
 		Order order = new Order();
-		order.setDate(LocalDate.now());
+		order.setDate(LocalDateTime.now());
 		order.setCartID(cart.getId());
 		order.setStatus(OrderStatus.ON_HOLD);
 		order.setId(null);
@@ -509,7 +500,7 @@ public class OrderRegistryImp
 		
 		//Cria a fatura
 		Invoice i = new Invoice();
-		i.setDate(LocalDate.now());
+		i.setDate(LocalDateTime.now());
 		i.setDiscount(discount);
 		i.setDiscountType(discountType);
 		i.setValue(total == null? order.getPayment().getTotal() : total);
@@ -733,10 +724,12 @@ public class OrderRegistryImp
 	
 	/* log  */
 	
-	public void registryLog(String id, String message) throws OrderRegistryException{
+	public void registryLog(String orderID, String message) throws OrderRegistryException{
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "logs.register"));
 		try{
 			Order order = new Order();
-			order.setId(id);
+			order.setId(orderID);
 			orderEntityAccess.registryLog(order, message);
 		}
 		catch(Throwable e){
@@ -744,6 +737,7 @@ public class OrderRegistryImp
 		}
 	}
 
+	/*
 	public void updateLog(OrderLog log) throws OrderRegistryException{
 		try{
 			orderEntityAccess.updateLog(log);
@@ -761,9 +755,16 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(e);
 		}
 	}
+	*/
 	
-	public List<OrderLog> getLogs(Order order, Integer first, Integer max) throws OrderRegistryException{
+	public List<OrderLog> getLogs(String orderID, Integer first, Integer max) throws OrderRegistryException{
+
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "logs.list"));
+		
 		try{
+			Order order = new Order();
+			order.setId(orderID);
 			return orderEntityAccess.getLogs(order, first, max);
 		}
 		catch(Throwable e){
@@ -771,14 +772,6 @@ public class OrderRegistryImp
 		}
 	}
 
-
-	/* lock */
-	@Override
-	public Lock lockOrder(String id) {
-		Lock lock = this.lockfactory.getLock(id);
-		lock.lock();
-		return lock;
-	}
 
 	@Override
 	public void flush() {

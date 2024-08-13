@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -47,6 +48,8 @@ public class ProductRequest implements Serializable{
 
 	@NotNull
 	private BigDecimal additionalCost;
+	
+	private List<Discount> discounts;
 	
 	@NotNull
 	private BigDecimal discount;
@@ -181,6 +184,22 @@ public class ProductRequest implements Serializable{
 
 	public void setDiscount(BigDecimal discount) {
 		this.discount = discount;
+	}
+
+	public List<Discount> getDiscounts() {
+		return discounts;
+	}
+
+	public void setDiscounts(List<Discount> discounts) {
+		this.discounts = discounts;
+	}
+
+	public BigDecimal getTax() {
+		return tax;
+	}
+
+	public void setTax(BigDecimal tax) {
+		this.tax = tax;
 	}
 
 	public BigDecimal getSubtotal(){

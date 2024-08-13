@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -23,7 +23,7 @@ public class Invoice implements Serializable{
 	private String id;
 	
 	@NotNull(groups = DataValidation.class)
-	private LocalDate date;
+	private LocalDateTime date;
 
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 0, groups = DataValidation.class)
@@ -48,11 +48,11 @@ public class Invoice implements Serializable{
 		this.id = id;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
