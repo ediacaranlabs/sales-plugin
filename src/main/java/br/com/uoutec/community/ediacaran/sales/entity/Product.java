@@ -33,6 +33,9 @@ public class Product implements Serializable{
 	private String description;
 	
 	@NotNull(groups = DataValidation.class)
+	private PeriodType periodType;
+	
+	@NotNull(groups = DataValidation.class)
 	private ProductType productType;
 	
 	@NotNull(groups = DataValidation.class)
@@ -81,6 +84,14 @@ public class Product implements Serializable{
 
 	public void setProductType(ProductType productType) {
 		this.productType = productType;
+	}
+
+	public PeriodType getPeriodType() {
+		return periodType;
+	}
+
+	public void setPeriodType(PeriodType periodType) {
+		this.periodType = periodType;
 	}
 
 	public boolean isFree(){

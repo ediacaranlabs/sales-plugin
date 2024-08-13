@@ -1,20 +1,37 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.entity.registry.DataValidation;
+import br.com.uoutec.entity.registry.IdValidation;
 
 public class OrderLog implements Serializable{
 
 	private static final long serialVersionUID = 2795809142976062486L;
 
+	@Min(value = 0, groups = IdValidation.class)
 	private int id;
 	
-	private int systemUserId;
+	@Min(value = 0, groups = DataValidation.class)
+	private int owner;
 	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
+	@Length(max = 38, min = 10, groups = DataValidation.class)
 	private String orderId;
 	
-	private Date date;
+	@NotNull(groups = DataValidation.class)
+	private LocalDateTime date;
 	
+	@NotNull(groups = DataValidation.class)
+	@Length(max = 255, min = 1, groups = DataValidation.class)
 	private String message;
 
 	public int getId() {
@@ -25,12 +42,12 @@ public class OrderLog implements Serializable{
 		this.id = id;
 	}
 
-	public int getSystemUserId() {
-		return systemUserId;
+	public int getOwner() {
+		return owner;
 	}
 
-	public void setSystemUserId(int systemUserId) {
-		this.systemUserId = systemUserId;
+	public void setOwner(int owner) {
+		this.owner = owner;
 	}
 
 	public String getOrderId() {
@@ -41,11 +58,11 @@ public class OrderLog implements Serializable{
 		this.orderId = orderId;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
