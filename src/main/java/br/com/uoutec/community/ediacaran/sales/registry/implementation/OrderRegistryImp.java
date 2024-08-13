@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -468,7 +467,7 @@ public class OrderRegistryImp
 		
 		//Cria a fatura
 		Invoice i = new Invoice();
-		i.setDate(new Date());
+		i.setDate(LocalDate.now());
 		i.setDiscount(discount);
 		i.setDiscountType(discountType);
 		i.setValue(total == null? order.getPayment().getTotal() : total);

@@ -17,7 +17,7 @@ public enum PeriodType {
 	YEAR(8760);
 	
 	public static final String RESOURCE_BUNDLE = 
-			MessageBundle.toPackageID(OrderStatus.class);
+			MessageBundle.toPackageID(PeriodType.class);
 	
 	private int hour;
 	

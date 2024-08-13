@@ -4,13 +4,20 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.entity.registry.IdValidation;
 
 public class Discount implements Serializable {
 
 	private static final long serialVersionUID = 7140999176118548327L;
 
-	@NotNull
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+")
+	@Length(max = 38, min = 10)
 	private String id;
 	
 	@NotNull

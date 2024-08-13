@@ -8,36 +8,63 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.entity.registry.IdValidation;
+
 public class ProductRequest implements Serializable{
 
 	private static final long serialVersionUID = -4588518156028055308L;
 
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+")
+	@Length(min = 10, max = 38)
 	private String id;
-	
+
+	@NotNull
 	private String serial;
 	
+	@NotNull
+	@Valid
 	private Product product;
 	
+	@Length(max = 30)
 	private String productID;
 	
+	@Min(1)
 	private int units;
 	
+	@NotNull
 	private PeriodType periodType;
 	
+	@NotNull
 	private BigDecimal cost;
 
+	@NotNull
 	private BigDecimal additionalCost;
 	
+	@NotNull
 	private BigDecimal discount;
 
+	@NotNull
 	private BigDecimal tax;
 	
+	@NotNull
 	private String currency;
 	
 	private Map<String, String> addData;
 
+	@NotNull
+	@Length(min = 5, max = 128)
 	private String shortDescription;
 	
+	@NotNull
+	@Length(min = 5, max = 128)
 	private String description;
 	
 	/* Campos transientes */

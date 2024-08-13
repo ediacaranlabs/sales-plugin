@@ -5,11 +5,19 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.entity.registry.IdValidation;
 
 public class Payment implements Serializable{
 
 	private static final long serialVersionUID = 6482522225801595660L;
 
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+")
+	@Length(max = 38, min = 10)
 	private String id;
 	
 	@NotNull

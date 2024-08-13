@@ -6,22 +6,33 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 
 public class Cart implements Serializable{
 
 	private static final long serialVersionUID = 7487563886270371708L;
 
+	@NotNull
+	@Pattern(regexp = CommonValidation.UUID)
 	private String id;
 	
+	@NotNull
 	private SystemUserID owner;
 	
+	@NotNull
 	private ItensCollection itens;
 
+	@NotNull
 	private List<Discount> discounts;
 	
+	@NotNull
 	private BigDecimal discount;
 	
+	@NotNull
 	private BigDecimal tax;
 	
 	public Cart(){

@@ -2,19 +2,27 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.entity.registry.IdValidation;
 
 public class Invoice implements Serializable{
 
 	private static final long serialVersionUID = -58736758314320975L;
 
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+")
+	@Length(max = 38, min = 10)
 	private String id;
 	
 	@NotNull
-	private Date date;
+	private LocalDate date;
 
 	@NotNull
 	@Min(0)
@@ -39,11 +47,11 @@ public class Invoice implements Serializable{
 		this.id = id;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 

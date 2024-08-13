@@ -6,17 +6,30 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Length;
+
+import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.entity.registry.IdValidation;
 
 public class Order implements Serializable{
 
 	private static final long serialVersionUID = -3268832345080113374L;
 
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+")
+	@Length(max = 38, min = 10)
 	private String id;
-	
+
+	@Min(1)
 	private int owner;
 	
+	@NotNull
+	@Pattern(regexp = CommonValidation.UUID)
 	private String cartID;
 	
 	@NotNull
