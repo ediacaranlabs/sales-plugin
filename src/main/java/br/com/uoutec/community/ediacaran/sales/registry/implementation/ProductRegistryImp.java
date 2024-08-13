@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
-import br.com.uoutec.community.ediacaran.sales.persistence.ProductPlanEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.entity.registry.AbstractRegistry;
@@ -20,7 +20,7 @@ public class ProductRegistryImp
 	implements ProductRegistry{
 
 	@Inject
-	private ProductPlanEntityAccess entityAccess;
+	private ProductEntityAccess entityAccess;
 	
 	public void registryServicePlan(Product entity) throws ProductRegistryException{
 		try{

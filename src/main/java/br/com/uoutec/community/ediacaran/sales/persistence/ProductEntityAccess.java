@@ -7,7 +7,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.persistence.EntityAccessException;
 
-public interface ProductPlanEntityAccess {
+public interface ProductEntityAccess {
 
 	void save(Product entity) throws EntityAccessException;
 	
