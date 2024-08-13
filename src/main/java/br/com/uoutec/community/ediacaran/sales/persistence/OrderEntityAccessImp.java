@@ -8,12 +8,20 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
+import br.com.uoutec.community.ediacaran.marketplace.entity.Resource;
+import br.com.uoutec.community.ediacaran.marketplace.persistence.entity.ResourceAccessPermissionEntity;
+import br.com.uoutec.community.ediacaran.marketplace.persistence.entity.ResourceEntity;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -215,85 +223,170 @@ public class OrderEntityAccessImp
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Order> getOrders(SystemUser user, Integer first, Integer max)
+	public List<Order> getOrders(Integer owner, Integer first, Integer max)
 			throws EntityAccessException {
-		try{
-			Criteria c = 
-					session
-						.createCriteria(OrderHibernateEntity.class, "order")
-						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderHibernateEntity> criteria = 
+		    		builder.createQuery(OrderHibernateEntity.class);
+		    Root<OrderHibernateEntity> from = 
+		    		criteria.from(OrderHibernateEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    criteria.where(
+		    		builder.and(
+		    				builder.equal(from.get("owner"), owner)
+    				)
+    		);
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<OrderHibernateEntity> typed = 
+		    		entityManager.createQuery(criteria);
 
-			c.add(Restrictions.eq("order.systemUserCode", user.getId()));
-			c.addOrder(org.hibernate.criterion.Order.desc("date"));
-			if(first != null){
-				c.setFirstResult(first);
-			}
-			
-			if(max != null){
-				c.setMaxResults(max);
-			}
-			
-			List<OrderHibernateEntity> list = c.list();
-			return list == null? null : this.toCollection(list);
+
+		    if(first != null) {
+		    	typed.setFirstResult(first);
+		    }
+		    
+		    if(max != null) {
+			    typed.setMaxResults(max);		    	
+		    }
+		    
+		    List<OrderHibernateEntity> list = (List<OrderHibernateEntity>)typed.getResultList();
+		    List<Order> result = new ArrayList<Order>();
+    
+		    for(OrderHibernateEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
 		}
-		catch(Throwable e){
+		catch (Throwable e) {
 			throw new EntityAccessException(e);
-		}	
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Order> getOrders(SystemUser user, OrderStatus status,
+	public List<Order> getOrders(Integer owner, OrderStatus status,
 			Integer first, Integer max) throws EntityAccessException {
-		try{
-			Criteria c = 
-					session
-						.createCriteria(OrderHibernateEntity.class, "order")
-						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderHibernateEntity> criteria = 
+		    		builder.createQuery(OrderHibernateEntity.class);
+		    Root<OrderHibernateEntity> from = 
+		    		criteria.from(OrderHibernateEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
 
-			c.add(Restrictions.eq("order.systemUserCode", user.getId()));
-			c.add(Restrictions.eq("order.status", status));
-			
-			if(first != null){
-				c.setFirstResult(first);
-			}
-			
-			if(max != null){
-				c.setMaxResults(max);
-			}
-			
-			List<OrderHibernateEntity> list = c.list();
-			return list == null? null : this.toCollection(list);
+		    if(owner != null) {
+		    	and.add(builder.equal(from.get("owner"), owner));
+		    }
+
+		    if(status != null) {
+		    	and.add(builder.equal(from.get("status"), status));
+		    }
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<OrderHibernateEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    if(first != null) {
+		    	typed.setFirstResult(first);
+		    }
+		    
+		    if(max != null) {
+			    typed.setMaxResults(max);		    	
+		    }
+		    
+		    List<OrderHibernateEntity> list = (List<OrderHibernateEntity>)typed.getResultList();
+		    List<Order> result = new ArrayList<Order>();
+    
+		    for(OrderHibernateEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
 		}
-		catch(Throwable e){
+		catch (Throwable e) {
 			throw new EntityAccessException(e);
-		}	
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Order> getOrders(OrderStatus status, Integer first, Integer max)
 			throws EntityAccessException {
-		try{
-			Criteria c = 
-					session
-						.createCriteria(OrderHibernateEntity.class, "order")
-						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderHibernateEntity> criteria = 
+		    		builder.createQuery(OrderHibernateEntity.class);
+		    Root<OrderHibernateEntity> from = 
+		    		criteria.from(OrderHibernateEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
 
-			c.add(Restrictions.eq("order.status", status));
-			
-			if(first != null){
-				c.setFirstResult(first);
-			}
-			
-			if(max != null){
-				c.setMaxResults(max);
-			}
-			
-			List<OrderHibernateEntity> list = c.list();
-			return list == null? null : this.toCollection(list);
+		    if(status != null) {
+		    	and.add(builder.equal(from.get("status"), status));
+		    }
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<OrderHibernateEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    if(first != null) {
+		    	typed.setFirstResult(first);
+		    }
+		    
+		    if(max != null) {
+			    typed.setMaxResults(max);		    	
+		    }
+		    
+		    List<OrderHibernateEntity> list = (List<OrderHibernateEntity>)typed.getResultList();
+		    List<Order> result = new ArrayList<Order>();
+    
+		    for(OrderHibernateEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
 		}
-		catch(Throwable e){
+		catch (Throwable e) {
 			throw new EntityAccessException(e);
-		}	
+		}
 	}
 
 	public ProductRequest getProductRequest(Order order, String id) throws EntityAccessException {
