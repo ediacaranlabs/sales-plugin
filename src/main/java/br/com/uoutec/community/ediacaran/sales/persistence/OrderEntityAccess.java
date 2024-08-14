@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
+import java.io.Serializable;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -10,7 +11,7 @@ import br.com.uoutec.persistence.EntityAccessException;
 
 public interface OrderEntityAccess {
 
-	Order findById(String id) throws EntityAccessException;
+	Order findById(Serializable id) throws EntityAccessException;
 	
 	Order findByCartID(String cartID) throws EntityAccessException;
 	

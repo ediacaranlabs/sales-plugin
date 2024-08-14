@@ -1,8 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -11,31 +11,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-
-import br.com.uoutec.community.ediacaran.marketplace.entity.Resource;
-import br.com.uoutec.community.ediacaran.marketplace.persistence.entity.ResourceAccessPermissionEntity;
-import br.com.uoutec.community.ediacaran.marketplace.persistence.entity.ResourceEntity;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceHibernateEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderDiscountHibernateEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderHibernateEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogHibernateEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.PaymentHibernateEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestDiscountHibernateEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestHibernateEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -222,7 +212,6 @@ public class OrderEntityAccessImp
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Order> getOrders(Integer owner, Integer first, Integer max)
 			throws EntityAccessException {
 		
@@ -272,7 +261,6 @@ public class OrderEntityAccessImp
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Order> getOrders(Integer owner, OrderStatus status,
 			Integer first, Integer max) throws EntityAccessException {
 		try {
@@ -333,7 +321,6 @@ public class OrderEntityAccessImp
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Order> getOrders(OrderStatus status, Integer first, Integer max)
 			throws EntityAccessException {
 		try {
@@ -389,40 +376,76 @@ public class OrderEntityAccessImp
 		}
 	}
 
-	public ProductRequest getProductRequest(Order order, String id) throws EntityAccessException {
-		try{
-			Criteria c = 
-					session
-						.createCriteria(ProductRequestHibernateEntity.class, "product_request")
-						.createAlias("product_request.order", "order", JoinType.INNER_JOIN)
-						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+	public ProductRequest getProductRequest(String orderID, String id) throws EntityAccessException {
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestHibernateEntity> criteria = 
+		    		builder.createQuery(ProductRequestHibernateEntity.class);
+		    Root<ProductRequestHibernateEntity> from = 
+		    		criteria.from(ProductRequestHibernateEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
 
-			c.add(Restrictions.eq("product_request.id", id));
-			c.add(Restrictions.eq("order.systemUserCode", order.getId().getSystemUserId()));
-			c.add(Restrictions.eq("order.id", order.getId().getId()));
-			
-			ProductRequestHibernateEntity e = (ProductRequestHibernateEntity) c.uniqueResult();
-			return e == null? null : e.toEntity();
+	    	and.add(builder.equal(from.get("id"), id));
+		    
+		    Join<ProductRequestHibernateEntity, OrderHibernateEntity> orderJoin = from.join("order");
+		    and.add(builder.equal(orderJoin.get("id"), orderID));
+	    	
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestHibernateEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    ProductRequestHibernateEntity e = typed.getSingleResult();
+		    
+		    return e == null? null : e.toEntity();
 		}
-		catch(Throwable e){
+		catch (Throwable e) {
 			throw new EntityAccessException(e);
 		}
+		
 	}
 	
-	public Order findByCartID(SystemUser user, String id) throws EntityAccessException {
-		try{
-			Criteria c = 
-					session
-						.createCriteria(OrderHibernateEntity.class, "order")
-						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+	public Order findByCartID(String id) throws EntityAccessException {
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderHibernateEntity> criteria = 
+		    		builder.createQuery(OrderHibernateEntity.class);
+		    Root<OrderHibernateEntity> from = 
+		    		criteria.from(OrderHibernateEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
 
-			c.add(Restrictions.eq("order.cartID", id));
-			c.add(Restrictions.eq("order.systemUserCode", user.getId()));
-			
-			OrderHibernateEntity e = (OrderHibernateEntity) c.uniqueResult();
-			return e == null? null : e.toEntity();
+	    	and.add(builder.equal(from.get("id"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<OrderHibernateEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    OrderHibernateEntity e = typed.getSingleResult();
+		    
+		    return e == null? null : e.toEntity();
 		}
-		catch(Throwable e){
+		catch (Throwable e) {
 			throw new EntityAccessException(e);
 		}
 	}
@@ -432,13 +455,13 @@ public class OrderEntityAccessImp
 			throws EntityAccessException {
 		try{
 			OrderLog log = new OrderLog();
-			log.setDate(new Date());
+			log.setDate(LocalDateTime.now());
 			log.setMessage(message);
-			log.setOrderId(order.getId().getId());
-			log.setSystemUserId(order.getId().getSystemUserId());
+			log.setOrderId(order.getId());
+			log.setOwner(order.getOwner());
 			
 			OrderLogHibernateEntity e = new OrderLogHibernateEntity(log);
-			this.session.save(e);
+			entityManager.persist(e);
 			
 		}
 		catch(Throwable e){
@@ -450,8 +473,7 @@ public class OrderEntityAccessImp
 	public void updateLog(OrderLog log) throws EntityAccessException {
 		try{
 			OrderLogHibernateEntity e = new OrderLogHibernateEntity(log);
-			e = (OrderLogHibernateEntity)this.session.merge(e);
-			this.session.update(e);
+			entityManager.merge(e);
 		}
 		catch(Throwable e){
 			throw new EntityAccessException(e);
@@ -462,47 +484,62 @@ public class OrderEntityAccessImp
 	public void deleteLog(OrderLog log) throws EntityAccessException {
 		try{
 			OrderLogHibernateEntity e = new OrderLogHibernateEntity(log);
-			e = (OrderLogHibernateEntity)this.session.merge(e);
-			this.session.delete(e);
+			e = (OrderLogHibernateEntity)entityManager.merge(e);
+			entityManager.remove(e);
 		}
 		catch(Throwable e){
 			throw new EntityAccessException(e);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<OrderLog> getLogs(Order order, Integer first, Integer max)
 			throws EntityAccessException {
-		try{
-			Criteria c = 
-					session
-						.createCriteria(OrderLogHibernateEntity.class, "log")
-						.createAlias("product_request.order", "order")
-						.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderLogHibernateEntity> criteria = 
+		    		builder.createQuery(OrderLogHibernateEntity.class);
+		    Root<OrderLogHibernateEntity> from = 
+		    		criteria.from(OrderLogHibernateEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
 
-			c.add(Restrictions.eq("log.orderId", order.getId().getId()));
-			c.add(Restrictions.eq("log.systemUserCode", order.getId().getSystemUserId()));
-			c.addOrder(org.hibernate.criterion.Order.asc("date"));
+	    	and.add(builder.equal(from.get("orderId"), order.getId()));
+	    	
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<OrderLogHibernateEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
 
 			if(first != null){
-				c.setFirstResult(first);
+				typed.setFirstResult(first);
 			}
 			
 			if(max != null){
-				c.setMaxResults(max);
+				typed.setMaxResults(max);
 			}
 			
-			List<OrderLogHibernateEntity> list = (List<OrderLogHibernateEntity>) c.list();
+			List<OrderLogHibernateEntity> list = (List<OrderLogHibernateEntity>) typed.getResultList();
 			List<OrderLog> result = new ArrayList<OrderLog>(5);
 			for(OrderLogHibernateEntity e: list){
 				result.add(e.toEntity());
 			}
 			return result;
 		}
-		catch(Throwable e){
+		catch (Throwable e) {
 			throw new EntityAccessException(e);
 		}
+		
 	}
-	
+
 }
