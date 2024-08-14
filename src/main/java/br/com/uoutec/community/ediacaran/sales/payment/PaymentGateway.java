@@ -14,7 +14,7 @@ public interface PaymentGateway {
 	
 	String getOwnerView(SystemUser user, Order order) throws PaymentGatewayException;
 	
-	String getView(SystemUser user, Order order) throws PaymentGatewayException;
+	String getView() throws PaymentGatewayException;
 
 	String getId();
 	
