@@ -39,10 +39,14 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductException;
 import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusRegistryException;
+import br.com.uoutec.community.ediacaran.security.Principal;
+import br.com.uoutec.community.ediacaran.security.Subject;
+import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -131,6 +135,9 @@ public class OrderRegistryImp
 	
 	@Inject
 	private OrderEntityAccess orderEntityAccess;
+
+	@Inject
+	private SubjectProvider subjectProvider;
 	
 	@Override
 	public void registerOrder(Order entity)	throws OrderRegistryException {
@@ -233,7 +240,7 @@ public class OrderRegistryImp
 	}
 	
 	public List<Order> getOrders(SystemUserID userID, Integer first, Integer max)
-			throws OrderRegistryException {
+			throws OrderRegistryException, SystemUserRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(
 				new RuntimeSecurityPermission(basePermission + "list"));
@@ -250,7 +257,7 @@ public class OrderRegistryImp
 	}
 
 	public List<Order> getOrders(SystemUserID userID, OrderStatus status,
-			Integer first, Integer max) throws OrderRegistryException {
+			Integer first, Integer max) throws OrderRegistryException, SystemUserRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(
 				new RuntimeSecurityPermission(basePermission + "list"));
@@ -291,16 +298,51 @@ public class OrderRegistryImp
 	 * @param user Cliente.
 	 * @return Pedido.
 	 */
+	
 	@Override
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
-					throws OrderRegistryException, UnavailableProductException {
+					throws OrderRegistryException, UnavailableProductException, SystemUserRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".create"));
+		
+		SystemUserID userID = getSystemUserID();
+		SystemUser user = getSystemUser(userID);
+		
+		return unsafeCreateOrder(cart, user, payment, message, paymentGateway);
+	}
+	
+	public Order createOrder(Cart cart, SystemUserID userID, Payment payment, 
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(
 				new RuntimeSecurityPermission(basePermission + ".create"));
 		
+		SystemUser user = getSystemUser(userID);
+		
+		if(user == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return unsafeCreateOrder(cart, user, payment, message, paymentGateway);
+	}
+		
+
+	public Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + ".create"));
+		
+		return unsafeCreateOrder(cart, systemUser, payment, message, paymentGateway);
+	}
+	
+	private Order unsafeCreateOrder(Cart cart, SystemUser systemUser, Payment payment, 
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
+		
 		try{
-			return this.safeCreateOrder(cart, payment, message, paymentGateway);
+			return createOrder0(cart, systemUser, payment, message, paymentGateway);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar o pedido", e);
@@ -312,7 +354,7 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private Order safeCreateOrder(Cart cart, Payment payment, 
+	private Order createOrder0(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
 					throws OrderRegistryException, UnavailableProductException, 
 					ExistOrderRegistryException, EmptyOrderException {
@@ -328,14 +370,16 @@ public class OrderRegistryImp
 		if(cart.getOwner() == null) {
 			throw new OrderRegistryException("owner not found");
 		}
+
+		if(!cart.getOwner().equals(systemUser.getSystemID())) {
+			throw new OrderRegistryException("invalid owner: " + cart.getOwner() + " <> " + systemUser.getSystemID());
+		}
 		
 		Order o = this.findByCartID(cart.getId());
 		
 		if(o != null){
 			throw new ExistOrderRegistryException();
 		}
-		
-		SystemUser systemUser = getSystemUser(cart.getOwner());
 		
 		try{
 			if(!isAvailability(cart, systemUser)){
@@ -422,7 +466,8 @@ public class OrderRegistryImp
 	}
 	
 	public boolean isAvailability(Cart cart, SystemUserID userID) 
-			throws ProductTypeHandlerException, ProductTypeRegistryException, OrderRegistryException{
+			throws ProductTypeHandlerException, ProductTypeRegistryException, 
+			OrderRegistryException, SystemUserRegistryException{
 		
 		SystemUser user = getSystemUser(userID);
 		
@@ -778,13 +823,27 @@ public class OrderRegistryImp
 		orderEntityAccess.flush();
 	}
 
-	private SystemUser getSystemUser(SystemUserID userID) throws OrderRegistryException {
-		try {
-			return systemUserRegistry.getBySystemID(String.valueOf(userID));
+	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
+		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID));
+		
+		if(user == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
 		}
-		catch(Throwable ex) {
-			throw new OrderRegistryException("failed to load user information", ex);
+		
+		return user;
+	}
+	
+	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
+		Subject subject = subjectProvider.getSubject();
+		
+		if(!subject.isAuthenticated()) {
+			throw new SystemUserRegistryException();
 		}
+		
+		Principal principal = subject.getPrincipal();
+		java.security.Principal jaaPrincipal = principal.getUserPrincipal();
+		
+		return ()->jaaPrincipal.getName();
 	}
 	
 }

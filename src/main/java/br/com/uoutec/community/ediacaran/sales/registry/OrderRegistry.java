@@ -13,7 +13,9 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 public interface OrderRegistry extends PublicBean {
@@ -23,6 +25,12 @@ public interface OrderRegistry extends PublicBean {
 	void removeOrder(Order entity) throws OrderRegistryException;
 
 	Order createOrder(Cart cart, Payment payment, 
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException; 
+
+	Order createOrder(Cart cart, SystemUserID userID, Payment payment, 
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException; 
+	
+	Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
 	
 	Invoice createInvoice(String order, BigDecimal total, 
@@ -49,9 +57,9 @@ public interface OrderRegistry extends PublicBean {
 	
 	List<Order> getOrders(OrderStatus status, Integer first, Integer max) throws OrderRegistryException;
 	
-	List<Order> getOrders(SystemUserID userID, Integer first, Integer max) throws OrderRegistryException;
+	List<Order> getOrders(SystemUserID userID, Integer first, Integer max) throws OrderRegistryException, SystemUserRegistryException;
 
-	List<Order> getOrders(SystemUserID userID, OrderStatus status, Integer first, Integer max) throws OrderRegistryException;
+	List<Order> getOrders(SystemUserID userID, OrderStatus status, Integer first, Integer max) throws OrderRegistryException, SystemUserRegistryException;
 
 	/* product */
 	

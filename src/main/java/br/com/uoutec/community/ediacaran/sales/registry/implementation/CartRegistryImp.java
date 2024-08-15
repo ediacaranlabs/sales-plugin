@@ -5,6 +5,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
@@ -24,6 +26,9 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.security.Principal;
+import br.com.uoutec.community.ediacaran.security.Subject;
+import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.lock.NamedLock;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
@@ -37,6 +42,8 @@ public class CartRegistryImp
 	extends AbstractRegistry implements CartRegistry{
 
 	public static final String CART_LOCK_GROUP_NAME = "CART";
+
+	public static final String basePermission = "app.registry.sales.cart.";
 	
 	private boolean enabledCouponSupport;
 
@@ -60,6 +67,9 @@ public class CartRegistryImp
 
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
+	
+	@Inject
+	private SubjectProvider subjectProvider;
 	
 	@Override
 	public Cart getNewCart() {
@@ -158,11 +168,47 @@ public class CartRegistryImp
 	@EnableFilters(CartRegistry.class)
 	public void calculateTotal(Cart cart){
 	}
-	
+
 	@EnableFilters(CartRegistry.class)
 	public Checkout checkout(Cart cart, Payment payment, 
-			String message) throws OrderRegistryException, PaymentGatewayException{
+			String message) throws OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
+		
+		SystemUserID userID = getSystemUserID();
+		SystemUser user = getSystemUser(userID);
+		
+		return safeCheckout(cart, user, payment, message);
+	}
+	
+	@EnableFilters(CartRegistry.class)
+	public Checkout checkout(Cart cart, SystemUserID userID, Payment payment, 
+			String message) throws
+			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "checkout"));
+		
+		SystemUser user = getSystemUser(userID);
+		
+		if(user == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return safeCheckout(cart, user, payment, message);
+	}
 
+	@EnableFilters(CartRegistry.class)
+	public Checkout checkout(Cart cart, SystemUser user, Payment payment, 
+			String message) throws OrderRegistryException, PaymentGatewayException{
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "checkout"));
+		
+		return safeCheckout(cart, user, payment, message);
+	}
+
+	private Checkout safeCheckout(Cart cart, SystemUser user, Payment payment, 
+			String message) throws OrderRegistryException, PaymentGatewayException{
+		
 		PaymentGateway paymentGateway = 
 				paymentGatewayRegistry.getPaymentGateway(payment.getPaymentType());
 		
@@ -179,7 +225,7 @@ public class CartRegistryImp
 		try{
 			activeLock = lock.lock(lockID);
 			 order = orderRegistry.createOrder(
-				cart, payment, message, paymentGateway);
+				cart, user, payment, message, paymentGateway);
 		}
 		catch(ExistOrderRegistryException e){
 			order = orderRegistry.findByCartID(cart.getId());
@@ -228,8 +274,26 @@ public class CartRegistryImp
 	}
 
 	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
-		return systemUserRegistry.getBySystemID(String.valueOf(userID));
+		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID));
+		
+		if(user == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return user;
 	}
 	
+	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
+		Subject subject = subjectProvider.getSubject();
+		
+		if(!subject.isAuthenticated()) {
+			throw new SystemUserRegistryException();
+		}
+		
+		Principal principal = subject.getPrincipal();
+		java.security.Principal jaaPrincipal = principal.getUserPrincipal();
+		
+		return ()->jaaPrincipal.getName();
+	}
 	
 }

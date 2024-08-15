@@ -54,7 +54,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
 @Controller(value="/cart", defaultActionName="/")
-@Action(value="/products", view=@View("cart/products"))
+@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/cart/products"))
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartPubResource {
 
@@ -106,7 +106,7 @@ public class CartPubResource {
 	}
 	
 	@Action(value="/")
-	@View("cart/index")
+	@View("${plugins.ediacaran.sales.template}/cart/index")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
 	public Map<String, Object> index(
@@ -134,7 +134,7 @@ public class CartPubResource {
 	}
 	
 	@Action(value="/payment-details")
-	@View("cart/payment-details")
+	@View("${plugins.ediacaran.sales.template}/cart/payment-details")
 	@Result("vars")
 	public Map<String, Object> paymentDetails() throws InvalidRequestException{
 		
@@ -202,7 +202,7 @@ public class CartPubResource {
 	
 	@Action("/units/{product:[A-Za-z0-9\\-]{1,128}}/{qty:\\d{1,3}}")
 	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
-	@View("cart/products")
+	@View("${plugins.ediacaran.sales.template}/cart/products")
 	@ResponseErrors(rendered=false, name="productException")
 	public void updateUnits(
 			@Basic(
@@ -264,7 +264,7 @@ public class CartPubResource {
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "loadProductData", ex);
 			WebFlowController.redirect()
 				.put("productException", new InvalidRequestException(error, ex))
-				.to("/cart/");
+				.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 			return;
 		}
 
@@ -274,7 +274,7 @@ public class CartPubResource {
 			
 			WebFlowController.redirect()
 			.put("productException", new InvalidRequestException(error))
-			.to("/cart/");
+			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 			return;
 		}
 		
@@ -296,11 +296,11 @@ public class CartPubResource {
 			
 			WebFlowController.redirect()
 			.put("productException", new InvalidRequestException(error, ex))
-			.to("/cart/");
+			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 			return;
 		}
 
-		WebFlowController.redirectTo("/cart/");
+		WebFlowController.redirectTo(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 	}
 	
 	@Action("/remove")
@@ -324,13 +324,13 @@ public class CartPubResource {
 			
 			WebFlowController.redirect()
 			.put("productException", new InvalidRequestException(error, ex))
-			.to("/cart/");
+			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 			return;
 		}
 
 		if(productRequest == null){
 			WebFlowController.redirect()
-			.to("/cart/");
+			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 			return;
 		}
 		
@@ -342,17 +342,17 @@ public class CartPubResource {
 			
 			WebFlowController.redirect()
 			.put("productException", new InvalidRequestException(error, ex))
-			.to("/cart/");
+			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 			return;
 		}
 		
 		WebFlowController.redirect()
-		.to("/cart/");
+		.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 	}
 
 	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
-	@View("cart/result_checkout")
+	@View("${plugins.ediacaran.sales.template}/cart/result_checkout")
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
 	public String checkout(
@@ -394,7 +394,7 @@ public class CartPubResource {
 		String paymentResource = null;
 		
 		try{
-			Checkout checkoutResult = this.cartRegistry.checkout(cart, payment, "Pedido criado via website.");
+			Checkout checkoutResult = this.cartRegistry.checkout(cart, user, payment, "Pedido criado via website.");
 			paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
 		}
 		catch(Throwable ex){
