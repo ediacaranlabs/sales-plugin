@@ -12,8 +12,6 @@ import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Controller;
 import org.brandao.brutos.annotation.DetachedName;
-import org.brandao.brutos.annotation.Intercept;
-import org.brandao.brutos.annotation.InterceptedBy;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Result;
 import org.brandao.brutos.annotation.ScopeType;
@@ -27,15 +25,12 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
-@Controller(value="/service-manager/orders", defaultActionName="/")
+@Controller(value="${plugins.ediacaran.front.admin_context}/orders", defaultActionName="/")
 @ResponseErrors(rendered=false)
-@InterceptedBy(@Intercept(name="securityStack"))
 public class OrderPubResource {
 
 	@Transient
@@ -51,18 +46,14 @@ public class OrderPubResource {
 	private PaymentGatewayRegistry paymentGatewayProvider;
 	
 	@Action("/")
-	@View(value="/service-manager/orders/index.jsp", resolved=true)
+	@View("${plugins.ediacaran.sales.template}/admin/orders/index")
 	@Result("orders")
 	public List<Order> showOrders(
-			@DetachedName
-			AuthenticatedSystemUserPubEntity systemUserPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
-		SystemUser user;
 		try{
-			user = systemUserPubEntity.rebuild(true, false, false);
-			return this.orderRegistry.getOrders(user, null, null);
+			return this.orderRegistry.getOrders(null, null);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -75,11 +66,9 @@ public class OrderPubResource {
 	}
 
 	@Action("/show-order/{id}")
-	@View(value="service-manager/orders/show_order")
+	@View("${plugins.ediacaran.sales.template}/admin/orders/show_order")
 	@Result("vars")
 	public Map<String,Object> orderDetail(
-			@DetachedName 
-			AuthenticatedSystemUserPubEntity userPubEntity,
 			@DetachedName
 			OrderPubEntity orderPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -87,10 +76,8 @@ public class OrderPubResource {
 	) throws InvalidRequestException{
 		
 		Order order;
-		SystemUser user;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
-			user = userPubEntity.rebuild(true, false, false);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -112,8 +99,9 @@ public class OrderPubResource {
 							order.getPayment().getPaymentType());
 			
 			if(paymentGateway != null){
-				view = paymentGateway.getOwnerView(user, order);
+				view = paymentGateway.getOwnerView(order);
 			}
+			
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -127,7 +115,6 @@ public class OrderPubResource {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order",          order);
-		map.put("user",           user);
 		map.put("paymentGateway", paymentGateway);
 		map.put("payment_view",   view);
 		return map;

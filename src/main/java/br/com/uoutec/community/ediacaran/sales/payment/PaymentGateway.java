@@ -10,7 +10,11 @@ public interface PaymentGateway {
 	
 	void payment(SystemUser user, Order order, Payment payment) throws PaymentGatewayException;
 	
+	String redirectView(String orderID) throws PaymentGatewayException;
+	
 	String redirectView(SystemUser user, Order order) throws PaymentGatewayException;
+	
+	String getOwnerView(Order order) throws PaymentGatewayException;
 	
 	String getOwnerView(SystemUser user, Order order) throws PaymentGatewayException;
 	

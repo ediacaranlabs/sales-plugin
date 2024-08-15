@@ -54,7 +54,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
 @Controller(value="/cart", defaultActionName="/")
-@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/cart/products"))
+@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/front/cart/products"))
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartPubResource {
 
@@ -106,7 +106,7 @@ public class CartPubResource {
 	}
 	
 	@Action(value="/")
-	@View("${plugins.ediacaran.sales.template}/cart/index")
+	@View("${plugins.ediacaran.sales.template}/front/cart/index")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
 	public Map<String, Object> index(
@@ -134,7 +134,7 @@ public class CartPubResource {
 	}
 	
 	@Action(value="/payment-details")
-	@View("${plugins.ediacaran.sales.template}/cart/payment-details")
+	@View("${plugins.ediacaran.sales.template}/front/cart/payment-details")
 	@Result("vars")
 	public Map<String, Object> paymentDetails() throws InvalidRequestException{
 		
@@ -202,7 +202,7 @@ public class CartPubResource {
 	
 	@Action("/units/{product:[A-Za-z0-9\\-]{1,128}}/{qty:\\d{1,3}}")
 	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
-	@View("${plugins.ediacaran.sales.template}/cart/products")
+	@View("${plugins.ediacaran.sales.template}/front/cart/products")
 	@ResponseErrors(rendered=false, name="productException")
 	public void updateUnits(
 			@Basic(
@@ -352,7 +352,7 @@ public class CartPubResource {
 
 	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
-	@View("${plugins.ediacaran.sales.template}/cart/result_checkout")
+	@View("${plugins.ediacaran.sales.template}/front/cart/result_checkout")
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
 	public String checkout(

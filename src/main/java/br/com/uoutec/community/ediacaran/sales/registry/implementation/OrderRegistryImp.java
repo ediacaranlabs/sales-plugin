@@ -224,19 +224,25 @@ public class OrderRegistryImp
 		}
 	}
 	
+	public List<Order> getOrders(Integer first, Integer max)
+			throws OrderRegistryException, SystemUserRegistryException {
+		return getOrders((OrderStatus)null, first, max);
+	}
+	
 	public List<Order> getOrders(OrderStatus status, Integer first, Integer max)
-			throws OrderRegistryException {
+			throws OrderRegistryException, SystemUserRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "list"));
-		
+		SystemUserID userID = getSystemUserID();
+		SystemUser user = getSystemUser(userID);
+
 		try{
-			return orderEntityAccess.getOrders(status, first, max);
+			return orderEntityAccess.getOrders(user.getId(), status, first, max);
 		}
 		catch(Throwable e){
 			e.printStackTrace();
 			throw new OrderRegistryException(e);
 		}
+		
 	}
 	
 	public List<Order> getOrders(SystemUserID userID, Integer first, Integer max)
@@ -303,9 +309,6 @@ public class OrderRegistryImp
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
 					throws OrderRegistryException, UnavailableProductException, SystemUserRegistryException {
-		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".create"));
 		
 		SystemUserID userID = getSystemUserID();
 		SystemUser user = getSystemUser(userID);
