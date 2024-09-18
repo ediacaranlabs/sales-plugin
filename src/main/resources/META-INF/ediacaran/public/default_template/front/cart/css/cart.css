@@ -1,0 +1,17 @@
+.product-table .available-item {
+	
+}
+
+.product-table .unavailable-item {
+	background-color: #fff1f1;
+}
+
+.product-table .header {
+	background-color: #000000;
+	color: #ffffff;
+}
+
+.segment-name {
+	margin-top: 15px;
+	color: #a9a9a9;
+}
