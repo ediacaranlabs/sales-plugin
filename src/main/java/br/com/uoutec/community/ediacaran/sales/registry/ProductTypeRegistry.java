@@ -13,7 +13,7 @@ public interface ProductTypeRegistry {
 	
 	void registryProductType(ProductType e) throws ProductTypeRegistryException;
 
-	void removeProductType(ProductType e) throws ProductTypeRegistryException;
+	void removeProductType(String code) throws ProductTypeRegistryException;
 	
 	List<ProductType> getProductTypes() throws ProductTypeRegistryException;
 	

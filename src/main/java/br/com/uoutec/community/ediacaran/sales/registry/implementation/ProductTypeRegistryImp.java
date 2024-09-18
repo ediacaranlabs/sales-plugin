@@ -38,12 +38,12 @@ public class ProductTypeRegistryImp
 	}
 
 	@Override
-	public void removeProductType(ProductType e) throws ProductTypeRegistryException {
+	public void removeProductType(String code) throws ProductTypeRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(
 				new RuntimeSecurityPermission(basePermission + "remove"));
 		
-		map.remove(e.getCode());
+		map.remove(code);
 	}
 
 	@Override
