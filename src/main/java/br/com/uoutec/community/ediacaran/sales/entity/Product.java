@@ -7,6 +7,7 @@ import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -29,7 +30,7 @@ public class Product implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
-	@Length(max = 255)
+	@Size(max=2048)
 	private String description;
 	
 	@NotNull(groups = DataValidation.class)

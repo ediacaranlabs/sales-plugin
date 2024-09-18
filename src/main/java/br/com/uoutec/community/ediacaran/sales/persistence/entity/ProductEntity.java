@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
@@ -33,7 +34,8 @@ public class ProductEntity implements Serializable{
 	@Column(name="dsc_name", length=128)
 	private String name;
 	
-	@Column(name="dsc_description", length=255)
+	@Column(name="dsc_description")
+	@Lob
 	private String description;
 	
 	@Column(name="cod_product_type")
