@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -19,7 +20,8 @@ import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 @Entity
 @Table(name="rw_product")
-public class ProductHibernateEntity implements Serializable{
+@EntityListeners(ProductEntityListener.class)
+public class ProductEntity implements Serializable{
 
 	private static final long serialVersionUID = 7360107228997614767L;
 
@@ -50,10 +52,10 @@ public class ProductHibernateEntity implements Serializable{
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
-	public ProductHibernateEntity(){
+	public ProductEntity(){
 	}
 	
-	public ProductHibernateEntity(Product e){
+	public ProductEntity(Product e){
 		this.cost           = e.getCost();
 		this.currency       = e.getCurrency();
 		this.productType    = e.getProductType() == null? null : e.getProductType().getCode();

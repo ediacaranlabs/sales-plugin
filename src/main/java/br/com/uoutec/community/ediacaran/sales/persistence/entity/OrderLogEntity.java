@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,7 +17,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 
 @Entity
 @Table(name="rw_order_log")
-public class OrderLogHibernateEntity implements Serializable{
+@EntityListeners(OrderLogEntityListener.class)
+public class OrderLogEntity implements Serializable{
 
 	private static final long serialVersionUID = 8764002166887883414L;
 
@@ -38,10 +40,10 @@ public class OrderLogHibernateEntity implements Serializable{
 	@Column(name="dsc_message", length=300)
 	private String message;
 
-	public OrderLogHibernateEntity(){
+	public OrderLogEntity(){
 	}
 	
-	public OrderLogHibernateEntity(OrderLog e){
+	public OrderLogEntity(OrderLog e){
 		this.date = e.getDate();
 		this.id   = e.getId();
 		this.message = e.getMessage();

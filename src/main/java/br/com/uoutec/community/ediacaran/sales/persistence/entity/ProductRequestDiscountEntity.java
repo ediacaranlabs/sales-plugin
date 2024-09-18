@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
@@ -16,7 +17,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
 
 @Entity
 @Table(name = "rw_product_request_discount")
-public class ProductRequestDiscountHibernateEntity {
+@EntityListeners(ProductRequestDiscountEntityListener.class)
+public class ProductRequestDiscountEntity {
 
 	@Id
 	@Column(name="cod_product_request_discount")
@@ -24,7 +26,7 @@ public class ProductRequestDiscountHibernateEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "cod_product_request", referencedColumnName = "cod_product_request", insertable = false, updatable = false)
-	private ProductRequestHibernateEntity productRequest;
+	private ProductRequestEntity productRequest;
 
 	@Column(name = "dsc_name", length = 128)
 	private String name;
@@ -42,11 +44,11 @@ public class ProductRequestDiscountHibernateEntity {
 	@Column(name = "vlr_order", length = 1)
 	private byte order;
 
-	public ProductRequestDiscountHibernateEntity() {
+	public ProductRequestDiscountEntity() {
 	}
 
-	public ProductRequestDiscountHibernateEntity(
-			ProductRequestHibernateEntity productRequest, Discount e) {
+	public ProductRequestDiscountEntity(
+			ProductRequestEntity productRequest, Discount e) {
 		this.description = e.getDescription();
 		this.name = e.getName();
 		this.order = e.getOrder();
@@ -63,11 +65,11 @@ public class ProductRequestDiscountHibernateEntity {
 		this.id = id;
 	}
 
-	public ProductRequestHibernateEntity getProductRequest() {
+	public ProductRequestEntity getProductRequest() {
 		return productRequest;
 	}
 
-	public void setProductRequest(ProductRequestHibernateEntity productRequest) {
+	public void setProductRequest(ProductRequestEntity productRequest) {
 		this.productRequest = productRequest;
 	}
 

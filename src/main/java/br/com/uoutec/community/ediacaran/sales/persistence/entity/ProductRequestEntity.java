@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -24,7 +25,8 @@ import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 
 @Entity
 @Table(name="rw_product_request")
-public class ProductRequestHibernateEntity implements Serializable{
+@EntityListeners(ProductRequestEntityListener.class)
+public class ProductRequestEntity implements Serializable{
 
 	private static final long serialVersionUID = -6395849000853228077L;
 
@@ -37,14 +39,14 @@ public class ProductRequestHibernateEntity implements Serializable{
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_product", referencedColumnName="cod_product")
-	private ProductHibernateEntity product;
+	private ProductEntity product;
 
 	@Column(name="dsc_productid", length=30)
 	private String productID;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
-	private OrderHibernateEntity order;
+	private OrderEntity order;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_period_type", length=32)
@@ -72,16 +74,16 @@ public class ProductRequestHibernateEntity implements Serializable{
 	private String currency;
 
 	@OneToMany(mappedBy="productRequest", fetch=FetchType.LAZY)
-	private List<ProductRequestDiscountHibernateEntity> discounts;
+	private List<ProductRequestDiscountEntity> discounts;
 	
 	@Lob
 	@Column(name="dsc_data")
 	private String addData;
 	
-	public ProductRequestHibernateEntity(){
+	public ProductRequestEntity(){
 	}
 	
-	public ProductRequestHibernateEntity(OrderHibernateEntity order, ProductRequest e){
+	public ProductRequestEntity(OrderEntity order, ProductRequest e){
 		this.id               = e.getId();
 		this.serial           = e.getSerial();
 		this.order            = order;
@@ -89,7 +91,7 @@ public class ProductRequestHibernateEntity implements Serializable{
 		this.cost             = e.getCost();
 		this.additionalCost   = e.getAdditionalCost();
 		this.currency         = e.getCurrency();
-		this.product          = e.getProduct() == null? null : new ProductHibernateEntity(e.getProduct());
+		this.product          = e.getProduct() == null? null : new ProductEntity(e.getProduct());
 		this.units            = e.getUnits();
 		this.periodType       = e.getPeriodType();
 		this.shortDescription = e.getShortDescription();
@@ -100,9 +102,9 @@ public class ProductRequestHibernateEntity implements Serializable{
 		List<Discount> discounts = e.getDiscounts();
 		
 		if(discounts != null){
-			this.discounts = new ArrayList<ProductRequestDiscountHibernateEntity>();
+			this.discounts = new ArrayList<ProductRequestDiscountEntity>();
 			for(Discount discount: discounts){
-				this.discounts.add(new ProductRequestDiscountHibernateEntity(this, discount));
+				this.discounts.add(new ProductRequestDiscountEntity(this, discount));
 			}
 		}
 		
@@ -140,19 +142,19 @@ public class ProductRequestHibernateEntity implements Serializable{
 		this.shortDescription = shortDescription;
 	}
 
-	public ProductHibernateEntity getProduct() {
+	public ProductEntity getProduct() {
 		return product;
 	}
 
-	public void setProduct(ProductHibernateEntity product) {
+	public void setProduct(ProductEntity product) {
 		this.product = product;
 	}
 
-	public OrderHibernateEntity getOrder() {
+	public OrderEntity getOrder() {
 		return order;
 	}
 
-	public void setOrder(OrderHibernateEntity order) {
+	public void setOrder(OrderEntity order) {
 		this.order = order;
 	}
 
@@ -220,11 +222,11 @@ public class ProductRequestHibernateEntity implements Serializable{
 		this.discount = discount;
 	}
 
-	public List<ProductRequestDiscountHibernateEntity> getDiscounts() {
+	public List<ProductRequestDiscountEntity> getDiscounts() {
 		return discounts;
 	}
 
-	public void setDiscounts(List<ProductRequestDiscountHibernateEntity> discounts) {
+	public void setDiscounts(List<ProductRequestDiscountEntity> discounts) {
 		this.discounts = discounts;
 	}
 
@@ -248,7 +250,7 @@ public class ProductRequestHibernateEntity implements Serializable{
 			List<Discount> discounts = new ArrayList<Discount>();
 			e.setDiscounts(discounts);
 			
-			for(ProductRequestDiscountHibernateEntity prd: this.discounts){
+			for(ProductRequestDiscountEntity prd: this.discounts){
 				discounts.add(prd.toEntity());
 			}
 			

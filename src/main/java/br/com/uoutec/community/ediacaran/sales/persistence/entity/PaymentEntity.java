@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -24,7 +25,8 @@ import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 @Entity
 @Table(name="rw_payment")
-public class PaymentHibernateEntity implements Serializable{
+@EntityListeners(PaymentEntityListener.class)
+public class PaymentEntity implements Serializable{
 
 	private static final long serialVersionUID = -1070328474697632265L;
 
@@ -68,10 +70,10 @@ public class PaymentHibernateEntity implements Serializable{
 	@Column(name="dsc_ext_data")
 	private String extendData;
 
-	public PaymentHibernateEntity(){
+	public PaymentEntity(){
 	}
 	
-	public PaymentHibernateEntity(Payment e){
+	public PaymentEntity(Payment e){
 		this.typeName           = e.getClass().getName();
 		this.currency           = e.getCurrency();
 		this.tax                = e.getTax();

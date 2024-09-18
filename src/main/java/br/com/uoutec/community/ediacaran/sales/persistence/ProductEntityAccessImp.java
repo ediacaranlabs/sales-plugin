@@ -15,11 +15,11 @@ import org.hibernate.Session;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductHibernateEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public class ProductEntityAccessImp 
-	extends AbstractEntityAccess<Product, ProductHibernateEntity>
+	extends AbstractEntityAccess<Product, ProductEntity>
 	implements ProductEntityAccess{
 
 	@Inject
@@ -31,10 +31,10 @@ public class ProductEntityAccessImp
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<ProductHibernateEntity> criteria = 
-		    		builder.createQuery(ProductHibernateEntity.class);
-		    Root<ProductHibernateEntity> from = 
-		    		criteria.from(ProductHibernateEntity.class);
+		    CriteriaQuery<ProductEntity> criteria = 
+		    		builder.createQuery(ProductEntity.class);
+		    Root<ProductEntity> from = 
+		    		criteria.from(ProductEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -44,14 +44,14 @@ public class ProductEntityAccessImp
     				)
     		);
 		    
-		    TypedQuery<ProductHibernateEntity> typed = 
+		    TypedQuery<ProductEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
-		    List<ProductHibernateEntity> list = (List<ProductHibernateEntity>)typed.getResultList();
+		    List<ProductEntity> list = (List<ProductEntity>)typed.getResultList();
 		    List<Product> result = new ArrayList<Product>();
     
-		    for(ProductHibernateEntity e: list) {
+		    for(ProductEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -66,10 +66,10 @@ public class ProductEntityAccessImp
 	public List<Product> getProductByCode(String code) throws EntityAccessException{
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<ProductHibernateEntity> criteria = 
-		    		builder.createQuery(ProductHibernateEntity.class);
-		    Root<ProductHibernateEntity> from = 
-		    		criteria.from(ProductHibernateEntity.class);
+		    CriteriaQuery<ProductEntity> criteria = 
+		    		builder.createQuery(ProductEntity.class);
+		    Root<ProductEntity> from = 
+		    		criteria.from(ProductEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -79,14 +79,14 @@ public class ProductEntityAccessImp
     				)
     		);
 		    
-		    TypedQuery<ProductHibernateEntity> typed = 
+		    TypedQuery<ProductEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
-		    List<ProductHibernateEntity> list = (List<ProductHibernateEntity>)typed.getResultList();
+		    List<ProductEntity> list = (List<ProductEntity>)typed.getResultList();
 		    List<Product> result = new ArrayList<Product>();
     
-		    for(ProductHibernateEntity e: list) {
+		    for(ProductEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -99,13 +99,13 @@ public class ProductEntityAccessImp
 	}
 	
 	@Override
-	protected ProductHibernateEntity toPersistenceEntity(Product entity)
+	protected ProductEntity toPersistenceEntity(Product entity)
 			throws Throwable {
-		return new ProductHibernateEntity(entity);
+		return new ProductEntity(entity);
 	}
 
 	@Override
-	protected Product toEntity(ProductHibernateEntity entity) throws Throwable {
+	protected Product toEntity(ProductEntity entity) throws Throwable {
 		return entity.toEntity();
 	}
 
@@ -115,7 +115,7 @@ public class ProductEntityAccessImp
 	}
 
 	@Override
-	protected Serializable getPersistenceID(ProductHibernateEntity value)
+	protected Serializable getPersistenceID(ProductEntity value)
 			throws Throwable {
 		return value.getId();
 	}

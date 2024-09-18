@@ -20,17 +20,17 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderDiscountHibernateEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderHibernateEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogHibernateEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestDiscountHibernateEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestHibernateEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderDiscountEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestDiscountEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
 public class OrderEntityAccessImp 
-	extends AbstractEntityAccess<Order, OrderHibernateEntity>
+	extends AbstractEntityAccess<Order, OrderEntity>
 	implements OrderEntityAccess{
 
 	public OrderEntityAccessImp() {
@@ -44,7 +44,7 @@ public class OrderEntityAccessImp
 
 	public void save(Order value) throws EntityAccessException {
 		try{
-			OrderHibernateEntity pEntity = this.toPersistenceEntity(value);
+			OrderEntity pEntity = this.toPersistenceEntity(value);
 
 			if(value.getId() != null){
 				throw new EntityAccessException("id");
@@ -68,18 +68,18 @@ public class OrderEntityAccessImp
 			
 			entityManager.persist(pEntity);
 			
-			List<ProductRequestHibernateEntity> list = 
+			List<ProductRequestEntity> list = 
 					pEntity.getItens();
 			
 			if(list != null){
-				for(ProductRequestHibernateEntity e: list){
+				for(ProductRequestEntity e: list){
 					e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
 					entityManager.persist(e);
 					
-					List<ProductRequestDiscountHibernateEntity> prdel = e.getDiscounts();
+					List<ProductRequestDiscountEntity> prdel = e.getDiscounts();
 					
 					if(prdel != null){
-						for(ProductRequestDiscountHibernateEntity k: prdel){
+						for(ProductRequestDiscountEntity k: prdel){
 							k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 							entityManager.persist(k);
 						}
@@ -87,10 +87,10 @@ public class OrderEntityAccessImp
 				}
 			}
 			
-			List<OrderDiscountHibernateEntity> odl = pEntity.getDiscounts();
+			List<OrderDiscountEntity> odl = pEntity.getDiscounts();
 			
 			if(odl != null){
-				for(OrderDiscountHibernateEntity k: odl){
+				for(OrderDiscountEntity k: odl){
 					k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 					entityManager.persist(k);
 				}
@@ -105,7 +105,7 @@ public class OrderEntityAccessImp
 
 	public void update(Order value) throws EntityAccessException {
 		try{
-			OrderHibernateEntity pEntity = this.toPersistenceEntity(value);
+			OrderEntity pEntity = this.toPersistenceEntity(value);
 
 			if(pEntity.getInvoice() != null){
 				if(pEntity.getInvoice().getId() == null){
@@ -127,13 +127,13 @@ public class OrderEntityAccessImp
 				}
 			}
 			
-			pEntity = (OrderHibernateEntity)entityManager.merge(pEntity);
+			pEntity = (OrderEntity)entityManager.merge(pEntity);
 			
-			List<ProductRequestHibernateEntity> list = 
+			List<ProductRequestEntity> list = 
 					pEntity.getItens();
 			
 			if(list != null){
-				for(ProductRequestHibernateEntity e: list){
+				for(ProductRequestEntity e: list){
 					if(e.getId() == null){
 						e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
 						entityManager.persist(e);
@@ -142,10 +142,10 @@ public class OrderEntityAccessImp
 						entityManager.merge(e);
 					}
 					
-					List<ProductRequestDiscountHibernateEntity> prdel = e.getDiscounts();
+					List<ProductRequestDiscountEntity> prdel = e.getDiscounts();
 					
 					if(prdel != null){
-						for(ProductRequestDiscountHibernateEntity k: prdel){
+						for(ProductRequestDiscountEntity k: prdel){
 							if(k.getId() == null){
 								k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 								entityManager.persist(k);
@@ -159,10 +159,10 @@ public class OrderEntityAccessImp
 				}
 			}
 			
-			List<OrderDiscountHibernateEntity> odl = pEntity.getDiscounts();
+			List<OrderDiscountEntity> odl = pEntity.getDiscounts();
 			
 			if(odl != null){
-				for(OrderDiscountHibernateEntity k: odl){
+				for(OrderDiscountEntity k: odl){
 					if(k.getId() == null){
 						k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 						entityManager.persist(k);
@@ -181,13 +181,13 @@ public class OrderEntityAccessImp
 	}
 	
 	@Override
-	protected OrderHibernateEntity toPersistenceEntity(Order entity)
+	protected OrderEntity toPersistenceEntity(Order entity)
 			throws Throwable {
-		return new OrderHibernateEntity(entity);
+		return new OrderEntity(entity);
 	}
 
 	@Override
-	protected Order toEntity(OrderHibernateEntity entity) throws Throwable {
+	protected Order toEntity(OrderEntity entity) throws Throwable {
 		return entity.toEntity();
 	}
 
@@ -197,7 +197,7 @@ public class OrderEntityAccessImp
 	}
 
 	@Override
-	protected Serializable getPersistenceID(OrderHibernateEntity value)
+	protected Serializable getPersistenceID(OrderEntity value)
 			throws Throwable {
 		return value.getId();
 	}
@@ -217,10 +217,10 @@ public class OrderEntityAccessImp
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderHibernateEntity> criteria = 
-		    		builder.createQuery(OrderHibernateEntity.class);
-		    Root<OrderHibernateEntity> from = 
-		    		criteria.from(OrderHibernateEntity.class);
+		    CriteriaQuery<OrderEntity> criteria = 
+		    		builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = 
+		    		criteria.from(OrderEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -234,7 +234,7 @@ public class OrderEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<OrderHibernateEntity> typed = 
+		    TypedQuery<OrderEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
@@ -246,10 +246,10 @@ public class OrderEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<OrderHibernateEntity> list = (List<OrderHibernateEntity>)typed.getResultList();
+		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
 		    List<Order> result = new ArrayList<Order>();
     
-		    for(OrderHibernateEntity e: list) {
+		    for(OrderEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -265,10 +265,10 @@ public class OrderEntityAccessImp
 			Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderHibernateEntity> criteria = 
-		    		builder.createQuery(OrderHibernateEntity.class);
-		    Root<OrderHibernateEntity> from = 
-		    		criteria.from(OrderHibernateEntity.class);
+		    CriteriaQuery<OrderEntity> criteria = 
+		    		builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = 
+		    		criteria.from(OrderEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -294,7 +294,7 @@ public class OrderEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<OrderHibernateEntity> typed = 
+		    TypedQuery<OrderEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
@@ -306,10 +306,10 @@ public class OrderEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<OrderHibernateEntity> list = (List<OrderHibernateEntity>)typed.getResultList();
+		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
 		    List<Order> result = new ArrayList<Order>();
     
-		    for(OrderHibernateEntity e: list) {
+		    for(OrderEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -325,10 +325,10 @@ public class OrderEntityAccessImp
 			throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderHibernateEntity> criteria = 
-		    		builder.createQuery(OrderHibernateEntity.class);
-		    Root<OrderHibernateEntity> from = 
-		    		criteria.from(OrderHibernateEntity.class);
+		    CriteriaQuery<OrderEntity> criteria = 
+		    		builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = 
+		    		criteria.from(OrderEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -350,7 +350,7 @@ public class OrderEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<OrderHibernateEntity> typed = 
+		    TypedQuery<OrderEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
@@ -362,10 +362,10 @@ public class OrderEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<OrderHibernateEntity> list = (List<OrderHibernateEntity>)typed.getResultList();
+		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
 		    List<Order> result = new ArrayList<Order>();
     
-		    for(OrderHibernateEntity e: list) {
+		    for(OrderEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -379,10 +379,10 @@ public class OrderEntityAccessImp
 	public ProductRequest getProductRequest(String orderID, String id) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<ProductRequestHibernateEntity> criteria = 
-		    		builder.createQuery(ProductRequestHibernateEntity.class);
-		    Root<ProductRequestHibernateEntity> from = 
-		    		criteria.from(ProductRequestHibernateEntity.class);
+		    CriteriaQuery<ProductRequestEntity> criteria = 
+		    		builder.createQuery(ProductRequestEntity.class);
+		    Root<ProductRequestEntity> from = 
+		    		criteria.from(ProductRequestEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -390,7 +390,7 @@ public class OrderEntityAccessImp
 
 	    	and.add(builder.equal(from.get("id"), id));
 		    
-		    Join<ProductRequestHibernateEntity, OrderHibernateEntity> orderJoin = from.join("order");
+		    Join<ProductRequestEntity, OrderEntity> orderJoin = from.join("order");
 		    and.add(builder.equal(orderJoin.get("id"), orderID));
 	    	
 		    if(!and.isEmpty()) {
@@ -401,11 +401,11 @@ public class OrderEntityAccessImp
 	    		);
 		    }
 		    
-		    TypedQuery<ProductRequestHibernateEntity> typed = 
+		    TypedQuery<ProductRequestEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
-		    ProductRequestHibernateEntity e = typed.getSingleResult();
+		    ProductRequestEntity e = typed.getSingleResult();
 		    
 		    return e == null? null : e.toEntity();
 		}
@@ -418,10 +418,10 @@ public class OrderEntityAccessImp
 	public Order findByCartID(String id) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderHibernateEntity> criteria = 
-		    		builder.createQuery(OrderHibernateEntity.class);
-		    Root<OrderHibernateEntity> from = 
-		    		criteria.from(OrderHibernateEntity.class);
+		    CriteriaQuery<OrderEntity> criteria = 
+		    		builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = 
+		    		criteria.from(OrderEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -437,11 +437,11 @@ public class OrderEntityAccessImp
 	    		);
 		    }
 		    
-		    TypedQuery<OrderHibernateEntity> typed = 
+		    TypedQuery<OrderEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
-		    OrderHibernateEntity e = typed.getSingleResult();
+		    OrderEntity e = typed.getSingleResult();
 		    
 		    return e == null? null : e.toEntity();
 		}
@@ -460,7 +460,7 @@ public class OrderEntityAccessImp
 			log.setOrderId(order.getId());
 			log.setOwner(order.getOwner());
 			
-			OrderLogHibernateEntity e = new OrderLogHibernateEntity(log);
+			OrderLogEntity e = new OrderLogEntity(log);
 			entityManager.persist(e);
 			
 		}
@@ -472,7 +472,7 @@ public class OrderEntityAccessImp
 	@Override
 	public void updateLog(OrderLog log) throws EntityAccessException {
 		try{
-			OrderLogHibernateEntity e = new OrderLogHibernateEntity(log);
+			OrderLogEntity e = new OrderLogEntity(log);
 			entityManager.merge(e);
 		}
 		catch(Throwable e){
@@ -483,8 +483,8 @@ public class OrderEntityAccessImp
 	@Override
 	public void deleteLog(OrderLog log) throws EntityAccessException {
 		try{
-			OrderLogHibernateEntity e = new OrderLogHibernateEntity(log);
-			e = (OrderLogHibernateEntity)entityManager.merge(e);
+			OrderLogEntity e = new OrderLogEntity(log);
+			e = (OrderLogEntity)entityManager.merge(e);
 			entityManager.remove(e);
 		}
 		catch(Throwable e){
@@ -498,10 +498,10 @@ public class OrderEntityAccessImp
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderLogHibernateEntity> criteria = 
-		    		builder.createQuery(OrderLogHibernateEntity.class);
-		    Root<OrderLogHibernateEntity> from = 
-		    		criteria.from(OrderLogHibernateEntity.class);
+		    CriteriaQuery<OrderLogEntity> criteria = 
+		    		builder.createQuery(OrderLogEntity.class);
+		    Root<OrderLogEntity> from = 
+		    		criteria.from(OrderLogEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -517,7 +517,7 @@ public class OrderEntityAccessImp
 	    		);
 		    }
 		    
-		    TypedQuery<OrderLogHibernateEntity> typed = 
+		    TypedQuery<OrderLogEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
@@ -529,9 +529,9 @@ public class OrderEntityAccessImp
 				typed.setMaxResults(max);
 			}
 			
-			List<OrderLogHibernateEntity> list = (List<OrderLogHibernateEntity>) typed.getResultList();
+			List<OrderLogEntity> list = (List<OrderLogEntity>) typed.getResultList();
 			List<OrderLog> result = new ArrayList<OrderLog>(5);
-			for(OrderLogHibernateEntity e: list){
+			for(OrderLogEntity e: list){
 				result.add(e.toEntity());
 			}
 			return result;

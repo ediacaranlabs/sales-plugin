@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -25,7 +26,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 
 @Entity
 @Table(name="rw_order")
-public class OrderHibernateEntity implements Serializable{
+@EntityListeners(OrderEntityListener.class)
+public class OrderEntity implements Serializable{
 
 	private static final long serialVersionUID = 8764002166887883414L;
 
@@ -49,48 +51,48 @@ public class OrderHibernateEntity implements Serializable{
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_payment", referencedColumnName="cod_payment")
-	private PaymentHibernateEntity payment;
+	private PaymentEntity payment;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_invoice", referencedColumnName="cod_invoice")
-	private InvoiceHibernateEntity invoice;
+	private InvoiceEntity invoice;
 
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
-	private List<ProductRequestHibernateEntity> itens;
+	private List<ProductRequestEntity> itens;
 
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
-	private List<OrderDiscountHibernateEntity> discounts;
+	private List<OrderDiscountEntity> discounts;
 
 	@Column(name="bit_removed", length=1)
 	private Boolean removed;
 
-	public OrderHibernateEntity(){
+	public OrderEntity(){
 	}
 	
-	public OrderHibernateEntity(Order e){
+	public OrderEntity(Order e){
 		this.date = e.getDate();
 		this.cartID = e.getCartID();
 		this.id = e.getId();
 		this.owner = e.getOwner();
-		this.invoice = e.getInvoice() == null? null : new InvoiceHibernateEntity(e.getInvoice());
+		this.invoice = e.getInvoice() == null? null : new InvoiceEntity(e.getInvoice());
 		
 		if(e.getItens() != null){
-			this.itens = new ArrayList<ProductRequestHibernateEntity>();
+			this.itens = new ArrayList<ProductRequestEntity>();
 			for(ProductRequest p: e.getItens()){
-				this.itens.add(new ProductRequestHibernateEntity(this,p));
+				this.itens.add(new ProductRequestEntity(this,p));
 			}
 		}
 		
-		this.payment = e.getPayment() == null? null : new PaymentHibernateEntity(e.getPayment());
+		this.payment = e.getPayment() == null? null : new PaymentEntity(e.getPayment());
 		this.removed = e.isRemoved();
 		this.status = e.getStatus();
 		
 		List<Discount> discounts = e.getDiscounts();
 		
 		if(discounts != null){
-			this.discounts = new ArrayList<OrderDiscountHibernateEntity>();
+			this.discounts = new ArrayList<OrderDiscountEntity>();
 			for(Discount discount: discounts){
-				this.discounts.add(new OrderDiscountHibernateEntity(this, discount));
+				this.discounts.add(new OrderDiscountEntity(this, discount));
 			}
 		}
 
@@ -128,27 +130,27 @@ public class OrderHibernateEntity implements Serializable{
 		this.status = status;
 	}
 
-	public PaymentHibernateEntity getPayment() {
+	public PaymentEntity getPayment() {
 		return payment;
 	}
 
-	public void setPayment(PaymentHibernateEntity payment) {
+	public void setPayment(PaymentEntity payment) {
 		this.payment = payment;
 	}
 
-	public InvoiceHibernateEntity getInvoice() {
+	public InvoiceEntity getInvoice() {
 		return invoice;
 	}
 
-	public void setInvoice(InvoiceHibernateEntity invoice) {
+	public void setInvoice(InvoiceEntity invoice) {
 		this.invoice = invoice;
 	}
 
-	public List<ProductRequestHibernateEntity> getItens() {
+	public List<ProductRequestEntity> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<ProductRequestHibernateEntity> itens) {
+	public void setItens(List<ProductRequestEntity> itens) {
 		this.itens = itens;
 	}
 
@@ -168,11 +170,11 @@ public class OrderHibernateEntity implements Serializable{
 		this.cartID = cartID;
 	}
 
-	public List<OrderDiscountHibernateEntity> getDiscounts() {
+	public List<OrderDiscountEntity> getDiscounts() {
 		return discounts;
 	}
 
-	public void setDiscounts(List<OrderDiscountHibernateEntity> discounts) {
+	public void setDiscounts(List<OrderDiscountEntity> discounts) {
 		this.discounts = discounts;
 	}
 
@@ -197,7 +199,7 @@ public class OrderHibernateEntity implements Serializable{
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();
-			for(ProductRequestHibernateEntity k: this.itens){
+			for(ProductRequestEntity k: this.itens){
 				l.add(k.toEntity());
 			}
 			e.setItens(l);
@@ -207,7 +209,7 @@ public class OrderHibernateEntity implements Serializable{
 			List<Discount> discounts = new ArrayList<Discount>();
 			e.setDiscounts(discounts);
 			
-			for(OrderDiscountHibernateEntity prd: this.discounts){
+			for(OrderDiscountEntity prd: this.discounts){
 				discounts.add(prd.toEntity());
 			}
 			

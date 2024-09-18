@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
@@ -17,7 +18,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 
 @Entity
 @Table(name="rw_invoice")
-public class InvoiceHibernateEntity implements Serializable{
+@EntityListeners(InvoiceEntityListener.class)
+public class InvoiceEntity implements Serializable{
 
 	private static final long serialVersionUID = -8813652553986660245L;
 
@@ -41,10 +43,10 @@ public class InvoiceHibernateEntity implements Serializable{
 	@Column(name="vlr_total", scale=3, precision=12)
 	private BigDecimal total;
 
-	public InvoiceHibernateEntity(){
+	public InvoiceEntity(){
 	}
 	
-	public InvoiceHibernateEntity(Invoice e){
+	public InvoiceEntity(Invoice e){
 		this.discountType = e.getDiscountType();
 		this.date = e.getDate();
 		this.discount = e.getDiscount(); 
