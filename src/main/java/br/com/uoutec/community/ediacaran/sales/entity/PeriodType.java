@@ -8,6 +8,8 @@ import br.com.uoutec.i18n.MessageBundle;
 
 public enum PeriodType {
 
+	UNDEFINED(0),
+	
 	HOUR(1),
 	
 	DAY(24),
