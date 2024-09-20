@@ -65,7 +65,7 @@ public class OrderPubResource {
 		}
 	}
 
-	@Action("/show-order/{id}")
+	@Action("/show/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/orders/show_order")
 	@Result("vars")
 	public Map<String,Object> orderDetail(

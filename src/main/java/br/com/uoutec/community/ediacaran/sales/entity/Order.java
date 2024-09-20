@@ -3,7 +3,10 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -73,6 +76,17 @@ public class Order implements Serializable{
 		this.owner = owner;
 	}
 
+	public String toStringDate(Locale locale) {
+		if(date == null) {
+			return "";
+		}
+		//DateTimeFormatter.withLocale(locale).
+		
+		DateTimeFormatter dateTimeFormatter = 
+				DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
+		return date.format(dateTimeFormatter);
+	}
+	
 	public LocalDateTime getDate() {
 		return date;
 	}
