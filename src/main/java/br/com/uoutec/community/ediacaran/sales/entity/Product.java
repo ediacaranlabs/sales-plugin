@@ -21,39 +21,39 @@ public class Product implements Serializable{
 
 	@NotNull(groups = IdValidation.class)
 	@Min(value = 1, groups = IdValidation.class)
-	private int id;
+	protected int id;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT)
 	@Length(max = 128, groups = DataValidation.class)
-	private String name;
+	protected String name;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Size(max=2048)
-	private String description;
+	protected String description;
 	
 	@NotNull(groups = DataValidation.class)
-	private PeriodType periodType;
+	protected PeriodType periodType;
 	
 	@NotNull(groups = DataValidation.class)
-	private ProductType productType;
+	protected ProductType productType;
 	
 	@NotNull(groups = DataValidation.class)
-	private BigDecimal additionalCost;
+	protected BigDecimal additionalCost;
 	
 	@NotNull(groups = DataValidation.class)
-	private BigDecimal cost;
+	protected BigDecimal cost;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.CURRENCY, groups = DataValidation.class)
-	private String currency;
+	protected String currency;
 
 	/* transaient properties */
 	
-	private List<Discount> discounts;
+	protected List<Discount> discounts;
 
-	private BigDecimal discount;
+	protected BigDecimal discount;
 	
 	public int getId() {
 		return id;

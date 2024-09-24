@@ -25,54 +25,54 @@ public class ProductRequest implements Serializable{
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+")
 	@Length(min = 10, max = 38)
-	private String id;
+	protected String id;
 
 	@NotNull
-	private String serial;
+	protected String serial;
 	
 	@NotNull
 	@Valid
-	private Product product;
+	protected Product product;
 	
 	@Length(max = 30)
-	private String productID;
+	protected String productID;
 	
 	@Min(1)
-	private int units;
+	protected int units;
 	
 	@NotNull
-	private PeriodType periodType;
+	protected PeriodType periodType;
 	
 	@NotNull
-	private BigDecimal cost;
+	protected BigDecimal cost;
 
 	@NotNull
-	private BigDecimal additionalCost;
+	protected BigDecimal additionalCost;
 	
-	private List<Discount> discounts;
+	protected List<Discount> discounts;
 	
 	@NotNull
-	private BigDecimal discount;
+	protected BigDecimal discount;
 
 	@NotNull
-	private BigDecimal tax;
+	protected BigDecimal tax;
 	
 	@NotNull
-	private String currency;
+	protected String currency;
 	
-	private Map<String, String> addData;
+	protected Map<String, String> addData;
 
 	@NotNull
 	@Length(min = 5, max = 128)
-	private String shortDescription;
+	protected String shortDescription;
 	
 	@NotNull
 	@Length(min = 5, max = 128)
-	private String description;
+	protected String description;
 	
 	/* Campos transientes */
 	
-	private boolean availability;
+	protected boolean availability;
 	
 	public String getId() {
 		return id;

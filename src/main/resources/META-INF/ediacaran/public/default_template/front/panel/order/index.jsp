@@ -23,14 +23,14 @@
 </section>
 
 <ec:box>
-	<ec:box-header><fmt:message key="show-orders.table.title" bundle="${sys_messages}"/></ec:box-header>
+	<ec:box-header><fmt:message key="show-orders.table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
 		<ec:table>
 			<ec:table-header>
-				<ec:table-col><fmt:message key="show-orders.table.data" bundle="${sys_messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="show-orders.table.status" bundle="${sys_messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="show-orders.table.total" bundle="${sys_messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="show-orders.table.action" bundle="${sys_messages}"/></ec:table-col>
+				<ec:table-col><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:table-col>
+				<ec:table-col><fmt:message key="show-orders.table.status" bundle="${messages}"/></ec:table-col>
+				<ec:table-col><fmt:message key="show-orders.table.total" bundle="${messages}"/></ec:table-col>
+				<ec:table-col><fmt:message key="show-orders.table.action" bundle="${messages}"/></ec:table-col>
 			</ec:table-header>
 			<ec:table-body>
 				<c:forEach var="order" items="${orders}">
@@ -38,8 +38,9 @@
 					<ec:table-col>${order.status.friendlyName}</ec:table-col>
 					<ec:table-col>${order.payment.currency} <fmt:formatNumber pattern="###,###,###.00" value="${order.payment.total}"/></ec:table-col>
 					<ec:table-col>
-							<a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id.id}"
-								class="btn btn-df btn-success"><fmt:message key="show-orders.table.button_show" bundle="${sys_messages}"/></a>
+						<a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id.id}">
+							<fmt:message key="show-orders.table.button_show" bundle="${messages}"/>
+						</a>
 					</ec:table-col>
 				</c:forEach>
 			</ec:table-body>

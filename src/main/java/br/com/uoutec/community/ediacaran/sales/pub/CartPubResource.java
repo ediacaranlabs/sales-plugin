@@ -58,9 +58,9 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartPubResource {
 
-	public static final String CART_BEAN_NAME	= "cart";
+	//public static final String CART_BEAN_NAME	= "cart";
 	
-	public static final String CART_BEAN_SCOPE	= ScopeType.SESSION;
+	//public static final String CART_BEAN_SCOPE	= ScopeType.IO;
 	
 	@Transient
 	@Inject
@@ -101,6 +101,10 @@ public class CartPubResource {
 	@Transient
 	@Inject
 	private VarParser varParser;
+	
+	@Transient
+	@Inject
+	private Cart cart;
 	
 	public CartPubResource(){
 	}
@@ -161,11 +165,7 @@ public class CartPubResource {
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
 	public ResultAction paymentType(
-			@Basic(bean="code")String code,
-			@Basic(
-					bean=CART_BEAN_NAME, 
-					scope=CART_BEAN_SCOPE, mappingType=MappingTypes.VALUE)
-			Cart cart) throws InvalidRequestException{
+			@Basic(bean="code")String code) throws InvalidRequestException{
 		
 		try{
 			PaymentGateway pg = paymentGatewayProvider.getPaymentGateway(code);
@@ -205,11 +205,6 @@ public class CartPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/cart/products")
 	@ResponseErrors(rendered=false, name="productException")
 	public void updateUnits(
-			@Basic(
-					bean=CART_BEAN_NAME, 
-					scope=CART_BEAN_SCOPE, 
-					mappingType=MappingTypes.VALUE)
-			Cart cart,
 			@Basic(bean="qty")
 			Integer qty,
 			@Basic(bean="product")
@@ -238,11 +233,6 @@ public class CartPubResource {
 	@Action("/add")
 	@RequestMethod(RequestMethodTypes.POST)
 	public void add(
-			@Basic(
-					bean=CART_BEAN_NAME, 
-					scope=CART_BEAN_SCOPE, 
-					mappingType=MappingTypes.VALUE)
-			Cart cart,
 			@Basic(bean="product")
 			Integer productID,
 			@Basic(bean="addData")
@@ -306,10 +296,6 @@ public class CartPubResource {
 	@Action("/remove")
 	@RequestMethod(RequestMethodTypes.POST)
 	public void remove(
-			@Basic(
-					bean=CART_BEAN_NAME, 
-					scope=CART_BEAN_SCOPE, mappingType=MappingTypes.VALUE)
-			Cart cart,
 			@Pattern(regexp="[A-Za-z0-9\\#\\-]{1,128}")
 			@Basic(bean="product")
 			String productIndex) throws InvalidRequestException{
@@ -356,10 +342,6 @@ public class CartPubResource {
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
 	public String checkout(
-			@Basic(
-					bean=CART_BEAN_NAME, 
-					scope=CART_BEAN_SCOPE, mappingType=MappingTypes.VALUE)
-			Cart cart,
 			@Basic(bean="customer")
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
 			@Basic(bean="payment")

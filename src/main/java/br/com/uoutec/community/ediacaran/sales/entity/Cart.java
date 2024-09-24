@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import javax.enterprise.context.SessionScoped;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -14,6 +15,7 @@ import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
+@SessionScoped
 public class Cart implements Serializable{
 
 	private static final long serialVersionUID = 7487563886270371708L;

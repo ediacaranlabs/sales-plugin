@@ -1,6 +1,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" 					prefix="fmt"%> 
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" 					prefix="c" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/functions" 				prefix="fn" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" 					prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" 				prefix="fn"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 
@@ -25,17 +25,17 @@
 
 <ed:row>
 	<ed:col>
-		<h2><fmt:message key="show_order.date" bundle="${sys_messages}"/>: ${vars.order.toStringDate(lcoale)}</h2>
+		<h2><fmt:message key="show_order.date" bundle="${messages}"/>: ${vars.order.toStringDate(lcoale)}</h2>
 	</ed:col>
 </ed:row>
 <ed:row>
 	<ed:col>
-		<b><fmt:message key="show_order.invoice_id" bundle="${sys_messages}"/> #${vars.order.invoice.id}</b><br>
+		<b><fmt:message key="show_order.invoice_id" bundle="${messages}"/> #${vars.order.invoice.id}</b><br>
 		<br> 
-		<b><fmt:message key="show_order.order_id" bundle="${sys_messages}"/>:</b> #${vars.order.id.id}<br>
-		<b><fmt:message key="show_order.payment_due" bundle="${sys_messages}"/>:</b> ${vars.order.toStringDate(lcoale)}<br>
-		<b><fmt:message key="show_order.account" bundle="${sys_messages}"/>:</b> ${vars.order.id.systemUserId}<br>
-		<b><fmt:message key="show_order.status" bundle="${sys_messages}"/>:</b> ${vars.order.status.friendlyName}
+		<b><fmt:message key="show_order.order_id" bundle="${messages}"/>:</b> #${vars.order.id.id}<br>
+		<b><fmt:message key="show_order.payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(lcoale)}<br>
+		<b><fmt:message key="show_order.account" bundle="${messages}"/>:</b> ${vars.order.id.systemUserId}<br>
+		<b><fmt:message key="show_order.status" bundle="${messages}"/>:</b> ${vars.order.status.friendlyName}
 	</ed:col>
 </ed:row>
 <ed:row>
