@@ -27,6 +27,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebFlowController;
 
+import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
@@ -36,6 +37,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -230,13 +232,14 @@ public class CartPubResource {
 		
 	}
 	
-	@Action("/add")
-	@RequestMethod(RequestMethodTypes.POST)
+	@Action("/add/{protectedID}")
+	@RequestMethod({RequestMethodTypes.POST, RequestMethodTypes.GET})
 	public void add(
-			@Basic(bean="product")
-			Integer productID,
+			@DetachedName 
+			@NotNull 
+			ProductPubEntity productPubEntity,
 			@Basic(bean="addData")
-			Map<String,String> addData,
+			Map<String,String> addPubData,
 			@DetachedName 
 			@NotNull 
 			RequestPropertiesPubEntity requestPropertiesPubEntity
@@ -244,11 +247,13 @@ public class CartPubResource {
 		
 		Product product;
 		RequestProperties requestProperties;
+		Map<String,String> addData;
 
 		try{
+			addData = addPubData == null? new HashMap<>() : addPubData;
 			requestProperties = requestPropertiesPubEntity.rebuild(false, true, true);
 			addData.put("host", requestProperties.getRemoteAddress());
-			product = this.productRegistry.findById(productID);
+			product = productPubEntity.rebuild(true, false, true);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "loadProductData", ex);
@@ -387,4 +392,12 @@ public class CartPubResource {
 		return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");
 	}
 
+	public Cart getCart() {
+		return cart;
+	}
+	
+	public List<Widget> getWidgets(){
+		return null;
+	}
+	
 }

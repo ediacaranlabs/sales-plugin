@@ -1,16 +1,7 @@
+$.AppContext.sales = {};
+
 $.AppContext.onload(function(){
 
-	$('#payment_form')
-	.bootstrapValidator(
-			{
-				message : '',
-				feedbackIcons : {
-					valid : 'glyphicon glyphicon-ok',
-					invalid : 'glyphicon glyphicon-remove',
-					validating : 'glyphicon glyphicon-refresh'
-				}
-	});
-	
 	$.AppContext.addLoadListener('updateUnits', '^.*/cart/units/.*$', {
 		
 		after: function (){
@@ -21,6 +12,7 @@ $.AppContext.onload(function(){
 	
 });
 
+/*
 function updateProducts(){
 	$.AppContext.loadContent('#product_content', '/cart/products');
 }
@@ -53,3 +45,4 @@ function updatePaymentForm(){
 	var $resource = "/cart/payment-type?code=" + encodeURI($type);
 	$.AppContext.loadContent('#payment_form_area', $resource);
 }
+*/

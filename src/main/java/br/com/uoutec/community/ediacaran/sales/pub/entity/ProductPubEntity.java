@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -17,6 +16,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -25,12 +25,13 @@ import br.com.uoutec.pub.entity.IdValidation;
 
 public class ProductPubEntity extends AbstractPubEntity<Product>{
 
-	@Transient
 	private static final long serialVersionUID = -5240855789107084675L;
 
-	@Null(groups=DataValidation.class)
-	@NotNull(groups=IdValidation.class)
+	@Transient
 	private Integer id;
+	
+	@NotNull(groups = IdValidation.class)
+	private String protectedID;
 	
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3,groups=DataValidation.class)
@@ -69,11 +70,19 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 		this.cost = e.getCost();
 		this.currency = e.getCurrency();
 		this.description = e.getDescription();
-		this.id = e.getId();
+		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
 		this.name = e.getName();
 		this.productType = e.getProductType().getCode();
 	}
 	
+	public String getProtectedID() {
+		return protectedID;
+	}
+
+	public void setProtectedID(String protectedID) {
+		this.protectedID = protectedID;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -138,6 +147,16 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 		this.currency = currency;
 	}
 
+	@Override
+	protected void preRebuild(Product instance, boolean reload, boolean override, boolean validate) {
+		try {
+			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
+		}
+		catch(Throwable ex){
+			this.id = 0;
+		}
+	}
+	
 	@Override
 	protected Product reloadEntity() throws Throwable {
 		ProductRegistry entityRegistry = 

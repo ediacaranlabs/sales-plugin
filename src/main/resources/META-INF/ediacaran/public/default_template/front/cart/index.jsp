@@ -11,6 +11,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <ec:include uri="/includes/head.jsp"/>
+<link href="${plugins.ediacaran.sales.web_path}/default_template/front/cart/css/cart.css" rel="stylesheet">
+<script src="${plugins.ediacaran.sales.web_path}/default_template/front/cart/js/cart.js" charset="utf-8" type="text/javascript"></script>
 <title><fmt:message key="cart_review.banner.title" bundle="${messages}"/></title>
 </head>
 
@@ -39,15 +41,15 @@
 
 	<section>
 		<ed:container>
-			<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
-				<!-- products-table -->
-				<ed:row>
-					<ed:col id="product_content" size="12">
-						<ec:include uri="products.jsp"/>
-					</ed:col>
-				</ed:row>
-				<!-- /products-table -->
+			<!-- products-table -->
+			<ed:row>
+				<ed:col id="product_content" size="12">
+					<ec:include uri="products.jsp"/>
+				</ed:col>
+			</ed:row>
+			<!-- /products-table -->
 	
+			<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
 				<!-- payment-area -->
 				<c:if test="${!empty pageContext.request.userPrincipal}">
 				<ed:row>
