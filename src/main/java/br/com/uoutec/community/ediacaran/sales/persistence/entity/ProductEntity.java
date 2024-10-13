@@ -16,8 +16,6 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 @Entity
 @Table(name="rw_product")
@@ -60,7 +58,7 @@ public class ProductEntity implements Serializable{
 	public ProductEntity(Product e){
 		this.cost           = e.getCost();
 		this.currency       = e.getCurrency();
-		this.productType    = e.getProductType() == null? null : e.getProductType().getCode();
+		this.productType    = e.getProductType();
 		this.description    = e.getDescription();
 		this.additionalCost = e.getAdditionalCost();
 		this.periodType     = e.getPeriodType();
@@ -138,22 +136,7 @@ public class ProductEntity implements Serializable{
 		
 		e.setCost(this.cost);
 		e.setCurrency(this.currency);
-
-		try {
-			ProductTypeRegistry productTypeRegistry = 
-					EntityContextPlugin.getEntity(ProductTypeRegistry.class);
-			
-			e.setProductType(
-					this.productType == null? 
-							null : 
-							productTypeRegistry.getProductType(this.productType)
-			);
-			
-		}
-		catch(Throwable ex) {
-			throw new RuntimeException(ex);
-		}
-		
+		e.setProductType(this.productType);
 		e.setAdditionalCost(this.additionalCost);
 		e.setPeriodType(this.periodType);
 		e.setDescription(this.description);

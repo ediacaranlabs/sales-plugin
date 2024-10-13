@@ -15,6 +15,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -90,8 +91,8 @@ public class CartRegistryImp
 		boolean result = true;
 		
 		for(ProductRequest p: itens.getItens()){
-			ProductTypeHandler handler = 
-					productTypeRegistry.getProductTypeHandler(p.getProduct().getProductType());
+			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
+			ProductTypeHandler handler = productType.getHandler();
 			
 			boolean availability = handler.isAvailability(sysemUser, cart, itens, p);
 			
@@ -107,9 +108,8 @@ public class CartRegistryImp
 		
 		ItensCollection itens = cart.getItensCollection();
 		
-		ProductTypeHandler productTypeHandler = 
-				productTypeRegistry.getProductTypeHandler(
-						item.getProduct().getProductType());
+		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
+		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
 		productTypeHandler.removeItem(cart, itens, item);
 		
@@ -123,9 +123,8 @@ public class CartRegistryImp
 
 		ItensCollection itens = cart.getItensCollection();
 		
-		ProductTypeHandler productTypeHandler = 
-				productTypeRegistry.getProductTypeHandler(
-						item.getProduct().getProductType());
+		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
+		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
 		productTypeHandler.updateQty(cart, itens, item, quantity);
 		
@@ -156,9 +155,8 @@ public class CartRegistryImp
 
 		ItensCollection itens = cart.getItensCollection();
 		
-		ProductTypeHandler productTypeHandler = 
-				productTypeRegistry.getProductTypeHandler(
-						item.getProduct().getProductType());
+		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
+		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
 		item.setShortDescription(productTypeHandler.getShortDescription(item));
 		item.setDescription(productTypeHandler.getDescription(item));

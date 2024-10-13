@@ -8,6 +8,9 @@ import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class ItensCollection implements Serializable{
 
@@ -40,7 +43,7 @@ public class ItensCollection implements Serializable{
 		
 	}
 
-	public void add(ProductRequest item) throws MaxItensException{
+	public void add(ProductRequest item) throws MaxItensException, ProductTypeRegistryException{
 		
 		if(item.getSerial() == null){
 			throw new NullPointerException();
@@ -51,7 +54,7 @@ public class ItensCollection implements Serializable{
 		if(product != null){
 			product.setUnits(product.getUnits() + 1);
 			
-			if(item.getUnits() > item.getProduct().getProductType().getMaxExtra() + 1){
+			if(item.getUnits() > getProductTypeHandler(item.getProduct()).getMaxExtra() + 1){
 				throw new MaxItensException();
 			}
 			
@@ -63,7 +66,7 @@ public class ItensCollection implements Serializable{
 				throw new MaxItensException();
 			}
 			
-			if(item.getUnits() > item.getProduct().getProductType().getMaxExtra() + 1){
+			if(item.getUnits() > getProductTypeHandler(item.getProduct()).getMaxExtra() + 1){
 				throw new MaxItensException();
 			}
 			
@@ -71,7 +74,7 @@ public class ItensCollection implements Serializable{
 		}
 	}
 
-	public void setQty(ProductRequest item, int quantity) throws MaxItensException{
+	public void setQty(ProductRequest item, int quantity) throws MaxItensException, ProductTypeRegistryException{
 		
 		if(item.getSerial() == null){
 			throw new NullPointerException();
@@ -92,7 +95,7 @@ public class ItensCollection implements Serializable{
 			}
 			else{
 				
-				if(item.getUnits() > item.getProduct().getProductType().getMaxExtra() + 1){
+				if(item.getUnits() > getProductTypeHandler(item.getProduct()).getMaxExtra() + 1){
 					throw new MaxItensException();
 				}
 				
@@ -133,4 +136,9 @@ public class ItensCollection implements Serializable{
 		return itens;
 	}
 
+	private ProductType getProductTypeHandler(Product product) throws ProductTypeRegistryException {
+		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
+		return productTypeRegistry.getProductType(product.getProductType());
+	}
+	
 }

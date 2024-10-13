@@ -22,7 +22,7 @@ public class ProductRegistryImp
 	@Inject
 	private ProductEntityAccess entityAccess;
 	
-	public void registryServicePlan(Product entity) throws ProductRegistryException{
+	public void registerProduct(Product entity) throws ProductRegistryException{
 		try{
 			
 			if(entity.getId() > 0){
@@ -37,7 +37,7 @@ public class ProductRegistryImp
 		}
 	}
 	
-	public void removeServicePlan(Product entity) throws ProductRegistryException{
+	public void removeProduct(Product entity) throws ProductRegistryException{
 		try{
 			entityAccess.delete(entity);
 		}
@@ -46,7 +46,7 @@ public class ProductRegistryImp
 		}
 	}
 
-	public Product findById(int id) throws ProductRegistryException{
+	public Product findProductById(int id) throws ProductRegistryException{
 		try{
 			return entityAccess.findById(id);
 		}

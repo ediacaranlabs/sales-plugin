@@ -37,7 +37,7 @@ public class Product implements Serializable{
 	protected PeriodType periodType;
 	
 	@NotNull(groups = DataValidation.class)
-	protected ProductType productType;
+	protected String productType;
 	
 	@NotNull(groups = DataValidation.class)
 	protected BigDecimal additionalCost;
@@ -79,11 +79,11 @@ public class Product implements Serializable{
 		this.description = description;
 	}
 
-	public ProductType getProductType() {
+	public String getProductType() {
 		return productType;
 	}
 
-	public void setProductType(ProductType productType) {
+	public void setProductType(String productType) {
 		this.productType = productType;
 	}
 

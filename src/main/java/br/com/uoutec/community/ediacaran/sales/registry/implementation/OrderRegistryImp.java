@@ -25,6 +25,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
@@ -427,9 +428,8 @@ public class OrderRegistryImp
 		
 		try{
 			for(ProductRequest pr: order.getItens()){
-				ProductTypeHandler productTypeHandler = 
-						this.productTypeRegistry
-						.getProductTypeHandler(pr.getProduct().getProductType());
+				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
+				ProductTypeHandler productTypeHandler = productType.getHandler();
 				productTypeHandler.preRegisterOrder(systemUser, cart, pr);
 			}
 		}
@@ -455,9 +455,8 @@ public class OrderRegistryImp
 		
 		try{
 			for(ProductRequest pr: order.getItens()){
-				ProductTypeHandler productTypeHandler = 
-						this.productTypeRegistry
-						.getProductTypeHandler(pr.getProduct().getProductType());
+				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
+				ProductTypeHandler productTypeHandler = productType.getHandler();
 				productTypeHandler.postRegisterOrder(systemUser, cart, pr);
 			}
 		}
@@ -479,10 +478,9 @@ public class OrderRegistryImp
 		boolean result = true;
 		
 		for(ProductRequest p: itens.getItens()){
-			ProductTypeHandler handler = 
-					productTypeRegistry.getProductTypeHandler(p.getProduct().getProductType());
-			
-			boolean availability = handler.isAvailability(user, cart, itens, p);
+			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			boolean availability = productTypeHandler.isAvailability(user, cart, itens, p);
 			
 			result = result & availability;
 			p.setAvailability(availability);
@@ -579,10 +577,8 @@ public class OrderRegistryImp
 		//Processa os itens do pedido
 		for(ProductRequest productRequest: order.getItens()){
 			try{
-				ProductTypeHandler productTypeHandler =
-						this.productTypeRegistry
-						.getProductTypeHandler(productRequest.getProduct().getProductType());
-				
+				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
+				ProductTypeHandler productTypeHandler = productType.getHandler();
 				productTypeHandler.registryItem(user, order, productRequest);
 			}
 			catch(Throwable e){
@@ -658,10 +654,8 @@ public class OrderRegistryImp
 		//Processa os itens do pedido
 		for(ProductRequest productRequest: order.getItens()){
 			try{
-				ProductTypeHandler productTypeHandler =
-						this.productTypeRegistry
-						.getProductTypeHandler(productRequest.getProduct().getProductType());
-				
+				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
+				ProductTypeHandler productTypeHandler = productType.getHandler();
 				productTypeHandler.refoundItem(user, order, productRequest);
 			}
 			catch(Throwable e){
@@ -732,10 +726,8 @@ public class OrderRegistryImp
 		//Processa os itens do pedido
 		for(ProductRequest productRequest: order.getItens()){
 			try{
-				ProductTypeHandler productTypeHandler =
-						this.productTypeRegistry
-						.getProductTypeHandler(productRequest.getProduct().getProductType());
-				
+				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
+				ProductTypeHandler productTypeHandler = productType.getHandler();
 				productTypeHandler.revertRefoundItem(user, order, productRequest);
 			}
 			catch(Throwable e){

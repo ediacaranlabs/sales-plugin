@@ -15,7 +15,6 @@ import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.ValidationException;
@@ -72,7 +71,7 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 		this.description = e.getDescription();
 		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
 		this.name = e.getName();
-		this.productType = e.getProductType().getCode();
+		this.productType = e.getProductType();
 	}
 	
 	public String getProtectedID() {
@@ -161,7 +160,7 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 	protected Product reloadEntity() throws Throwable {
 		ProductRegistry entityRegistry = 
 				EntityContextPlugin.getEntity(ProductRegistry.class);
-		return entityRegistry.findById(this.id);
+		return entityRegistry.findProductById(this.id);
 	}
 
 	@Override
@@ -184,12 +183,7 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 		o.setName(this.name);
 		o.setAdditionalCost(this.additionalCost);
 		o.setPeriodType(this.periodType);
-		
-		if(productType != null) {
-			ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
-			o.setProductType(productTypeRegistry.getProductType(productType));
-		}
-
+		o.setProductType(this.productType);
 	}
 
 	@Override

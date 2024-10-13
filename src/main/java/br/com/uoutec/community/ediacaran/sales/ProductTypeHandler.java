@@ -6,16 +6,17 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 public interface ProductTypeHandler {
 
 	/* cart */
 	void addItem(Cart cart, ItensCollection itens, ProductRequest productRequest) 
-			throws MaxItensException, ProductTypeHandlerException;
+			throws MaxItensException, ProductTypeHandlerException, ProductTypeRegistryException;
 
 	void updateQty(Cart cart, ItensCollection itens, ProductRequest productRequest, int qty) 
-			throws MaxItensException, ProductTypeHandlerException;
+			throws MaxItensException, ProductTypeHandlerException, ProductTypeRegistryException;
 	
 	void removeItem(Cart cart, ItensCollection itens, ProductRequest productRequest)
 		throws ProductTypeHandlerException;
