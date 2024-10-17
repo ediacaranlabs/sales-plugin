@@ -30,8 +30,8 @@
 							<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
 						</ec:table-col>
 						<ec:table-col>
-							<ec:form id="cart_item_change_form_${step.index}">
-								<ec:select id="cart_item_units_${step.index}" name="units_${step.index}"> <!-- style="width: 60px" -->
+							<ec:form id="update-item-cart-form-${productRequest.serial}">
+								<ec:select name="units"> <!-- style="width: 60px" -->
 									<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.friendlyName)}</ec:option>
 									<c:if test="${productRequest.product.productType.maxExtra > 1}">
 										<c:forEach var="units" begin="2" end="${productRequest.product.productType.maxExtra + 1}">
@@ -39,8 +39,8 @@
 										</c:forEach>
 									</c:if>
 									<ec:event type="change">
-										var $form  = $.AppContext.utils.getById('cart_item_change_form_${step.index}');
-										var $units = $form.getField('units_${step.index}');
+										var $form  = $.AppContext.utils.getById('cart-item-form-${productRequest.serial}');
+										var $units = $form.getField('units');
 										var $qty   = $units.getValue();
 										$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/units/${productRequest.serial}/' + $qty, "product_content");
 									</ec:event>
@@ -48,7 +48,7 @@
 							</ec:form>
 						</ec:table-col>
 						<ec:table-col>
-							<ec:form id="cart_item_remove_form_${step.index}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
+							<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
 								<input type="hidden" name="product" value="${productRequest.serial}">
 								<ec:button label="#{cart_review.table.action}" bundle="${messages}" actionType="submit" style="danger"/>
 							</ec:form>

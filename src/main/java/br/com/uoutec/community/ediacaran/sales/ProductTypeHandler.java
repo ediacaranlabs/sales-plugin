@@ -24,6 +24,8 @@ public interface ProductTypeHandler {
 	boolean isAvailability(SystemUser user, Cart cart, ItensCollection itens, ProductRequest productRequest) throws
 		ProductTypeHandlerException;
 	
+	String getSerial(ProductRequest productRequest);
+	
 	String getShortDescription(ProductRequest productRequest) throws ProductTypeHandlerException;
 
 	String getDescription(ProductRequest productRequest) throws ProductTypeHandlerException;

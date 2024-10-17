@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -54,6 +55,10 @@ public class Product implements Serializable{
 	protected List<Discount> discounts;
 
 	protected BigDecimal discount;
+	
+	public String getProtectedID() {
+		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
+	}
 	
 	public int getId() {
 		return id;
