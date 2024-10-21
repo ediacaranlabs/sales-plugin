@@ -381,7 +381,7 @@ public class CartPubResource {
 		String paymentResource = null;
 		
 		try{
-			Checkout checkoutResult = this.cartRegistry.checkout(cart, user, payment, "Pedido criado via website.");
+			Checkout checkoutResult = this.cartRegistry.checkout(cart, payment, "Pedido criado via website.");
 			paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
 		}
 		catch(Throwable ex){
