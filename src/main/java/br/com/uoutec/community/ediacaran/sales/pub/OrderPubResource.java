@@ -43,7 +43,7 @@ public class OrderPubResource {
 	
 	@Transient
 	@Inject
-	private PaymentGatewayRegistry paymentGatewayProvider;
+	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/orders/index")
@@ -94,7 +94,7 @@ public class OrderPubResource {
 		
 		try{
 			paymentGateway = 
-				paymentGatewayProvider
+				paymentGatewayRegistry
 					.getPaymentGateway(
 							order.getPayment().getPaymentType());
 			

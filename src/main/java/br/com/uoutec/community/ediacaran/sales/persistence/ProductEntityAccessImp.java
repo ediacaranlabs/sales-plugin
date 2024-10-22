@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.hibernate.Session;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
@@ -22,9 +21,13 @@ public class ProductEntityAccessImp
 	extends AbstractEntityAccess<Product, ProductEntity>
 	implements ProductEntityAccess{
 
+	public ProductEntityAccessImp() {
+		super(null);
+	}
+	
 	@Inject
-	public ProductEntityAccessImp(Session session) {
-		super(session);
+	public ProductEntityAccessImp(EntityManager entityManager) {
+		super(entityManager);
 	}
 
 	public List<Product> getProductByType(ProductType productType) throws EntityAccessException{
