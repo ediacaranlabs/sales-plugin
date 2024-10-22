@@ -2,13 +2,16 @@ package br.com.uoutec.community.ediacaran.sales.payment;
 
 import java.util.List;
 
-public interface PaymentGatewayRegistry {
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
+import br.com.uoutec.entity.registry.Registry;
 
-	void registry(String name, Class<? extends PaymentGateway> paymentGateway) throws PaymentGatewayException;
+public interface PaymentGatewayRegistry extends Registry, PublicBean{
+
+	void registry(PaymentGateway paymentGateway) throws PaymentGatewayException;
 	
-	void remove(String name) throws PaymentGatewayException;
+	void remove(String value) throws PaymentGatewayException;
 	
-	PaymentGateway getPaymentGateway(String code) throws PaymentGatewayException;
+	PaymentGateway getPaymentGateway(String value);
 	
 	List<PaymentGateway> getPaymentGateways();
 	
