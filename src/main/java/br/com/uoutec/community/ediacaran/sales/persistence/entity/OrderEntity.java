@@ -16,8 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Discount;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -41,7 +39,6 @@ public class OrderEntity implements Serializable{
 	@Column(name="dsc_cartid", length=128)
 	private String cartID;
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="dat_registry")
 	private LocalDateTime date;
 	

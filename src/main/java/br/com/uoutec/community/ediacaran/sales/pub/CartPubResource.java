@@ -273,18 +273,8 @@ public class CartPubResource {
 			return;
 		}
 		
-		ProductRequest productRequest = new ProductRequest();
-		productRequest.setAvailability(true);
-		productRequest.setAddData(addData);
-		productRequest.setCost(product.getCost());
-		productRequest.setCurrency(product.getCurrency());
-		productRequest.setUnits(1);
-		productRequest.setPeriodType(product.getPeriodType());
-		productRequest.setAdditionalCost(product.getAdditionalCost());
-		productRequest.setProduct(product);
-		
 		try{
-			this.cartRegistry.add(cart, productRequest);
+			this.cartRegistry.add(cart, product, addData, 1);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "addProduct", ex);

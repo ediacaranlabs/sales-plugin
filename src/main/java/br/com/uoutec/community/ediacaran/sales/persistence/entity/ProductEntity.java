@@ -62,7 +62,7 @@ public class ProductEntity implements Serializable{
 		this.description    = e.getDescription();
 		this.additionalCost = e.getAdditionalCost();
 		this.periodType     = e.getPeriodType();
-		this.id             = e.getId();
+		this.id             = e.getId() <= 0? null : e.getId();
 		this.name           = e.getName();
 	}
 	

@@ -10,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 
@@ -33,7 +31,6 @@ public class OrderLogEntity implements Serializable{
 	@Column(name="cod_owner", length=11)
 	private Integer owner;
 	
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="dat_registry")
 	private LocalDateTime date;
 	
@@ -45,7 +42,7 @@ public class OrderLogEntity implements Serializable{
 	
 	public OrderLogEntity(OrderLog e){
 		this.date = e.getDate();
-		this.id   = e.getId();
+		this.id   = e.getId() <= 0? null : e.getId();
 		this.message = e.getMessage();
 		this.orderId = e.getOrderId();
 		this.owner = e.getOwner();
