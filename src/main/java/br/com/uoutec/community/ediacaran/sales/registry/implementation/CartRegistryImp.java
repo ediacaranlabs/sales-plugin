@@ -8,7 +8,6 @@ import javax.inject.Singleton;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
-import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -81,10 +80,11 @@ public class CartRegistryImp
 	public void destroy(Cart cart) {
 	}
 
-	public boolean isAvailability(Cart cart, SystemUserID user) 
+	public boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, SystemUserRegistryException{
 		
-		SystemUser sysemUser = getSystemUser(user);
+		SystemUserID userID = getSystemUserID();
+		SystemUser sysemUser = getSystemUser(userID);
 		
 		ItensCollection itens = cart.getItensCollection();
 		
@@ -104,9 +104,14 @@ public class CartRegistryImp
 	}
 	
 	@EnableFilters(CartRegistry.class)
-	public void remove(Cart cart, ProductRequest item) throws ProductTypeRegistryException, ProductTypeHandlerException {
+	public void remove(Cart cart, String serial) throws ProductTypeRegistryException, ProductTypeHandlerException {
 		
 		ItensCollection itens = cart.getItensCollection();
+		ProductRequest item = itens.get(serial);
+		
+		if(item == null) {
+			return;
+		}
 		
 		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
@@ -117,11 +122,17 @@ public class CartRegistryImp
 	
 	@Override
 	@EnableFilters(CartRegistry.class)
-	public void setQuantity(Cart cart, ProductRequest item, 
+	public void setQuantity(Cart cart, String serial, 
 			int quantity) throws MaxItensException, ProductTypeRegistryException, 
 			ProductTypeHandlerException {
 
 		ItensCollection itens = cart.getItensCollection();
+		
+		ProductRequest item = itens.get(serial);
+		
+		if(item == null) {
+			throw new ProductTypeRegistryException("item not found: " + serial);
+		}
 		
 		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
@@ -134,6 +145,9 @@ public class CartRegistryImp
 	public ProductRequest add(Cart cart, Product product, 
 			Map<String, String> addData, int units) throws MaxItensException, 
 			ProductTypeRegistryException, ProductTypeHandlerException {
+
+		ProductType productType = productTypeRegistry.getProductType(product.getProductType());
+		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
 		ProductRequest productRequest = new ProductRequest();
 		productRequest.setAvailability(true);
@@ -144,25 +158,15 @@ public class CartRegistryImp
 		productRequest.setPeriodType(product.getPeriodType());
 		productRequest.setAdditionalCost(product.getAdditionalCost());
 		productRequest.setProduct(product);
+		productRequest.setSerial(productTypeHandler.getSerial(productRequest));
+		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest));
+		productRequest.setDescription(productTypeHandler.getDescription(productRequest));
 
-		this.add(cart, productRequest);
+		productTypeHandler.addItem(cart, cart.getItensCollection(), productRequest);
+		
 		return productRequest;
 	}
 	
-	@EnableFilters(CartRegistry.class)
-	public void add(Cart cart, ProductRequest item) 
-			throws MaxItensException, ProductTypeRegistryException, ProductTypeHandlerException{
-
-		ItensCollection itens = cart.getItensCollection();
-		
-		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
-		ProductTypeHandler productTypeHandler = productType.getHandler();
-		
-		item.setShortDescription(productTypeHandler.getShortDescription(item));
-		item.setDescription(productTypeHandler.getDescription(item));
-		productTypeHandler.addItem(cart, itens, item);
-	}
-
 	@EnableFilters(CartRegistry.class)
 	public void calculateTotal(Cart cart){
 	}

@@ -1,4 +1,4 @@
-package br.com.uoutec.community.ediacaran.sales.entity;
+package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,7 +11,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import br.com.uoutec.application.validation.CommonValidation;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
+import br.com.uoutec.community.ediacaran.sales.entity.Discount;
+import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -24,8 +26,10 @@ public class Cart implements Serializable{
 	@Pattern(regexp = CommonValidation.UUID, groups = IdValidation.class)
 	private String id;
 	
+	/*
 	@NotNull(groups = DataValidation.class)
 	private SystemUserID owner;
+	*/
 	
 	@NotNull(groups = DataValidation.class)
 	private ItensCollection itens;
@@ -46,6 +50,7 @@ public class Cart implements Serializable{
 		this.tax      = BigDecimal.ZERO;
 	}
 	
+	/*
 	public SystemUserID getOwner() {
 		return owner;
 	}
@@ -58,7 +63,8 @@ public class Cart implements Serializable{
 		
 		this.owner = owner;
 	}
-
+    */
+	
 	public String getId() {
 		return id;
 	}
@@ -91,11 +97,11 @@ public class Cart implements Serializable{
 		return this.itens.get(id);
 	}
 
-	public ItensCollection getItensCollection(){
+	ItensCollection getItensCollection(){
 		return this.itens;
 	}
 	
-	public void setItens(ItensCollection itens) {
+	void setItens(ItensCollection itens) {
 		this.itens = itens;
 	}
 

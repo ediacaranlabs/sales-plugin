@@ -29,11 +29,9 @@ import org.brandao.brutos.web.WebFlowController;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
-import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
@@ -41,6 +39,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
@@ -212,18 +211,8 @@ public class CartPubResource {
 			@Basic(bean="product")
 			String productIndex) throws InvalidRequestException{
 		
-		ProductRequest productRequest;
-
 		try{
-			productRequest = cart.get(productIndex);
-		}
-		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartPubResource.class, "updateUnits", "loadProduct", ex);
-			throw new InvalidRequestException(error, ex);
-		}
-
-		try{
-			this.cartRegistry.setQuantity(cart, productRequest, qty);
+			this.cartRegistry.setQuantity(cart, productIndex, qty);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "updateUnits", "updateQuantity", ex);
@@ -295,28 +284,8 @@ public class CartPubResource {
 			@Basic(bean="product")
 			String productIndex) throws InvalidRequestException{
 		
-		ProductRequest productRequest;
-
 		try{
-			productRequest = cart.get(productIndex);
-		}
-		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartPubResource.class, "remove", "loadProductData", ex);
-			
-			WebFlowController.redirect()
-			.put("productException", new InvalidRequestException(error, ex))
-			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
-			return;
-		}
-
-		if(productRequest == null){
-			WebFlowController.redirect()
-			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
-			return;
-		}
-		
-		try{
-			this.cartRegistry.remove(cart, productRequest);
+			this.cartRegistry.remove(cart, productIndex);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "remove", "removeProduct", ex);

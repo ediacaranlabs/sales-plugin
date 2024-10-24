@@ -3,8 +3,7 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
-<fmt:setLocale value="${locale}"/>
-<fmt:setBundle var="messages"/>
+<ec:setBundle var="messages" locale="${locale}"/>
 
 <c:if test="${!empty productException}">
 	<ec:alert id="cart_error_message" style="danger">${productException.message}</ec:alert>
@@ -80,11 +79,21 @@
 			</ed:row>
 			<ed:row style="cart_widget">
 				<ed:col>
-					<ed:row>
-						<ed:col size="12">
-							<fmt:message key="cart_review.table.summary" bundle="${messages}"/>
-						</ed:col>
-					</ed:row>
+					<ec:description-list>
+						<ec:description title="#{cart_review.checkout.sub_total}" truncate="false" bundle="${messages}">
+							<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.subtotal}"/>
+						</ec:description>
+						<ec:description title="#{cart_review.checkout.discount}" truncate="false" bundle="${messages}">
+							<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.totalDiscount}"/>
+						</ec:description>
+						<ec:description title="#{cart_review.checkout.tax}" truncate="false" bundle="${messages}">
+							<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.totalTax}"/>
+						</ec:description>
+						<ec:description title="#{cart_review.checkout.total}" truncate="false" bundle="${messages}">
+							<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.total}"/>
+						</ec:description>
+					</ec:description-list>
+					<%--
 					<ed:row>
 						<ed:col size="6">
 							<fmt:message key="cart_review.checkout.sub_total" bundle="${messages}"/>:
@@ -117,6 +126,7 @@
 							<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.total}"/>
 						</ed:col>
 					</ed:row>
+					--%>
 				</ed:col>
 			</ed:row>
 	</ed:col>

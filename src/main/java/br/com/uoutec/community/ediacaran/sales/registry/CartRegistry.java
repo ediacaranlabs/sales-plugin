@@ -2,12 +2,12 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.util.Map;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
@@ -37,13 +37,13 @@ public interface CartRegistry extends Registry{
 	
 	void destroy(Cart cart);
 
-	boolean isAvailability(Cart cart, SystemUserID user) 
+	boolean isAvailability(Cart cart) 
 			throws ProductTypeRegistryException, ProductTypeHandlerException, SystemUserRegistryException;
 			
-	void remove(Cart cart, ProductRequest item) 
+	void remove(Cart cart, String serial) 
 			throws ProductTypeRegistryException, ProductTypeHandlerException;
 	
-	void setQuantity(Cart cart, ProductRequest productRequest, 
+	void setQuantity(Cart cart, String serial, 
 			int quantity) throws MaxItensException, ProductTypeRegistryException, 
 			ProductTypeHandlerException;
 	
@@ -51,10 +51,6 @@ public interface CartRegistry extends Registry{
 			Map<String, String> addData, int units) throws MaxItensException, 
 			ProductTypeRegistryException, ProductTypeHandlerException;
 	
-	void add(Cart cart, ProductRequest item) 
-			throws MaxItensException, ProductTypeRegistryException, 
-			ProductTypeHandlerException;
-
 	Checkout checkout(Cart cart, SystemUserID userID, Payment payment, 
 			String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException;

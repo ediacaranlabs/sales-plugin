@@ -44,7 +44,7 @@
 			<!-- products-table -->
 			<ed:row>
 				<ed:col id="product_content" size="12">
-					<ec:include uri="products.jsp"/>
+					<jsp:include page="products.jsp"/>
 				</ed:col>
 			</ed:row>
 			<!-- /products-table -->

@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
-import br.com.uoutec.community.ediacaran.sales.entity.Cart;
 import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
@@ -371,6 +370,7 @@ public class OrderRegistryImp
 			throw new OrderRegistryException("empty cart id");
 		}
 		
+		/*
 		if(cart.getOwner() == null) {
 			throw new OrderRegistryException("owner not found");
 		}
@@ -378,6 +378,7 @@ public class OrderRegistryImp
 		if(!cart.getOwner().equals(systemUser.getSystemID())) {
 			throw new OrderRegistryException("invalid owner: " + cart.getOwner() + " <> " + systemUser.getSystemID());
 		}
+		*/
 		
 		Order o = this.findByCartID(cart.getId());
 		
