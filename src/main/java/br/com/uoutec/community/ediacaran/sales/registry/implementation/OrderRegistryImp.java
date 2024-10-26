@@ -431,7 +431,7 @@ public class OrderRegistryImp
 			for(ProductRequest pr: order.getItens()){
 				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.preRegisterOrder(systemUser, cart, pr);
+				productTypeHandler.preRegisterOrder(systemUser, cart, pr, productType);
 			}
 		}
 		catch(Throwable e){
@@ -458,7 +458,7 @@ public class OrderRegistryImp
 			for(ProductRequest pr: order.getItens()){
 				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.postRegisterOrder(systemUser, cart, pr);
+				productTypeHandler.postRegisterOrder(systemUser, cart, pr, productType);
 			}
 		}
 		catch(Throwable e){
@@ -481,7 +481,7 @@ public class OrderRegistryImp
 		for(ProductRequest p: itens.getItens()){
 			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
 			ProductTypeHandler productTypeHandler = productType.getHandler();
-			boolean availability = productTypeHandler.isAvailability(user, cart, itens, p);
+			boolean availability = productTypeHandler.isAvailability(user, cart, itens, p, productType);
 			
 			result = result & availability;
 			p.setAvailability(availability);
@@ -580,7 +580,7 @@ public class OrderRegistryImp
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, order, productRequest);
+				productTypeHandler.registryItem(user, order, productRequest, productType);
 			}
 			catch(Throwable e){
 				throw new OrderRegistryException(
@@ -657,7 +657,7 @@ public class OrderRegistryImp
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.refoundItem(user, order, productRequest);
+				productTypeHandler.refoundItem(user, order, productRequest, productType);
 			}
 			catch(Throwable e){
 				throw new OrderRegistryException(
@@ -729,7 +729,7 @@ public class OrderRegistryImp
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.revertRefoundItem(user, order, productRequest);
+				productTypeHandler.revertRefoundItem(user, order, productRequest, productType);
 			}
 			catch(Throwable e){
 				throw new OrderRegistryException(

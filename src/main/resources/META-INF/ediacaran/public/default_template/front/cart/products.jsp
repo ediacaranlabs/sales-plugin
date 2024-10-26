@@ -31,10 +31,10 @@
 						<ec:table-col>
 							<ec:form id="update-item-cart-form-${productRequest.serial}">
 								<ec:select name="units"> <!-- style="width: 60px" -->
-									<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.friendlyName)}</ec:option>
+									<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
 									<c:if test="${productRequest.product.productType.maxExtra > 1}">
 										<c:forEach var="units" begin="2" end="${productRequest.product.productType.maxExtra + 1}">
-											<ec:option value="${units}" selected="${productRequest.units == units}">${units} ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.friendlyName)}</ec:option>
+											<ec:option value="${units}" selected="${productRequest.units == units}">${units} ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
 										</c:forEach>
 									</c:if>
 									<ec:event type="change">

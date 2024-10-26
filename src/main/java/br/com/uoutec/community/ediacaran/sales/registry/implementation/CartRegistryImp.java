@@ -94,7 +94,7 @@ public class CartRegistryImp
 			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
 			ProductTypeHandler handler = productType.getHandler();
 			
-			boolean availability = handler.isAvailability(sysemUser, cart, itens, p);
+			boolean availability = handler.isAvailability(sysemUser, cart, itens, p, productType);
 			
 			result = result & availability;
 			p.setAvailability(availability);
@@ -116,7 +116,7 @@ public class CartRegistryImp
 		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
-		productTypeHandler.removeItem(cart, itens, item);
+		productTypeHandler.removeItem(cart, itens, item, productType);
 		
 	}
 	
@@ -137,7 +137,7 @@ public class CartRegistryImp
 		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
-		productTypeHandler.updateQty(cart, itens, item, quantity);
+		productTypeHandler.updateQty(cart, itens, item, quantity, productType);
 		
 	}
 
@@ -159,10 +159,10 @@ public class CartRegistryImp
 		productRequest.setAdditionalCost(product.getAdditionalCost());
 		productRequest.setProduct(product);
 		productRequest.setSerial(productTypeHandler.getSerial(productRequest));
-		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest));
-		productRequest.setDescription(productTypeHandler.getDescription(productRequest));
+		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest, productType));
+		productRequest.setDescription(productTypeHandler.getDescription(productRequest, productType));
 
-		productTypeHandler.addItem(cart, cart.getItensCollection(), productRequest);
+		productTypeHandler.addItem(cart, cart.getItensCollection(), productRequest, productType);
 		
 		return productRequest;
 	}
