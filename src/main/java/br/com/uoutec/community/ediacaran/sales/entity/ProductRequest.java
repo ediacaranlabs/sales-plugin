@@ -39,6 +39,9 @@ public class ProductRequest implements Serializable{
 	
 	@Min(1)
 	protected int units;
+
+	@Min(0)
+	private int maxExtra;
 	
 	@NotNull
 	protected PeriodType periodType;
@@ -104,6 +107,14 @@ public class ProductRequest implements Serializable{
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	public int getMaxExtra() {
+		return maxExtra;
+	}
+
+	public void setMaxExtra(int maxExtra) {
+		this.maxExtra = maxExtra;
 	}
 
 	public PeriodType getPeriodType() {

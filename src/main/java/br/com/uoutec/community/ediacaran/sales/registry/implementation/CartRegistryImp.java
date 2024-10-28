@@ -94,7 +94,7 @@ public class CartRegistryImp
 			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
 			ProductTypeHandler handler = productType.getHandler();
 			
-			boolean availability = handler.isAvailability(sysemUser, cart, itens, p, productType);
+			boolean availability = handler.isAvailability(sysemUser, cart, itens, p);
 			
 			result = result & availability;
 			p.setAvailability(availability);
@@ -116,7 +116,7 @@ public class CartRegistryImp
 		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
-		productTypeHandler.removeItem(cart, itens, item, productType);
+		productTypeHandler.removeItem(cart, itens, item);
 		
 	}
 	
@@ -137,7 +137,7 @@ public class CartRegistryImp
 		ProductType productType = productTypeRegistry.getProductType(item.getProduct().getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
-		productTypeHandler.updateQty(cart, itens, item, quantity, productType);
+		productTypeHandler.updateQty(cart, itens, item, quantity);
 		
 	}
 
@@ -158,11 +158,12 @@ public class CartRegistryImp
 		productRequest.setPeriodType(product.getPeriodType());
 		productRequest.setAdditionalCost(product.getAdditionalCost());
 		productRequest.setProduct(product);
+		productRequest.setMaxExtra(productType.getMaxExtra());
 		productRequest.setSerial(productTypeHandler.getSerial(productRequest));
-		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest, productType));
-		productRequest.setDescription(productTypeHandler.getDescription(productRequest, productType));
+		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest));
+		productRequest.setDescription(productTypeHandler.getDescription(productRequest));
 
-		productTypeHandler.addItem(cart, cart.getItensCollection(), productRequest, productType);
+		productTypeHandler.addItem(cart, cart.getItensCollection(), productRequest);
 		
 		return productRequest;
 	}

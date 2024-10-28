@@ -41,7 +41,7 @@ public class ItensCollection implements Serializable{
 		
 	}
 
-	public void add(ProductRequest item, int maxExtra) throws MaxItensException, ProductTypeRegistryException{
+	public void add(ProductRequest item) throws MaxItensException, ProductTypeRegistryException{
 		
 		if(item.getSerial() == null){
 			throw new NullPointerException();
@@ -52,7 +52,7 @@ public class ItensCollection implements Serializable{
 		if(product != null){
 			product.setUnits(product.getUnits() + 1);
 			
-			if(item.getUnits() > maxExtra + 1){
+			if(item.getUnits() > item.getMaxExtra() + 1){
 				throw new MaxItensException();
 			}
 			
@@ -64,7 +64,7 @@ public class ItensCollection implements Serializable{
 				throw new MaxItensException();
 			}
 			
-			if(item.getUnits() > maxExtra + 1){
+			if(item.getUnits() > item.getMaxExtra() + 1){
 				throw new MaxItensException();
 			}
 			
@@ -72,7 +72,7 @@ public class ItensCollection implements Serializable{
 		}
 	}
 
-	public void setQty(ProductRequest item, int quantity, int maxExtra) throws MaxItensException, ProductTypeRegistryException{
+	public void setQty(ProductRequest item, int quantity) throws MaxItensException, ProductTypeRegistryException{
 		
 		if(item.getSerial() == null){
 			throw new NullPointerException();
@@ -93,7 +93,7 @@ public class ItensCollection implements Serializable{
 			}
 			else{
 				
-				if(item.getUnits() > maxExtra + 1){
+				if(item.getUnits() > item.getMaxExtra() + 1){
 					throw new MaxItensException();
 				}
 				
