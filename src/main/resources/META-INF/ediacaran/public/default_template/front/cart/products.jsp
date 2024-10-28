@@ -14,24 +14,26 @@
 		<ec:table>
 			<ec:table-header>
 				<ec:table-col>#</ec:table-col>
-				<ec:table-col><fmt:message key="cart_review.table.product" bundle="${messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="cart_review.table.price" bundle="${messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="cart_review.table.quantity"	bundle="${messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="cart_review.table.action" bundle="${messages}"/></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="cart_review.table.product" bundle="${messages}"/></ec:center></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="cart_review.table.price" bundle="${messages}"/></ec:center></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="cart_review.table.quantity"	bundle="${messages}"/></ec:center></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="cart_review.table.action" bundle="${messages}"/></ec:center></ec:table-col>
 			</ec:table-header>
 			<ec:table-body>
 				<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
 					<ec:table-row classStyle="${productRequest.availability? 'available-item' : 'unavailable-item'}">
 						<ec:table-col id="cart_item_index_${step.index}">${step.index + 1}</ec:table-col>
-						<ec:table-col id="cart_item_description_${step.index}">${productRequest.description}</ec:table-col>
+						<ec:table-col id="cart_item_description_${step.index}"><ec:center>${productRequest.description}</ec:center></ec:table-col>
 						<ec:table-col id="cart_item_value_${step.index}">
-							${productRequest.product.currency}<br>
-							<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+							<ec:center>
+								${productRequest.product.currency}<br>
+								<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+							</ec:center>
 						</ec:table-col>
 						<ec:table-col>
 							<ec:form id="update-item-cart-form-${productRequest.serial}">
 								<ec:select name="units"> <!-- style="width: 60px" -->
-									<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+									<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType || productRequest.product.periodType == 'UNDEFINED'? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
 									<c:if test="${productRequest.maxExtra > 1}">
 										<c:forEach var="units" begin="2" end="${productRequest.maxExtra + 1}">
 											<ec:option value="${units}" selected="${productRequest.units == units}">${units} ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
@@ -49,7 +51,7 @@
 						<ec:table-col>
 							<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
 								<input type="hidden" name="product" value="${productRequest.serial}">
-								<ec:button label="#{cart_review.table.action}" bundle="${messages}" actionType="submit" style="danger"/>
+								<ec:button label="#{cart_review.table.action}" bundle="${messages}" align="center" actionType="submit" style="danger"/>
 							</ec:form>
 						</ec:table-col>
 					</ec:table-row>
