@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.payment;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 public interface PaymentGateway {
@@ -23,5 +24,7 @@ public interface PaymentGateway {
 	String getId();
 	
 	String getName();
+	
+	boolean isApplicable(Cart cart);
 	
 }

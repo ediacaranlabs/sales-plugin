@@ -125,7 +125,7 @@ public class CartPubResource {
 			Map<String,Object> result = new HashMap<String, Object>();
 			
 			if(subject.isAuthenticated()) {
-				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways();
+				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways(cart);
 				result.put("payment_gateway_list", paymentGatewayList);
 			}
 			
@@ -149,7 +149,7 @@ public class CartPubResource {
 			Map<String,Object> result = new HashMap<String, Object>();
 			
 			if(subject.isAuthenticated()) {
-				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways();
+				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways(cart);
 				result.put("payment_gateway_list", paymentGatewayList);
 			}
 			

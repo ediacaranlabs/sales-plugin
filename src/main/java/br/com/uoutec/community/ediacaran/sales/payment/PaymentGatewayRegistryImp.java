@@ -1,9 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.payment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.RuntimeSecurityPermission;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 
 @Singleton
 public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
@@ -71,8 +72,14 @@ public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
 	}
 
 	@Override
-	public List<PaymentGateway> getPaymentGateways() {
-		return map.values().stream().collect(Collectors.toList());
+	public List<PaymentGateway> getPaymentGateways(Cart cart) {
+		List<PaymentGateway> result = new ArrayList<>();
+		map.values().stream().forEach((e)->{
+			if(e.isApplicable(cart)) {
+				result.add(e);
+			}
+		});
+		return result;
 	}
 
 }
