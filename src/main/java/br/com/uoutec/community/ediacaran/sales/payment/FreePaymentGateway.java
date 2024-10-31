@@ -13,7 +13,7 @@ public class FreePaymentGateway implements PaymentGateway{
 	public void payment(SystemUser user, Order order, Payment payment) throws PaymentGatewayException {
 		
 		if(payment.getTotal().compareTo(BigDecimal.ZERO) > 0){
-			throw new PaymentGatewayException("o pedido não está zerado: " + payment.getTotal());
+			throw new PaymentGatewayException(payment.getTotal().compareTo(BigDecimal.ZERO) + "> 0");
 		}
 		
 	}
