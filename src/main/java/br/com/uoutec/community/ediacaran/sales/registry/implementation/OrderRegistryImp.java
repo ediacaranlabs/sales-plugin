@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
-import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -26,6 +25,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
@@ -370,6 +370,18 @@ public class OrderRegistryImp
 			throw new OrderRegistryException("empty cart id");
 		}
 		
+		if(payment == null) {
+			throw new OrderRegistryException("payment information not found");
+		}
+		
+		if(paymentGateway == null) {
+			throw new OrderRegistryException("payment gateway not found");
+		}
+		
+		if(systemUser == null || systemUser.getId() <= 0) {
+			throw new OrderRegistryException("owner not found");
+		}
+		
 		/*
 		if(cart.getOwner() == null) {
 			throw new OrderRegistryException("owner not found");
@@ -406,7 +418,7 @@ public class OrderRegistryImp
 		order.setOwner(systemUser.getId());
 		order.setInvoice(null);
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
-		order.setDiscounts(cart.getDiscounts());
+		order.setTaxes(cart.getTaxes());
 		
 		/*
 		 Validar moeda
@@ -451,7 +463,7 @@ public class OrderRegistryImp
 		if(payment.getTotal().compareTo(BigDecimal.ZERO) <= 0){
 			order.setStatus(OrderStatus.PENDING_PAYMENT);
 			this.registerOrder(order);
-			this.createInvoice(order.getId(), BigDecimal.ZERO, BigDecimal.ZERO, DiscountType.PERCENTAGE, null);
+			this.createInvoice(order.getId(), BigDecimal.ZERO, BigDecimal.ZERO, TaxType.PERCENTAGE, null);
 		}
 		
 		try{
@@ -501,7 +513,7 @@ public class OrderRegistryImp
 	 */
 	@Override
 	public Invoice createInvoice(String orderID, BigDecimal total, 
-			BigDecimal discount, DiscountType discountType, String message) 
+			BigDecimal discount, TaxType taxType, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 		
@@ -509,7 +521,7 @@ public class OrderRegistryImp
 				new RuntimeSecurityPermission(basePermission + ".invoice"));
 		
 		try{
-			return this.safeCreateInvoice(orderID, total, discount, discountType, message);
+			return this.safeCreateInvoice(orderID, total, discount, taxType, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -522,7 +534,7 @@ public class OrderRegistryImp
 	}
 	
 	private Invoice safeCreateInvoice(String orderID, BigDecimal total, 
-			BigDecimal discount, DiscountType discountType, String message) 
+			BigDecimal discount, TaxType taxType, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 
@@ -541,7 +553,7 @@ public class OrderRegistryImp
 		
 		if(discount == null) {
 			discount = BigDecimal.ZERO;
-			discountType = DiscountType.UNIT;
+			taxType = TaxType.UNIT;
 		}
 		//discount = discount == null? BigDecimal.ZERO : discount;
 		
@@ -549,7 +561,7 @@ public class OrderRegistryImp
 		Invoice i = new Invoice();
 		i.setDate(LocalDateTime.now());
 		i.setDiscount(discount);
-		i.setDiscountType(discountType);
+		i.setTaxType(taxType);
 		i.setValue(total == null? order.getPayment().getTotal() : total);
 		
 		//Verifica o desconto
@@ -557,7 +569,7 @@ public class OrderRegistryImp
 			if(discount.doubleValue() > i.getValue().doubleValue()){
 				throw new OrderRegistryException("desconto maior que o valor!");
 			}
-			i.setTotal(discountType.apply(i.getValue(), i.getDiscount()));
+			i.setTotal(taxType.apply(i.getValue(), i.getDiscount()));
 		}
 		else{
 			i.setTotal(i.getValue());

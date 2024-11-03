@@ -36,6 +36,10 @@ public class SecurityPluginInstaller {
 				.addRole(BasicRoles.MANAGER)
 				.addRole(BasicRoles.USER)
 				.addRole(BasicRoles.CLIENT)
+			.addConstraint(varParser.getValue("${plugins.ediacaran.front.manager_context}/cart/checkout/*"))
+				.addRole(BasicRoles.MANAGER)
+				.addRole(BasicRoles.USER)
+				.addRole(BasicRoles.CLIENT)
 			.form()
 				.setOption(AuthenticationMethodBuilder.LOGIN_PAGE, "/login")
 				.setOption(AuthenticationMethodBuilder.ERROR_PAGE, "/login?error=true");

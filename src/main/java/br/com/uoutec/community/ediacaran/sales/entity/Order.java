@@ -56,7 +56,7 @@ public class Order implements Serializable{
 	@Size(min = 1, groups = DataValidation.class)
 	private List<ProductRequest> itens;
 
-	private List<Discount> discounts;
+	private List<Tax> taxes;
 	
 	private boolean removed;
 	
@@ -151,12 +151,12 @@ public class Order implements Serializable{
 		this.shipping = shipping;
 	}
 
-	public List<Discount> getDiscounts() {
-		return discounts;
+	public List<Tax> getTaxes() {
+		return taxes;
 	}
 
-	public void setDiscounts(List<Discount> discounts) {
-		this.discounts = discounts;
+	public void setTaxes(List<Tax> taxes) {
+		this.taxes = taxes;
 	}
 
 	public BigDecimal getSubtotal(){

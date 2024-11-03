@@ -8,25 +8,19 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Discount;
-import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
+import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 
 @Entity
-@Table(name = "rw_product_request_discount")
-@EntityListeners(ProductRequestDiscountEntityListener.class)
-public class ProductRequestDiscountEntity {
+@Table(name = "rw_tax")
+@EntityListeners(TaxEntityListener.class)
+public class TaxEntity {
 
 	@Id
-	@Column(name="cod_product_request_discount")
+	@Column(name = "cod_discount", length = 38)
 	private String id;
-
-	@ManyToOne
-	@JoinColumn(name = "cod_product_request", referencedColumnName = "cod_product_request", insertable = false, updatable = false)
-	private ProductRequestEntity productRequest;
 
 	@Column(name = "dsc_name", length = 128)
 	private String name;
@@ -39,22 +33,25 @@ public class ProductRequestDiscountEntity {
 
 	@Column(name = "set_type", length = 32)
 	@Enumerated(EnumType.STRING)
-	private DiscountType type;
+	private TaxType type;
 
+	@Column(name = "bit_discount")
+	private Boolean discount;
+	
 	@Column(name = "vlr_order", length = 1)
 	private byte order;
 
-	public ProductRequestDiscountEntity() {
+	public TaxEntity() {
 	}
 
-	public ProductRequestDiscountEntity(
-			ProductRequestEntity productRequest, Discount e) {
+	public TaxEntity(Tax e) {
 		this.description = e.getDescription();
+		this.id = e.getId();
 		this.name = e.getName();
 		this.order = e.getOrder();
-		this.productRequest = productRequest;
 		this.type = e.getType();
 		this.value = e.getValue();
+		this.discount = e.isDiscount();
 	}
 
 	public String getId() {
@@ -63,14 +60,6 @@ public class ProductRequestDiscountEntity {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public ProductRequestEntity getProductRequest() {
-		return productRequest;
-	}
-
-	public void setProductRequest(ProductRequestEntity productRequest) {
-		this.productRequest = productRequest;
 	}
 
 	public String getName() {
@@ -97,11 +86,11 @@ public class ProductRequestDiscountEntity {
 		this.value = value;
 	}
 
-	public DiscountType getType() {
+	public TaxType getType() {
 		return type;
 	}
 
-	public void setType(DiscountType type) {
+	public void setType(TaxType type) {
 		this.type = type;
 	}
 
@@ -113,14 +102,14 @@ public class ProductRequestDiscountEntity {
 		this.order = order;
 	}
 
-	public Discount toEntity() {
+	public Tax toEntity() {
 		return this.toEntity(null);
 	}
 
-	public Discount toEntity(Discount e) {
+	public Tax toEntity(Tax e) {
 
 		if (e == null) {
-			e = new Discount();
+			e = new Tax();
 		}
 
 		e.setDescription(this.description);
@@ -129,7 +118,7 @@ public class ProductRequestDiscountEntity {
 		e.setOrder(this.order);
 		e.setType(this.type);
 		e.setValue(this.value);
-
+		e.setDiscount(this.discount == null? false : this.discount.booleanValue());
 		return e;
 	}
 

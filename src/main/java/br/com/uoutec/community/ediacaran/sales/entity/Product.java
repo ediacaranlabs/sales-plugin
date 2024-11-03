@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -50,12 +49,6 @@ public class Product implements Serializable{
 	@Pattern(regexp = CommonValidation.CURRENCY, groups = DataValidation.class)
 	protected String currency;
 
-	/* transaient properties */
-	
-	protected List<Discount> discounts;
-
-	protected BigDecimal discount;
-	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
 	}
@@ -128,35 +121,9 @@ public class Product implements Serializable{
 		this.additionalCost = additionalCost;
 	}
 
-	public List<Discount> getDiscounts() {
-		return discounts;
-	}
-
-	public void setDiscounts(List<Discount> discounts) {
-		this.discounts = discounts;
-	}
 	
 	public BigDecimal getSubtotal(boolean additional){
 		return additional? this.additionalCost : this.cost;
 	}
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
-
-	public BigDecimal getTotal(boolean additional){
-		BigDecimal value = this.getSubtotal(additional);
-		
-		if(this.discount == null && 
-			this.discount.compareTo(BigDecimal.ZERO) > 0 && 
-			this.discount.compareTo(value) <= 0){
-			return value.subtract(this.discount);
-		}
-		
-		return value;
-	}	
 }

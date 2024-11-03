@@ -12,8 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 
 
 @Entity
@@ -38,7 +38,7 @@ public class InvoiceEntity implements Serializable{
 
 	@Column(name="set_discount_type", length=32)
 	@Enumerated(EnumType.STRING)
-	private DiscountType discountType;
+	private TaxType taxType;
 	
 	@Column(name="vlr_total", scale=3, precision=12)
 	private BigDecimal total;
@@ -47,7 +47,7 @@ public class InvoiceEntity implements Serializable{
 	}
 	
 	public InvoiceEntity(Invoice e){
-		this.discountType = e.getDiscountType();
+		this.taxType = e.getTaxType();
 		this.date = e.getDate();
 		this.discount = e.getDiscount(); 
 		this.id = e.getId();
@@ -79,20 +79,28 @@ public class InvoiceEntity implements Serializable{
 		this.value = value;
 	}
 
-	public DiscountType getDiscountType() {
-		return discountType;
-	}
-
-	public void setDiscountType(DiscountType discountType) {
-		this.discountType = discountType;
-	}
-
 	public BigDecimal getTotal() {
 		return total;
 	}
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
+	}
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public TaxType getTaxType() {
+		return taxType;
+	}
+
+	public void setTaxType(TaxType taxType) {
+		this.taxType = taxType;
 	}
 
 	public Invoice toEntity(){
@@ -105,7 +113,7 @@ public class InvoiceEntity implements Serializable{
 			e = new Invoice();
 		}
 		
-		e.setDiscountType(this.discountType);
+		e.setTaxType(this.taxType);
 		e.setDate(this.date);
 		e.setDiscount(this.discount);
 		e.setId(this.id);

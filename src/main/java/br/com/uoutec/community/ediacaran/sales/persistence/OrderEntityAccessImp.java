@@ -20,10 +20,10 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderDiscountEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestDiscountEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -76,10 +76,10 @@ public class OrderEntityAccessImp
 					e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
 					entityManager.persist(e);
 					
-					List<ProductRequestDiscountEntity> prdel = e.getDiscounts();
+					List<ProductRequestTaxEntity> prdel = e.getTaxes();
 					
 					if(prdel != null){
-						for(ProductRequestDiscountEntity k: prdel){
+						for(ProductRequestTaxEntity k: prdel){
 							k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 							entityManager.persist(k);
 						}
@@ -87,10 +87,10 @@ public class OrderEntityAccessImp
 				}
 			}
 			
-			List<OrderDiscountEntity> odl = pEntity.getDiscounts();
+			List<OrderTaxEntity> odl = pEntity.getTaxes();
 			
 			if(odl != null){
-				for(OrderDiscountEntity k: odl){
+				for(OrderTaxEntity k: odl){
 					k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 					entityManager.persist(k);
 				}
@@ -142,10 +142,10 @@ public class OrderEntityAccessImp
 						entityManager.merge(e);
 					}
 					
-					List<ProductRequestDiscountEntity> prdel = e.getDiscounts();
+					List<ProductRequestTaxEntity> prdel = e.getTaxes();
 					
 					if(prdel != null){
-						for(ProductRequestDiscountEntity k: prdel){
+						for(ProductRequestTaxEntity k: prdel){
 							if(k.getId() == null){
 								k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 								entityManager.persist(k);
@@ -159,10 +159,10 @@ public class OrderEntityAccessImp
 				}
 			}
 			
-			List<OrderDiscountEntity> odl = pEntity.getDiscounts();
+			List<OrderTaxEntity> odl = pEntity.getTaxes();
 			
 			if(odl != null){
-				for(OrderDiscountEntity k: odl){
+				for(OrderTaxEntity k: odl){
 					if(k.getId() == null){
 						k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 						entityManager.persist(k);

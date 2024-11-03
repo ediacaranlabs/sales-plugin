@@ -8,7 +8,7 @@ import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.MessageBundle;
 
-public enum DiscountType {
+public enum TaxType {
 
 	UNIT{
 		
@@ -46,7 +46,7 @@ public enum DiscountType {
 	};
 	
 	public static final String RESOURCE_BUNDLE = 
-			MessageBundle.toPackageID(DiscountType.class);
+			MessageBundle.toPackageID(TaxType.class);
 	
 	
 	public String getName(Locale locale) {

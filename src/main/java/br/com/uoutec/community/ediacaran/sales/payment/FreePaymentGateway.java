@@ -6,6 +6,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.ediacaran.core.VarParser;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class FreePaymentGateway implements PaymentGateway{
 
@@ -40,7 +42,9 @@ public class FreePaymentGateway implements PaymentGateway{
 
 	@Override
 	public String getView() throws PaymentGatewayException {
-		return null;
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		String view = varParser.getValue("{plugins.ediacaran.sales.web_path}:/default_template/front/cart/free_payment.jsp");
+		return view;
 	}
 
 	@Override

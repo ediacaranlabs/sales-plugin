@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import br.com.uoutec.community.ediacaran.persistence.SecurityEntitylListener;
 
-public class OrderDiscountEntityListener 
-	extends SecurityEntitylListener<OrderDiscountEntity>{
+public class ProductRequestTaxEntityListener 
+	extends SecurityEntitylListener<ProductRequestTaxEntity>{
 
 }

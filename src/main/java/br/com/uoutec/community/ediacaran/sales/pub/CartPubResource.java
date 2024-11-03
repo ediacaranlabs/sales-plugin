@@ -40,6 +40,8 @@ import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
+import br.com.uoutec.community.ediacaran.security.BasicRoles;
+import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
@@ -305,6 +307,7 @@ public class CartPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/cart/result_checkout")
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
+	@RequiresRole({BasicRoles.MANAGER, BasicRoles.CLIENT, BasicRoles.USER})
 	public String checkout(
 			@Basic(bean="customer")
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,

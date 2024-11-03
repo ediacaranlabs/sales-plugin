@@ -34,7 +34,7 @@ public class Invoice implements Serializable{
 	private BigDecimal discount;
 	
 	@NotNull(groups = DataValidation.class)
-	private DiscountType discountType;
+	private TaxType taxType;
 	
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 0, groups = DataValidation.class)
@@ -64,6 +64,14 @@ public class Invoice implements Serializable{
 		this.value = value;
 	}
 
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
 	public BigDecimal getDiscount() {
 		return discount;
 	}
@@ -72,20 +80,12 @@ public class Invoice implements Serializable{
 		this.discount = discount;
 	}
 
-	public DiscountType getDiscountType() {
-		return discountType;
+	public TaxType getTaxType() {
+		return taxType;
 	}
 
-	public void setDiscountType(DiscountType discountType) {
-		this.discountType = discountType;
-	}
-
-	public BigDecimal getTotal() {
-		return total;
-	}
-
-	public void setTotal(BigDecimal total) {
-		this.total = total;
+	public void setTaxType(TaxType taxType) {
+		this.taxType = taxType;
 	}
 	
 }

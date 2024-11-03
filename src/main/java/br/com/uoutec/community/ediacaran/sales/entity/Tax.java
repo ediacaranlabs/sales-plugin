@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
-public class Discount implements Serializable {
+public class Tax implements Serializable {
 
 	private static final long serialVersionUID = 7140999176118548327L;
 
@@ -33,7 +33,9 @@ public class Discount implements Serializable {
 	private BigDecimal value;
 	
 	@NotNull(groups = DataValidation.class)
-	private DiscountType type;
+	private TaxType type;
+	
+	private boolean discount;
 	
 	private byte order;
 
@@ -69,12 +71,20 @@ public class Discount implements Serializable {
 		this.value = value;
 	}
 
-	public DiscountType getType() {
+	public TaxType getType() {
 		return type;
 	}
 
-	public void setType(DiscountType type) {
+	public void setType(TaxType type) {
 		this.type = type;
+	}
+
+	public boolean isDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(boolean discount) {
+		this.discount = discount;
 	}
 
 	public byte getOrder() {

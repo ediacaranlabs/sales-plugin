@@ -18,9 +18,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Discount;
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 
 @Entity
@@ -67,14 +67,11 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="vlr_add_cost", scale=2, precision=12)
 	private BigDecimal additionalCost;
 	
-	@Column(name="vlr_discount", scale=3, precision=12)
-	private BigDecimal discount;
-
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
 	@OneToMany(mappedBy="productRequest", fetch=FetchType.LAZY)
-	private List<ProductRequestDiscountEntity> discounts;
+	private List<ProductRequestTaxEntity> taxes;
 	
 	@Lob
 	@Column(name="dsc_data")
@@ -97,14 +94,13 @@ public class ProductRequestEntity implements Serializable{
 		this.shortDescription = e.getShortDescription();
 		this.description      = e.getDescription();
 		this.productID        = e.getProductID();
-		this.discount         = e.getDiscount();
 		
-		List<Discount> discounts = e.getDiscounts();
+		List<Tax> taxes = e.getTaxes();
 		
-		if(discounts != null){
-			this.discounts = new ArrayList<ProductRequestDiscountEntity>();
-			for(Discount discount: discounts){
-				this.discounts.add(new ProductRequestDiscountEntity(this, discount));
+		if(taxes != null){
+			this.taxes = new ArrayList<ProductRequestTaxEntity>();
+			for(Tax tax: taxes){
+				this.taxes.add(new ProductRequestTaxEntity(this, tax));
 			}
 		}
 		
@@ -214,20 +210,12 @@ public class ProductRequestEntity implements Serializable{
 		this.productID = productID;
 	}
 
-	public BigDecimal getDiscount() {
-		return discount;
+	public List<ProductRequestTaxEntity> getTaxes() {
+		return taxes;
 	}
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
-
-	public List<ProductRequestDiscountEntity> getDiscounts() {
-		return discounts;
-	}
-
-	public void setDiscounts(List<ProductRequestDiscountEntity> discounts) {
-		this.discounts = discounts;
+	public void setTaxes(List<ProductRequestTaxEntity> taxes) {
+		this.taxes = taxes;
 	}
 
 	public ProductRequest toEntity(){
@@ -244,14 +232,13 @@ public class ProductRequestEntity implements Serializable{
 		e.setShortDescription(this.shortDescription);
 		e.setDescription(this.description);
 		e.setProductID(this.productID);
-		e.setDiscount(this.discount);
 		
-		if(this.discounts != null){
-			List<Discount> discounts = new ArrayList<Discount>();
-			e.setDiscounts(discounts);
+		if(this.taxes != null){
+			List<Tax> taxes = new ArrayList<Tax>();
+			e.setTaxes(taxes);
 			
-			for(ProductRequestDiscountEntity prd: this.discounts){
-				discounts.add(prd.toEntity());
+			for(ProductRequestTaxEntity prd: this.taxes){
+				taxes.add(prd.toEntity());
 			}
 			
 		}

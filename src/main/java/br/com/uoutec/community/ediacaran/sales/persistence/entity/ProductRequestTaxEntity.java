@@ -12,51 +12,55 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Discount;
-import br.com.uoutec.community.ediacaran.sales.entity.DiscountType;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
+import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 
 @Entity
-@Table(name="rw_order_discount")
-@EntityListeners(OrderDiscountEntityListener.class)
-public class OrderDiscountEntity {
+@Table(name = "rw_product_request_tax")
+@EntityListeners(ProductRequestTaxEntityListener.class)
+public class ProductRequestTaxEntity {
 
 	@Id
-	@Column(name="cod_order_discount")
-	private String id; 
-	
+	@Column(name="cod_product_request_discount")
+	private String id;
+
 	@ManyToOne
-	@JoinColumn(name="cod_order",referencedColumnName="cod_order")
-	private OrderEntity orderEntity;
-	
-	@Column(name="dsc_name", length=128)
+	@JoinColumn(name = "cod_product_request", referencedColumnName = "cod_product_request", insertable = false, updatable = false)
+	private ProductRequestEntity productRequest;
+
+	@Column(name = "dsc_name", length = 128)
 	private String name;
-	
-	@Column(name="dsc_description", length=256)
+
+	@Column(name = "dsc_description", length = 256)
 	private String description;
-	
-	@Column(name="vlr_value", scale=3, precision=12)
+
+	@Column(name = "vlr_value", scale = 3, precision = 12)
 	private BigDecimal value;
-	
-	@Column(name="set_type", length=32)
+
+	@Column(name = "set_type", length = 32)
 	@Enumerated(EnumType.STRING)
-	private DiscountType type;
+	private TaxType type;
+
+	@Column(name = "bit_discount")
+	private Boolean discount;
 	
-	@Column(name="vlr_order", length=1)
+	@Column(name = "vlr_order", length = 1)
 	private byte order;
 
-	public OrderDiscountEntity(){
+	public ProductRequestTaxEntity() {
 	}
-	
-	public OrderDiscountEntity(
-			OrderEntity orderentity, Discount e){
+
+	public ProductRequestTaxEntity(
+			ProductRequestEntity productRequest, Tax e) {
 		this.description = e.getDescription();
 		this.name = e.getName();
 		this.order = e.getOrder();
-		this.orderEntity = orderentity;
+		this.productRequest = productRequest;
 		this.type = e.getType();
 		this.value = e.getValue();
+		this.discount = e.isDiscount();
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -65,12 +69,12 @@ public class OrderDiscountEntity {
 		this.id = id;
 	}
 
-	public OrderEntity getOrderEntity() {
-		return orderEntity;
+	public ProductRequestEntity getProductRequest() {
+		return productRequest;
 	}
 
-	public void setOrderEntity(OrderEntity orderEntity) {
-		this.orderEntity = orderEntity;
+	public void setProductRequest(ProductRequestEntity productRequest) {
+		this.productRequest = productRequest;
 	}
 
 	public String getName() {
@@ -97,11 +101,11 @@ public class OrderDiscountEntity {
 		this.value = value;
 	}
 
-	public DiscountType getType() {
+	public TaxType getType() {
 		return type;
 	}
 
-	public void setType(DiscountType type) {
+	public void setType(TaxType type) {
 		this.type = type;
 	}
 
@@ -112,25 +116,25 @@ public class OrderDiscountEntity {
 	public void setOrder(byte order) {
 		this.order = order;
 	}
-	
-	public Discount toEntity(){
+
+	public Tax toEntity() {
 		return this.toEntity(null);
 	}
-	
-	public Discount toEntity(Discount e){
-		
-		if( e == null){
-			e = new Discount();
+
+	public Tax toEntity(Tax e) {
+
+		if (e == null) {
+			e = new Tax();
 		}
-		
+
 		e.setDescription(this.description);
 		e.setId(this.id);
 		e.setName(this.name);
 		e.setOrder(this.order);
 		e.setType(this.type);
 		e.setValue(this.value);
-		
+		e.setDiscount(this.discount == null? false : this.discount);
 		return e;
 	}
-	
+
 }

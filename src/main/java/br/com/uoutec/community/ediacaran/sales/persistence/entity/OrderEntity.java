@@ -17,10 +17,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Discount;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 
 @Entity
 @Table(name="rw_order")
@@ -58,7 +58,7 @@ public class OrderEntity implements Serializable{
 	private List<ProductRequestEntity> itens;
 
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
-	private List<OrderDiscountEntity> discounts;
+	private List<OrderTaxEntity> taxes;
 
 	@Column(name="bit_removed", length=1)
 	private Boolean removed;
@@ -84,12 +84,12 @@ public class OrderEntity implements Serializable{
 		this.removed = e.isRemoved();
 		this.status = e.getStatus();
 		
-		List<Discount> discounts = e.getDiscounts();
+		List<Tax> discounts = e.getTaxes();
 		
 		if(discounts != null){
-			this.discounts = new ArrayList<OrderDiscountEntity>();
-			for(Discount discount: discounts){
-				this.discounts.add(new OrderDiscountEntity(this, discount));
+			this.taxes = new ArrayList<OrderTaxEntity>();
+			for(Tax tax: discounts){
+				this.taxes.add(new OrderTaxEntity(this, tax));
 			}
 		}
 
@@ -167,12 +167,12 @@ public class OrderEntity implements Serializable{
 		this.cartID = cartID;
 	}
 
-	public List<OrderDiscountEntity> getDiscounts() {
-		return discounts;
+	public List<OrderTaxEntity> getTaxes() {
+		return taxes;
 	}
 
-	public void setDiscounts(List<OrderDiscountEntity> discounts) {
-		this.discounts = discounts;
+	public void setTaxes(List<OrderTaxEntity> taxes) {
+		this.taxes = taxes;
 	}
 
 	public Order toEntity(){
@@ -202,12 +202,12 @@ public class OrderEntity implements Serializable{
 			e.setItens(l);
 		}
 		
-		if(this.discounts != null){
-			List<Discount> discounts = new ArrayList<Discount>();
-			e.setDiscounts(discounts);
+		if(this.taxes != null){
+			List<Tax> tax = new ArrayList<Tax>();
+			e.setTaxes(tax);
 			
-			for(OrderDiscountEntity prd: this.discounts){
-				discounts.add(prd.toEntity());
+			for(OrderTaxEntity prd: this.taxes){
+				tax.add(prd.toEntity());
 			}
 			
 		}
