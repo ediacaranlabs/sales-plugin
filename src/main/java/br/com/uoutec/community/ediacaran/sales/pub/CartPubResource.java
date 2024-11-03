@@ -162,7 +162,7 @@ public class CartPubResource {
 		
 	}
 	
-	@Action("/payment-type")
+	@Action("/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
 	public ResultAction paymentType(
