@@ -1,16 +1,40 @@
 $.AppContext.sales = {};
 
+$.AppContext.sales.context = "";
+ 
+$.AppContext.sales.updateProducts = function(){
+	$.AppContext.utils.updateContentByID($.AppContext.sales.context + '/cart/products', 'product_content');
+};
+
+$.AppContext.sales.updatePaymentDetails = function(){
+	$.AppContext.utils.updateContentByID($.AppContext.sales.context + '/cart/payment-details', 'cart_payment_details');
+};
+	
+$.AppContext.sales.updatePaymentForm = function(){
+		var $form = $.AppContext.utils.getById('payment_form');
+		var $paymentType = $form.getField('payment.paymentType');
+		var $paymentTypeValue = $paymentType.getValue();
+		
+		$form.submit(
+			false, 
+			$.AppContext.sales.context + "/cart/payment-type/" + $paymentTypeValue, 
+			"payment_form_area"
+		);
+};
+
 $.AppContext.onload(function(){
 
-	$.AppContext.addLoadListener('updateUnits', '^.*/cart/units/.*$', {
+	$.AppContext.addLoadListener('updateUnits', '^.*' + $.AppContext.sales.context + '/cart/units/.*$', {
 		
 		after: function (){
-			updatePaymentDetails();
+			$.AppContext.sales.updatePaymentDetails();
 		}
 	
 	});
 	
 });
+
+
 
 /*
 function updateProducts(){

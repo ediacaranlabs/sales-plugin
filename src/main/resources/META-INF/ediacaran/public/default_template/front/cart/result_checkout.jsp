@@ -1,15 +1,14 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core"                  prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions"             prefix="fn"%>
+<%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <c:if test="${!empty exception}">
-	<div class="alert alert-danger alert-dismissable span12">
-		<button type="button" class="close" data-dismiss="alert"
-			aria-hidden="true">&times;</button>
+	<ec:alert id="exceptionMessage" style="danger">
 		${exception.message}
-	</div>				
+	</ec:alert>
 	<script type="text/javascript">
 		$.AppContext.onload(
 			function (){
-				updateProducts();
+				$.AppContext.sales.updateProducts();
 			}
 		);
 	</script>
@@ -18,7 +17,7 @@
 	<script type="text/javascript">
 		$.AppContext.onload(
 			function (){
-				$.AppContext.openLink("${fn:startsWith(link, '/')? pageContext.request.contextPath.concat(link) : link}");
+				$.AppContext.openLink("${link}");
 			}
 		);
 			

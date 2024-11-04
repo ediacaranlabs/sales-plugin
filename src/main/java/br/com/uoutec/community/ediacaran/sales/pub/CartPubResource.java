@@ -323,7 +323,7 @@ public class CartPubResource {
 		SystemUser user = null;
 		
 		try{
-			user = authenticatedSystemUserPubEntity.rebuild(true, true, true);
+			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData",  ex);

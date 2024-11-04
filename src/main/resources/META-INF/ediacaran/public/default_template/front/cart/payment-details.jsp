@@ -3,9 +3,10 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
-<ec:setBundle var="messages" locale="${locale}"/>
+<%--<ec:setBundle var="messages" locale="${locale}"/>--%>
+
+<c:if test="${vars.payment_gateway_list.size() > 1}">
 <ed:row>
-	<c:if test="${vars.payment_gateway_list.size() > 1}">
 		<ed:col size="12">
 			<c:set var="firstPaymentGateway" value="${vars.payment_gateway_list.get(0)}"/>
 			<c:forEach var="paymentGateway" items="${vars.payment_gateway_list}">
@@ -30,10 +31,22 @@
 				</ec:radio>
 			</c:forEach>
 		</ed:col>
-	</c:if>
 </ed:row>
+</c:if>
+<c:if test="${vars.payment_gateway_list.size() == 1}">
+	<input type="hidden" name="payment.paymentType" value="${vars.payment_gateway_list.get(0).id}">
+</c:if>
 <ed:row>
 	<ed:col size="12" id="payment_form_area">
+		<script type="text/javascript">
+			$.AppContext.onload(function(){			
+				$.AppContext.utils
+					.updateContentByID(
+							"#!${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}", 
+							"payment_form_area"
+					);
+			});	
+		</script>
 		<c:if test="${vars.payment_gateway_list.size() > 0}">
 			<jsp:include page="${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}"/>
 		</c:if>

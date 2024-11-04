@@ -4,6 +4,7 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
 <ec:setBundle var="messages" locale="${locale}"/>
+
 <!DOCTYPE html>
 <html>
 
@@ -13,6 +14,9 @@
 <ec:include uri="/includes/head.jsp"/>
 <link href="${plugins.ediacaran.sales.web_path}/default_template/front/cart/css/cart.css" rel="stylesheet">
 <script src="${plugins.ediacaran.sales.web_path}/default_template/front/cart/js/cart.js" charset="utf-8" type="text/javascript"></script>
+<script type="text/javascript">
+	$.AppContext.sales.context = '${plugins.ediacaran.sales.web_path}';
+</script>
 <title><fmt:message key="cart_review.banner.title" bundle="${messages}"/></title>
 </head>
 
@@ -41,6 +45,11 @@
 
 	<section>
 		<ed:container>
+			<ed:row>
+				<ed:col size="12">
+						<hr>
+				</ed:col>
+			</ed:row>
 			<!-- products-table -->
 			<ed:row>
 				<ed:col id="product_content" size="12">
@@ -54,23 +63,25 @@
 				<c:if test="${!empty pageContext.request.userPrincipal}">
 				<ed:row>
 					<ed:col size="12">
-							<h3><fmt:message key="cart_review.payment.title" bundle="${sys_messages}" /></h3>
+							<h3><fmt:message key="cart_review.payment.title" bundle="${messages}" /></h3>
 							<hr>
 					</ed:col>
 				</ed:row>
 				<ed:row>
 					<ed:col id="cart_payment_details" size="12">
-						<ec:include uri="payment-details.jsp"/>
+						<jsp:include page="payment-details.jsp"/>
 					</ed:col>
 				</ed:row>
 				</c:if>
 				<!-- /payment-area -->
+				
 				<ed:row>
 					<ed:col size="12">
 						<div id="result-checkout" class="result-check"></div>
 						<ec:button align="right" label="#{cart_review.checkout.submit}" bundle="${messages}"/>
 					</ed:col>
 				</ed:row>
+
 			</ec:form>
 		</ed:container>
 	</section>
