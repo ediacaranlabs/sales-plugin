@@ -1,11 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales;
 
-import java.util.Arrays;
-
 import br.com.uoutec.community.ediacaran.sales.entity.FreePayment;
+import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.payment.FreePaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.FreePaymentPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
@@ -20,10 +20,8 @@ public class PaymentGatewayPluginInstaller {
 		pgr.registry(new FreePaymentGateway());
 		
 		EntityInheritanceManager eiu = EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-		eiu.loadEntities(Arrays.asList(
-				FreePaymentPubEntity.class, 
-				FreePayment.class
-		));
+		eiu.register(FreePaymentPubEntity.class, "free", PaymentPubEntity.class);  
+		eiu.register(FreePayment.class, "free", Payment.class);  
 	}
 	
 	public void uninstall() throws Throwable {
@@ -32,10 +30,8 @@ public class PaymentGatewayPluginInstaller {
 		pgr.remove("free");
 		
 		EntityInheritanceManager eiu = EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-		eiu.removeEntities(Arrays.asList(
-				FreePaymentPubEntity.class, 
-				FreePayment.class
-		));
+		eiu.remove("free", PaymentPubEntity.class);  
+		eiu.remove("free", Payment.class);  
 	}
 	
 }
