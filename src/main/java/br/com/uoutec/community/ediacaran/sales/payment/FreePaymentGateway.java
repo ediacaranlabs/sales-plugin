@@ -11,6 +11,12 @@ import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class FreePaymentGateway implements PaymentGateway{
 
+	private final String id;
+	
+	public FreePaymentGateway() {
+		this.id = "free";
+	}
+	
 	@Override
 	public void payment(SystemUser user, Order order, Payment payment) throws PaymentGatewayException {
 		
@@ -60,6 +66,31 @@ public class FreePaymentGateway implements PaymentGateway{
 	@Override
 	public boolean isApplicable(Cart cart) {
 		return cart.getTotal().compareTo(BigDecimal.ZERO) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FreePaymentGateway other = (FreePaymentGateway) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 }

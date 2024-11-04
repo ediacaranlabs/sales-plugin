@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritance;
 
-@EntityInheritance(base=Payment.class, name="Free")
+@EntityInheritance(base=Payment.class, name="free")
 public class FreePayment extends Payment{
 
 	private static final long serialVersionUID = 3347471112297156243L;
