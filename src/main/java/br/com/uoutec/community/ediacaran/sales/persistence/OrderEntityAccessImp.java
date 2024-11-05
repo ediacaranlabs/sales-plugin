@@ -54,17 +54,17 @@ public class OrderEntityAccessImp
 			pEntity.setId(IDGenerator.getUniqueOrderID('O', value.getOwner()));
 			
 			if(pEntity.getInvoice() != null){
-				if(pEntity.getInvoice().getId() == null){
+				//if(pEntity.getInvoice().getId() == null){
 					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getOwner()));
 					entityManager.persist(pEntity.getInvoice());
-				}
+				//}
 			}
 			
 			if(pEntity.getPayment() != null){
-				if(pEntity.getPayment().getId() == null){
+				//if(pEntity.getPayment().getId() == null){
 					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getOwner()));
 					entityManager.persist(pEntity.getPayment());
-				}
+				//}
 			}
 			
 			entityManager.persist(pEntity);
@@ -210,7 +210,7 @@ public class OrderEntityAccessImp
 
 	@Override
 	protected Serializable toPersistenceID(Serializable value) throws Throwable {
-		throw new UnsupportedOperationException();
+		return value;
 	}
 
 	public List<Order> getOrders(Integer owner, Integer first, Integer max)

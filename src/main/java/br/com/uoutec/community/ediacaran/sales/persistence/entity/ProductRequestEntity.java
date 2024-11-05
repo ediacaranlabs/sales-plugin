@@ -55,10 +55,12 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="vlr_units", length=11)
 	private Integer units;
 
-	@Column(name="dsc_description", length=11)
+	@Lob
+	@Column(name="dsc_description")
 	private String description;
 	
-	@Column(name="dsc_short_description", length=11)
+	@Lob
+	@Column(name="dsc_short_description")
 	private String shortDescription;
 	
 	@Column(name="vlr_cost", scale=3, precision=12)
