@@ -283,7 +283,7 @@ public class OrderRegistryImp
 			String id) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".product_request"));
+				new RuntimeSecurityPermission(basePermission + "product_request"));
 		
 		try{
 			return orderEntityAccess.getProductRequest(orderID, id);
@@ -320,7 +320,7 @@ public class OrderRegistryImp
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".create"));
+				new RuntimeSecurityPermission(basePermission + "create"));
 		
 		SystemUser user = getSystemUser(userID);
 		
@@ -336,7 +336,7 @@ public class OrderRegistryImp
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".create"));
+				new RuntimeSecurityPermission(basePermission + "create"));
 		
 		return unsafeCreateOrder(cart, systemUser, payment, message, paymentGateway);
 	}
@@ -518,7 +518,7 @@ public class OrderRegistryImp
 		UnmodifiedOrderStatusRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".invoice"));
+				new RuntimeSecurityPermission(basePermission + "invoice"));
 		
 		try{
 			return this.safeCreateInvoice(orderID, total, discount, taxType, message);
@@ -620,7 +620,7 @@ public class OrderRegistryImp
 			UnmodifiedOrderStatusRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".refound"));
+				new RuntimeSecurityPermission(basePermission + "refound"));
 		
 		try{
 			this.safeCreateRefound(orderID, message);
@@ -691,7 +691,7 @@ public class OrderRegistryImp
 			UnmodifiedOrderStatusRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + ".revert_refound"));
+				new RuntimeSecurityPermission(basePermission + "revert_refound"));
 		
 		try{
 			this.safeRevertRefound(orderID, message);
@@ -832,7 +832,7 @@ public class OrderRegistryImp
 	}
 
 	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
-		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID));
+		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID.getSystemID()));
 		
 		if(user == null) {
 			throw new SystemUserRegistryException(String.valueOf(userID));

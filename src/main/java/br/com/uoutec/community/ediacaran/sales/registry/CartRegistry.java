@@ -11,9 +11,10 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.entity.registry.Registry;
 
-public interface CartRegistry extends Registry{
+public interface CartRegistry extends Registry, PublicBean{
 
 	public static final int CART_MAX_ITENS = 10;
 	

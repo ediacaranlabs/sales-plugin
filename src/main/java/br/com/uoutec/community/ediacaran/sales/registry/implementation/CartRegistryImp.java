@@ -277,7 +277,7 @@ public class CartRegistryImp
 	}
 
 	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
-		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID));
+		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID.getSystemID()));
 		
 		if(user == null) {
 			throw new SystemUserRegistryException(String.valueOf(userID));

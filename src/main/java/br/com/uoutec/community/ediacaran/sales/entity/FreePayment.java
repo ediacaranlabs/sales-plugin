@@ -9,6 +9,6 @@ public class FreePayment extends Payment{
 
 	public FreePayment(){
 		super();
-		super.setPaymentType("Free");
+		super.setPaymentType("free");
 	}
 }

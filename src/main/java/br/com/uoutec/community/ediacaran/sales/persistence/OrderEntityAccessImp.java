@@ -8,6 +8,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,11 +21,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -444,6 +445,9 @@ public class OrderEntityAccessImp
 		    OrderEntity e = typed.getSingleResult();
 		    
 		    return e == null? null : e.toEntity();
+		}
+		catch(NoResultException e) {
+			return null;
 		}
 		catch (Throwable e) {
 			throw new EntityAccessException(e);
