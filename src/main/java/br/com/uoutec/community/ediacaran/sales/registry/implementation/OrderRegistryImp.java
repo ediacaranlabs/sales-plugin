@@ -587,7 +587,7 @@ public class OrderRegistryImp
 		order.setStatus(OrderStatus.PAYMENT_RECEIVED);
 		order.setInvoice(i);
 		
-		/*
+
 		SystemUser user;
 		
 		try{
@@ -596,10 +596,10 @@ public class OrderRegistryImp
 		catch(Throwable e){
 			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());
 		}
-        */
+
 		
 		//Processa os itens do pedido
-		/*
+
 		for(ProductRequest productRequest: order.getItens()){
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
@@ -611,7 +611,7 @@ public class OrderRegistryImp
 					"falha ao processar o produto/serviço " + productRequest.getId(), e);
 			}
 		}
-		*/
+
 
 		try {
 			invoiceEntityAccess.save(i);
