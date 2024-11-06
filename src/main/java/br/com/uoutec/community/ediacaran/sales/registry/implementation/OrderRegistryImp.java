@@ -351,7 +351,7 @@ public class OrderRegistryImp
 		
 		try{
 			Order order = createOrder0(cart, systemUser, payment, message, paymentGateway);
-			//cart.clear();
+			cart.clear();
 			return order;
 		}
 		catch(RegistryException e){

@@ -78,7 +78,7 @@
 				<ed:row>
 					<ed:col size="12">
 						<div id="result-checkout" class="result-check"></div>
-						<ec:button align="right" actionType="submit" label="#{cart_review.checkout.submit}" bundle="${messages}"/>
+						<ec:button enabled="${!empty pageContext.request.userPrincipal}" align="right" actionType="submit" label="#{cart_review.checkout.submit}" bundle="${messages}"/>
 					</ed:col>
 				</ed:row>
 
