@@ -428,7 +428,7 @@ public class OrderEntityAccessImp
 		    
 		    List<Predicate> and = new ArrayList<Predicate>();
 
-	    	and.add(builder.equal(from.get("id"), id));
+	    	and.add(builder.equal(from.get("cartID"), id));
 		    
 		    if(!and.isEmpty()) {
 			    criteria.where(

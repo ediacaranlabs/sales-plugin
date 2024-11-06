@@ -28,6 +28,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
+import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
@@ -137,7 +138,11 @@ public class OrderRegistryImp
 	private OrderEntityAccess orderEntityAccess;
 
 	@Inject
+	private InvoiceEntityAccess invoiceEntityAccess;
+	
+	@Inject
 	private SubjectProvider subjectProvider;
+
 	
 	@Override
 	public void registerOrder(Order entity)	throws OrderRegistryException {
@@ -345,7 +350,9 @@ public class OrderRegistryImp
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
 		try{
-			return createOrder0(cart, systemUser, payment, message, paymentGateway);
+			Order order = createOrder0(cart, systemUser, payment, message, paymentGateway);
+			//cart.clear();
+			return order;
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar o pedido", e);
@@ -559,6 +566,7 @@ public class OrderRegistryImp
 		
 		//Cria a fatura
 		Invoice i = new Invoice();
+		i.setId(order.getId());
 		i.setDate(LocalDateTime.now());
 		i.setDiscount(discount);
 		i.setTaxType(taxType);
@@ -578,6 +586,8 @@ public class OrderRegistryImp
 		//Atualiza os dados do pedido
 		order.setStatus(OrderStatus.PAYMENT_RECEIVED);
 		order.setInvoice(i);
+		
+		/*
 		SystemUser user;
 		
 		try{
@@ -586,8 +596,10 @@ public class OrderRegistryImp
 		catch(Throwable e){
 			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());
 		}
-
+        */
+		
 		//Processa os itens do pedido
+		/*
 		for(ProductRequest productRequest: order.getItens()){
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
@@ -598,6 +610,16 @@ public class OrderRegistryImp
 				throw new OrderRegistryException(
 					"falha ao processar o produto/serviço " + productRequest.getId(), e);
 			}
+		}
+		*/
+
+		try {
+			invoiceEntityAccess.save(i);
+			invoiceEntityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException(
+				"invoice error: " + order.getId(), e);
 		}
 		
 		//Registra as alterações do pedido
