@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,10 +22,10 @@ import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 public class OrderTaxEntity {
 
 	@Id
-	@Column(name="cod_order_discount")
+	@Column(name="cod_order_tax", length = 38)
 	private String id; 
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_order",referencedColumnName="cod_order")
 	private OrderEntity orderEntity;
 	
@@ -37,7 +38,7 @@ public class OrderTaxEntity {
 	@Column(name="vlr_value", scale=3, precision=12)
 	private BigDecimal value;
 
-	@Column(name="bit_discount")
+	@Column(name="bit_discount", length=1)
 	private Boolean discount;
 	
 	@Column(name="set_type", length=32)

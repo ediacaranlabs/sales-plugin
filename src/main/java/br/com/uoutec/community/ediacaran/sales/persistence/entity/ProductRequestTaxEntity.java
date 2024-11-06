@@ -21,11 +21,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 public class ProductRequestTaxEntity {
 
 	@Id
-	@Column(name="cod_product_request_discount")
+	@Column(name="cod_product_request_tax", length = 38)
 	private String id;
 
 	@ManyToOne
-	@JoinColumn(name = "cod_product_request", referencedColumnName = "cod_product_request", insertable = false, updatable = false)
+	@JoinColumn(name = "cod_product_request", referencedColumnName = "cod_product_request")
 	private ProductRequestEntity productRequest;
 
 	@Column(name = "dsc_name", length = 128)
@@ -41,7 +41,7 @@ public class ProductRequestTaxEntity {
 	@Enumerated(EnumType.STRING)
 	private TaxType type;
 
-	@Column(name = "bit_discount")
+	@Column(name = "bit_discount", length=1)
 	private Boolean discount;
 	
 	@Column(name = "vlr_order", length = 1)

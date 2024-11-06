@@ -53,18 +53,20 @@ public class OrderEntityAccessImp
 			
 			pEntity.setId(IDGenerator.getUniqueOrderID('O', value.getOwner()));
 			
+			/*
 			if(pEntity.getInvoice() != null){
 				//if(pEntity.getInvoice().getId() == null){
 					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getOwner()));
 					entityManager.persist(pEntity.getInvoice());
 				//}
 			}
+			*/
 			
 			if(pEntity.getPayment() != null){
-				//if(pEntity.getPayment().getId() == null){
+				if(pEntity.getPayment().getId() == null){
 					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getOwner()));
 					entityManager.persist(pEntity.getPayment());
-				//}
+				}
 			}
 			
 			entityManager.persist(pEntity);
@@ -74,6 +76,7 @@ public class OrderEntityAccessImp
 			
 			if(list != null){
 				for(ProductRequestEntity e: list){
+					e.setOrder(pEntity);
 					e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
 					entityManager.persist(e);
 					
@@ -81,6 +84,7 @@ public class OrderEntityAccessImp
 					
 					if(prdel != null){
 						for(ProductRequestTaxEntity k: prdel){
+							k.setProductRequest(e);
 							k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 							entityManager.persist(k);
 						}
@@ -92,6 +96,7 @@ public class OrderEntityAccessImp
 			
 			if(odl != null){
 				for(OrderTaxEntity k: odl){
+					k.setOrderEntity(pEntity);
 					k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 					entityManager.persist(k);
 				}
@@ -136,6 +141,7 @@ public class OrderEntityAccessImp
 			if(list != null){
 				for(ProductRequestEntity e: list){
 					if(e.getId() == null){
+						e.setOrder(pEntity);
 						e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
 						entityManager.persist(e);
 					}
@@ -148,6 +154,7 @@ public class OrderEntityAccessImp
 					if(prdel != null){
 						for(ProductRequestTaxEntity k: prdel){
 							if(k.getId() == null){
+								k.setProductRequest(e);
 								k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 								entityManager.persist(k);
 							}
@@ -165,6 +172,7 @@ public class OrderEntityAccessImp
 			if(odl != null){
 				for(OrderTaxEntity k: odl){
 					if(k.getId() == null){
+						k.setOrderEntity(pEntity);
 						k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
 						entityManager.persist(k);
 					}

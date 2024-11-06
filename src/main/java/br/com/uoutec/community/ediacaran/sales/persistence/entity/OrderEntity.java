@@ -57,7 +57,7 @@ public class OrderEntity implements Serializable{
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
 
-	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="orderEntity", fetch=FetchType.LAZY)
 	private List<OrderTaxEntity> taxes;
 
 	@Column(name="bit_removed", length=1)
