@@ -41,8 +41,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
-import br.com.uoutec.community.ediacaran.security.BasicRoles;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
@@ -318,7 +316,6 @@ public class CartPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/cart/result_checkout")
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole({BasicRoles.MANAGER, BasicRoles.CLIENT, BasicRoles.USER})
 	public String checkout(
 			@Basic(bean="customer")
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
@@ -334,24 +331,24 @@ public class CartPubResource {
 		}		
 
 		SystemUser user = null;
+
+		if(authenticatedSystemUserPubEntity == null) {
+			return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
+		}
 		
 		try{
 			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
 		}
 		catch(AuthenticationRequiredException ex) {
-			WebFlowController.redirect()
-				.put("redirectTo", varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/checkout"))
-				.to(varParser.getValue("${plugins.ediacaran.front.login_page}"));
+			return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData", locale, ex);
 			throw new InvalidRequestException(error, ex);
-		}		
+		}
 
 		if(!user.isComplete()) {
-			WebFlowController.redirect()
-			.put("redirectTo", varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/checkout"))
-			.to(varParser.getValue("${plugins.ediacaran.front.perfil_page}"));
+			return varParser.getValue("${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
 		}
 		
 		Payment payment;
