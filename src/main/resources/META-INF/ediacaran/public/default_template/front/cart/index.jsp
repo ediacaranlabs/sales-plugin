@@ -57,9 +57,9 @@
 				</ed:col>
 			</ed:row>
 			<!-- /products-table -->
-	
+
+			<!-- payment-area -->
 			<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
-				<!-- payment-area -->
 				<c:if test="${!empty pageContext.request.userPrincipal}">
 				<ed:row>
 					<ed:col size="12">
@@ -73,16 +73,17 @@
 					</ed:col>
 				</ed:row>
 				</c:if>
-				<!-- /payment-area -->
 				
 				<ed:row>
 					<ed:col size="12">
 						<div id="result-checkout" class="result-check"></div>
-						<ec:button enabled="${!empty pageContext.request.userPrincipal}" align="right" actionType="submit" label="#{cart_review.checkout.submit}" bundle="${messages}"/>
+						<ec:button align="right" actionType="submit" label="#{cart_review.checkout.submit}" bundle="${messages}"/>
 					</ed:col>
 				</ed:row>
 
 			</ec:form>
+			<!-- /payment-area -->
+			
 		</ed:container>
 	</section>
 

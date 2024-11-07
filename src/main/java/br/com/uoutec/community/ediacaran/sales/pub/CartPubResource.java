@@ -40,6 +40,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
+import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -337,10 +338,21 @@ public class CartPubResource {
 		try{
 			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
 		}
+		catch(AuthenticationRequiredException ex) {
+			WebFlowController.redirect()
+				.put("redirectTo", varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/checkout"))
+				.to(varParser.getValue("${plugins.ediacaran.front.login_page}"));
+		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}		
+
+		if(!user.isComplete()) {
+			WebFlowController.redirect()
+			.put("redirectTo", varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/checkout"))
+			.to(varParser.getValue("${plugins.ediacaran.front.perfil_page}"));
+		}
 		
 		Payment payment;
 		
