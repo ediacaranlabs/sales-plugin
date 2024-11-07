@@ -50,6 +50,15 @@
 						<hr>
 				</ed:col>
 			</ed:row>
+			
+			<c:if test="${!empty vars.user && !vars.user.complete}">
+				<ec:alert style="danger">
+					<a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart">
+						<fmt:message key="cart_review.retriction_msg" bundle="${messages}" />
+					</a>
+				</ec:alert>
+			</c:if>
+			
 			<!-- products-table -->
 			<ed:row>
 				<ed:col id="product_content" size="12">

@@ -119,24 +119,26 @@ public class CartPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
+		Map<String,Object> result = new HashMap<String, Object>();
 		
-		try{
-			Subject subject = subjectProvider.getSubject();
-			
-			Map<String,Object> result = new HashMap<String, Object>();
-			
-			if(subject.isAuthenticated()) {
+		AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
+		SystemUser user;
+		
+		try {
+			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			result.put("user", user);
+			if(user != null) {
 				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways(cart);
 				result.put("payment_gateway_list", paymentGatewayList);
 			}
 			
-			return result;
 		}
-		catch(Throwable ex){
+		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
+		return result;
 	}
 	
 	@Action(value="/payment-details")
@@ -348,7 +350,7 @@ public class CartPubResource {
 		}
 
 		if(!user.isComplete()) {
-			return varParser.getValue("${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
+			return varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
 		}
 		
 		Payment payment;
