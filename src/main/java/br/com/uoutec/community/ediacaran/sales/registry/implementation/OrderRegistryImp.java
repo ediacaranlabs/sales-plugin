@@ -32,6 +32,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
@@ -389,6 +390,9 @@ public class OrderRegistryImp
 			throw new OrderRegistryException("owner not found");
 		}
 		
+		if(!systemUser.isComplete()) {
+			throw new IncompleteClientRegistrationException();
+		}
 		/*
 		if(cart.getOwner() == null) {
 			throw new OrderRegistryException("owner not found");

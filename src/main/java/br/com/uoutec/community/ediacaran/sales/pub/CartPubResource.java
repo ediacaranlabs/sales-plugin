@@ -37,6 +37,8 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
+import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -326,32 +328,34 @@ public class CartPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 
-		if(cart.isNoitems()){
-			Throwable ex = new IllegalStateException("cart");
-			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "emptyCart", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}		
-
-		SystemUser user = null;
-
 		if(authenticatedSystemUserPubEntity == null) {
-			return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
+			authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
 		}
+		
+		/* user */
+		
+		SystemUser user = null;
 		
 		try{
 			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
 		}
-		catch(AuthenticationRequiredException ex) {
-			return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
+		catch(InvalidRequestException ex){
+			
+			Throwable cause = ex.getCause();
+			
+			if(cause instanceof AuthenticationRequiredException) {
+				return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
+			}
+			
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData", locale, ex);
+			throw new InvalidRequestException(error, ex);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
-
-		if(!user.isComplete()) {
-			return varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
-		}
+		
+		/* Payment */
 		
 		Payment payment;
 		
@@ -362,19 +366,26 @@ public class CartPubResource {
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadPaymentData", locale,  ex);
 			throw new InvalidRequestException(error, ex);
 		}		
-
-		String paymentResource = null;
+		
+		/* checkout */
 		
 		try{
 			Checkout checkoutResult = this.cartRegistry.checkout(cart, payment, "Pedido criado via website.");
-			paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
+			String paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
+			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
+		}
+		catch(EmptyOrderException ex){
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "emptyCart", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		catch(IncompleteClientRegistrationException ex){
+			return varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}");
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "checkout", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
-		return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");
 	}
 
 	public Cart getCart() {
