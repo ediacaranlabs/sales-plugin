@@ -10,9 +10,23 @@
 </c:if>
 <style>
 
+#products-list select {
+	width: 5rem;
+}
+
+#product-image {
+  margin: auto;
+}
+
 @media (max-width: 992px) {
 	#product-line {
 		display: none;
+	}
+	
+	#product-image {
+		flex-grow: unset;
+		margin-left: 4rem;
+        margin-right: 4rem;
 	}
 }
 
@@ -25,7 +39,7 @@
 
 </style>
 <ed:row>
-	<ed:col size="9">
+	<ed:col id="products-list" size="9">
 		<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
 		
 			<ec:box>
@@ -35,8 +49,8 @@
 				<ec:box-body>
 				
 					<ed:row id="product-line-min">
-						<ed:col>
-							<ec:image align="center" src="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png"/>
+						<ed:col id="product-image">
+							<ec:center><ec:image src="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png"/></ec:center>
 						</ed:col>
 						<ed:col>
 							<ed:row>
@@ -70,10 +84,12 @@
 									</ec:form>
 								</ed:col>
 								<ed:col id="cart_item_description_${step.index}">
-									<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
-										<input type="hidden" name="product" value="${productRequest.serial}">
-										<ec:button label="" icon="trash" align="center" actionType="submit" style="danger"/>
-									</ec:form>
+									<ec:center>
+										<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
+											<input type="hidden" name="product" value="${productRequest.serial}">
+											<ec:button label="" icon="trash" actionType="submit" style="danger"/>
+										</ec:form>
+									</ec:center>
 								</ed:col>
 							</ed:row>
 						</ed:col>
@@ -90,8 +106,8 @@
 						</ed:col>
 						<ed:col id="cart_item_value_${step.index}">
 							<ec:center>
-								${productRequest.product.currency}<br>
-								<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+									${productRequest.product.currency}<br>
+									<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
 							</ec:center>
 						</ed:col>
 						<ed:col id="update-item-cart-form-${productRequest.serial}">
