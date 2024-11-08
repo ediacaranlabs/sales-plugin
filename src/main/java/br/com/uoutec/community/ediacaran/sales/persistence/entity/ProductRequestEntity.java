@@ -37,6 +37,9 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="dsc_serial", length=30, unique=true)
 	private String serial;
 	
+	@Column(name="dsc_name", length=128)
+	private String name;
+	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_product", referencedColumnName="cod_product")
 	private ProductEntity product;
@@ -84,6 +87,7 @@ public class ProductRequestEntity implements Serializable{
 	
 	public ProductRequestEntity(OrderEntity order, ProductRequest e){
 		this.id               = e.getId();
+		this.name             = e.getName();
 		this.serial           = e.getSerial();
 		this.order            = order;
 		this.addData          = DataUtil.encode(e.getAddData());
@@ -220,9 +224,18 @@ public class ProductRequestEntity implements Serializable{
 		this.taxes = taxes;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public ProductRequest toEntity(){
 		ProductRequest e = new ProductRequest();
 		e.setSerial(this.serial);
+		e.setName(this.name);
 		e.setCost(this.cost);
 		e.setCurrency(this.currency);
 		e.setId(this.id);

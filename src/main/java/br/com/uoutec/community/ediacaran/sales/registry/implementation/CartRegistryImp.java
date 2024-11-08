@@ -158,6 +158,7 @@ public class CartRegistryImp
 		productRequest.setPeriodType(product.getPeriodType());
 		productRequest.setAdditionalCost(product.getAdditionalCost());
 		productRequest.setProduct(product);
+		productRequest.setName(product.getName());
 		productRequest.setMaxExtra(productType.getMaxExtra());
 		productRequest.setSerial(productTypeHandler.getSerial(productRequest));
 		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest));

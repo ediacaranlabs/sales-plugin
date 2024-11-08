@@ -17,6 +17,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
 public class ProductRequest implements Serializable {
@@ -60,6 +61,11 @@ public class ProductRequest implements Serializable {
 	
 	protected Map<String, String> addData;
 
+	@NotNull
+	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	@Length(max = 128)
+	protected String name;
+	
 	@NotNull
 	@Length(min = 5, max = 128)
 	protected String shortDescription;
@@ -158,6 +164,14 @@ public class ProductRequest implements Serializable {
 
 	public void setAvailability(boolean availability) {
 		this.availability = availability;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getShortDescription() {
