@@ -59,12 +59,6 @@
 								</ed:col>
 							</ed:row>
 							<ed:row>
-								<ed:col id="cart_item_value_${step.index}">
-									<ec:center>
-										${productRequest.product.currency}<br>
-										<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
-									</ec:center>
-								</ed:col>
 								<ed:col id="update-item-cart-form-${productRequest.serial}">
 									<ec:form id="update-item-cart-form-${productRequest.serial}">
 										<ec:select name="units"> <!-- style="width: 60px" -->
@@ -82,6 +76,11 @@
 											</ec:event>
 										</ec:select>
 									</ec:form>
+								</ed:col>
+								<ed:col id="cart_item_value_${step.index}">
+									<ec:center>
+										${productRequest.product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+									</ec:center>
 								</ed:col>
 								<ed:col id="cart_item_description_${step.index}">
 									<ec:center>
@@ -104,12 +103,6 @@
 							<ec:center>${productRequest.description}</ec:center>
 							<p>
 						</ed:col>
-						<ed:col id="cart_item_value_${step.index}">
-							<ec:center>
-									${productRequest.product.currency}<br>
-									<fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
-							</ec:center>
-						</ed:col>
 						<ed:col id="update-item-cart-form-${productRequest.serial}">
 							<ec:form id="update-item-cart-form-${productRequest.serial}">
 								<ec:select name="units"> <!-- style="width: 60px" -->
@@ -127,6 +120,11 @@
 									</ec:event>
 								</ec:select>
 							</ec:form>
+						</ed:col>
+						<ed:col id="cart_item_value_${step.index}">
+							<ec:center>
+									${productRequest.product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+							</ec:center>
 						</ed:col>
 						<ed:col id="cart_item_description_${step.index}">
 							<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
