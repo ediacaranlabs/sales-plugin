@@ -10,6 +10,10 @@
 </c:if>
 <style>
 
+#delete-icon {
+	cursor: pointer;
+}
+
 #products-list select {
 	width: 5rem;
 }
