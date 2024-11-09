@@ -38,6 +38,7 @@
 </c:if>
 <ed:row>
 	<ed:col size="12" id="payment_form_area">
+		<c:if test="${vars.payment_gateway_list.size() > 0}">
 		<script type="text/javascript">
 			$.AppContext.onload(function(){			
 				$.AppContext.utils
@@ -47,7 +48,6 @@
 					);
 			});	
 		</script>
-		<c:if test="${vars.payment_gateway_list.size() > 0}">
 			<jsp:include page="${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}"/>
 		</c:if>
 	</ed:col>

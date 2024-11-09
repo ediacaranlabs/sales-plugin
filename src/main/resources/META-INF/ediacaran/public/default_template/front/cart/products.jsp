@@ -66,10 +66,10 @@
 								<ed:col id="update-item-cart-form-${productRequest.serial}">
 									<ec:form id="update-item-cart-form-${productRequest.serial}">
 										<ec:select name="units"> <!-- style="width: 60px" -->
-											<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType || productRequest.product.periodType == 'UNDEFINED'? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+											<ec:option value="1" selected="${productRequest.units == 1}">1</ec:option>
 											<c:if test="${productRequest.maxExtra > 1}">
 												<c:forEach var="units" begin="2" end="${productRequest.maxExtra + 1}">
-													<ec:option value="${units}" selected="${productRequest.units == units}">${units} ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+													<ec:option value="${units}" selected="${productRequest.units == units}">${units}</ec:option>
 												</c:forEach>
 											</c:if>
 											<ec:event type="change">
@@ -79,6 +79,7 @@
 												$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/units/${productRequest.serial}/' + $qty, "product_content");
 											</ec:event>
 										</ec:select>
+										${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}
 									</ec:form>
 								</ed:col>
 								<ed:col id="cart_item_value_${step.index}">
@@ -110,10 +111,10 @@
 						<ed:col id="update-item-cart-form-${productRequest.serial}">
 							<ec:form id="update-item-cart-form-${productRequest.serial}">
 								<ec:select name="units"> <!-- style="width: 60px" -->
-									<ec:option value="1" selected="${productRequest.units == 1}">1 ${empty productRequest.product.periodType || productRequest.product.periodType == 'UNDEFINED'? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+									<ec:option value="1" selected="${productRequest.units == 1}">1</ec:option>
 									<c:if test="${productRequest.maxExtra > 1}">
 										<c:forEach var="units" begin="2" end="${productRequest.maxExtra + 1}">
-											<ec:option value="${units}" selected="${productRequest.units == units}">${units} ${empty productRequest.product.periodType? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+											<ec:option value="${units}" selected="${productRequest.units == units}">${units}</ec:option>
 										</c:forEach>
 									</c:if>
 									<ec:event type="change">
@@ -123,6 +124,7 @@
 										$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/units/${productRequest.serial}/' + $qty, "product_content");
 									</ec:event>
 								</ec:select>
+								${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/ '.concat(productRequest.product.periodType.getName(locale))}
 							</ec:form>
 						</ed:col>
 						<ed:col id="cart_item_value_${step.index}">

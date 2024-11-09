@@ -207,13 +207,15 @@ public class ProductRequest implements Serializable {
 	}
 
 	public BigDecimal getSubtotal(){
-		BigDecimal value = this.cost;
+		BigDecimal value = cost;
 		
 		if(this.units > 1){
-			BigDecimal ex = 
-					this.additionalCost
-					.multiply(new BigDecimal(this.units - 1));
-			value = value.add(ex);
+			if(additionalCost == null) {
+				return cost.multiply(new BigDecimal(this.units));
+			}
+			else {
+				return value.add(additionalCost.multiply(new BigDecimal(this.units - 1)));
+			}
 		}
 		
 		return value;
