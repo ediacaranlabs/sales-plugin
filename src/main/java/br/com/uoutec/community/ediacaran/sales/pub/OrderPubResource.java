@@ -65,6 +65,10 @@ public class OrderPubResource {
 		}
 	}
 
+	public void searchOrders(OrderSearchRequest request) {
+		
+	}
+	
 	@Action("/show/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/orders/show_order")
 	@Result("vars")
