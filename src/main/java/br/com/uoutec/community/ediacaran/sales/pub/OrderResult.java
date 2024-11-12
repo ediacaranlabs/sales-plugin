@@ -1,12 +1,15 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 
-public class OrderResult {
+public class OrderResult implements Serializable {
+
+	private static final long serialVersionUID = 9166429937476180931L;
 
 	private String id;
 	

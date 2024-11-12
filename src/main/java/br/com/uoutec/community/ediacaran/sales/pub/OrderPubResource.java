@@ -38,7 +38,7 @@ import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
-@Controller(value="${plugins.ediacaran.front.admin_context}/orders", defaultActionName="/")
+@Controller(value="${plugins.ediacaran.front.panel_context}/orders", defaultActionName="/")
 @ResponseErrors(rendered=false)
 public class OrderPubResource {
 
@@ -55,7 +55,7 @@ public class OrderPubResource {
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
-	@View("${plugins.ediacaran.sales.template}/admin/orders/index")
+	@View("${plugins.ediacaran.sales.template}/panel/order/index")
 	@Result("orders")
 	public List<Order> showOrders(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -124,7 +124,7 @@ public class OrderPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/orders/show_order")
+	@View("${plugins.ediacaran.sales.template}/panel/order/details_order")
 	@Result("vars")
 	public Map<String,Object> orderDetail(
 			@DetachedName
