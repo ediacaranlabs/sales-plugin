@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 
-public class OrderSearchRequest implements Serializable{
+public class OrderSearch implements Serializable{
 	
 	private static final long serialVersionUID = 2549319270886774890L;
 
@@ -20,7 +20,9 @@ public class OrderSearchRequest implements Serializable{
 	
 	private OrderStatus status;
 
-	private BigDecimal total;
+	private BigDecimal minTotal;
+
+	private BigDecimal maxTotal;
 	
 	private String invoice;
 	
@@ -76,12 +78,20 @@ public class OrderSearchRequest implements Serializable{
 		this.invoice = invoice;
 	}
 
-	public BigDecimal getTotal() {
-		return total;
+	public BigDecimal getMinTotal() {
+		return minTotal;
 	}
 
-	public void setTotal(BigDecimal total) {
-		this.total = total;
+	public void setMinTotal(BigDecimal minTotal) {
+		this.minTotal = minTotal;
+	}
+
+	public BigDecimal getMaxTotal() {
+		return maxTotal;
+	}
+
+	public void setMaxTotal(BigDecimal maxTotal) {
+		this.maxTotal = maxTotal;
 	}
 
 	public Integer getPage() {

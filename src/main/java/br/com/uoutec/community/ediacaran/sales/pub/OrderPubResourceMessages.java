@@ -28,4 +28,15 @@ public class OrderPubResourceMessages {
 		}
 		
 	}
+	
+	public final class search {
+		
+		public final class error {
+	
+			public static final String fail_load_entity = "search.error.fail_load_entity";
+			
+		}
+		
+	}
+	
 }

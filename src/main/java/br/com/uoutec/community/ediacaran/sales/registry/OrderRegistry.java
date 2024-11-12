@@ -6,12 +6,14 @@ import java.util.List;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
@@ -54,6 +56,8 @@ public interface OrderRegistry extends PublicBean {
 	Order findById(String id) throws OrderRegistryException;
 
 	Order findByCartID(String id) throws OrderRegistryException;
+
+	List<OrderResultSearch> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws OrderRegistryException;
 	
 	List<Order> getOrders(OrderStatus status, Integer first, 
 			Integer max) throws OrderRegistryException, SystemUserRegistryException;

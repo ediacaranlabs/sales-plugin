@@ -2,11 +2,9 @@ package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Locale;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 
 public class OrderResult {
 
@@ -26,15 +24,16 @@ public class OrderResult {
 	
 	private String invoice;
 
-	public OrderResult(Order order, SystemUser user, Locale locale) {
-		this.id = order.getId();
-		this.owner = user == null? null : user.getFirstName() + " " + user.getLastName();
-		this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
-		this.status = order.getStatus() == null? null : order.getStatus().getName(locale);
-		this.subTotal = order.getSubtotal();
-		this.taxes = order.getTax();
-		this.total = order.getTotal();
-		this.invoice = order.getInvoice() == null? null : order.getInvoice().getId();
+	public OrderResult(OrderResultSearch orderResultSearch, Locale locale, DateTimeFormatter dateTimeFormatter) {
+		this.id = orderResultSearch.getOrder().getId();
+		this.owner = orderResultSearch.getOwner().getFirstName() + " " + orderResultSearch.getOwner().getLastName();
+		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
+		this.date = orderResultSearch.getOrder().getDate() == null? null : dateTimeFormatter.format(orderResultSearch.getOrder().getDate());
+		this.status = orderResultSearch.getOrder().getStatus() == null? null : orderResultSearch.getOrder().getStatus().getName(locale);
+		this.subTotal = orderResultSearch.getOrder().getSubtotal();
+		this.taxes = orderResultSearch.getOrder().getTax();
+		this.total = orderResultSearch.getOrder().getTotal();
+		this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
 	}
 	
 	public String getId() {
