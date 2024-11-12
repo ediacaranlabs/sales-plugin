@@ -19,14 +19,20 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.PaymentEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
+import br.com.uoutec.community.ediacaran.system.util.StringUtil;
+import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -221,6 +227,111 @@ public class OrderEntityAccessImp
 		return value;
 	}
 
+	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws EntityAccessException {
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderEntity> criteria = 
+		    		builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = 
+		    		criteria.from(OrderEntity.class);
+		    Join<OrderEntity, SystemUserEntity> systemUserJoin = from.join("owner");
+		    Join<OrderEntity, PaymentEntity> paymentJoin = from.join("payment");
+		    Join<OrderEntity, InvoiceEntity> invoiceJoin = from.join("invoice");
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
+
+		    if(value.getId() != null) {
+		    	and.add(builder.equal(from.get("id"), value.getId()));
+		    }
+		    
+		    if(value.getStartDate() != null || value.getEndDate() != null) {
+		    	
+		    	if(value.getStartDate() != null && value.getEndDate() != null) {
+				    and.add(builder.between(systemUserJoin.get("date"), value.getStartDate(), value.getEndDate()));
+		    	}
+		    	else
+		    	if(value.getStartDate() != null) {
+				    and.add(builder.greaterThanOrEqualTo(systemUserJoin.get("date"), value.getStartDate()));
+		    	}
+		    	else
+		    	if(value.getEndDate() != null) {
+				    and.add(builder.lessThanOrEqualTo(systemUserJoin.get("date"), value.getEndDate()));
+		    	}
+		    	
+		    }
+
+		    if(value.getMinTotal() != null || value.getMaxTotal() != null) {
+		    	
+		    	if(value.getMinTotal() != null && value.getMaxTotal() != null) {
+				    and.add(builder.between(paymentJoin.get("total"), value.getMinTotal(), value.getMaxTotal()));
+		    	}
+		    	else
+		    	if(value.getMinTotal() != null) {
+				    and.add(builder.greaterThanOrEqualTo(paymentJoin.get("total"), value.getMinTotal()));
+		    	}
+		    	else
+		    	if(value.getMaxTotal() != null) {
+				    and.add(builder.lessThanOrEqualTo(paymentJoin.get("total"), value.getMaxTotal()));
+		    	}
+		    	
+		    }
+		    
+		    if(value.getOwner() != null) {
+			    and.add(builder.equal(systemUserJoin.get("id"), value.getOwner()));
+		    }
+
+		    if(value.getStatus() != null) {
+			    and.add(builder.equal(systemUserJoin.get("status"), value.getStatus()));
+		    }
+		    
+		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
+			    and.add(builder.like(systemUserJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+		    }
+		    
+		    if(value.getInvoice() != null) {
+			    and.add(builder.equal(invoiceJoin.get("id"), value.getInvoice()));
+		    }
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<OrderEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    if(first != null) {
+		    	typed.setFirstResult(first);
+		    }
+		    
+		    if(max != null) {
+			    typed.setMaxResults(max);		    	
+		    }
+		    
+		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
+		    List<OrderResultSearch> result = new ArrayList<OrderResultSearch>();
+    
+		    for(OrderEntity e: list) {
+		    	result.add(new OrderResultSearch(e.toEntity(), e.getOwner().toEntity()));
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}		
+	}
+	
 	public List<Order> getOrders(Integer owner, Integer first, Integer max)
 			throws EntityAccessException {
 		

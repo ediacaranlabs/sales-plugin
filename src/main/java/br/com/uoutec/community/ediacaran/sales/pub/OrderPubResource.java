@@ -109,7 +109,7 @@ public class OrderPubResource {
 			List<OrderResult> result = values.stream()
 					.map((e)->new OrderResult(e, locale, dtaFormt)).collect(Collectors.toList());
 			
-			return new OrderSearchResult(-1, page, result.size() > 10, result);
+			return new OrderSearchResult(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

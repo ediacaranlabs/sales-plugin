@@ -58,6 +58,9 @@ public class PaymentEntity implements Serializable{
 	
 	@Column(name="vlr_tax", scale=3, precision=12)
 	private BigDecimal tax;
+
+	@Column(name="vlr_total", scale=3, precision=12)
+	private BigDecimal total;
 	
 	@NotNull
 	@Column(name="dsc_currency", length=3)
@@ -81,6 +84,7 @@ public class PaymentEntity implements Serializable{
 		this.paymentType        = e.getPaymentType();
 		this.value              = e.getValue();
 		this.discount           = e.getDiscount();
+		this.total              = e.getTotal();
 		
 		Map<String,String> actualData = e.getAddData();
 		Map<String,String> data = DataUtil.encode(e, excludeFields);
@@ -143,6 +147,22 @@ public class PaymentEntity implements Serializable{
 		this.currency = currency;
 	}
 
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
 	public String getExtendData() {
 		return extendData;
 	}
@@ -186,6 +206,7 @@ public class PaymentEntity implements Serializable{
 			e.setPaymentType(this.paymentType);
 			e.setValue(this.value);
 			e.setDiscount(this.discount);
+			e.setTotal(this.total);
 			
 			return e;
 		}

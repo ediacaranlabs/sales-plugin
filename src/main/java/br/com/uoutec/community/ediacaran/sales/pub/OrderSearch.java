@@ -13,6 +13,8 @@ public class OrderSearch implements Serializable{
 	private String id;
 	
 	private Integer owner;
+
+	private String ownerName;
 	
 	private LocalDate startDate;
 	
@@ -44,6 +46,14 @@ public class OrderSearch implements Serializable{
 
 	public void setOwner(Integer owner) {
 		this.owner = owner;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
 
 	public LocalDate getStartDate() {

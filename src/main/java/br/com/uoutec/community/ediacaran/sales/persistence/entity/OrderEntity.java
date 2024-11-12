@@ -21,6 +21,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
+import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 
 @Entity
 @Table(name="rw_order")
@@ -33,8 +34,9 @@ public class OrderEntity implements Serializable{
 	@Column(name="cod_order", length=38)
 	private String id;
 
-	@Column(name="cod_owner", length=11)
-	private Integer owner;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="cod_owner", referencedColumnName="cod_owner")
+	private SystemUserEntity owner;
 
 	@Column(name="dsc_cartid", length=128)
 	private String cartID;
@@ -70,7 +72,12 @@ public class OrderEntity implements Serializable{
 		this.date = e.getDate();
 		this.cartID = e.getCartID();
 		this.id = e.getId();
-		this.owner = e.getOwner();
+		
+		if(e.getOwner() > 0) {
+			this.owner = new SystemUserEntity();
+			this.owner.setId(e.getOwner());
+		}
+		
 		this.invoice = e.getInvoice() == null? null : new InvoiceEntity(e.getInvoice());
 		
 		if(e.getItens() != null){
@@ -103,11 +110,11 @@ public class OrderEntity implements Serializable{
 		this.id = id;
 	}
 
-	public Integer getOwner() {
+	public SystemUserEntity getOwner() {
 		return owner;
 	}
 
-	public void setOwner(Integer owner) {
+	public void setOwner(SystemUserEntity owner) {
 		this.owner = owner;
 	}
 
@@ -187,7 +194,11 @@ public class OrderEntity implements Serializable{
 		
 		e.setDate(this.date);
 		e.setId(this.id);
-		e.setOwner(this.owner);
+		
+		if(this.owner != null) {
+			e.setOwner(this.owner.getId());
+		}
+		
 		e.setInvoice(this.invoice == null? null : this.invoice.toEntity());
 		e.setPayment(this.payment == null? null : this.payment.toEntity());
 		e.setRemoved(this.removed == null? false : this.removed);

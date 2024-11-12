@@ -57,7 +57,7 @@ public interface OrderRegistry extends PublicBean {
 
 	Order findByCartID(String id) throws OrderRegistryException;
 
-	List<OrderResultSearch> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws OrderRegistryException;
+	List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws OrderRegistryException;
 	
 	List<Order> getOrders(OrderStatus status, Integer first, 
 			Integer max) throws OrderRegistryException, SystemUserRegistryException;

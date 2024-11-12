@@ -37,6 +37,10 @@ public class Payment implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal discount;
+
+	@NotNull(groups = DataValidation.class)
+	@Min(value = 0, groups = DataValidation.class)
+	private BigDecimal total;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.CURRENCY)
@@ -100,8 +104,17 @@ public class Payment implements Serializable{
 		this.discount = discount;
 	}
 
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
+	/*
 	public BigDecimal getTotal(){
 		return this.value.subtract(this.discount).add(this.tax);
 	}
-	
+	*/
 }

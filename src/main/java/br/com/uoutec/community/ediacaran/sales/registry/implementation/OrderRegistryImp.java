@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -30,6 +31,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
@@ -224,6 +226,15 @@ public class OrderRegistryImp
 		
 		try{
 			return orderEntityAccess.findByCartID(id);
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException(e);
+		}
+	}
+	
+	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws OrderRegistryException {
+		try{
+			return orderEntityAccess.searchOrder(value, first, max);
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);
@@ -448,6 +459,7 @@ public class OrderRegistryImp
 		payment.setDiscount(cart.getTotalDiscount());
 		payment.setCurrency(order.getItens().get(0).getCurrency());
 		payment.setValue(cart.getSubtotal());
+		payment.setTotal(cart.getTotal());
 		order.setPayment(payment);
 		
 		try{

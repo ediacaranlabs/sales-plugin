@@ -5,8 +5,10 @@ import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public interface OrderEntityAccess {
@@ -20,6 +22,8 @@ public interface OrderEntityAccess {
 	void update(Order value) throws EntityAccessException;
 	
 	void delete(Order value) throws EntityAccessException;
+	
+	List<OrderResultSearch> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws EntityAccessException;
 	
 	List<Order> getOrders(Integer owner, Integer first, Integer max) throws EntityAccessException;
 	
