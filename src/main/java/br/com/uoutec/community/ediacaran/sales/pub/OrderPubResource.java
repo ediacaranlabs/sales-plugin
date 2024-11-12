@@ -55,7 +55,7 @@ public class OrderPubResource {
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
-	@View("${plugins.ediacaran.sales.template}/panel/order/index")
+	@View("${plugins.ediacaran.sales.template}/front/panel/order/index")
 	@Result("orders")
 	public List<Order> showOrders(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -79,7 +79,7 @@ public class OrderPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	public synchronized Serializable search(
-			@DetachedName OrderSearchPubEntity request,
+			@DetachedName OrderSearchAdminPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
 
@@ -124,7 +124,7 @@ public class OrderPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/panel/order/details_order")
+	@View("${plugins.ediacaran.sales.template}/front/panel/order/details_order")
 	@Result("vars")
 	public Map<String,Object> orderDetail(
 			@DetachedName

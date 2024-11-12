@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -22,6 +23,9 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 	
 	@Min(1)
 	private Integer owner;
+
+	@Pattern(regexp=CommonValidation.NAME_FORMAT)
+	private String ownerName;
 	
 	private LocalDate startDate;
 	
@@ -122,6 +126,14 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 		this.resultPerPage = resultPerPage;
 	}
 
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
 	@Override
 	protected boolean isEqualId(OrderSearch instance) throws Throwable {
 		return false;
@@ -159,6 +171,7 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
 		o.setStatus(status);
+		o.setOwnerName(this.ownerName);
 	}
 	
 }
