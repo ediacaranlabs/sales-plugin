@@ -66,41 +66,65 @@
 		</ed:row>
 
 		<ed:row>
-			<ed:col size="6">
+			<ed:col size="4">
 				<p>
 					<fmt:message key="show_order.payment_due" bundle="${messages}"/>
 					${vars.order.toStringDate(locale)}
 				</p>
 				
 				<ec:description-list>
-					<ec:description title="#{show_order.table_product.subtotal}" bundle="${messages}">
+					<ec:description title="#{show_order.table_product.subtotal}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.value}"/>
 					</ec:description>
-					<ec:description title="#{show_order.table_product.discount}" bundle="${messages}">
+					<ec:description title="#{show_order.table_product.discount}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.discount}"/>
 					</ec:description>
-					<ec:description title="#{show_order.table_product.tax}" bundle="${messages}">
+					<ec:description title="#{show_order.table_product.tax}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.tax}"/>
 					</ec:description>
-					<ec:description title="#{show_order.table_product.shipping}" bundle="${messages}">
+					<ec:description title="#{show_order.table_product.shipping}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.shipping.value}"/>
 					</ec:description>
-					<ec:description title="#{show_order.table_product.total}" bundle="${messages}">
+					<ec:description title="#{show_order.table_product.total}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.total}"/>
 					</ec:description>
 				</ec:description-list>
 			</ed:col>
-			<ed:col size="6">
-				<ec:box>
-					<ec:box-header><b>Payment type</b></ec:box-header>
-					<ec:box-body>
-					    <!-- payment method page -->
+			<ed:col size="8">
+				<ec:tabs>
+					<ec:tabs-item title="Payment type" active="true" >
+						<span id="payment_type_tab">
 					    <c:if test="${!empty vars['payment_view']}">
-							<jsp:include page="${vars['payment_view']}"/>
-						</c:if>
-					    <!-- /payment method page -->
-					</ec:box-body>
-				</ec:box>
+							<script type="text/javascript">
+								$.AppContext.onload(function(){			
+									$.AppContext.utils
+										.updateContentByID(
+												"#!${vars['payment_view']}", 
+												"payment_type_tab"
+										);
+								});	
+							</script>
+					    </c:if>
+						</span>
+					</ec:tabs-item>
+					<c:forEach items="${vars.widgets}" var="widget">
+						<ec:tabs-item title="${widget.title}" >
+							<span id="${widget.id}_tab">
+						    <c:if test="${!empty vars['payment_view']}">
+								<script type="text/javascript">
+									$.AppContext.onload(function(){			
+										$.AppContext.utils
+											.updateContentByID(
+													"#!${widget.resource}", 
+													"${widget.id}_tab"
+											);
+									});	
+								</script>
+						    </c:if>
+							</span>
+						</ec:tabs-item>
+					</c:forEach>
+				</ec:tabs>
 			</ed:col>
 		</ed:row>
 	

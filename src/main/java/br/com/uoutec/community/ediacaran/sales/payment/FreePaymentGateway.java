@@ -38,7 +38,9 @@ public class FreePaymentGateway implements PaymentGateway{
 
 	@Override
 	public String getOwnerView(Order order) throws PaymentGatewayException {
-		return null;
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		String view = varParser.getValue("${plugins.ediacaran.sales.web_path}/default_template/front/cart/free_payment.jsp");
+		return view;
 	}
 
 	@Override
