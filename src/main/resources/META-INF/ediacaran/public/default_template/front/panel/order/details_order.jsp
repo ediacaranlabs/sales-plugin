@@ -119,7 +119,6 @@
 					<c:forEach items="${vars.widgets}" var="widget">
 						<ec:tabs-item title="${widget.title}" >
 							<span id="${widget.id}_tab">
-						    <c:if test="${!empty vars['payment_view']}">
 								<script type="text/javascript">
 									$.AppContext.onload(function(){			
 										$.AppContext.utils
@@ -129,7 +128,6 @@
 											);
 									});	
 								</script>
-						    </c:if>
 							</span>
 						</ec:tabs-item>
 					</c:forEach>

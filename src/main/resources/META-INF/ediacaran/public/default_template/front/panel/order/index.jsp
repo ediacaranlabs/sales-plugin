@@ -25,6 +25,33 @@
 <ec:box>
 	<ec:box-header><fmt:message key="show-orders.table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
+		<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/search">
+			<ed:row>
+				<ed:col size="4">
+		    		<ec:field-group>
+		    			<ec:datefield name="startDate">
+		    				<ec:event type="change">
+								var $form = $.AppContext.utils.getById('orderSearchForm');
+								var $startDate = $form.getField('startDate');
+								var $endDate = $form.getField('endDate');
+								$endDate.setProperty('min', $startDate.getValue());
+		    				</ec:event>
+		    			</ec:datefield>
+		    			<ec:datefield name="endDate">
+		    				<ec:event type="change">
+								var $form = $.AppContext.utils.getById('orderSearchForm');
+								var $startDate = $form.getField('startDate');
+								var $endDate = $form.getField('endDate');
+								$startDate.setProperty('max', $endDate.getValue());
+		    				</ec:event>
+		    			</ec:datefield>
+		    		</ec:field-group>
+				</ed:col>
+				<ed:col size="8">
+				</ed:col>
+			</ed:row>
+		</ec:data-table>
+	
 		<ec:table>
 			<ec:table-header>
 				<ec:table-col><ec:center><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:center></ec:table-col>
