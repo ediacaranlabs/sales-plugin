@@ -83,7 +83,7 @@ public class Order implements Serializable{
 		//DateTimeFormatter.withLocale(locale).
 		
 		DateTimeFormatter dateTimeFormatter = 
-				DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
+				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
 		return date.format(dateTimeFormatter);
 	}
 	

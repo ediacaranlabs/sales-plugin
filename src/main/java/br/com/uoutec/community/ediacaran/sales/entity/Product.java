@@ -39,7 +39,6 @@ public class Product implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	protected String productType;
 	
-	@NotNull(groups = DataValidation.class)
 	protected BigDecimal additionalCost;
 	
 	@NotNull(groups = DataValidation.class)

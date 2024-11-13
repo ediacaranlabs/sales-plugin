@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales;
 
 import br.com.uoutec.community.ediacaran.front.pub.Menu;
 import br.com.uoutec.community.ediacaran.front.pub.MenuBar;
-import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectMetadata;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectValue;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsManagerDriver.ObjectsManagerDriverListener;
@@ -45,7 +44,6 @@ public class AdminMenuListener
 		}
 		
 		menu.addItem("orders")
-			.setRole(BasicRoles.CLIENT)
 			.setIcon("circle")
 			.setName("Orders")
 			.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)

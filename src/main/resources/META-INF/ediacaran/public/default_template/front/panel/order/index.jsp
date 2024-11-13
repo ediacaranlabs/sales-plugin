@@ -27,20 +27,24 @@
 	<ec:box-body>
 		<ec:table>
 			<ec:table-header>
-				<ec:table-col><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="show-orders.table.status" bundle="${messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="show-orders.table.total" bundle="${messages}"/></ec:table-col>
-				<ec:table-col><fmt:message key="show-orders.table.action" bundle="${messages}"/></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:center></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="show-orders.table.status" bundle="${messages}"/></ec:center></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="show-orders.table.total" bundle="${messages}"/></ec:center></ec:table-col>
+				<ec:table-col><ec:center><fmt:message key="show-orders.table.action" bundle="${messages}"/></ec:center></ec:table-col>
 			</ec:table-header>
 			<ec:table-body>
 				<c:forEach var="order" items="${orders}">
-					<ec:table-col>${order.toStringDate(lcoale)}</ec:table-col>
-					<ec:table-col>${order.status.friendlyName}</ec:table-col>
-					<ec:table-col>${order.payment.currency} <fmt:formatNumber pattern="###,###,###.00" value="${order.payment.total}"/></ec:table-col>
+					<ec:table-col><ec:center>${order.toStringDate(locale)}</ec:center></ec:table-col>
+					<ec:table-col><ec:center>${order.status.getName(locale)}</ec:center></ec:table-col>
+					<ec:table-col><ec:center>${order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${order.payment.total}"/></ec:center></ec:table-col>
 					<ec:table-col>
-						<a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id.id}">
-							<fmt:message key="show-orders.table.button_show" bundle="${messages}"/>
-						</a>
+						<ec:center>
+						<ec:button label="" icon="search" style="info">
+							<ec:event type="click">
+								$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id}');
+							</ec:event>
+						</ec:button>
+						</ec:center>
 					</ec:table-col>
 				</c:forEach>
 			</ec:table-body>

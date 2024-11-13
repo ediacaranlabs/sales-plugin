@@ -16,11 +16,14 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	private CartErrorsPluginInstaller cartErrorsPluginInstaller;
 	
+	private MenuPluginInstaller menuPluginInstaller;
+	
 	public PluginInstaller() {
 		this.securityPluginInstaller = new SecurityPluginInstaller();
 		this.i18nPluginInstaller = new I18nPluginInstaller();
 		this.paymentGatewayPluginInstaller = new PaymentGatewayPluginInstaller();
 		this.cartErrorsPluginInstaller = new CartErrorsPluginInstaller();
+		this.menuPluginInstaller = new MenuPluginInstaller();
 	}
 	
 	@Override
@@ -29,6 +32,7 @@ public class PluginInstaller extends AbstractPlugin {
 		i18nPluginInstaller.install();
 		paymentGatewayPluginInstaller.install();
 		cartErrorsPluginInstaller.install();
+		menuPluginInstaller.install();
 	}
 
 	@Override
@@ -37,6 +41,7 @@ public class PluginInstaller extends AbstractPlugin {
 		i18nPluginInstaller.uninstall();
 		paymentGatewayPluginInstaller.uninstall();
 		cartErrorsPluginInstaller.uninstall();
+		menuPluginInstaller.uninstall();
 	}
 	
 }

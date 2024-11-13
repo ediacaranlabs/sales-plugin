@@ -35,7 +35,7 @@ public class OrderEntity implements Serializable{
 	private String id;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_owner", referencedColumnName="cod_owner")
+	@JoinColumn(name="cod_owner", referencedColumnName="cod_system_user")
 	private SystemUserEntity owner;
 
 	@Column(name="dsc_cartid", length=128)
