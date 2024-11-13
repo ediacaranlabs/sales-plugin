@@ -25,17 +25,17 @@
 
 <ed:row>
 	<ed:col>
-		<h2><fmt:message key="show_order.date" bundle="${messages}"/>: ${vars.order.toStringDate(lcoale)}</h2>
+		<h2><fmt:message key="show_order.date" bundle="${messages}"/>: ${vars.order.toStringDate(locale)}</h2>
 	</ed:col>
 </ed:row>
 <ed:row>
 	<ed:col>
 		<b><fmt:message key="show_order.invoice_id" bundle="${messages}"/> #${vars.order.invoice.id}</b><br>
 		<br> 
-		<b><fmt:message key="show_order.order_id" bundle="${messages}"/>:</b> #${vars.order.id.id}<br>
-		<b><fmt:message key="show_order.payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(lcoale)}<br>
-		<b><fmt:message key="show_order.account" bundle="${messages}"/>:</b> ${vars.order.id.systemUserId}<br>
-		<b><fmt:message key="show_order.status" bundle="${messages}"/>:</b> ${vars.order.status.friendlyName}
+		<b><fmt:message key="show_order.order_id" bundle="${messages}"/>:</b> #${vars.order.id}<br>
+		<b><fmt:message key="show_order.payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(locale)}<br>
+		<b><fmt:message key="show_order.account" bundle="${messages}"/>:</b> ${vars.order.owner}<br>
+		<b><fmt:message key="show_order.status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
 	</ed:col>
 </ed:row>
 <ed:row>
@@ -74,7 +74,7 @@
 	<ed:col size="6">
 		<p>
 			<fmt:message key="show_order.payment_due" bundle="${messages}"/>
-			${vars.order.toStringDate(lcoale)}
+			${vars.order.toStringDate(locale)}
 		</p>
 		
 		<ec:description-list>
