@@ -1,0 +1,4 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
+<%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
+<%@page trimDirectiveWhitespaces="true" %>
+

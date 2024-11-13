@@ -66,7 +66,7 @@
 		</ed:row>
 
 		<ed:row>
-			<ed:col size="4">
+			<ed:col size="5">
 				<p>
 					<fmt:message key="show_order.payment_due" bundle="${messages}"/>
 					${vars.order.toStringDate(locale)}
@@ -76,23 +76,32 @@
 					<ec:description title="#{show_order.table_product.subtotal}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.value}"/>
 					</ec:description>
+					<%--
 					<ec:description title="#{show_order.table_product.discount}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.discount}"/>
 					</ec:description>
+					--%>
+					<c:forEach items="${vars.order.taxes}" var="tax">
+					<ec:description title="${tax.name}" truncate="false">
+						<c:if test="${tax.type == 'UNIT'}">${vars.order.payment.currency}</c:if>
+						<c:if test="${tax.discount}">-</c:if>
+						 <fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/>
+						<c:if test="${tax.type == 'PERCENTAGE'}"> %</c:if>
+					</ec:description>
+					</c:forEach>
+					<%--
 					<ec:description title="#{show_order.table_product.tax}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.tax}"/>
 					</ec:description>
-					<ec:description title="#{show_order.table_product.shipping}" truncate="false" bundle="${messages}">
-						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.shipping.value}"/>
-					</ec:description>
+					--%>
 					<ec:description title="#{show_order.table_product.total}" truncate="false" bundle="${messages}">
 						${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.total}"/>
 					</ec:description>
 				</ec:description-list>
 			</ed:col>
-			<ed:col size="8">
+			<ed:col size="7">
 				<ec:tabs>
-					<ec:tabs-item title="Payment type" active="true" >
+					<ec:tabs-item title="#{show_order.widgets.payment}" bundle="${messages}" active="true" >
 						<span id="payment_type_tab">
 					    <c:if test="${!empty vars['payment_view']}">
 							<script type="text/javascript">
