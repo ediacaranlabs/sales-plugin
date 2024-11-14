@@ -43,9 +43,6 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 	private PaymentPubEntity payment;
 
 	@Valid
-	private InvoicePubEntity invoice;
-
-	@Valid
 	@Size(min = 1, groups = DataValidation.class)
 	private List<ProductRequestPubEntity> itens;
 
@@ -85,14 +82,6 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 		this.payment = payment;
 	}
 
-	public InvoicePubEntity getInvoice() {
-		return invoice;
-	}
-
-	public void setInvoice(InvoicePubEntity invoice) {
-		this.invoice = invoice;
-	}
-
 	public List<ProductRequestPubEntity> getItens() {
 		return itens;
 	}
@@ -123,10 +112,6 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 
 		o.setDate(this.date);
 		o.setId(this.id);
-		o.setInvoice(this.invoice == null ? 
-				null : 
-				this.invoice.rebuild(o.getInvoice(), override, validate));
-
 
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();

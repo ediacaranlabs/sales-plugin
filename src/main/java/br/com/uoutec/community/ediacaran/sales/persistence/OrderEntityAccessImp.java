@@ -119,6 +119,7 @@ public class OrderEntityAccessImp
 		try{
 			OrderEntity pEntity = this.toPersistenceEntity(value);
 
+			/*
 			if(pEntity.getInvoice() != null){
 				if(pEntity.getInvoice().getId() == null){
 					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getOwner()));
@@ -128,6 +129,7 @@ public class OrderEntityAccessImp
 					entityManager.merge(pEntity.getInvoice());
 				}
 			}
+			*/
 			
 			if(pEntity.getPayment() != null){
 				if(pEntity.getPayment().getId() == null){
@@ -283,7 +285,7 @@ public class OrderEntityAccessImp
 		    }
 
 		    if(value.getStatus() != null) {
-			    and.add(builder.equal(systemUserJoin.get("status"), value.getStatus()));
+			    and.add(builder.equal(from.get("status"), value.getStatus()));
 		    }
 		    
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {

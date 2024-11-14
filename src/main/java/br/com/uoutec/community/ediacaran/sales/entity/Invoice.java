@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,11 @@ public class Invoice implements Serializable{
 	private String id;
 	
 	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
+	@Length(max = 38, min = 10, groups = DataValidation.class)
+	private String order;
+	
+	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
 	@NotNull(groups = DataValidation.class)
@@ -40,12 +46,22 @@ public class Invoice implements Serializable{
 	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal total;
 
+	private List<ProductRequest> itens;
+	
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public LocalDateTime getDate() {
@@ -86,6 +102,14 @@ public class Invoice implements Serializable{
 
 	public void setTaxType(TaxType taxType) {
 		this.taxType = taxType;
+	}
+
+	public List<ProductRequest> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<ProductRequest> itens) {
+		this.itens = itens;
 	}
 	
 }

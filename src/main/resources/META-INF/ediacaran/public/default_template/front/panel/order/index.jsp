@@ -27,6 +27,9 @@
 	<ec:box-body>
 		<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/search">
 			<ed:row>
+				<ed:col size="2">
+	    			<ec:textfield name="id" placeholder="code"/>
+				</ed:col>
 				<ed:col size="4">
 		    		<ec:field-group>
 		    			<ec:datefield name="startDate">
@@ -47,34 +50,52 @@
 		    			</ec:datefield>
 		    		</ec:field-group>
 				</ed:col>
-				<ed:col size="8">
+				<ed:col size="2">
+					<ec:select name="status">
+						<ec:option value="">Select a status</ec:option>
+						<c:forEach items="${vars.statusList}" var="status">
+						<ec:option value="${status}">${status.getName(locale)}</ec:option>
+						</c:forEach>
+					</ec:select>
+				</ed:col>
+				<ed:col size="3">
+		    		<ec:field-group>
+		    			<ec:textfield name="minTotal" placeholder="min total"/>
+		    			<ec:textfield name="maxTotal" placeholder="max total"/>
+		    		</ec:field-group>
+				</ed:col>
+				<ed:col size="1">
+					<ec:button icon="search" style="info" actionType="submit" align="right"/>
 				</ed:col>
 			</ed:row>
+
+			<ec:data-result var="response">
+				<ec:table>
+					<ec:table-header>
+						<ec:table-col><ec:center><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="show-orders.table.status" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="show-orders.table.total" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="show-orders.table.action" bundle="${messages}"/></ec:center></ec:table-col>
+					</ec:table-header>
+					<ec:table-body>
+						<ec:forEach items="!{response.data}" var="item">
+							<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+							<ec:table-col>
+								<ec:center>
+								<ec:button icon="search" style="info">
+									<ec:event type="click">
+										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+									</ec:event>
+								</ec:button>
+								</ec:center>
+							</ec:table-col>
+						</ec:forEach>
+					</ec:table-body>
+				</ec:table>
+			</ec:data-result>
 		</ec:data-table>
-	
-		<ec:table>
-			<ec:table-header>
-				<ec:table-col><ec:center><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:center></ec:table-col>
-				<ec:table-col><ec:center><fmt:message key="show-orders.table.status" bundle="${messages}"/></ec:center></ec:table-col>
-				<ec:table-col><ec:center><fmt:message key="show-orders.table.total" bundle="${messages}"/></ec:center></ec:table-col>
-				<ec:table-col><ec:center><fmt:message key="show-orders.table.action" bundle="${messages}"/></ec:center></ec:table-col>
-			</ec:table-header>
-			<ec:table-body>
-				<c:forEach var="order" items="${orders}">
-					<ec:table-col><ec:center>${order.toStringDate(locale)}</ec:center></ec:table-col>
-					<ec:table-col><ec:center>${order.status.getName(locale)}</ec:center></ec:table-col>
-					<ec:table-col><ec:center>${order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${order.payment.total}"/></ec:center></ec:table-col>
-					<ec:table-col>
-						<ec:center>
-						<ec:button label="" icon="search" style="info">
-							<ec:event type="click">
-								$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id}');
-							</ec:event>
-						</ec:button>
-						</ec:center>
-					</ec:table-col>
-				</c:forEach>
-			</ec:table-body>
-		</ec:table>
+		
 	</ec:box-body>
 </ec:box>

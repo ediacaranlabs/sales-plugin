@@ -52,10 +52,6 @@ public class OrderEntity implements Serializable{
 	@JoinColumn(name="cod_payment", referencedColumnName="cod_payment")
 	private PaymentEntity payment;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_invoice", referencedColumnName="cod_invoice")
-	private InvoiceEntity invoice;
-
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
 
@@ -77,8 +73,6 @@ public class OrderEntity implements Serializable{
 			this.owner = new SystemUserEntity();
 			this.owner.setId(e.getOwner());
 		}
-		
-		this.invoice = e.getInvoice() == null? null : new InvoiceEntity(e.getInvoice());
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -142,14 +136,6 @@ public class OrderEntity implements Serializable{
 		this.payment = payment;
 	}
 
-	public InvoiceEntity getInvoice() {
-		return invoice;
-	}
-
-	public void setInvoice(InvoiceEntity invoice) {
-		this.invoice = invoice;
-	}
-
 	public List<ProductRequestEntity> getItens() {
 		return itens;
 	}
@@ -199,7 +185,6 @@ public class OrderEntity implements Serializable{
 			e.setOwner(this.owner.getId());
 		}
 		
-		e.setInvoice(this.invoice == null? null : this.invoice.toEntity());
 		e.setPayment(this.payment == null? null : this.payment.toEntity());
 		e.setRemoved(this.removed == null? false : this.removed);
 		e.setStatus(this.status);

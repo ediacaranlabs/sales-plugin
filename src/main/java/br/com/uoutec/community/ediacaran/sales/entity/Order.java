@@ -47,7 +47,7 @@ public class Order implements Serializable{
 	private Payment payment;
 	
 	@Valid
-	private Invoice invoice;
+	private List<Invoice> invoices;
 	
 	@Valid
 	private Shipping shipping;
@@ -119,12 +119,12 @@ public class Order implements Serializable{
 		this.payment = payment;
 	}
 
-	public Invoice getInvoice() {
-		return invoice;
+	public List<Invoice> getInvoice() {
+		return invoices;
 	}
 
-	public void setInvoice(Invoice invoice) {
-		this.invoice = invoice;
+	public void setInvoice(List<Invoice> invoices) {
+		this.invoices = invoices;
 	}
 
 	public List<ProductRequest> getItens() {

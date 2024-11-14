@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -11,6 +11,7 @@ public class OrderResult implements Serializable {
 
 	private static final long serialVersionUID = 9166429937476180931L;
 
+	private static final DecimalFormat df = new DecimalFormat("###,###,##0.00"); 
 	private String id;
 	
 	private String owner;
@@ -19,13 +20,13 @@ public class OrderResult implements Serializable {
 	
 	private String status;
 
-	private BigDecimal subTotal;
+	private String subTotal;
 
-	private BigDecimal taxes;
+	private String taxes;
 	
-	private BigDecimal total;
+	private String total;
 	
-	private String invoice;
+	//private String invoice;
 
 	public OrderResult(OrderResultSearch orderResultSearch, Locale locale, DateTimeFormatter dateTimeFormatter) {
 		this.id = orderResultSearch.getOrder().getId();
@@ -33,10 +34,11 @@ public class OrderResult implements Serializable {
 		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
 		this.date = orderResultSearch.getOrder().getDate() == null? null : dateTimeFormatter.format(orderResultSearch.getOrder().getDate());
 		this.status = orderResultSearch.getOrder().getStatus() == null? null : orderResultSearch.getOrder().getStatus().getName(locale);
-		this.subTotal = orderResultSearch.getOrder().getSubtotal();
-		this.taxes = orderResultSearch.getOrder().getTax();
-		this.total = orderResultSearch.getOrder().getTotal();
-		this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
+		
+		this.subTotal = orderResultSearch.getOrder().getPayment().getCurrency() + " " + df.format(orderResultSearch.getOrder().getSubtotal());
+		this.taxes = orderResultSearch.getOrder().getPayment().getCurrency() + " " + df.format(orderResultSearch.getOrder().getTax());
+		this.total = orderResultSearch.getOrder().getPayment().getCurrency() + " " + df.format(orderResultSearch.getOrder().getTotal());
+		//this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
 	}
 	
 	public String getId() {
@@ -71,30 +73,31 @@ public class OrderResult implements Serializable {
 		this.status = status;
 	}
 
-	public BigDecimal getSubTotal() {
+	public String getSubTotal() {
 		return subTotal;
 	}
 
-	public void setSubTotal(BigDecimal subTotal) {
+	public void setSubTotal(String subTotal) {
 		this.subTotal = subTotal;
 	}
 
-	public BigDecimal getTaxes() {
+	public String getTaxes() {
 		return taxes;
 	}
 
-	public void setTaxes(BigDecimal taxes) {
+	public void setTaxes(String taxes) {
 		this.taxes = taxes;
 	}
 
-	public BigDecimal getTotal() {
+	public String getTotal() {
 		return total;
 	}
 
-	public void setTotal(BigDecimal total) {
+	public void setTotal(String total) {
 		this.total = total;
 	}
 
+	/*
 	public String getInvoice() {
 		return invoice;
 	}
@@ -102,5 +105,6 @@ public class OrderResult implements Serializable {
 	public void setInvoice(String invoice) {
 		this.invoice = invoice;
 	}
+    */
 	
 }

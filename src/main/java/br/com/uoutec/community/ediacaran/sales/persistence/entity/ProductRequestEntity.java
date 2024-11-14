@@ -50,6 +50,10 @@ public class ProductRequestEntity implements Serializable{
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
 	private OrderEntity order;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="cod_invoice", referencedColumnName="cod_invoice")
+	private InvoiceEntity invoice;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_period_type", length=32)

@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.pub;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +30,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
@@ -56,13 +58,18 @@ public class OrderPubResource {
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/front/panel/order/index")
-	@Result("orders")
-	public List<Order> showOrders(
+	@Result("vars")
+	public Map<String, Object> showOrders(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
+		Map<String,Object> vars = new HashMap<>();
 		try{
-			return this.orderRegistry.getOrders(null, null);
+			List<Order> orders = this.orderRegistry.getOrders(null, null);
+			vars.put("orders", orders);
+			vars.put("statusList", Arrays.asList(OrderStatus.values()));
+			
+			return vars;
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -100,7 +107,7 @@ public class OrderPubResource {
 		
 		
 		try{
-			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
+			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
 			int page = request.getPage() == null? 0 : request.getPage();
 			int firstResult = (page-1)*10;
 			int maxResult = 11;
