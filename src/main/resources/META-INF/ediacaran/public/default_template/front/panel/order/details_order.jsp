@@ -44,20 +44,26 @@
 			<ed:col>
 				<ec:table>
 					<ec:table-header>
-						<ec:table-col><center><fmt:message key="show_order.table_product.quantity" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="show_order.table_product.product" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="show_order.table_product.serial" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="show_order.table_product.product" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="show_order.table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="show_order.table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="show_order.table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center>Discounts</center></ec:table-col>
+						<ec:table-col><center>Taxes</center></ec:table-col>
+						<ec:table-col><center>Total</center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.order.itens}" var="product">
 							<ec:table-row>
-								<ec:table-col><center>${product.units}</center></ec:table-col>
-								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
+								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<ec:table-col><center>${product.product.description}</center></ec:table-col>
+								<ec:table-col><center>${product.units}</center></ec:table-col>
 								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -114,7 +120,7 @@
 							<ec:table-body>
 								<c:forEach items="${vars.order.invoice}" var="invoice">
 								<ec:table-row>
-									<ec:table-col>${invoice.id}</ec:table-col>
+									<ec:table-col><small>${invoice.id}</small></ec:table-col>
 									<ec:table-col>${vars.order.toStringDate(locale)}</ec:table-col>
 									<ec:table-col>${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.subtotal}"/></ec:table-col>
 									<ec:table-col>${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.tax}"/></ec:table-col>
