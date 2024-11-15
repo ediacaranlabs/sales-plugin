@@ -50,9 +50,6 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 	private PeriodType periodType;
 
 	@NotNull(groups=DataValidation.class)
-	private BigDecimal additionalCost;
-	
-	@NotNull(groups=DataValidation.class)
 	private BigDecimal cost;
 	
 	@NotNull(groups=DataValidation.class)
@@ -64,7 +61,6 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 	}
 
 	public ProductPubEntity(Product e){
-		this.additionalCost = e.getAdditionalCost();
 		this.periodType = e.getPeriodType();
 		this.cost = e.getCost();
 		this.currency = e.getCurrency();
@@ -122,14 +118,6 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 		this.periodType = periodType;
 	}
 
-	public BigDecimal getAdditionalCost() {
-		return additionalCost;
-	}
-
-	public void setAdditionalCost(BigDecimal additionalCost) {
-		this.additionalCost = additionalCost;
-	}
-
 	public BigDecimal getCost() {
 		return cost;
 	}
@@ -181,7 +169,6 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 		o.setDescription(this.description);
 		o.setId(this.id);
 		o.setName(this.name);
-		o.setAdditionalCost(this.additionalCost);
 		o.setPeriodType(this.periodType);
 		o.setProductType(this.productType);
 	}

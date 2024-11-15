@@ -43,9 +43,6 @@ public class ProductEntity implements Serializable{
 	@Column(name="set_period_type", length=32)
 	private PeriodType periodType;
 	
-	@Column(name="vlr_add_cost", scale=2, precision=12)
-	private BigDecimal additionalCost;
-
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
 	
@@ -60,7 +57,6 @@ public class ProductEntity implements Serializable{
 		this.currency       = e.getCurrency();
 		this.productType    = e.getProductType();
 		this.description    = e.getDescription();
-		this.additionalCost = e.getAdditionalCost();
 		this.periodType     = e.getPeriodType();
 		this.id             = e.getId() <= 0? null : e.getId();
 		this.name           = e.getName();
@@ -106,14 +102,6 @@ public class ProductEntity implements Serializable{
 		this.periodType = periodType;
 	}
 
-	public BigDecimal getAdditionalCost() {
-		return additionalCost;
-	}
-
-	public void setAdditionalCost(BigDecimal additionalCost) {
-		this.additionalCost = additionalCost;
-	}
-
 	public BigDecimal getCost() {
 		return cost;
 	}
@@ -137,7 +125,6 @@ public class ProductEntity implements Serializable{
 		e.setCost(this.cost);
 		e.setCurrency(this.currency);
 		e.setProductType(this.productType);
-		e.setAdditionalCost(this.additionalCost);
 		e.setPeriodType(this.periodType);
 		e.setDescription(this.description);
 		e.setId(this.id == null? 0 : this.id);

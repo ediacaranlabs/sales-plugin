@@ -156,7 +156,6 @@ public class CartRegistryImp
 		productRequest.setCurrency(product.getCurrency());
 		productRequest.setUnits(units);
 		productRequest.setPeriodType(product.getPeriodType());
-		productRequest.setAdditionalCost(product.getAdditionalCost());
 		productRequest.setProduct(product);
 		productRequest.setName(product.getName());
 		productRequest.setMaxExtra(productType.getMaxExtra());

@@ -22,7 +22,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
@@ -238,7 +237,6 @@ public class OrderEntityAccessImp
 		    		criteria.from(OrderEntity.class);
 		    Join<OrderEntity, SystemUserEntity> systemUserJoin = from.join("owner");
 		    Join<OrderEntity, PaymentEntity> paymentJoin = from.join("payment");
-		    Join<OrderEntity, InvoiceEntity> invoiceJoin = from.join("invoice");
 		    
 		    criteria.select(from);
 		    
@@ -290,10 +288,6 @@ public class OrderEntityAccessImp
 		    
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
 			    and.add(builder.like(systemUserJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
-		    }
-		    
-		    if(value.getInvoice() != null) {
-			    and.add(builder.equal(invoiceJoin.get("id"), value.getInvoice()));
 		    }
 		    
 		    if(!and.isEmpty()) {

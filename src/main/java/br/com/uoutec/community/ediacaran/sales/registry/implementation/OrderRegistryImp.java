@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,7 +28,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
@@ -35,6 +36,8 @@ import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvalidUnitsOrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ItemNotFoundOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
@@ -475,7 +478,7 @@ public class OrderRegistryImp
 
 		try{
 			this.registerOrder(order);
-			this.registryLog(order.getId(), message == null? "Pedido criado." : message);
+			this.registryLog(order.getId(), message == null? "Pedido criado #" + order.getId() : message);
 			paymentGateway.payment(systemUser, order, order.getPayment());
 			this.registerOrder(order);
 		}
@@ -484,9 +487,15 @@ public class OrderRegistryImp
 		}
 
 		if(payment.getTotal().compareTo(BigDecimal.ZERO) <= 0){
-			order.setStatus(OrderStatus.PENDING_PAYMENT);
+			
+			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
 			this.registerOrder(order);
-			this.createInvoice(order.getId(), BigDecimal.ZERO, BigDecimal.ZERO, TaxType.PERCENTAGE, null);
+			
+			Map<String, Integer> itens = 
+					order.getItens().stream()
+					.collect(Collectors.toMap(ProductRequest::getSerial, ProductRequest::getUnits));
+			
+			this.createInvoice(order.getId(), itens, null);
 		}
 		
 		try{
@@ -535,8 +544,7 @@ public class OrderRegistryImp
 	 * @return Fatura.
 	 */
 	@Override
-	public Invoice createInvoice(String orderID, BigDecimal total, 
-			BigDecimal discount, TaxType taxType, String message) 
+	public Invoice createInvoice(String orderID, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 		
@@ -544,7 +552,7 @@ public class OrderRegistryImp
 				new RuntimeSecurityPermission(basePermission + "invoice"));
 		
 		try{
-			return this.safeCreateInvoice(orderID, total, discount, taxType, message);
+			return this.safeCreateInvoice(orderID, itens, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -556,54 +564,16 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private Invoice safeCreateInvoice(String orderID, BigDecimal total, 
-			BigDecimal discount, TaxType taxType, String message) 
+	private Invoice safeCreateInvoice(String orderID, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 
 		Order order = findById(orderID);
 		
-		if(order.getInvoice() != null){
-			throw new UnmodifiedOrderStatusRegistryException("Fatura já criada.");
-		}
+		Invoice i = createInvoice(order, itens);
 		
-		//Verifica se o status é o adequado
-		if(!this.isValid(order, OrderStatus.PAYMENT_RECEIVED)){
-			throw new OrderStatusNotAllowedRegistryException(
-					"novo status não é permitido: " + 
-					order.getStatus() + " -> " + OrderStatus.PAYMENT_RECEIVED);
-		}
+		checkInvoice(order, i);
 		
-		if(discount == null) {
-			discount = BigDecimal.ZERO;
-			taxType = TaxType.UNIT;
-		}
-		//discount = discount == null? BigDecimal.ZERO : discount;
-		
-		//Cria a fatura
-		Invoice i = new Invoice();
-		i.setId(order.getId());
-		i.setDate(LocalDateTime.now());
-		i.setDiscount(discount);
-		i.setTaxType(taxType);
-		i.setValue(total == null? order.getPayment().getTotal() : total);
-		
-		//Verifica o desconto
-		if(discount != null){
-			if(discount.doubleValue() > i.getValue().doubleValue()){
-				throw new OrderRegistryException("desconto maior que o valor!");
-			}
-			i.setTotal(taxType.apply(i.getValue(), i.getDiscount()));
-		}
-		else{
-			i.setTotal(i.getValue());
-		}
-
-		//Atualiza os dados do pedido
-		order.setStatus(OrderStatus.PAYMENT_RECEIVED);
-		order.setInvoice(i);
-		
-
 		SystemUser user;
 		
 		try{
@@ -616,7 +586,7 @@ public class OrderRegistryImp
 		
 		//Processa os itens do pedido
 
-		for(ProductRequest productRequest: order.getItens()){
+		for(ProductRequest productRequest: i.getItens()){
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
@@ -639,12 +609,114 @@ public class OrderRegistryImp
 		}
 		
 		//Registra as alterações do pedido
-		this.registerOrder(order);
+		//this.registerOrder(order);
 		
 		//Registra o evento no log
-		this.registryLog(order.getId(), message != null? message : "Pagamento recebido.");
+		this.registryLog(order.getId(), message != null? message : "Criada a fatura #" + i.getId() );
 		
 		return i;
+	}
+
+	private Invoice createInvoice(Order order, Map<String, Integer> itens
+			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+
+		Map<String, ProductRequest> transientItens = new HashMap<>();
+		
+		for(ProductRequest pr: order.getItens()) {
+			ProductRequest tpr = new ProductRequest();
+			tpr.setAddData(pr.getAddData());
+			tpr.setAvailability(pr.isAvailability());
+			tpr.setCost(pr.getCost());
+			tpr.setCurrency(pr.getCurrency());
+			tpr.setDescription(pr.getDescription());
+			tpr.setMaxExtra(pr.getMaxExtra());
+			tpr.setName(pr.getName());
+			tpr.setPeriodType(pr.getPeriodType());
+			tpr.setProduct(pr.getProduct());
+			tpr.setProductID(pr.getProductID());
+			tpr.setSerial(pr.getSerial());
+			tpr.setShortDescription(pr.getShortDescription());
+			tpr.setTaxes(pr.getTaxes());
+			//tpr.setUnits(pr.getUnits());
+			transientItens.put(pr.getSerial(), tpr);
+		}
+		
+		//create productrequest invoice
+		List<ProductRequest> invoiceItens = new ArrayList<>();
+		
+		for(Entry<String,Integer> e: itens.entrySet()) {
+			ProductRequest tpr = transientItens.get(e.getKey());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(e.getKey());
+			}
+			
+			tpr.setUnits(e.getValue().intValue());
+			invoiceItens.add(tpr);
+			transientItens.remove(e.getKey());
+		}
+		
+		Invoice i = new Invoice();
+		i.setId(null);
+		i.setDate(LocalDateTime.now());
+		i.setOrder(order.getId());
+		i.setItens(invoiceItens);
+		
+		return i;
+	}
+	
+	private void checkInvoice(Order order, Invoice invoice
+			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+
+		Map<String, ProductRequest> transientItens = new HashMap<>();
+		
+		for(ProductRequest pr: order.getItens()) {
+			ProductRequest tpr = new ProductRequest();
+			tpr.setAddData(pr.getAddData());
+			tpr.setAvailability(pr.isAvailability());
+			tpr.setCost(pr.getCost());
+			tpr.setCurrency(pr.getCurrency());
+			tpr.setDescription(pr.getDescription());
+			tpr.setMaxExtra(pr.getMaxExtra());
+			tpr.setName(pr.getName());
+			tpr.setPeriodType(pr.getPeriodType());
+			tpr.setProduct(pr.getProduct());
+			tpr.setProductID(pr.getProductID());
+			tpr.setSerial(pr.getSerial());
+			tpr.setShortDescription(pr.getShortDescription());
+			tpr.setTaxes(pr.getTaxes());
+			tpr.setUnits(pr.getUnits());
+			transientItens.put(pr.getSerial(), tpr);
+		}
+		
+		if(order.getInvoice() != null) {
+			for(Invoice i: order.getInvoice()) {
+				for(ProductRequest pr: i.getItens()) {
+					ProductRequest tpr = transientItens.get(pr.getSerial());
+					
+					tpr.setUnits(tpr.getUnits() - pr.getUnits());
+					
+					if(tpr.getUnits() < 0) {
+						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+					}
+				}
+			}
+		}
+		
+		for(ProductRequest pr: invoice.getItens()) {
+			ProductRequest tpr = transientItens.get(pr.getSerial());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
+			}
+			
+			tpr.setUnits(tpr.getUnits() - pr.getUnits());
+			
+			if(tpr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			}
+		}
+		
 	}
 	
 	/**

@@ -1,9 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.brandao.brutos.annotation.Constructor;
@@ -25,30 +23,11 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
-	@NotNull(groups = DataValidation.class)
-	@Min(value=0, groups = DataValidation.class)
-	private BigDecimal value;
-	
-	@NotNull(groups = DataValidation.class)
-	@Min(value=0, groups = DataValidation.class)
-	private BigDecimal discount;
-	
-	@NotNull(groups = DataValidation.class)
-	@Min(value=0, groups = DataValidation.class)
-	private BigDecimal total;
 	
 	@Constructor
 	public InvoicePubEntity(){
 	}
 	
-	public InvoicePubEntity(Invoice e){
-		this.date = e.getDate();
-		this.discount = e.getDiscount();
-		this.id = e.getId();
-		this.total = e.getTotal();
-		this.value = e.getValue();
-	}
-
 	public String getId() {
 		return id;
 	}
@@ -63,30 +42,6 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;
-	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public BigDecimal getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
-
-	public BigDecimal getTotal() {
-		return total;
-	}
-
-	public void setTotal(BigDecimal total) {
-		this.total = total;
 	}
 
 	@Override
@@ -119,12 +74,8 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 	@Override
 	protected void copyTo(Invoice o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
-		
 		o.setDate(this.date);
-		o.setDiscount(this.discount);
 		o.setId(this.id);
-		o.setTotal(this.total);
-		o.setValue(this.value);
 	}
 	
 }

@@ -39,8 +39,6 @@ public class Product implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	protected String productType;
 	
-	protected BigDecimal additionalCost;
-	
 	@NotNull(groups = DataValidation.class)
 	protected BigDecimal cost;
 	
@@ -110,19 +108,6 @@ public class Product implements Serializable{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
-	}
-
-	public BigDecimal getAdditionalCost() {
-		return additionalCost;
-	}
-
-	public void setAdditionalCost(BigDecimal additionalCost) {
-		this.additionalCost = additionalCost;
-	}
-
-	
-	public BigDecimal getSubtotal(boolean additional){
-		return additional? this.additionalCost : this.cost;
 	}
 
 }

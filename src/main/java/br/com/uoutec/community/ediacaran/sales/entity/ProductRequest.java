@@ -51,9 +51,6 @@ public class ProductRequest implements Serializable {
 	@NotNull
 	protected BigDecimal cost;
 
-	@NotNull
-	protected BigDecimal additionalCost;
-	
 	protected List<Tax> taxes;
 	
 	@NotNull
@@ -190,14 +187,6 @@ public class ProductRequest implements Serializable {
 		this.description = description;
 	}
 
-	public BigDecimal getAdditionalCost() {
-		return additionalCost;
-	}
-
-	public void setAdditionalCost(BigDecimal additionalCost) {
-		this.additionalCost = additionalCost;
-	}
-
 	public List<Tax> getTaxes() {
 		return taxes;
 	}
@@ -208,22 +197,12 @@ public class ProductRequest implements Serializable {
 
 	public BigDecimal getSubtotal(){
 		BigDecimal value = cost;
-		
-		if(this.units > 1){
-			if(additionalCost == null) {
-				return cost.multiply(new BigDecimal(this.units));
-			}
-			else {
-				return value.add(additionalCost.multiply(new BigDecimal(this.units - 1)));
-			}
-		}
-		
-		return value;
+		return value.multiply(new BigDecimal(this.units));
 	}
 
-	public BigDecimal getTotalDiscount() {
+	public BigDecimal getDiscount() {
 		
-		BigDecimal value = this.getSubtotal();
+		BigDecimal value = cost;
 		BigDecimal discount = BigDecimal.ZERO;
 		
 		if(taxes != null) {
@@ -242,12 +221,12 @@ public class ProductRequest implements Serializable {
 			
 		}
 		
-		return discount;
+		return discount.multiply(new BigDecimal(this.units));
 	}
 
-	public BigDecimal getTotalTax() {
+	public BigDecimal getTax() {
 		
-		BigDecimal value = this.getSubtotal();
+		BigDecimal value = cost;
 		BigDecimal tax = BigDecimal.ZERO;
 		
 		if(taxes != null) {
@@ -266,11 +245,12 @@ public class ProductRequest implements Serializable {
 			
 		}
 		
-		return tax;
+		return tax.multiply(new BigDecimal(this.units));
 	}
 	
 	public BigDecimal getTotal(){
-		BigDecimal value = this.getSubtotal();
+		
+		BigDecimal value = cost;
 		
 		if(taxes != null) {
 			
@@ -285,7 +265,7 @@ public class ProductRequest implements Serializable {
 			
 		}
 		
-		return value;
+		return value.multiply(new BigDecimal(this.units));
 	}
 	
 	public BigDecimal getRemainingValue(LocalDate validate){

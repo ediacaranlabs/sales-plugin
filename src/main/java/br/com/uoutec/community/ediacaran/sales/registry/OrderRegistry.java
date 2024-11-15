@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -11,7 +11,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -35,10 +34,9 @@ public interface OrderRegistry extends PublicBean {
 	Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
 	
-	Invoice createInvoice(String order, BigDecimal total, 
-			BigDecimal discount, TaxType discountType, String message) 
+	Invoice createInvoice(String orderID, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException;
+		UnmodifiedOrderStatusRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException;
 	
 	void createRefound(String order, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

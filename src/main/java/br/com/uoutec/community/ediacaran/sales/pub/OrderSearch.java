@@ -26,8 +26,6 @@ public class OrderSearch implements Serializable{
 
 	private BigDecimal maxTotal;
 	
-	private String invoice;
-	
 	private Integer page;
 	
 	private Integer resultPerPage;
@@ -78,14 +76,6 @@ public class OrderSearch implements Serializable{
 
 	public void setStatus(OrderStatus status) {
 		this.status = status;
-	}
-
-	public String getInvoice() {
-		return invoice;
-	}
-
-	public void setInvoice(String invoice) {
-		this.invoice = invoice;
 	}
 
 	public BigDecimal getMinTotal() {

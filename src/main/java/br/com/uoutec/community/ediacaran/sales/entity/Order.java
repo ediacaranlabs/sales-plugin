@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -160,19 +161,79 @@ public class Order implements Serializable{
 	}
 
 	public BigDecimal getSubtotal(){
-		return this.payment.getValue();
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: itens) {
+			value.add(pr.getTotal());
+		}
+		return value;
 	}
-	
-	public BigDecimal getDiscount(){
-		return this.payment.getDiscount();
+
+	public BigDecimal getDiscount() {
+		
+		BigDecimal value = getSubtotal();
+		BigDecimal discount = BigDecimal.ZERO;
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+				if(t.isDiscount()) {
+					discount = discount.add(taxUnit);
+				}
+			}
+			
+		}
+		
+		return discount;
 	}
-	
-	public BigDecimal getTax(){
-		return this.payment.getTax();
+
+	public BigDecimal getTax() {
+		
+		BigDecimal value = getSubtotal();
+		BigDecimal tax = BigDecimal.ZERO;
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+				if(!t.isDiscount()) {
+					tax = tax.add(taxUnit);
+				}
+			}
+			
+		}
+		
+		return tax;
 	}
 	
 	public BigDecimal getTotal(){
-		return this.payment.getTotal();
+		
+		BigDecimal value = getSubtotal();
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+			}
+			
+		}
+		
+		return value;
 	}
 	
 }

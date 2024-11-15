@@ -163,7 +163,6 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 			boolean validate) throws Throwable {
 		o.setEndDate(endDate);
 		o.setId(id);
-		o.setInvoice(invoice);
 		o.setMaxTotal(maxTotal);
 		o.setMinTotal(minTotal);
 		o.setOwner(owner);

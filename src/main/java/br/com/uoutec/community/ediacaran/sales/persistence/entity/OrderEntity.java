@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -55,6 +56,9 @@ public class OrderEntity implements Serializable{
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
 
+	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
+	private List<InvoiceEntity> invoices;
+	
 	@OneToMany(mappedBy="orderEntity", fetch=FetchType.LAZY)
 	private List<OrderTaxEntity> taxes;
 
@@ -196,6 +200,14 @@ public class OrderEntity implements Serializable{
 				l.add(k.toEntity());
 			}
 			e.setItens(l);
+		}
+
+		if(this.invoices != null){
+			List<Invoice> l = new ArrayList<Invoice>();
+			for(InvoiceEntity k: this.invoices){
+				l.add(k.toEntity());
+			}
+			e.setInvoice(l);
 		}
 		
 		if(this.taxes != null){

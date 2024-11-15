@@ -3,9 +3,12 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 
-import javax.validation.constraints.Min;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -31,21 +34,7 @@ public class Invoice implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
-	@NotNull(groups = DataValidation.class)
-	@Min(value = 0, groups = DataValidation.class)
-	private BigDecimal value;
-	
-	@NotNull(groups = DataValidation.class)
-	@Min(value = 0, groups = DataValidation.class)
-	private BigDecimal discount;
-	
-	@NotNull(groups = DataValidation.class)
-	private TaxType taxType;
-	
-	@NotNull(groups = DataValidation.class)
-	@Min(value = 0, groups = DataValidation.class)
-	private BigDecimal total;
-
+	@Valid
 	private List<ProductRequest> itens;
 	
 	public String getId() {
@@ -72,44 +61,58 @@ public class Invoice implements Serializable{
 		this.date = date;
 	}
 
-	public BigDecimal getValue() {
-		return value;
+	public String toStringDate(Locale locale) {
+		if(date == null) {
+			return "";
+		}
+		//DateTimeFormatter.withLocale(locale).
+		
+		DateTimeFormatter dateTimeFormatter = 
+				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+		return date.format(dateTimeFormatter);
 	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public BigDecimal getTotal() {
-		return total;
-	}
-
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-
-	public BigDecimal getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
-
-	public TaxType getTaxType() {
-		return taxType;
-	}
-
-	public void setTaxType(TaxType taxType) {
-		this.taxType = taxType;
-	}
-
+	
 	public List<ProductRequest> getItens() {
 		return itens;
 	}
 
 	public void setItens(List<ProductRequest> itens) {
 		this.itens = itens;
+	}
+	
+	public BigDecimal getSubtotal(){
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: itens) {
+			value.add(pr.getTotal());
+		}
+		return value;
+	}
+
+	public BigDecimal getDiscount() {
+
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: itens) {
+			value.add(pr.getDiscount());
+		}
+		return value;
+		
+	}
+
+	public BigDecimal getTax() {
+		
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: itens) {
+			value.add(pr.getTax());
+		}
+		return value;
+	}
+	
+	public BigDecimal getTotal(){
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: itens) {
+			value.add(pr.getTotal());
+		}
+		return value;
 	}
 	
 }

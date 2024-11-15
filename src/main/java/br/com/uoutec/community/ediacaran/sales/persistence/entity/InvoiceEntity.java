@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +8,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -20,7 +17,6 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 
 
 @Entity
@@ -41,19 +37,6 @@ public class InvoiceEntity implements Serializable{
 	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
 	private OrderEntity order;
 	
-	@Column(name="vlr_value", scale=3, precision=12)
-	private BigDecimal value;
-	
-	@Column(name="vlr_discount", scale=3, precision=12)
-	private BigDecimal discount;
-
-	@Column(name="set_discount_type", length=32)
-	@Enumerated(EnumType.STRING)
-	private TaxType taxType;
-	
-	@Column(name="vlr_total", scale=3, precision=12)
-	private BigDecimal total;
-
 	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
 	
@@ -65,12 +48,16 @@ public class InvoiceEntity implements Serializable{
 		this.order = new OrderEntity();
 		this.order.setId(e.getOrder());
 		
-		this.taxType = e.getTaxType();
 		this.date = e.getDate();
-		this.discount = e.getDiscount(); 
 		this.id = e.getId();
-		this.total = e.getTotal();
-		this.value = e.getValue();
+		
+		if(e.getItens() != null){
+			this.itens = new ArrayList<ProductRequestEntity>();
+			for(ProductRequest k: e.getItens()){
+				itens.add(new ProductRequestEntity(this, k));
+			}
+		}
+		
 	}
 	
 	public String getId() {
@@ -89,36 +76,20 @@ public class InvoiceEntity implements Serializable{
 		this.date = date;
 	}
 
-	public BigDecimal getValue() {
-		return value;
+	public OrderEntity getOrder() {
+		return order;
 	}
 
-	public void setValue(BigDecimal value) {
-		this.value = value;
+	public void setOrder(OrderEntity order) {
+		this.order = order;
 	}
 
-	public BigDecimal getTotal() {
-		return total;
+	public List<ProductRequestEntity> getItens() {
+		return itens;
 	}
 
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-
-	public BigDecimal getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
-
-	public TaxType getTaxType() {
-		return taxType;
-	}
-
-	public void setTaxType(TaxType taxType) {
-		this.taxType = taxType;
+	public void setItens(List<ProductRequestEntity> itens) {
+		this.itens = itens;
 	}
 
 	public Invoice toEntity(){
@@ -131,12 +102,8 @@ public class InvoiceEntity implements Serializable{
 			e = new Invoice();
 		}
 		
-		e.setTaxType(this.taxType);
 		e.setDate(this.date);
-		e.setDiscount(this.discount);
 		e.setId(this.id);
-		e.setTotal(this.total);
-		e.setValue(this.value);
 		e.setOrder(this.order == null? null : this.order.getId());
 		
 		if(this.itens != null){

@@ -34,7 +34,7 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="cod_product_request", length=38)
 	private String id;
 	
-	@Column(name="dsc_serial", length=30, unique=true)
+	@Column(name="dsc_serial", length=30)
 	private String serial;
 	
 	@Column(name="dsc_name", length=128)
@@ -73,9 +73,6 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="vlr_cost", scale=3, precision=12)
 	private BigDecimal cost;
 	
-	@Column(name="vlr_add_cost", scale=2, precision=12)
-	private BigDecimal additionalCost;
-	
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
@@ -90,13 +87,21 @@ public class ProductRequestEntity implements Serializable{
 	}
 	
 	public ProductRequestEntity(OrderEntity order, ProductRequest e){
+		this(order, null, e);
+	}
+	
+	public ProductRequestEntity(InvoiceEntity invoice, ProductRequest e){
+		this(null, invoice, e);
+	}
+	
+	public ProductRequestEntity(OrderEntity order, InvoiceEntity invoice, ProductRequest e){
 		this.id               = e.getId();
 		this.name             = e.getName();
 		this.serial           = e.getSerial();
 		this.order            = order;
+		this.invoice          = invoice;
 		this.addData          = DataUtil.encode(e.getAddData());
 		this.cost             = e.getCost();
-		this.additionalCost   = e.getAdditionalCost();
 		this.currency         = e.getCurrency();
 		this.product          = e.getProduct() == null? null : new ProductEntity(e.getProduct());
 		this.units            = e.getUnits();
@@ -204,14 +209,6 @@ public class ProductRequestEntity implements Serializable{
 		this.periodType = periodType;
 	}
 
-	public BigDecimal getAdditionalCost() {
-		return additionalCost;
-	}
-
-	public void setAdditionalCost(BigDecimal additionalCost) {
-		this.additionalCost = additionalCost;
-	}
-
 	public String getProductID() {
 		return productID;
 	}
@@ -236,6 +233,14 @@ public class ProductRequestEntity implements Serializable{
 		this.name = name;
 	}
 
+	public InvoiceEntity getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(InvoiceEntity invoice) {
+		this.invoice = invoice;
+	}
+
 	public ProductRequest toEntity(){
 		ProductRequest e = new ProductRequest();
 		e.setSerial(this.serial);
@@ -246,7 +251,6 @@ public class ProductRequestEntity implements Serializable{
 		e.setProduct(this.product == null? null : this.product.toEntity());
 		e.setAddData(DataUtil.decode(this.addData));
 		e.setUnits(this.units);
-		e.setAdditionalCost(this.additionalCost);
 		e.setPeriodType(this.periodType);
 		e.setShortDescription(this.shortDescription);
 		e.setDescription(this.description);
