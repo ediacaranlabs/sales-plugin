@@ -60,10 +60,10 @@
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<ec:table-col><center>${product.product.description}</center></ec:table-col>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
-								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
+								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -122,10 +122,10 @@
 								<ec:table-row>
 									<ec:table-col><center><small>${invoice.id}</small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.toStringDate(locale)}</small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.subtotal}"/></small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.tax}"/></small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.discount}"/></small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.total}"/></small></center></ec:table-col>
+									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.subtotal}"/></small></center></ec:table-col>
+									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.tax}"/></small></center></ec:table-col>
+									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.discount}"/></small></center></ec:table-col>
+									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.total}"/></small></center></ec:table-col>
 								</ec:table-row>
 								</c:forEach>
 							</ec:table-body>
