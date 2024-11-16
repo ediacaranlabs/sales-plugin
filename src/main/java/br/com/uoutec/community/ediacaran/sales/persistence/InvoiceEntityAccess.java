@@ -18,6 +18,8 @@ public interface InvoiceEntityAccess {
 	
 	List<Invoice> getList(Integer first, Integer max) throws EntityAccessException;
 	
+	List<Invoice> findByOrder(String order) throws EntityAccessException;
+	
 	void flush();
 	
 }

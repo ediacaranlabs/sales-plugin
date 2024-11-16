@@ -10,12 +10,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
@@ -149,6 +152,43 @@ public class InvoiceEntityAccessImp
 		return value;
 	}
 
+	@Override
+	public List<Invoice> findByOrder(String order) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<InvoiceEntity> criteria = 
+		    		builder.createQuery(InvoiceEntity.class);
+		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
+		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
+		    
+		    criteria.select(from);
+
+	    	and.add(builder.equal(orderJoin.get("id"), order));
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<InvoiceEntity> typed = entityManager.createQuery(criteria);
+
+		    List<InvoiceEntity> list = (List<InvoiceEntity>)typed.getResultList();
+		    List<Invoice> result = new ArrayList<Invoice>();
+    
+		    for(InvoiceEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
 	@Override
 	public List<Invoice> getList(Integer first, Integer max)
 			throws EntityAccessException {

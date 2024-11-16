@@ -19,9 +19,14 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
+import br.com.uoutec.community.ediacaran.security.Principal;
+import br.com.uoutec.community.ediacaran.security.Subject;
+import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
@@ -57,6 +62,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
+
+	@Inject
+	private SubjectProvider subjectProvider;
 	
 	@Override
 	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
@@ -95,6 +103,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "remove"));
+		
 		try {
 			entityAccess.delete(entity);
 		}
@@ -113,16 +125,17 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 	}
 
+
 	@Override
-	public Invoice createInvoice(String orderID, Map<String, Integer> itens, String message) 
+	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException{
+		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "invoice"));
+		SystemUserID userID = getSystemUserID();
+		SystemUser user = getSystemUser(userID);
 		
-		try{
-			return this.safeCreateInvoice(orderID, itens, message);
+		try {
+			return unsafeCreateInvoice(order, user, itens, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -132,38 +145,85 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
 			throw new OrderRegistryException(e);
 		}
+		
 	}
 
 	@Override
+	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
+			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
+			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
+		SystemUser user = getSystemUser(userID);
+		return createInvoice(order, user, itens, message);
+	}
+	
+	@Override
+	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
+			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
+			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
+
+		if(systemUser == null) {
+			throw new NullPointerException("systemUser");
+		}
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "create"));
+
+		try {
+			return unsafeCreateInvoice(order, systemUser, itens, message);
+		}
+		catch(RegistryException e){
+			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
+			throw e;
+		}
+		catch(Throwable e){
+			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
+			throw new OrderRegistryException(e);
+		}
+		
+	}
+	
+	@Override
 	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return entityAccess.findByOrder(id);
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
 	}
 
 	@Override
 	public List<Invoice> getInvoices(Integer first, Integer max) throws InvoiceRegistryException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return entityAccess.getList(first, max);
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
 	}
 
 	
-	private Invoice safeCreateInvoice(String orderID, Map<String, Integer> itens, String message) 
+	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException{
+		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException {
 
-		Order order = orderRegistry.findById(orderID);
+		Order actualOrder = orderRegistry.findById(order.getId());
 		
-		Invoice i = createInvoice(order, itens);
+		if(actualOrder.getOwner() != systemUser.getId()) {
+			throw new InvoiceRegistryException("invalid user: " + actualOrder.getOwner() + " != " + systemUser.getId());
+		}
 		
-		checkInvoice(order, i);
+		Invoice i = createInvoice(actualOrder, itens);
+		
+		checkInvoice(actualOrder, i);
 		
 		SystemUser user;
 		
 		try{
-			user = this.systemUserRegistry.findById(order.getOwner());
+			user = this.systemUserRegistry.findById(actualOrder.getOwner());
 		}
 		catch(Throwable e){
-			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());
+			throw new OrderRegistryException("usuário não encontrado: " + actualOrder.getOwner());
 		}
 
 		
@@ -173,10 +233,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, order, productRequest);
+				productTypeHandler.registryItem(user, actualOrder, productRequest);
 			}
 			catch(Throwable e){
-				throw new OrderRegistryException(
+				throw new InvoiceRegistryException(
 					"falha ao processar o produto/serviço " + productRequest.getId(), e);
 			}
 		}
@@ -187,15 +247,15 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			entityAccess.flush();
 		}
 		catch(Throwable e){
-			throw new OrderRegistryException(
-				"invoice error: " + order.getId(), e);
+			throw new InvoiceRegistryException(
+				"invoice error: " + actualOrder.getId(), e);
 		}
 		
 		//Registra as alterações do pedido
 		//this.registerOrder(order);
 		
 		//Registra o evento no log
-		orderRegistry.registryLog(order.getId(), message != null? message : "Criada a fatura #" + i.getId() );
+		orderRegistry.registryLog(actualOrder.getId(), message != null? message : "Criada a fatura #" + i.getId() );
 		
 		return i;
 	}
@@ -332,6 +392,29 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	private void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{
 		ValidatorBean.validate(e, groups);
+	}
+
+	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
+		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID.getSystemID()));
+		
+		if(user == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return user;
+	}
+
+	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
+		Subject subject = subjectProvider.getSubject();
+		
+		if(!subject.isAuthenticated()) {
+			throw new SystemUserRegistryException();
+		}
+		
+		Principal principal = subject.getPrincipal();
+		java.security.Principal jaaPrincipal = principal.getUserPrincipal();
+		
+		return ()->jaaPrincipal.getName();
 	}
 	
 }
