@@ -28,12 +28,14 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
@@ -51,6 +53,10 @@ public class OrderPubResource {
 	@Transient
 	@Inject
 	private OrderRegistry orderRegistry;
+
+	@Transient
+	@Inject
+	private InvoiceRegistry invoiceRegistry;
 	
 	@Transient
 	@Inject
@@ -141,8 +147,10 @@ public class OrderPubResource {
 	) throws InvalidRequestException{
 		
 		Order order;
+		List<Invoice> invoices;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
+			invoices = invoiceRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -180,6 +188,7 @@ public class OrderPubResource {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order",          order);
+		map.put("invoices",       invoices);
 		map.put("paymentGateway", paymentGateway);
 		map.put("payment_view",   view);
 		return map;
