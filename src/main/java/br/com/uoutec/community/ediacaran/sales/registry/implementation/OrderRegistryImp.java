@@ -23,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -32,7 +33,6 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
@@ -211,11 +211,54 @@ public class OrderRegistryImp
 		ContextSystemSecurityCheck.checkPermission(
 				new RuntimeSecurityPermission(basePermission + "find"));
 		
+		return unsafeFindById(id, null);
+	}
+
+	@Override
+	public Order findById(String id, SystemUserID userID) throws OrderRegistryException {
+
+		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
+			ContextSystemSecurityCheck.checkPermission(
+					new RuntimeSecurityPermission(basePermission + "find"));
+		}
+
+		SystemUser systemUser = null;
+		
+		try {
+			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+				userID = getSystemUserID();
+			}
+			systemUser = getSystemUser(userID);
+		}
+		catch (SystemUserRegistryException e) {
+			throw new OrderRegistryException(e);
+		}
+		
+		return unsafeFindById(id, systemUser);
+	}
+
+	@Override
+	public Order findById(String id, SystemUser systemUser) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "find"));
+		
+		return unsafeFindById(id, systemUser);
+	}
+
+	private Order unsafeFindById(String id, SystemUser systemUser) throws OrderRegistryException {
+		
 		try{
-			return orderEntityAccess.findById(id);
+			Order order = orderEntityAccess.findById(id);
+			
+			if(order != null) {
+				if(systemUser != null && order.getOwner() != systemUser.getId()) {
+					return null;
+				}
+			}
+			return order;
 		}
 		catch(Throwable e){
-			e.printStackTrace();
 			throw new OrderRegistryException(e);
 		}
 	}

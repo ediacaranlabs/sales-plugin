@@ -30,11 +30,15 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResult;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPanelPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchAdminPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
@@ -44,7 +48,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @Singleton
 @Controller(value="${plugins.ediacaran.front.panel_context}/orders", defaultActionName="/")
 @ResponseErrors(rendered=false)
-public class OrderPubResource {
+public class OrderPanelPubResource {
 
 	@Transient
 	@Inject
@@ -80,8 +84,8 @@ public class OrderPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPubResourceMessages.show_orders.error.fail_load_orders, 
+							OrdePanelrPubResourceMessages.RESOURCE_BUNDLE,
+							OrdePanelrPubResourceMessages.show_orders.error.fail_load_orders, 
 							locale);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -104,8 +108,8 @@ public class OrderPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPubResourceMessages.search.error.fail_load_entity, 
+							OrdePanelrPubResourceMessages.RESOURCE_BUNDLE,
+							OrdePanelrPubResourceMessages.search.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -127,8 +131,8 @@ public class OrderPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPubResourceMessages.show_orders.error.fail_load_orders, 
+							OrdePanelrPubResourceMessages.RESOURCE_BUNDLE,
+							OrdePanelrPubResourceMessages.show_orders.error.fail_load_orders, 
 							locale);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -141,7 +145,7 @@ public class OrderPubResource {
 	@Result("vars")
 	public Map<String,Object> orderDetail(
 			@DetachedName
-			OrderPubEntity orderPubEntity,
+			OrderPanelPubEntity orderPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
@@ -155,8 +159,8 @@ public class OrderPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPubResourceMessages.order_detail.error.fail_load_entity, 
+							OrdePanelrPubResourceMessages.RESOURCE_BUNDLE,
+							OrdePanelrPubResourceMessages.order_detail.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -179,8 +183,8 @@ public class OrderPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPubResourceMessages.order_detail.error.fail_load_payment_gateway, 
+							OrdePanelrPubResourceMessages.RESOURCE_BUNDLE,
+							OrdePanelrPubResourceMessages.order_detail.error.fail_load_payment_gateway, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);

@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEn
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
@@ -28,7 +29,6 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.PaymentEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.OrderSearch;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;

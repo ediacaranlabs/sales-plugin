@@ -1,4 +1,4 @@
-package br.com.uoutec.community.ediacaran.sales.pub;
+package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.util.List;

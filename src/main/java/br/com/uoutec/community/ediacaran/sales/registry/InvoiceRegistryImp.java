@@ -117,14 +117,60 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	public Invoice findById(String id) throws InvoiceRegistryException {
-		try {
-			return entityAccess.findById(id);
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "find"));
+		
+		return unsafeFindById(id, null);
 	}
 
+	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException{
+
+		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
+			ContextSystemSecurityCheck.checkPermission(
+					new RuntimeSecurityPermission(basePermission + "find"));
+		}
+
+		SystemUser systemUser = null;
+		
+		try {
+			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+				userID = getSystemUserID();
+			}
+			systemUser = getSystemUser(userID);
+		}
+		catch (SystemUserRegistryException e) {
+			throw new InvoiceRegistryException(e);
+		}
+		
+		return unsafeFindById(id, systemUser);
+		
+	}
+	
+	public Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException{
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "find"));
+		
+		return unsafeFindById(id, systemUser);
+	}
+	
+	private Invoice unsafeFindById(String id, SystemUser systemUser) throws InvoiceRegistryException {
+		
+		try{
+			Invoice e = entityAccess.findById(id);
+			
+			if(e != null) {
+				if(systemUser != null && e.getOwner() != systemUser.getId()) {
+					return null;
+				}
+			}
+			return e;
+		}
+		catch(Throwable e){
+			throw new InvoiceRegistryException(e);
+		}
+	}
+	
 
 	@Override
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
@@ -266,21 +312,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Map<String, ProductRequest> transientItens = new HashMap<>();
 		
 		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest();
-			tpr.setAddData(pr.getAddData());
-			tpr.setAvailability(pr.isAvailability());
-			tpr.setCost(pr.getCost());
-			tpr.setCurrency(pr.getCurrency());
-			tpr.setDescription(pr.getDescription());
-			tpr.setMaxExtra(pr.getMaxExtra());
-			tpr.setName(pr.getName());
-			tpr.setPeriodType(pr.getPeriodType());
-			tpr.setProduct(pr.getProduct());
-			tpr.setProductID(pr.getProductID());
-			tpr.setSerial(pr.getSerial());
-			tpr.setShortDescription(pr.getShortDescription());
-			tpr.setTaxes(pr.getTaxes());
-			//tpr.setUnits(pr.getUnits());
+			ProductRequest tpr = new ProductRequest(pr);
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		

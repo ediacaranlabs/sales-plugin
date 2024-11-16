@@ -1,5 +1,7 @@
-package br.com.uoutec.community.ediacaran.sales.pub;
+package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
+import br.com.uoutec.community.ediacaran.sales.pub.OrderSearchPubEntity;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;

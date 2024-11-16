@@ -1,11 +1,9 @@
-package br.com.uoutec.community.ediacaran.sales.pub;
+package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 
 public class OrderResult implements Serializable {
 

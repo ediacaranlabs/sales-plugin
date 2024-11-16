@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -32,6 +33,10 @@ public class Invoice implements Serializable{
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
+	@Min(value = 1, groups = DataValidation.class)
+	private int owner;
+	
+	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
 	@Valid
@@ -51,6 +56,14 @@ public class Invoice implements Serializable{
 
 	public void setOrder(String order) {
 		this.order = order;
+	}
+
+	public int getOwner() {
+		return owner;
+	}
+
+	public void setOwner(int owner) {
+		this.owner = owner;
 	}
 
 	public LocalDateTime getDate() {

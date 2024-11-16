@@ -30,6 +30,7 @@ public class Order implements Serializable{
 	@Length(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 
+	@NotNull(groups = DataValidation.class)
 	@Min(value = 1, groups = DataValidation.class)
 	private int owner;
 	

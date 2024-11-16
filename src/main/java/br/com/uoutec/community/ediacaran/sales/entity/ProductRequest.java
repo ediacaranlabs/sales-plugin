@@ -75,6 +75,26 @@ public class ProductRequest implements Serializable {
 	
 	protected boolean availability;
 	
+	public ProductRequest() {
+	}
+	
+	public ProductRequest(ProductRequest value) {
+		setAddData(value.getAddData());
+		setAvailability(value.isAvailability());
+		setCost(value.getCost());
+		setCurrency(value.getCurrency());
+		setDescription(value.getDescription());
+		setMaxExtra(value.getMaxExtra());
+		setName(value.getName());
+		setPeriodType(value.getPeriodType());
+		setProduct(value.getProduct());
+		setProductID(value.getProductID());
+		setSerial(value.getSerial());
+		setShortDescription(value.getShortDescription());
+		setTaxes(value.getTaxes());
+		setUnits(value.getUnits());
+	}
+	
 	public String getId() {
 		return id;
 	}

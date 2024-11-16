@@ -1,10 +1,8 @@
-package br.com.uoutec.community.ediacaran.sales.pub;
+package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 
 public class OrderSearch implements Serializable{
 	

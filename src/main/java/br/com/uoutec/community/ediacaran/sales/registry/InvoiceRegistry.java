@@ -18,6 +18,10 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	Invoice findById(String id) throws InvoiceRegistryException;
 
+	Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException;
+	
+	Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException;
+	
 	Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException;
