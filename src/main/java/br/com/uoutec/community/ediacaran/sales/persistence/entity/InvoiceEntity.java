@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 
 
 @Entity
@@ -34,6 +35,10 @@ public class InvoiceEntity implements Serializable{
 	private LocalDateTime date;
 
 	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="cod_owner", referencedColumnName="cod_system_user")
+	private SystemUserEntity owner;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
 	private OrderEntity order;
 	
@@ -50,6 +55,11 @@ public class InvoiceEntity implements Serializable{
 		
 		this.date = e.getDate();
 		this.id = e.getId();
+		
+		if(e.getOwner() > 0) {
+			this.owner = new SystemUserEntity();
+			this.owner.setId(e.getOwner());
+		}
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -105,6 +115,10 @@ public class InvoiceEntity implements Serializable{
 		e.setDate(this.date);
 		e.setId(this.id);
 		e.setOrder(this.order == null? null : this.order.getId());
+
+		if(this.owner != null) {
+			e.setOwner(this.owner.getId());
+		}
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();

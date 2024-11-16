@@ -1,9 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.util.List;
-import java.util.Map;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
@@ -33,10 +31,6 @@ public interface OrderRegistry extends PublicBean {
 	
 	Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
-	
-	Invoice createInvoice(String orderID, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException;
 	
 	void createRefound(String order, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

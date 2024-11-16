@@ -27,6 +27,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
@@ -55,9 +56,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private EventRegistry throwSystemEventRegistry;
 	
 	@Inject
-	private OrderRegistry orderRegistry;
-	
-	@Inject
 	private SystemUserRegistry systemUserRegistry;
 	
 	@Inject
@@ -65,6 +63,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Inject
 	private SubjectProvider subjectProvider;
+	
 	
 	@Override
 	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
@@ -77,6 +76,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 		
 		try{
+			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 			Order order = orderRegistry.findById(entity.getOrder());
 			
 			if(order == null) {
@@ -253,6 +253,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException {
 
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		Order actualOrder = orderRegistry.findById(order.getId());
 		
 		if(actualOrder.getOwner() != systemUser.getId()) {
@@ -333,6 +334,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		Invoice i = new Invoice();
 		i.setId(null);
+		i.setOwner(order.getOwner());
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
 		i.setItens(invoiceItens);

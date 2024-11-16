@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,6 @@ import javax.inject.Singleton;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -31,13 +29,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
-import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
-import br.com.uoutec.community.ediacaran.sales.registry.InvalidUnitsOrderRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.ItemNotFoundOrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
@@ -144,7 +140,7 @@ public class OrderRegistryImp
 	private OrderEntityAccess orderEntityAccess;
 
 	@Inject
-	private InvoiceEntityAccess invoiceEntityAccess;
+	private InvoiceRegistry invoiceRegistry;
 	
 	@Inject
 	private SubjectProvider subjectProvider;
@@ -537,8 +533,13 @@ public class OrderRegistryImp
 			Map<String, Integer> itens = 
 					order.getItens().stream()
 					.collect(Collectors.toMap(ProductRequest::getSerial, ProductRequest::getUnits));
-			
-			this.createInvoice(order.getId(), itens, null);
+
+			try{
+				invoiceRegistry.createInvoice(order, itens, null);
+			}
+			catch(Throwable e){
+				throw new OrderRegistryException("falha ao processar os produtos", e);
+			}
 		}
 		
 		try{
@@ -575,191 +576,6 @@ public class OrderRegistryImp
 		}
 		
 		return result;
-	}
-	
-	/**
-	 * Registra o pagamento do pedido e cria a fatura.
-	 * 
-	 * @param order Pedido.
-	 * @param discount Desconto.
-	 * @param message Mensagem registrada no log.
-	 * @param total Valor total da fatura.
-	 * @return Fatura.
-	 */
-	@Override
-	public Invoice createInvoice(String orderID, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException{
-		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "invoice"));
-		
-		try{
-			return this.safeCreateInvoice(orderID, itens, message);
-		}
-		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw e;
-		}
-		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw new OrderRegistryException(e);
-		}
-	}
-	
-	private Invoice safeCreateInvoice(String orderID, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException{
-
-		Order order = findById(orderID);
-		
-		Invoice i = createInvoice(order, itens);
-		
-		checkInvoice(order, i);
-		
-		SystemUser user;
-		
-		try{
-			user = this.systemUserRegistry.findById(order.getOwner());
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());
-		}
-
-		
-		//Processa os itens do pedido
-
-		for(ProductRequest productRequest: i.getItens()){
-			try{
-				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, order, productRequest);
-			}
-			catch(Throwable e){
-				throw new OrderRegistryException(
-					"falha ao processar o produto/serviço " + productRequest.getId(), e);
-			}
-		}
-
-
-		try {
-			invoiceEntityAccess.save(i);
-			invoiceEntityAccess.flush();
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(
-				"invoice error: " + order.getId(), e);
-		}
-		
-		//Registra as alterações do pedido
-		//this.registerOrder(order);
-		
-		//Registra o evento no log
-		this.registryLog(order.getId(), message != null? message : "Criada a fatura #" + i.getId() );
-		
-		return i;
-	}
-
-	private Invoice createInvoice(Order order, Map<String, Integer> itens
-			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
-
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest();
-			tpr.setAddData(pr.getAddData());
-			tpr.setAvailability(pr.isAvailability());
-			tpr.setCost(pr.getCost());
-			tpr.setCurrency(pr.getCurrency());
-			tpr.setDescription(pr.getDescription());
-			tpr.setMaxExtra(pr.getMaxExtra());
-			tpr.setName(pr.getName());
-			tpr.setPeriodType(pr.getPeriodType());
-			tpr.setProduct(pr.getProduct());
-			tpr.setProductID(pr.getProductID());
-			tpr.setSerial(pr.getSerial());
-			tpr.setShortDescription(pr.getShortDescription());
-			tpr.setTaxes(pr.getTaxes());
-			//tpr.setUnits(pr.getUnits());
-			transientItens.put(pr.getSerial(), tpr);
-		}
-		
-		//create productrequest invoice
-		List<ProductRequest> invoiceItens = new ArrayList<>();
-		
-		for(Entry<String,Integer> e: itens.entrySet()) {
-			ProductRequest tpr = transientItens.get(e.getKey());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(e.getKey());
-			}
-			
-			tpr.setUnits(e.getValue().intValue());
-			invoiceItens.add(tpr);
-			transientItens.remove(e.getKey());
-		}
-		
-		Invoice i = new Invoice();
-		i.setId(null);
-		i.setDate(LocalDateTime.now());
-		i.setOrder(order.getId());
-		i.setItens(invoiceItens);
-		
-		return i;
-	}
-	
-	private void checkInvoice(Order order, Invoice invoice
-			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
-
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest();
-			tpr.setAddData(pr.getAddData());
-			tpr.setAvailability(pr.isAvailability());
-			tpr.setCost(pr.getCost());
-			tpr.setCurrency(pr.getCurrency());
-			tpr.setDescription(pr.getDescription());
-			tpr.setMaxExtra(pr.getMaxExtra());
-			tpr.setName(pr.getName());
-			tpr.setPeriodType(pr.getPeriodType());
-			tpr.setProduct(pr.getProduct());
-			tpr.setProductID(pr.getProductID());
-			tpr.setSerial(pr.getSerial());
-			tpr.setShortDescription(pr.getShortDescription());
-			tpr.setTaxes(pr.getTaxes());
-			tpr.setUnits(pr.getUnits());
-			transientItens.put(pr.getSerial(), tpr);
-		}
-		
-		if(order.getInvoice() != null) {
-			for(Invoice i: order.getInvoice()) {
-				for(ProductRequest pr: i.getItens()) {
-					ProductRequest tpr = transientItens.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
-				}
-			}
-		}
-		
-		for(ProductRequest pr: invoice.getItens()) {
-			ProductRequest tpr = transientItens.get(pr.getSerial());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
-			}
-			
-			tpr.setUnits(tpr.getUnits() - pr.getUnits());
-			
-			if(tpr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-			}
-		}
-		
 	}
 	
 	/**
