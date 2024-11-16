@@ -49,9 +49,9 @@
 						<ec:table-col><center><fmt:message key="show_order.table_product.description" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="show_order.table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="show_order.table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center>Discounts</center></ec:table-col>
-						<ec:table-col><center>Taxes</center></ec:table-col>
-						<ec:table-col><center>Total</center></ec:table-col>
+						<ec:table-col><center><fmt:message key="show_order.table_product.discount" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="show_order.table_product.tax" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="show_order.table_product.total" bundle="${messages}"/></center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.order.itens}" var="product">
@@ -110,12 +110,12 @@
 					<ec:tabs-item title="#{show_order.invoice_id}" bundle="${messages}" active="true" >
 						<ec:table>
 							<ec:table-header>
-								<ec:table-col><center><small>#ID</small></center></ec:table-col>
-								<ec:table-col><center><small>Date</small></center></ec:table-col>
-								<ec:table-col><center><small>Subtotal</small></center></ec:table-col>
-								<ec:table-col><center><small>Taxes</small></center></ec:table-col>
-								<ec:table-col><center><small>Discounts</small></center></ec:table-col>
-								<ec:table-col><center><small>Total</small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="show_order.table_invoice.id" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="show_order.table_invoice.date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="show_order.table_invoice.subtotal" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="show_order.table_invoice.tax" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="show_order.table_invoice.discount" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="show_order.table_invoice.total" bundle="${messages}"/></small></center></ec:table-col>
 							</ec:table-header>
 							<ec:table-body>
 								<c:forEach items="${vars.invoices}" var="invoice">
