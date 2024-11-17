@@ -11,8 +11,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -41,8 +41,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	private static final String ORDER_EVENT_GROUP = "ORDER";
 
-	public static final String basePermission = "app.registry.sales.invoice.";
-
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
 
@@ -68,8 +66,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "register"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRegisterPermission());
 		
 		if(entity.getOrder() == null) {
 			throw new InvoiceRegistryException("order is empty");
@@ -104,8 +101,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "remove"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
 		
 		try {
 			entityAccess.delete(entity);
@@ -118,18 +114,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	public Invoice findById(String id) throws InvoiceRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "find"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 		
 		return unsafeFindById(id, null);
 	}
 
 	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException{
 
-		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
-			ContextSystemSecurityCheck.checkPermission(
-					new RuntimeSecurityPermission(basePermission + "find"));
-		}
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 
 		SystemUser systemUser = null;
 		
@@ -148,8 +140,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	public Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException{
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "find"));
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 		
 		return unsafeFindById(id, systemUser);
 	}
@@ -177,6 +169,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
 		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
+		
 		SystemUserID userID = getSystemUserID();
 		SystemUser user = getSystemUser(userID);
 		
@@ -198,6 +192,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
+		
 		SystemUser user = getSystemUser(userID);
 		return createInvoice(order, user, itens, message);
 	}
@@ -207,13 +202,12 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
 
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
+		
 		if(systemUser == null) {
 			throw new NullPointerException("systemUser");
 		}
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "create"));
-
 		try {
 			return unsafeCreateInvoice(order, systemUser, itens, message);
 		}
@@ -231,8 +225,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "find"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 		
 		try {
 			return entityAccess.findByOrder(id, null);
@@ -245,10 +238,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException{
 
-		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
-			ContextSystemSecurityCheck.checkPermission(
-					new RuntimeSecurityPermission(basePermission + "find"));
-		}
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 
 		SystemUser systemUser = null;
 		

@@ -145,4 +145,34 @@ public final class SalesPluginPermissions {
 		
 	}
 	
+	public static class INVOICE_REGISTRY {
+
+		public static final String basePermission = SalesPluginPermissions.basePermission + "invoice.";
+		
+		public static SecurityPermission getRegisterPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register");
+		}
+
+		public static SecurityPermission getListPermission() {
+			return new RuntimeSecurityPermission(basePermission + "list");
+		}
+		
+		public static SecurityPermission getRemovePermission() {
+			return new RuntimeSecurityPermission(basePermission + "remove");
+		}
+
+		public static SecurityPermission getGetPermission() {
+			return new RuntimeSecurityPermission(basePermission + "get");
+		}
+		
+		public static SecurityPermission getFindPermission() {
+			return new RuntimeSecurityPermission(basePermission + "find");
+		}
+
+		public static SecurityPermission getCreatePermission() {
+			return new RuntimeSecurityPermission(basePermission + "create");
+		}
+		
+	}
+	
 }
