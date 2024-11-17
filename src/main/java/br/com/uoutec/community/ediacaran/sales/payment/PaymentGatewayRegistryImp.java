@@ -11,13 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.application.security.RuntimeSecurityPermission;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 
 @Singleton
 public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
-
-	public static final String basePermission = "app.registry.sales.payment.";
 
 	private Logger logger = LoggerFactory.getLogger(PaymentGatewayRegistry.class);
 	
@@ -32,10 +30,9 @@ public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
 	}
 
 	@Override
-	public void registry(PaymentGateway paymentGateway) throws PaymentGatewayException {
+	public void registerPaymentGateway(PaymentGateway paymentGateway) throws PaymentGatewayException {
 
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "register"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PAYMENT_GATEWAY.getRegisterPermission());
 
 		PaymentGateway oldPaymentGateway = map.put(paymentGateway.getId().toLowerCase(), paymentGateway);
 		
@@ -51,10 +48,9 @@ public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
 	}
 
 	@Override
-	public void remove(String value) throws PaymentGatewayException {
+	public void removePaymentGateway(String value) throws PaymentGatewayException {
 
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "remove"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PAYMENT_GATEWAY.getRemovePermission());
 
 		PaymentGateway oldPaymentGateway;
 		

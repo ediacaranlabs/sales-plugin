@@ -15,8 +15,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -119,8 +119,6 @@ public class OrderRegistryImp
 		
 	}
 
-	public static final String basePermission = "app.registry.sales.order.";
-	
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
 
@@ -149,8 +147,7 @@ public class OrderRegistryImp
 	@Override
 	public void registerOrder(Order entity)	throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "register"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
 		
 		try{
 			if(entity.getId() == null){
@@ -185,8 +182,7 @@ public class OrderRegistryImp
 	@Override
 	public void removeOrder(Order entity) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "remove"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRemovePermission());
 		
 		try{
 			if(!entity.isRemoved()){
@@ -204,8 +200,7 @@ public class OrderRegistryImp
 	@Override
 	public Order findById(String id) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "find"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
 		
 		return unsafeFindById(id, null);
 	}
@@ -214,8 +209,7 @@ public class OrderRegistryImp
 	public Order findById(String id, SystemUserID userID) throws OrderRegistryException {
 
 		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
-			ContextSystemSecurityCheck.checkPermission(
-					new RuntimeSecurityPermission(basePermission + "find"));
+			ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
 		}
 
 		SystemUser systemUser = null;
@@ -236,8 +230,7 @@ public class OrderRegistryImp
 	@Override
 	public Order findById(String id, SystemUser systemUser) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "find"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
 		
 		return unsafeFindById(id, systemUser);
 	}
@@ -263,8 +256,7 @@ public class OrderRegistryImp
 	public Order findByCartID(String id)
 			throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "find"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
 		
 		try{
 			return orderEntityAccess.findByCartID(id);
@@ -275,6 +267,9 @@ public class OrderRegistryImp
 	}
 	
 	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
+		
 		try{
 			return orderEntityAccess.searchOrder(value, first, max);
 		}
@@ -290,6 +285,8 @@ public class OrderRegistryImp
 	
 	public List<Order> getOrders(OrderStatus status, Integer first, Integer max)
 			throws OrderRegistryException, SystemUserRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
 		
 		SystemUserID userID = getSystemUserID();
 		SystemUser user = getSystemUser(userID);
@@ -307,8 +304,7 @@ public class OrderRegistryImp
 	public List<Order> getOrders(SystemUserID userID, Integer first, Integer max)
 			throws OrderRegistryException, SystemUserRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "list"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
 		
 		SystemUser systemUser = getSystemUser(userID);
 		
@@ -324,8 +320,7 @@ public class OrderRegistryImp
 	public List<Order> getOrders(SystemUserID userID, OrderStatus status,
 			Integer first, Integer max) throws OrderRegistryException, SystemUserRegistryException {
 
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "list"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
 		
 		SystemUser systemUser = getSystemUser(userID);
 		
@@ -341,8 +336,7 @@ public class OrderRegistryImp
 	public ProductRequest getProductRequest(String orderID,
 			String id) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "product_request"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.GET.getProductRequestPermission());
 		
 		try{
 			return orderEntityAccess.getProductRequest(orderID, id);
@@ -368,6 +362,8 @@ public class OrderRegistryImp
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
 					throws OrderRegistryException, UnavailableProductException, SystemUserRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getCreatePermission());
 		
 		SystemUserID userID = getSystemUserID();
 		SystemUser user = getSystemUser(userID);
@@ -378,8 +374,7 @@ public class OrderRegistryImp
 	public Order createOrder(Cart cart, SystemUserID userID, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException{
 
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "create"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getCreatePermission());
 		
 		SystemUser user = getSystemUser(userID);
 		
@@ -394,8 +389,7 @@ public class OrderRegistryImp
 	public Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "create"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getCreatePermission());
 		
 		return unsafeCreateOrder(cart, systemUser, payment, message, paymentGateway);
 	}
@@ -588,11 +582,10 @@ public class OrderRegistryImp
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException{
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "refound"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());
 		
 		try{
-			this.safeCreateRefound(orderID, message);
+			this.unsafeCreateRefound(orderID, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao fazer o reembolso", e);
@@ -604,7 +597,7 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private void safeCreateRefound(String orderID, String message) 
+	private void unsafeCreateRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 		
@@ -659,11 +652,10 @@ public class OrderRegistryImp
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException{
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "revert_refound"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.REFOUND.getRevertPermission());
 		
 		try{
-			this.safeRevertRefound(orderID, message);
+			this.unsafeRevertRefound(orderID, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao reserver o reembolso", e);
@@ -675,7 +667,7 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private void safeRevertRefound(String orderID, String message) 
+	private void unsafeRevertRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException{
 		
@@ -747,8 +739,9 @@ public class OrderRegistryImp
 	/* log  */
 	
 	public void registryLog(String orderID, String message) throws OrderRegistryException{
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "logs.register"));
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.LOGS.getRegisterPermission());
+		
 		try{
 			Order order = new Order();
 			order.setId(orderID);
@@ -781,8 +774,7 @@ public class OrderRegistryImp
 	
 	public List<OrderLog> getLogs(String orderID, Integer first, Integer max) throws OrderRegistryException{
 
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "logs.list"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.LOGS.getListPermission());
 		
 		try{
 			Order order = new Order();

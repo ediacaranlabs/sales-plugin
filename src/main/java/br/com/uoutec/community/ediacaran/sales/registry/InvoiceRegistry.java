@@ -36,7 +36,7 @@ public interface InvoiceRegistry extends PublicBean{
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
 	
-	List<Invoice> getInvoices(Integer first, Integer max) throws InvoiceRegistryException;
+	List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException;
 	
 	
 }

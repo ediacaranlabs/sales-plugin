@@ -22,6 +22,8 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -153,7 +155,7 @@ public class InvoiceEntityAccessImp
 	}
 
 	@Override
-	public List<Invoice> findByOrder(String order) throws EntityAccessException {
+	public List<Invoice> findByOrder(String order, SystemUser user) throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -161,13 +163,25 @@ public class InvoiceEntityAccessImp
 		    		builder.createQuery(InvoiceEntity.class);
 		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
 		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
-		    
-		    List<Predicate> and = new ArrayList<Predicate>();
+		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("owner");
 		    
 		    criteria.select(from);
 
+		    List<Predicate> and = new ArrayList<Predicate>();
 	    	and.add(builder.equal(orderJoin.get("id"), order));
 		    
+	    	if(user != null) {
+		    	and.add(builder.equal(userJoin.get("id"), user.getId()));
+	    	}
+	    	
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+	    	
 	    	List<javax.persistence.criteria.Order> orderList = 
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
@@ -190,17 +204,31 @@ public class InvoiceEntityAccessImp
 	}
 	
 	@Override
-	public List<Invoice> getList(Integer first, Integer max)
+	public List<Invoice> getList(Integer first, Integer max, SystemUser user)
 			throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<InvoiceEntity> criteria = 
 		    		builder.createQuery(InvoiceEntity.class);
-		    Root<InvoiceEntity> from = 
-		    		criteria.from(InvoiceEntity.class);
+		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
+		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("owner");
 		    
 		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+		    
+	    	if(user != null) {
+		    	and.add(builder.equal(userJoin.get("id"), user.getId()));
+	    	}
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
 		    
 	    	List<javax.persistence.criteria.Order> orderList = 
 	    			new ArrayList<javax.persistence.criteria.Order>();

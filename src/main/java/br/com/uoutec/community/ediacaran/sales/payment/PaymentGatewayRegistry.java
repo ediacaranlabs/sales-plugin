@@ -8,9 +8,9 @@ import br.com.uoutec.entity.registry.Registry;
 
 public interface PaymentGatewayRegistry extends Registry, PublicBean{
 
-	void registry(PaymentGateway paymentGateway) throws PaymentGatewayException;
+	void registerPaymentGateway(PaymentGateway paymentGateway) throws PaymentGatewayException;
 	
-	void remove(String value) throws PaymentGatewayException;
+	void removePaymentGateway(String value) throws PaymentGatewayException;
 	
 	PaymentGateway getPaymentGateway(String value);
 	

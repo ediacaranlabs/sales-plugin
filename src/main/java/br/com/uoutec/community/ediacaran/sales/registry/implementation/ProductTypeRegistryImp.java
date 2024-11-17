@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.application.security.RuntimeSecurityPermission;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
@@ -19,8 +19,6 @@ public class ProductTypeRegistryImp
 	extends AbstractRegistry
 	implements ProductTypeRegistry{
 
-	public static final String basePermission = "app.registry.product_type.";
-	
 	private ConcurrentMap<String, ProductType> map;
 	
 	public ProductTypeRegistryImp() {
@@ -30,8 +28,7 @@ public class ProductTypeRegistryImp
 	@Override
 	public void registerProductType(ProductType e) throws ProductTypeRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "register"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getRegisterPermission());
 		
 		map.put(e.getCode(), e);
 	}
@@ -39,19 +36,24 @@ public class ProductTypeRegistryImp
 	@Override
 	public void removeProductType(String code) throws ProductTypeRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "remove"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getRemovePermission());
 		
 		map.remove(code);
 	}
 
 	@Override
 	public List<ProductType> getProductTypes() throws ProductTypeRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getListPermission());
+		
 		return map.values().stream().collect(Collectors.toList());
 	}
 
 	@Override
 	public ProductType getProductType(String code) throws ProductTypeRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getGetPermission());
+		
 		return map.get(code);
 	}
 

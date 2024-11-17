@@ -230,8 +230,12 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(
+				new RuntimeSecurityPermission(basePermission + "find"));
+		
 		try {
-			return entityAccess.findByOrder(id);
+			return entityAccess.findByOrder(id, null);
 		}
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
@@ -239,15 +243,33 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
-	public List<Invoice> getInvoices(Integer first, Integer max) throws InvoiceRegistryException {
+	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException{
+
+		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
+			ContextSystemSecurityCheck.checkPermission(
+					new RuntimeSecurityPermission(basePermission + "find"));
+		}
+
+		SystemUser systemUser = null;
+		
 		try {
-			return entityAccess.getList(first, max);
+			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+				userID = getSystemUserID();
+			}
+			systemUser = getSystemUser(userID);
+		}
+		catch (SystemUserRegistryException e) {
+			throw new InvoiceRegistryException(e);
+		}
+		
+		try {
+			return entityAccess.findByOrder(id, systemUser);
 		}
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
 		}
+		
 	}
-
 	
 	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

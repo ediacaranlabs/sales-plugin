@@ -42,6 +42,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchAdminPubEnt
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -154,7 +155,7 @@ public class OrderPanelPubResource {
 		List<Invoice> invoices;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
-			invoices = invoiceRegistry.findByOrder(order.getId());
+			invoices = invoiceRegistry.findByOrder(order.getId(), SystemUserRegistry.CURRENT_USER);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

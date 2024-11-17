@@ -6,8 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.application.security.RuntimeSecurityPermission;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -43,8 +43,6 @@ public class CartRegistryImp
 
 	public static final String CART_LOCK_GROUP_NAME = "CART";
 
-	public static final String basePermission = "app.registry.sales.cart.";
-	
 	private boolean enabledCouponSupport;
 
 	private String couponPublicResource;
@@ -83,6 +81,8 @@ public class CartRegistryImp
 	public boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, SystemUserRegistryException{
 		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckAvailabilityPermission());
+		
 		SystemUserID userID = getSystemUserID();
 		SystemUser sysemUser = getSystemUser(userID);
 		
@@ -106,6 +106,8 @@ public class CartRegistryImp
 	@EnableFilters(CartRegistry.class)
 	public void remove(Cart cart, String serial) throws ProductTypeRegistryException, ProductTypeHandlerException {
 		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getRemovePermission());
+		
 		ItensCollection itens = cart.getItensCollection();
 		ProductRequest item = itens.get(serial);
 		
@@ -126,6 +128,8 @@ public class CartRegistryImp
 			int quantity) throws MaxItensException, ProductTypeRegistryException, 
 			ProductTypeHandlerException {
 
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getSetQuantityPermission());
+		
 		ItensCollection itens = cart.getItensCollection();
 		
 		ProductRequest item = itens.get(serial);
@@ -146,6 +150,8 @@ public class CartRegistryImp
 			Map<String, String> addData, int units) throws MaxItensException, 
 			ProductTypeRegistryException, ProductTypeHandlerException {
 
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getAddPermission());
+		
 		ProductType productType = productTypeRegistry.getProductType(product.getProductType());
 		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
@@ -176,10 +182,12 @@ public class CartRegistryImp
 	public Checkout checkout(Cart cart, Payment payment, 
 			String message) throws OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
 		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckoutPermission());
+		
 		SystemUserID userID = getSystemUserID();
 		SystemUser user = getSystemUser(userID);
 		
-		return safeCheckout(cart, user, payment, message);
+		return unsafeCheckout(cart, user, payment, message);
 	}
 	
 	@EnableFilters(CartRegistry.class)
@@ -187,8 +195,7 @@ public class CartRegistryImp
 			String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "checkout"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckoutPermission());
 		
 		SystemUser user = getSystemUser(userID);
 		
@@ -196,20 +203,19 @@ public class CartRegistryImp
 			throw new SystemUserRegistryException(String.valueOf(userID));
 		}
 		
-		return safeCheckout(cart, user, payment, message);
+		return unsafeCheckout(cart, user, payment, message);
 	}
 
 	@EnableFilters(CartRegistry.class)
 	public Checkout checkout(Cart cart, SystemUser user, Payment payment, 
 			String message) throws OrderRegistryException, PaymentGatewayException{
 		
-		ContextSystemSecurityCheck.checkPermission(
-				new RuntimeSecurityPermission(basePermission + "checkout"));
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckoutPermission());
 		
-		return safeCheckout(cart, user, payment, message);
+		return unsafeCheckout(cart, user, payment, message);
 	}
 
-	private Checkout safeCheckout(Cart cart, SystemUser user, Payment payment, 
+	private Checkout unsafeCheckout(Cart cart, SystemUser user, Payment payment, 
 			String message) throws OrderRegistryException, PaymentGatewayException{
 		
 		PaymentGateway paymentGateway = 

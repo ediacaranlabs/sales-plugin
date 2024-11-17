@@ -17,7 +17,7 @@ public class PaymentGatewayPluginInstaller {
 	public void install() throws Throwable {
 		
 		PaymentGatewayRegistry pgr = EntityContextPlugin.getEntity(PaymentGatewayRegistry.class);
-		pgr.registry(new FreePaymentGateway());
+		pgr.registerPaymentGateway(new FreePaymentGateway());
 		
 		EntityInheritanceManager eiu = EntityContextPlugin.getEntity(EntityInheritanceManager.class);
 		eiu.register(FreePaymentPubEntity.class, "free", PaymentPubEntity.class);  
@@ -27,7 +27,7 @@ public class PaymentGatewayPluginInstaller {
 	public void uninstall() throws Throwable {
 		
 		PaymentGatewayRegistry pgr = EntityContextPlugin.getEntity(PaymentGatewayRegistry.class);
-		pgr.remove("free");
+		pgr.removePaymentGateway("free");
 		
 		EntityInheritanceManager eiu = EntityContextPlugin.getEntity(EntityInheritanceManager.class);
 		eiu.remove("free", PaymentPubEntity.class);  
