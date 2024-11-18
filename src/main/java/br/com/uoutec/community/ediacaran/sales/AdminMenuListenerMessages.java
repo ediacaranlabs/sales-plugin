@@ -13,6 +13,8 @@ public class AdminMenuListenerMessages {
 		public static final class itens {
 			
 			public static final String order 	= "install_menu.itens.order";
+
+			public static final String invoice 	= "install_menu.itens.invoice";
 			
 		}
 		

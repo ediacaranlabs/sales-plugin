@@ -55,6 +55,9 @@ public class InvoiceEntity implements Serializable{
 	@Column(name="vlr_total", scale=3, precision=12)
 	private BigDecimal total;
 	
+	@Column(name="dsc_currency", length=3)
+	private String currency;
+	
 	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
 	
@@ -68,6 +71,7 @@ public class InvoiceEntity implements Serializable{
 		
 		this.date = e.getDate();
 		this.id = e.getId();
+		this.currency = e.getCurrency();
 		
 		if(e.getOwner() > 0) {
 			this.owner = new SystemUserEntity();
@@ -173,7 +177,8 @@ public class InvoiceEntity implements Serializable{
 		e.setDate(this.date);
 		e.setId(this.id);
 		e.setOrder(this.order == null? null : this.order.getId());
-
+		e.setCurrency(this.currency);
+		
 		if(this.owner != null) {
 			e.setOwner(this.owner.getId());
 		}

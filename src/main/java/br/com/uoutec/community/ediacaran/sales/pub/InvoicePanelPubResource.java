@@ -104,7 +104,7 @@ public class InvoicePanelPubResource {
 		
 		
 		try{
-			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
+			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale);
 			int page = request.getPage() == null? 0 : request.getPage();
 			int firstResult = (page-1)*10;
 			int maxResult = 11;
@@ -140,7 +140,7 @@ public class InvoicePanelPubResource {
 		
 		Invoice invoice;
 		try{
-			invoice = invoicePubEntity.rebuild(true, false, true);
+			invoice = invoicePubEntity.rebuild(true, false, false);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

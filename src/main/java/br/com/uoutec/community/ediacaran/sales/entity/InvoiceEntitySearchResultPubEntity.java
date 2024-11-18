@@ -19,6 +19,8 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 	private String subTotal;
 
 	private String taxes;
+
+	private String discounts;
 	
 	private String total;
 	
@@ -31,6 +33,7 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 		
 		this.subTotal = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getSubtotal());
 		this.taxes = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getTax());
+		this.discounts = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getDiscount());
 		this.total = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getTotal());
 	}
 	
@@ -80,6 +83,14 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 
 	public void setTotal(String total) {
 		this.total = total;
+	}
+
+	public String getDiscounts() {
+		return discounts;
+	}
+
+	public void setDiscounts(String discounts) {
+		this.discounts = discounts;
 	}
 
 	/*
