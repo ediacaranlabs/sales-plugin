@@ -26,7 +26,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.PaymentEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
@@ -236,7 +235,7 @@ public class OrderEntityAccessImp
 		    Root<OrderEntity> from = 
 		    		criteria.from(OrderEntity.class);
 		    Join<OrderEntity, SystemUserEntity> systemUserJoin = from.join("owner");
-		    Join<OrderEntity, PaymentEntity> paymentJoin = from.join("payment");
+		    //Join<OrderEntity, PaymentEntity> paymentJoin = from.join("payment");
 		    
 		    criteria.select(from);
 		    
@@ -249,15 +248,15 @@ public class OrderEntityAccessImp
 		    if(value.getStartDate() != null || value.getEndDate() != null) {
 		    	
 		    	if(value.getStartDate() != null && value.getEndDate() != null) {
-				    and.add(builder.between(systemUserJoin.get("date"), value.getStartDate(), value.getEndDate()));
+				    and.add(builder.between(from.get("date"), value.getStartDate(), value.getEndDate()));
 		    	}
 		    	else
 		    	if(value.getStartDate() != null) {
-				    and.add(builder.greaterThanOrEqualTo(systemUserJoin.get("date"), value.getStartDate()));
+				    and.add(builder.greaterThanOrEqualTo(from.get("date"), value.getStartDate()));
 		    	}
 		    	else
 		    	if(value.getEndDate() != null) {
-				    and.add(builder.lessThanOrEqualTo(systemUserJoin.get("date"), value.getEndDate()));
+				    and.add(builder.lessThanOrEqualTo(from.get("date"), value.getEndDate()));
 		    	}
 		    	
 		    }
@@ -265,15 +264,15 @@ public class OrderEntityAccessImp
 		    if(value.getMinTotal() != null || value.getMaxTotal() != null) {
 		    	
 		    	if(value.getMinTotal() != null && value.getMaxTotal() != null) {
-				    and.add(builder.between(paymentJoin.get("total"), value.getMinTotal(), value.getMaxTotal()));
+				    and.add(builder.between(from.get("total"), value.getMinTotal(), value.getMaxTotal()));
 		    	}
 		    	else
 		    	if(value.getMinTotal() != null) {
-				    and.add(builder.greaterThanOrEqualTo(paymentJoin.get("total"), value.getMinTotal()));
+				    and.add(builder.greaterThanOrEqualTo(from.get("total"), value.getMinTotal()));
 		    	}
 		    	else
 		    	if(value.getMaxTotal() != null) {
-				    and.add(builder.lessThanOrEqualTo(paymentJoin.get("total"), value.getMaxTotal()));
+				    and.add(builder.lessThanOrEqualTo(from.get("total"), value.getMaxTotal()));
 		    	}
 		    	
 		    }

@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,18 @@ public class InvoiceEntity implements Serializable{
 	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
 	private OrderEntity order;
 	
+	@Column(name="vlr_value", scale=3, precision=12)
+	private BigDecimal value;
+
+	@Column(name="vlr_discount", scale=3, precision=12)
+	private BigDecimal discount;
+	
+	@Column(name="vlr_tax", scale=3, precision=12)
+	private BigDecimal tax;
+
+	@Column(name="vlr_total", scale=3, precision=12)
+	private BigDecimal total;
+	
 	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
 	
@@ -60,6 +73,11 @@ public class InvoiceEntity implements Serializable{
 			this.owner = new SystemUserEntity();
 			this.owner.setId(e.getOwner());
 		}
+		
+		this.value = e.getSubtotal();
+		this.discount = e.getDiscount();
+		this.tax = e.getTax();
+		this.total = e.getTotal();
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -92,6 +110,46 @@ public class InvoiceEntity implements Serializable{
 
 	public void setOrder(OrderEntity order) {
 		this.order = order;
+	}
+
+	public SystemUserEntity getOwner() {
+		return owner;
+	}
+
+	public void setOwner(SystemUserEntity owner) {
+		this.owner = owner;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public BigDecimal getTax() {
+		return tax;
+	}
+
+	public void setTax(BigDecimal tax) {
+		this.tax = tax;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
 	}
 
 	public List<ProductRequestEntity> getItens() {

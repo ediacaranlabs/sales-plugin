@@ -15,6 +15,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -41,6 +42,10 @@ public class Invoice implements Serializable{
 
 	@Valid
 	private List<ProductRequest> itens;
+	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.CURRENCY)
+	private String currency;
 	
 	public String getId() {
 		return id;
@@ -72,6 +77,14 @@ public class Invoice implements Serializable{
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public String toStringDate(Locale locale) {

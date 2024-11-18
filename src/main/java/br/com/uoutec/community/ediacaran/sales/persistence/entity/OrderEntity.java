@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,18 @@ public class OrderEntity implements Serializable{
 	@OneToMany(mappedBy="orderEntity", fetch=FetchType.LAZY)
 	private List<OrderTaxEntity> taxes;
 
+	@Column(name="vlr_value", scale=3, precision=12)
+	private BigDecimal value;
+
+	@Column(name="vlr_discount", scale=3, precision=12)
+	private BigDecimal discount;
+	
+	@Column(name="vlr_tax", scale=3, precision=12)
+	private BigDecimal tax;
+
+	@Column(name="vlr_total", scale=3, precision=12)
+	private BigDecimal total;
+	
 	@Column(name="bit_removed", length=1)
 	private Boolean removed;
 
@@ -77,6 +90,11 @@ public class OrderEntity implements Serializable{
 			this.owner = new SystemUserEntity();
 			this.owner.setId(e.getOwner());
 		}
+		
+		this.value = e.getSubtotal();
+		this.discount = e.getDiscount();
+		this.tax = e.getTax();
+		this.total = e.getTotal();
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -170,6 +188,46 @@ public class OrderEntity implements Serializable{
 
 	public void setTaxes(List<OrderTaxEntity> taxes) {
 		this.taxes = taxes;
+	}
+
+	public List<InvoiceEntity> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<InvoiceEntity> invoices) {
+		this.invoices = invoices;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
+
+	public BigDecimal getTax() {
+		return tax;
+	}
+
+	public void setTax(BigDecimal tax) {
+		this.tax = tax;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
 	}
 
 	public Order toEntity(){

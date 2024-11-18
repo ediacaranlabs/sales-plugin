@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.pub;
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,36 +28,27 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResult;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderSearchResult;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPanelPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchAdminPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePanelPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchPanelPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
-@Controller(value="${plugins.ediacaran.front.panel_context}/orders", defaultActionName="/")
+@Controller(value="${plugins.ediacaran.front.panel_context}/invoices", defaultActionName="/")
 @ResponseErrors(rendered=false)
-public class OrderPanelPubResource {
+public class InvoicePanelPubResource {
 
 	@Transient
 	@Inject
 	private I18nRegistry i18nRegistry;
 	
-	@Transient
-	@Inject
-	private OrderRegistry orderRegistry;
-
 	@Transient
 	@Inject
 	private InvoiceRegistry invoiceRegistry;
@@ -68,25 +58,21 @@ public class OrderPanelPubResource {
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/index")
+	@View("${plugins.ediacaran.sales.template}/front/panel/invoice/index")
 	@Result("vars")
-	public Map<String, Object> showOrders(
+	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
 		Map<String,Object> vars = new HashMap<>();
 		try{
-			List<Order> orders = this.orderRegistry.getOrders(null, null);
-			vars.put("orders", orders);
-			vars.put("statusList", Arrays.asList(OrderStatus.values()));
-			
 			return vars;
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.show_orders.error.fail_load_orders, 
+							InvoicePanelPubResourceMessages.RESOURCE_BUNDLE,
+							InvoicePanelPubResourceMessages.index.error.fail_load, 
 							locale);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -97,20 +83,20 @@ public class OrderPanelPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	public synchronized Serializable search(
-			@DetachedName OrderSearchAdminPubEntity request,
+			@DetachedName InvoiceSearchPanelPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
 
 		
-		OrderSearch orderSearch;
+		InvoiceSearch search;
 		try{
-			orderSearch = request.rebuild(false, true, true);
+			search = request.rebuild(false, true, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.search.error.fail_load_entity, 
+							InvoicePanelPubResourceMessages.RESOURCE_BUNDLE,
+							InvoicePanelPubResourceMessages.search.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -122,18 +108,19 @@ public class OrderPanelPubResource {
 			int page = request.getPage() == null? 0 : request.getPage();
 			int firstResult = (page-1)*10;
 			int maxResult = 11;
-			List<OrderResultSearch> values = orderRegistry.searchOrder(orderSearch, firstResult, maxResult);
+			List<InvoiceResultSearch> values = invoiceRegistry.searchInvoice(search, firstResult, maxResult);
 			
-			List<OrderResult> result = values.stream()
-					.map((e)->new OrderResult(e, locale, dtaFormt)).collect(Collectors.toList());
+			List<InvoiceEntitySearchResultPubEntity> result = values.stream()
+					.map((e)->new InvoiceEntitySearchResultPubEntity(e, locale, dtaFormt)).collect(Collectors.toList());
 			
-			return new OrderSearchResult(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
+			return new InvoiceSearchResultPubEntity(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.show_orders.error.fail_load_orders, 
+							InvoicePanelPubResourceMessages.RESOURCE_BUNDLE,
+							InvoicePanelPubResourceMessages.search.error.fail_load_entity,
+							
 							locale);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -142,60 +129,31 @@ public class OrderPanelPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/details_order")
+	@View("${plugins.ediacaran.sales.template}/front/panel/invoice/details")
 	@Result("vars")
 	public Map<String,Object> orderDetail(
 			@DetachedName
-			OrderPanelPubEntity orderPubEntity,
+			InvoicePanelPubEntity invoicePubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
-		Order order;
-		List<Invoice> invoices;
+		Invoice invoice;
 		try{
-			order = orderPubEntity.rebuild(true, false, true);
-			invoices = invoiceRegistry.findByOrder(order.getId(), SystemUserRegistry.CURRENT_USER);
+			invoice = invoicePubEntity.rebuild(true, false, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.order_detail.error.fail_load_entity, 
+							InvoicePanelPubResourceMessages.RESOURCE_BUNDLE,
+							InvoicePanelPubResourceMessages.details.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
 		}
 
-		PaymentGateway paymentGateway = null;
-		String view                   = null;
-		
-		try{
-			paymentGateway = 
-				paymentGatewayRegistry
-					.getPaymentGateway(
-							order.getPayment().getPaymentType());
-			
-			if(paymentGateway != null){
-				view = paymentGateway.getOwnerView(order);
-			}
-			
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.order_detail.error.fail_load_payment_gateway, 
-							locale);
-			
-			throw new InvalidRequestException(error, ex);
-		}
-		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("order",          order);
-		map.put("invoices",       invoices);
-		map.put("paymentGateway", paymentGateway);
-		map.put("payment_view",   view);
+		map.put("invoice", invoice);
 		return map;
 	}
 	

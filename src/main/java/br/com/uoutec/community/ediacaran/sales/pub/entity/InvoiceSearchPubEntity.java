@@ -1,4 +1,4 @@
-package br.com.uoutec.community.ediacaran.sales.pub;
+package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,11 +10,11 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
+public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 
 	private static final long serialVersionUID = 7674988526885634067L;
 
@@ -136,17 +136,17 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 	}
 
 	@Override
-	protected boolean isEqualId(OrderSearch instance) throws Throwable {
+	protected boolean isEqualId(InvoiceSearch instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected boolean hasId(OrderSearch instance) throws Throwable {
+	protected boolean hasId(InvoiceSearch instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected OrderSearch reloadEntity() throws Throwable {
+	protected InvoiceSearch reloadEntity() throws Throwable {
 		throw new IllegalStateException();
 	}
 
@@ -155,12 +155,12 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 	}
 
 	@Override
-	protected OrderSearch createNewInstance() throws Throwable {
-		return new OrderSearch();
+	protected InvoiceSearch createNewInstance() throws Throwable {
+		return new InvoiceSearch();
 	}
 
 	@Override
-	protected void copyTo(OrderSearch o, boolean reload, boolean override,
+	protected void copyTo(InvoiceSearch o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setEndDate(endDate);
 		o.setId(id);
@@ -170,7 +170,6 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 		o.setPage(page);
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
-		o.setStatus(status);
 		o.setOwnerName(this.ownerName);
 	}
 	

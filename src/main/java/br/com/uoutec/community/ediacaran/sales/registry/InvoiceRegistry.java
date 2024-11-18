@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
@@ -21,6 +23,8 @@ public interface InvoiceRegistry extends PublicBean{
 	Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException;
 	
 	Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException;
+	
+	List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException;
 	
 	Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

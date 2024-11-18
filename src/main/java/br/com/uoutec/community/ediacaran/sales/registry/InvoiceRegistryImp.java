@@ -14,6 +14,8 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
@@ -163,6 +165,18 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 	}
 	
+	@Override
+	public List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
+		
+		try{
+			return entityAccess.search(value, first, max);
+		}
+		catch(Throwable e){
+			throw new InvoiceRegistryException(e);
+		}
+	}
 
 	@Override
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
@@ -350,6 +364,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
 		i.setItens(invoiceItens);
+		i.setCurrency(order.getPayment().getCurrency());
 		
 		return i;
 	}

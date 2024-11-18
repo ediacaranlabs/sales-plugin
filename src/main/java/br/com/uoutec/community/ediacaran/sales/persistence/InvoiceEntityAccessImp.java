@@ -17,11 +17,14 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
+import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -261,4 +264,99 @@ public class InvoiceEntityAccessImp
 
 	}
 
+	public List<InvoiceResultSearch> search(InvoiceSearch value, Integer first, Integer max) throws EntityAccessException {
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<InvoiceEntity> criteria = 
+		    		builder.createQuery(InvoiceEntity.class);
+		    Root<InvoiceEntity> from = 
+		    		criteria.from(InvoiceEntity.class);
+		    Join<InvoiceEntity, SystemUserEntity> systemUserJoin = from.join("owner");
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
+
+		    if(value.getId() != null) {
+		    	and.add(builder.equal(from.get("id"), value.getId()));
+		    }
+		    
+		    if(value.getStartDate() != null || value.getEndDate() != null) {
+		    	
+		    	if(value.getStartDate() != null && value.getEndDate() != null) {
+				    and.add(builder.between(from.get("date"), value.getStartDate(), value.getEndDate()));
+		    	}
+		    	else
+		    	if(value.getStartDate() != null) {
+				    and.add(builder.greaterThanOrEqualTo(from.get("date"), value.getStartDate()));
+		    	}
+		    	else
+		    	if(value.getEndDate() != null) {
+				    and.add(builder.lessThanOrEqualTo(from.get("date"), value.getEndDate()));
+		    	}
+		    	
+		    }
+
+		    if(value.getMinTotal() != null || value.getMaxTotal() != null) {
+		    	
+		    	if(value.getMinTotal() != null && value.getMaxTotal() != null) {
+				    and.add(builder.between(from.get("total"), value.getMinTotal(), value.getMaxTotal()));
+		    	}
+		    	else
+		    	if(value.getMinTotal() != null) {
+				    and.add(builder.greaterThanOrEqualTo(from.get("total"), value.getMinTotal()));
+		    	}
+		    	else
+		    	if(value.getMaxTotal() != null) {
+				    and.add(builder.lessThanOrEqualTo(from.get("total"), value.getMaxTotal()));
+		    	}
+		    	
+		    }
+		    
+		    if(value.getOwner() != null) {
+			    and.add(builder.equal(systemUserJoin.get("id"), value.getOwner()));
+		    }
+
+		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
+			    and.add(builder.like(systemUserJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+		    }
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<InvoiceEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    if(first != null) {
+		    	typed.setFirstResult(first);
+		    }
+		    
+		    if(max != null) {
+			    typed.setMaxResults(max);		    	
+		    }
+		    
+		    List<InvoiceEntity> list = (List<InvoiceEntity>)typed.getResultList();
+		    List<InvoiceResultSearch> result = new ArrayList<InvoiceResultSearch>();
+    
+		    for(InvoiceEntity e: list) {
+		    	result.add(new InvoiceResultSearch(e.toEntity(), e.getOwner().toEntity()));
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}		
+	}
+	
 }

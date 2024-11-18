@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.pub;
 
 import br.com.uoutec.i18n.MessageBundle;
 
-public class OrdePanelrPubResourceMessages {
+public class OrderPanelPubResourceMessages {
 
 	public static final String RESOURCE_BUNDLE = 
 			MessageBundle
