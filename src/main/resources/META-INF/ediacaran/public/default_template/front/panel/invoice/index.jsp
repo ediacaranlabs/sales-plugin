@@ -11,11 +11,11 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2><fmt:message key="show-orders.title" bundle="${messages}"/></h2>
+				<h2><fmt:message key="title" bundle="${messages}"/></h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
-			<ec:breadcrumb title="#{show-orders.title}" bundle="${messages}">
+			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
 			</ec:breadcrumb>
 		</ed:col>
@@ -23,15 +23,15 @@
 </section>
 
 <ec:box>
-	<ec:box-header><fmt:message key="show-orders.table.title" bundle="${messages}"/></ec:box-header>
+	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
 		<ec:data-table id="invoiceSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices/search">
 			<ed:row>
 				<ed:col size="2">
-	    			<ec:textfield name="id" placeholder="id"/>
+	    			<ec:textfield name="id" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:textfield name="order" placeholder="order"/>
+	    			<ec:textfield name="order" placeholder="#{form.order.placeholder}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="4">
 		    		<ec:field-group>
@@ -55,8 +55,8 @@
 				</ed:col>
 				<ed:col size="3">
 		    		<ec:field-group>
-		    			<ec:textfield name="minTotal" placeholder="min total"/>
-		    			<ec:textfield name="maxTotal" placeholder="max total"/>
+		    			<ec:textfield name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
+		    			<ec:textfield name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
 		    		</ec:field-group>
 				</ed:col>
 				<ed:col size="1">
@@ -67,14 +67,14 @@
 			<ec:data-result var="response">
 				<ec:table>
 					<ec:table-header>
-						<ec:table-col><ec:center>#ID</ec:center></ec:table-col>
-						<ec:table-col><ec:center>#Order</ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center>Subtotal</ec:center></ec:table-col>
-						<ec:table-col><ec:center>Taxes</ec:center></ec:table-col>
-						<ec:table-col><ec:center>Discounts</ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="show-orders.table.total" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="show-orders.table.action" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.order" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.subtotal" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.taxes" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.discounts" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
 						<ec:forEach items="!{response.data}" var="item">
