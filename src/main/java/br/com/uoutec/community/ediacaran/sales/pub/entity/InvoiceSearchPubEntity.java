@@ -5,11 +5,7 @@ import java.time.LocalDate;
 
 import javax.resource.spi.IllegalStateException;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -18,14 +14,10 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 
 	private static final long serialVersionUID = 7674988526885634067L;
 
-	@Pattern(regexp = "[0-9A-Z]+")
-	@Size(min=1,max=32)
 	private String id;
 	
-	@Min(1)
 	private Integer owner;
 
-	@Pattern(regexp=CommonValidation.NAME_FORMAT)
 	private String ownerName;
 	
 	private LocalDate startDate;
@@ -38,9 +30,7 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 
 	private BigDecimal maxTotal;
 	
-	@Pattern(regexp = "[0-9A-Z]+")
-	@Size(min=1,max=32)
-	private String invoice;
+	private String order;
 	
 	private Integer page;
 	
@@ -103,12 +93,12 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 		this.maxTotal = maxTotal;
 	}
 
-	public String getInvoice() {
-		return invoice;
+	public String getOrder() {
+		return order;
 	}
 
-	public void setInvoice(String invoice) {
-		this.invoice = invoice;
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public Integer getPage() {
@@ -171,6 +161,7 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
 		o.setOwnerName(this.ownerName);
+		o.setOrder(order);
 	}
 	
 }

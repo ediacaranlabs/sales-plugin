@@ -14,6 +14,8 @@ public class InvoiceSearch implements Serializable{
 
 	private String ownerName;
 	
+	private String order;
+	
 	private LocalDate startDate;
 	
 	private LocalDate endDate;
@@ -80,6 +82,14 @@ public class InvoiceSearch implements Serializable{
 
 	public void setMaxTotal(BigDecimal maxTotal) {
 		this.maxTotal = maxTotal;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public Integer getPage() {

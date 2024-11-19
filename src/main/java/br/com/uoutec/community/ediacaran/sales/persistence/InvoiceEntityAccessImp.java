@@ -272,6 +272,7 @@ public class InvoiceEntityAccessImp
 		    Root<InvoiceEntity> from = 
 		    		criteria.from(InvoiceEntity.class);
 		    Join<InvoiceEntity, SystemUserEntity> systemUserJoin = from.join("owner");
+		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
 		    
 		    criteria.select(from);
 		    
@@ -279,6 +280,10 @@ public class InvoiceEntityAccessImp
 
 		    if(value.getId() != null) {
 		    	and.add(builder.equal(from.get("id"), value.getId()));
+		    }
+
+		    if(value.getOrder() != null) {
+		    	and.add(builder.equal(orderJoin.get("id"), value.getOrder()));
 		    }
 		    
 		    if(value.getStartDate() != null || value.getEndDate() != null) {
