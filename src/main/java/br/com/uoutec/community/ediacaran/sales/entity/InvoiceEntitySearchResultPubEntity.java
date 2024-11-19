@@ -14,6 +14,8 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 	
 	private String owner;
 	
+	private String order;
+	
 	private String date;
 	
 	private String subTotal;
@@ -30,7 +32,7 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 		this.id = invoiceResultSearch.getInvoice().getId();
 		this.owner = invoiceResultSearch.getOwner().getFirstName() + " " + invoiceResultSearch.getOwner().getLastName();
 		this.date = invoiceResultSearch.getInvoice().getDate() == null? null : dateTimeFormatter.format(invoiceResultSearch.getInvoice().getDate());
-		
+		this.order = invoiceResultSearch.getInvoice().getOrder();
 		this.subTotal = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getSubtotal());
 		this.taxes = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getTax());
 		this.discounts = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getDiscount());
@@ -59,6 +61,14 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 
 	public void setDate(String date) {
 		this.date = date;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public String getSubTotal() {

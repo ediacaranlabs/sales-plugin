@@ -142,7 +142,7 @@ public class OrderPanelPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/details_order")
+	@View("${plugins.ediacaran.sales.template}/front/panel/order/details")
 	@Result("vars")
 	public Map<String,Object> orderDetail(
 			@DetachedName

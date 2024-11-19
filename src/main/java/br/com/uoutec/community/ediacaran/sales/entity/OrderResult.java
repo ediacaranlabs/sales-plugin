@@ -13,7 +13,7 @@ public class OrderResult implements Serializable {
 	private String id;
 	
 	private String owner;
-	
+
 	private String date;
 	
 	private String status;
@@ -32,7 +32,6 @@ public class OrderResult implements Serializable {
 		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
 		this.date = orderResultSearch.getOrder().getDate() == null? null : dateTimeFormatter.format(orderResultSearch.getOrder().getDate());
 		this.status = orderResultSearch.getOrder().getStatus() == null? null : orderResultSearch.getOrder().getStatus().getName(locale);
-		
 		this.subTotal = orderResultSearch.getOrder().getPayment().getCurrency() + " " + df.format(orderResultSearch.getOrder().getSubtotal());
 		this.taxes = orderResultSearch.getOrder().getPayment().getCurrency() + " " + df.format(orderResultSearch.getOrder().getTax());
 		this.total = orderResultSearch.getOrder().getPayment().getCurrency() + " " + df.format(orderResultSearch.getOrder().getTotal());

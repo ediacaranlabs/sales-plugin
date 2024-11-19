@@ -28,9 +28,12 @@
 		<ec:data-table id="invoiceSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices/search">
 			<ed:row>
 				<ed:col size="2">
-	    			<ec:textfield name="id" placeholder="code"/>
+	    			<ec:textfield name="id" placeholder="id"/>
 				</ed:col>
-				<ed:col size="6">
+				<ed:col size="2">
+	    			<ec:textfield name="order" placeholder="order"/>
+				</ed:col>
+				<ed:col size="4">
 		    		<ec:field-group>
 		    			<ec:datefield name="startDate">
 		    				<ec:event type="change">
@@ -65,6 +68,7 @@
 				<ec:table>
 					<ec:table-header>
 						<ec:table-col><ec:center>#ID</ec:center></ec:table-col>
+						<ec:table-col><ec:center>#Order</ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="show-orders.table.data" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center>Subtotal</ec:center></ec:table-col>
 						<ec:table-col><ec:center>Taxes</ec:center></ec:table-col>
@@ -74,7 +78,8 @@
 					</ec:table-header>
 					<ec:table-body>
 						<ec:forEach items="!{response.data}" var="item">
-							<ec:table-col><ec:center>!{item.id}</ec:center></ec:table-col>
+							<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+							<ec:table-col><ec:center><small>!{item.order}</small></ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.subTotal}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.taxes}</ec:center></ec:table-col>
