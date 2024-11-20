@@ -101,7 +101,10 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 
 	@Override
 	protected Invoice createNewInstance() throws Throwable {
-		return new Invoice();
+		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		Order order = new Order();
+		order.setId(this.order);
+		return invoiceRegistry.toInvoice(order);
 	}
 
 	@Override

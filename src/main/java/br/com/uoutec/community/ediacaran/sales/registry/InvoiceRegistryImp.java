@@ -236,6 +236,27 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 	}
 	
+	public Invoice toInvoice(Order order
+			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
+				InvalidUnitsOrderRegistryException {
+		
+		Order actualOrder = null;
+		
+		try {
+			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+			actualOrder = orderRegistry.findById(order.getId());
+		}
+		catch(Throwable e) {
+			throw new OrderNotFoundRegistryException(e);
+		}
+		
+		if(actualOrder == null) {
+			throw new OrderNotFoundRegistryException(order.getId());
+		}
+		
+		return createInvoice(actualOrder);
+	}
+	
 	@Override
 	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
 		
@@ -333,6 +354,42 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		return i;
 	}
 
+	private Invoice createInvoice(Order order) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+
+		Map<String, ProductRequest> transientItens = new HashMap<>();
+		
+		for(ProductRequest pr: order.getItens()) {
+			ProductRequest tpr = new ProductRequest(pr);
+			transientItens.put(pr.getSerial(), tpr);
+		}
+		
+		if(order.getInvoice() != null) {
+			for(Invoice i: order.getInvoice()) {
+				
+				for(ProductRequest pr: i.getItens()) {
+					ProductRequest tpr = transientItens.get(pr.getSerial());
+					
+					tpr.setUnits(tpr.getUnits() - pr.getUnits());
+					
+					if(tpr.getUnits() < 0) {
+						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+					}
+				}
+				
+			}
+		}
+		
+		Invoice i = new Invoice();
+		i.setId(null);
+		i.setOwner(order.getOwner());
+		i.setDate(LocalDateTime.now());
+		i.setOrder(order.getId());
+		i.setItens(new ArrayList<ProductRequest>(transientItens.values()));
+		i.setCurrency(order.getPayment().getCurrency());
+		
+		return i;
+	}
+	
 	private Invoice createInvoice(Order order, Map<String, Integer> itens
 			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 
@@ -375,21 +432,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Map<String, ProductRequest> transientItens = new HashMap<>();
 		
 		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest();
-			tpr.setAddData(pr.getAddData());
-			tpr.setAvailability(pr.isAvailability());
-			tpr.setCost(pr.getCost());
-			tpr.setCurrency(pr.getCurrency());
-			tpr.setDescription(pr.getDescription());
-			tpr.setMaxExtra(pr.getMaxExtra());
-			tpr.setName(pr.getName());
-			tpr.setPeriodType(pr.getPeriodType());
-			tpr.setProduct(pr.getProduct());
-			tpr.setProductID(pr.getProductID());
-			tpr.setSerial(pr.getSerial());
-			tpr.setShortDescription(pr.getShortDescription());
-			tpr.setTaxes(pr.getTaxes());
-			tpr.setUnits(pr.getUnits());
+			ProductRequest tpr = new ProductRequest(pr);
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		
@@ -414,21 +457,21 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			}
 		}
 		
-			for(ProductRequest pr: invoice.getItens()) {
-				ProductRequest tpr = transientItens.get(pr.getSerial());
-				
-				if(tpr == null) {
-					throw new ItemNotFoundOrderRegistryException(pr.getSerial());
-				}
-
-				if(!invoiceExist) {
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-				}
-				
-				if(tpr.getUnits() < 0) {
-					throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-				}
+		for(ProductRequest pr: invoice.getItens()) {
+			ProductRequest tpr = transientItens.get(pr.getSerial());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
+
+			if(!invoiceExist) {
+				tpr.setUnits(tpr.getUnits() - pr.getUnits());
+			}
+			
+			if(tpr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			}
+		}
 		
 	}
 	
