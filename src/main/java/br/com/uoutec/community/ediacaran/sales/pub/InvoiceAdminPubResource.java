@@ -32,9 +32,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultP
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
@@ -128,10 +130,56 @@ public class InvoiceAdminPubResource {
 		
 	}
 	
-	@Action({"/edit/{id}","/new/{order}"})
+	@Action("/new/{order}")
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/edit")
 	@Result("vars")
-	public Map<String,Object> edit(
+	public Map<String,Object> newInvoice(
+			@DetachedName
+			OrderPubEntity orderPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Order order;
+		
+		try{
+			order = orderPubEntity.rebuild(true, false, false);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.new_invoice.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+
+		Invoice invoice;
+		try{
+			invoice = invoiceRegistry.toInvoice(order);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.new_invoice.error.create_invoice, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("order", order);
+		map.put("invoice", invoice);
+		return map;
+	}
+
+	@Action("/save")
+	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
+	@Result("vars")
+	@RequestMethod("POST")
+	public Map<String,Object> save(
 			@DetachedName
 			InvoicePubEntity invoicePubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -139,21 +187,32 @@ public class InvoiceAdminPubResource {
 	) throws InvalidRequestException{
 		
 		Invoice invoice;
-		boolean isNew = false;
 		try{
-			isNew = invoicePubEntity.getId() == null;
-			invoice = invoicePubEntity.rebuild(!isNew, false, false);
+			invoice = invoicePubEntity.rebuild(invoicePubEntity.getId() != null, true, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
 							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.details.error.fail_load_entity, 
+							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
 		}
 
+		try{
+			invoiceRegistry.registerInvoice(invoice);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("invoice", invoice);
 		return map;

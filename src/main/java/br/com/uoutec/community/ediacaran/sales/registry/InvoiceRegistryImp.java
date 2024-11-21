@@ -436,13 +436,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		
-		boolean invoiceExist = false;
-		
 		if(order.getInvoice() != null) {
 			for(Invoice i: order.getInvoice()) {
 				
-				if(invoice.getId() != null && i.getId().equals(invoice.getId())) {
-					invoiceExist = true;
+				if(i.getId().equals(invoice.getId())) {
+					continue;
 				}
 				
 				for(ProductRequest pr: i.getItens()) {
@@ -454,6 +452,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
 					}
 				}
+				
 			}
 		}
 		
@@ -464,9 +463,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
 
-			if(!invoiceExist) {
-				tpr.setUnits(tpr.getUnits() - pr.getUnits());
-			}
+			tpr.setUnits(tpr.getUnits() - pr.getUnits());
 			
 			if(tpr.getUnits() < 0) {
 				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());

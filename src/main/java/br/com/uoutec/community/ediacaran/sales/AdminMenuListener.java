@@ -37,27 +37,48 @@ public class AdminMenuListener
 	
 	private void installMenu(MenuBar menubar) {
 		
-		Menu menu = menubar.getMenu("account");
+		Menu accountMenu = menubar.getMenu("account");
 		
-		if(menu == null) {
-			return;
+		if(accountMenu != null) {
+			accountMenu.addItem("orders")
+				.setIcon("circle")
+				.setName("Orders")
+				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.account_menu.itens.orders)
+				.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders")
+			.getParent()
+				.addItem("invoices")
+				.setIcon("circle")
+				.setName("Invoices")
+				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.account_menu.itens.invoices)
+				.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices");
 		}
 		
-		menu.addItem("orders")
-			.setIcon("circle")
-			.setName("Orders")
-			.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
-			.setTemplate(AdminMenuListenerMessages.installMenu.itens.order)
-			.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders")
-		.getParent()
-			.addItem("invoices")
-			.setIcon("circle")
-			.setName("Invoices")
-			.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
-			.setTemplate(AdminMenuListenerMessages.installMenu.itens.invoice)
-			.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices");
 
+		Menu salesMenu = menubar.getMenu("sales");
 
+		if(salesMenu == null) {
+			menubar.addMenu("sales")
+				.setIcon("circle")
+				.setName("Sales")
+				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.name)
+				.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders")
+				.addItem("orders")
+					.setIcon("circle")
+					.setName("Orders")
+					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.orders)
+					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders")
+				.getParent()
+					.addItem("invoices")
+					.setIcon("circle")
+					.setName("Invoices")
+					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.orders)
+					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices");
+		}
 		
 	}
 	

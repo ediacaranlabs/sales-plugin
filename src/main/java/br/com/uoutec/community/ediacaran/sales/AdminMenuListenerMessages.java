@@ -8,13 +8,35 @@ public class AdminMenuListenerMessages {
 	
 	public static class installMenu {
 		
-		public static final String name = "install_menu.name";
-		
-		public static final class itens {
+		public static final class admin_menu {
 			
-			public static final String order 	= "install_menu.itens.order";
+			public static final class account_menu {
 
-			public static final String invoice 	= "install_menu.itens.invoice";
+				public static final String name = "admin_menu.account_menu";
+
+				public static final class itens {
+					
+					public static final String orders = "admin_menu.account_menu.itens.orders";
+	
+					public static final String invoices = "admin_menu.account_menu.itens.invoices";
+					
+				}
+				
+			}
+			
+			public static final class sales_menu {
+
+				public static final String name = "admin_menu.sales_menu";
+				
+				public static final class itens {
+					
+					public static final String orders = "admin_menu.sales_menu.itens.orders";
+	
+					public static final String invoices = "admin_menu.sales_menu.itens.invoices";
+					
+				}
+				
+			}
 			
 		}
 		
