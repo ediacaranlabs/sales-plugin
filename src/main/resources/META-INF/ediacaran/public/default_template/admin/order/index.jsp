@@ -31,7 +31,7 @@
 	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:textfield name="ownerName" label="Username" placeholder="username" bundle="${messages}"/>
+	    			<ec:textfield name="ownerName" label="Owner" placeholder="owner" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
 		    			<ec:datefield label="From" name="startDate">
@@ -73,6 +73,7 @@
 				<ec:table>
 					<ec:table-header>
 						<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center>Owner</ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
@@ -81,6 +82,7 @@
 					<ec:table-body>
 						<ec:forEach items="!{response.data}" var="item">
 							<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.owner}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
