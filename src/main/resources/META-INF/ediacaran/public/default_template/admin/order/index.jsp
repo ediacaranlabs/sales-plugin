@@ -30,7 +30,7 @@
 				<ed:col size="2">
 	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="2">
+				<ed:col size="3">
 	    			<ec:textfield name="ownerName" label="Owner" placeholder="owner" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
@@ -59,7 +59,7 @@
 						</c:forEach>
 					</ec:select>
 				</ed:col>
-				<ed:col size="3">
+				<ed:col size="2">
 		    			<ec:textfield label="Mínimum (Total)" name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
 		    			<ec:textfield label="Maximum (Total)" name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
 				</ed:col>
@@ -68,7 +68,6 @@
 				</ed:col>
 			</ed:row>
 			
-
 			<ec:data-result var="response">
 				<ec:table>
 					<ec:table-header>
