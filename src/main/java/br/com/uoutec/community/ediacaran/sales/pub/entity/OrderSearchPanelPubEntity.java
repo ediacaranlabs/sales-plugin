@@ -8,7 +8,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
-public class OrderSearchAdminPubEntity extends OrderSearchPubEntity {
+public class OrderSearchPanelPubEntity extends OrderSearchPubEntity {
 
 	private static final long serialVersionUID = 7674988526885634067L;
 

@@ -64,7 +64,6 @@ public class AdminMenuListener
 				.setName("Sales")
 				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.name)
-				.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders")
 				.addItem("orders")
 					.setIcon("circle")
 					.setName("Orders")
@@ -76,7 +75,7 @@ public class AdminMenuListener
 					.setIcon("circle")
 					.setName("Invoices")
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
-					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.orders)
+					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.invoices)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices");
 		}
 		

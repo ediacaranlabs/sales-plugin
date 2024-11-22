@@ -37,19 +37,20 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPanelPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPanelPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
-@Controller(value="${plugins.ediacaran.front.panel_context}/orders", defaultActionName="/")
+@Controller(value="${plugins.ediacaran.front.admin_context}/orders", defaultActionName="/")
 @ResponseErrors(rendered=false)
-public class OrderPanelPubResource {
+public class OrderAdminPubResource {
 
 	@Transient
 	@Inject
@@ -61,6 +62,10 @@ public class OrderPanelPubResource {
 
 	@Transient
 	@Inject
+	private SystemUserRegistry systemUserRegistry;
+	
+	@Transient
+	@Inject
 	private InvoiceRegistry invoiceRegistry;
 	
 	@Transient
@@ -68,9 +73,9 @@ public class OrderPanelPubResource {
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/index")
+	@View("${plugins.ediacaran.sales.template}/admin/order/index")
 	@Result("vars")
-	public Map<String, Object> showOrders(
+	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
@@ -85,8 +90,8 @@ public class OrderPanelPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.show_orders.error.fail_load_orders, 
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.index.error.fail_load, 
 							locale);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -97,7 +102,7 @@ public class OrderPanelPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	public synchronized Serializable search(
-			@DetachedName OrderSearchPanelPubEntity request,
+			@DetachedName OrderSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
 
@@ -109,8 +114,8 @@ public class OrderPanelPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.search.error.fail_load_entity, 
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.search.error.fail_load, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -132,8 +137,8 @@ public class OrderPanelPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.show_orders.error.fail_load_orders, 
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.search.error.fail_load, 
 							locale);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -141,27 +146,29 @@ public class OrderPanelPubResource {
 		
 	}
 	
-	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/details")
+	@Action("/edit/{id}")
+	@View("${plugins.ediacaran.sales.template}/admin/order/edit")
 	@Result("vars")
-	public Map<String,Object> orderDetail(
+	public Map<String,Object> edit(
 			@DetachedName
-			OrderPanelPubEntity orderPubEntity,
+			OrderPubEntity orderPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
 		Order order;
 		List<Invoice> invoices;
+		SystemUser user;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
-			invoices = invoiceRegistry.findByOrder(order.getId(), SystemUserRegistry.CURRENT_USER);
+			invoices = invoiceRegistry.findByOrder(order.getId());
+			user = systemUserRegistry.findById(order.getOwner());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.order_detail.error.fail_load_entity, 
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.edit.error.fail_load, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -177,15 +184,15 @@ public class OrderPanelPubResource {
 							order.getPayment().getPaymentType());
 			
 			if(paymentGateway != null){
-				view = paymentGateway.getOwnerView(order);
+				view = paymentGateway.getOwnerView(user, order);
 			}
 			
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
-							OrderPanelPubResourceMessages.order_detail.error.fail_load_payment_gateway, 
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.edit.error.fail_load_payment_gateway, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);

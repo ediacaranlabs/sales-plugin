@@ -161,7 +161,7 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
 		o.setStatus(status);
-		o.setOwnerName(this.ownerName);
+		o.setOwnerName(ownerName);
 	}
 	
 }

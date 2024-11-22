@@ -46,5 +46,4 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException;
 	
-	
 }
