@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.brandao.brutos.bean.BeanInstance;
 import org.brandao.brutos.bean.BeanProperty;
@@ -62,7 +62,9 @@ public class PaymentEntity implements Serializable{
 	@Column(name="vlr_total", scale=3, precision=12)
 	private BigDecimal total;
 	
-	@NotNull
+	@Column(name="dat_received_from")
+	private LocalDateTime receivedFrom;
+	
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
@@ -81,6 +83,7 @@ public class PaymentEntity implements Serializable{
 		this.currency           = e.getCurrency();
 		this.tax                = e.getTax();
 		this.id                 = e.getId();
+		this.receivedFrom       = e.getReceivedFrom();
 		this.paymentType        = e.getPaymentType();
 		this.value              = e.getValue();
 		this.discount           = e.getDiscount();
@@ -171,6 +174,14 @@ public class PaymentEntity implements Serializable{
 		this.extendData = extendData;
 	}
 	
+	public LocalDateTime getReceivedFrom() {
+		return receivedFrom;
+	}
+
+	public void setReceivedFrom(LocalDateTime receivedFrom) {
+		this.receivedFrom = receivedFrom;
+	}
+
 	public Payment toEntity() {
 		return this.toEntity(null);
 	}
@@ -200,6 +211,7 @@ public class PaymentEntity implements Serializable{
 				e.setAddData(data);
 			}
 			
+			e.setReceivedFrom(this.receivedFrom);
 			e.setTax(this.tax);
 			e.setCurrency(this.currency);
 			e.setId(this.id);

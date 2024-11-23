@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -11,6 +12,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
@@ -31,6 +33,9 @@ public interface OrderRegistry extends PublicBean {
 	
 	Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
+	
+	void registerPayment(Order o, String currency, BigDecimal value
+			) throws OrderRegistryException, PaymentGatewayException;
 	
 	void createRefound(String order, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

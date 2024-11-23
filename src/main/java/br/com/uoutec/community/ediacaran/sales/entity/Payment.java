@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import javax.validation.constraints.Min;
@@ -46,6 +47,8 @@ public class Payment implements Serializable{
 	@Pattern(regexp = CommonValidation.CURRENCY)
 	private String currency;
 	
+	private LocalDateTime receivedFrom;
+	
 	private Map<String,String> addData;
 
 	public String getId() {
@@ -62,6 +65,14 @@ public class Payment implements Serializable{
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public LocalDateTime getReceivedFrom() {
+		return receivedFrom;
+	}
+
+	public void setReceivedFrom(LocalDateTime receivedFrom) {
+		this.receivedFrom = receivedFrom;
 	}
 
 	public BigDecimal getValue() {

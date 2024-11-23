@@ -53,6 +53,9 @@ public class OrderEntity implements Serializable{
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_payment", referencedColumnName="cod_payment")
 	private PaymentEntity payment;
+
+	@Column(name="set_payment_type", length=32)
+	private String paymentType;
 	
 	@OneToMany(mappedBy="order", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
@@ -63,6 +66,9 @@ public class OrderEntity implements Serializable{
 	@OneToMany(mappedBy="orderEntity", fetch=FetchType.LAZY)
 	private List<OrderTaxEntity> taxes;
 
+	@Column(name="dsc_currency", length=3)
+	private String currency;
+	
 	@Column(name="vlr_value", scale=3, precision=12)
 	private BigDecimal value;
 
@@ -91,10 +97,12 @@ public class OrderEntity implements Serializable{
 			this.owner.setId(e.getOwner());
 		}
 		
+		this.paymentType = e.getPaymentType();
 		this.value = e.getSubtotal();
 		this.discount = e.getDiscount();
 		this.tax = e.getTax();
 		this.total = e.getTotal();
+		this.currency = e.getCurrency();
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -251,6 +259,7 @@ public class OrderEntity implements Serializable{
 		e.setRemoved(this.removed == null? false : this.removed);
 		e.setStatus(this.status);
 		e.setCartID(this.cartID);
+		e.setPaymentType(this.paymentType);
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();

@@ -47,6 +47,13 @@ public class Order implements Serializable{
 	@Valid
 	@NotNull(groups = DataValidation.class)
 	private Payment payment;
+
+	@NotNull(groups = DataValidation.class)
+	private String paymentType;
+	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.CURRENCY)
+	private String currency;
 	
 	@Valid
 	private List<Invoice> invoices;
@@ -129,6 +136,22 @@ public class Order implements Serializable{
 		this.invoices = invoices;
 	}
 
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
 	public List<ProductRequest> getItens() {
 		return itens;
 	}
@@ -164,7 +187,7 @@ public class Order implements Serializable{
 	public BigDecimal getSubtotal(){
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
-			value.add(pr.getTotal());
+			value = value.add(pr.getTotal());
 		}
 		return value;
 	}

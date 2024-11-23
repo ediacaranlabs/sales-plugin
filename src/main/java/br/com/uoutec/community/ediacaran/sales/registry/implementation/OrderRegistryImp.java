@@ -29,11 +29,13 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
@@ -50,6 +52,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -346,6 +349,70 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(e);
 		}
 	}
+
+	@Override
+	public void registerPayment(Order o, String currency, BigDecimal value) throws OrderRegistryException, PaymentGatewayException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
+		
+		Order order;
+		try{
+			order = orderEntityAccess.findById(o.getId());
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(o.getId());
+		}
+
+		if(order.getPayment().getReceivedFrom() != null) {
+			return;
+		}
+		
+		//Verifica se o status é o adequado
+		if(!this.isValid(order, OrderStatus.PAYMENT_RECEIVED)){
+			throw new OrderStatusNotAllowedRegistryException(
+					"invalid status: " + 
+					order.getStatus() + " -> " + OrderStatus.PAYMENT_RECEIVED);
+		}
+		
+		if(value == null) {
+			
+			PaymentGatewayRegistry paymentGatewayRegistry = EntityContextPlugin.getEntity(PaymentGatewayRegistry.class);
+			
+			PaymentGateway paymentGateway = paymentGatewayRegistry.getPaymentGateway(order.getPaymentType());
+			
+			if(paymentGateway == null) {
+				throw new OrderRegistryException("payment gateway not found");
+			}
+			
+			SystemUser user;
+			
+			try {
+				user = getSystemUser(order.getOwner());
+			}
+			catch (SystemUserRegistryException e) {
+				throw new OrderRegistryException("owner not found: " + order.getOwner());
+			}
+			
+			paymentGateway.payment(user, order, order.getPayment());
+			
+		}
+		else {
+			
+			if(!order.getPayment().getCurrency().equals(currency)) {
+				throw new OrderRegistryException(currency + " <> " + order.getPayment().getCurrency());
+			}
+
+			if(order.getPayment().getTotal().compareTo(value) != 0) {
+				throw new OrderRegistryException(order.getPayment().getTotal() + " <> " + value);
+			}
+			
+			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
+			
+		}
+
+		this.registerOrder(order);
+		
+	}
 	
 	/**
 	 * Cria um novo pedido.
@@ -477,6 +544,8 @@ public class OrderRegistryImp
 		order.setInvoice(null);
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
+		order.setPaymentType(paymentGateway.getId());
+		order.setCurrency(order.getItens().get(0).getCurrency());
 		
 		/*
 		 Validar moeda
@@ -490,6 +559,7 @@ public class OrderRegistryImp
 		}
 		*/
 		
+
 		payment.setPaymentType(paymentGateway.getId());
 		payment.setTax(cart.getTotalTax());
 		payment.setDiscount(cart.getTotalDiscount());
@@ -497,6 +567,7 @@ public class OrderRegistryImp
 		payment.setValue(cart.getSubtotal());
 		payment.setTotal(cart.getTotal());
 		order.setPayment(payment);
+
 		
 		try{
 			for(ProductRequest pr: order.getItens()){
@@ -512,8 +583,8 @@ public class OrderRegistryImp
 		try{
 			this.registerOrder(order);
 			this.registryLog(order.getId(), message == null? "Pedido criado #" + order.getId() : message);
-			paymentGateway.payment(systemUser, order, order.getPayment());
-			this.registerOrder(order);
+			//paymentGateway.payment(systemUser, order, order.getPayment());
+			//this.registerOrder(order);
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("falha ao registrar o pedido", e);
@@ -797,6 +868,16 @@ public class OrderRegistryImp
 		
 		if(user == null) {
 			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return user;
+	}
+
+	private SystemUser getSystemUser(int id) throws SystemUserRegistryException {
+		SystemUser user = systemUserRegistry.findById(id);
+		
+		if(user == null) {
+			throw new SystemUserRegistryException(String.valueOf(id));
 		}
 		
 		return user;

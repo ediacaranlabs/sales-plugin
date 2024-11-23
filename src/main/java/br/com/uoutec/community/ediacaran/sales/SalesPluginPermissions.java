@@ -62,6 +62,10 @@ public final class SalesPluginPermissions {
 		public static SecurityPermission getCreatePermission() {
 			return new RuntimeSecurityPermission(basePermission + "create");
 		}
+
+		public static SecurityPermission getRegisterPaymentPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register_payment");
+		}
 		
 		public static SecurityPermission getSearchPermission() {
 			return new RuntimeSecurityPermission(basePermission + "search");

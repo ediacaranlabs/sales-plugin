@@ -385,7 +385,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
 		i.setItens(new ArrayList<ProductRequest>(transientItens.values()));
-		i.setCurrency(order.getPayment().getCurrency());
+		i.setCurrency(order.getCurrency());
 		
 		return i;
 	}
@@ -421,7 +421,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
 		i.setItens(invoiceItens);
-		i.setCurrency(order.getPayment().getCurrency());
+		i.setCurrency(order.getCurrency());
 		
 		return i;
 	}

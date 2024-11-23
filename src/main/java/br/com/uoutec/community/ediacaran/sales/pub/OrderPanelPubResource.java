@@ -174,7 +174,7 @@ public class OrderPanelPubResource {
 			paymentGateway = 
 				paymentGatewayRegistry
 					.getPaymentGateway(
-							order.getPayment().getPaymentType());
+							order.getPaymentType());
 			
 			if(paymentGateway != null){
 				view = paymentGateway.getOwnerView(order);
