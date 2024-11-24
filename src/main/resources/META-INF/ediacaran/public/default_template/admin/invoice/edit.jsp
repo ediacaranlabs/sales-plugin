@@ -21,12 +21,14 @@
 			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
 				<ec:breadcrumb-path text="#{origin_sub_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices"  bundle="${messages}"/>
-				<ec:breadcrumb-path text="#${vars.invoice.order}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.invoice.order}"/>
+				<ec:breadcrumb-path text="#${vars.invoice.order}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}"/>
 			</ec:breadcrumb>
 		</ed:col>
 	</ed:row>
 </section>
 
+<ec:form id="invoiceForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/save" method="POST" update="invoiceFormResult">
+	<input type="hidden" name="order" value="${vars.invoice.order}">
 <ec:box>
 	<ec:box-header><b><fmt:message key="invoice_id" bundle="${messages}"/></b> #${vars.invoice.id}</ec:box-header>
 	<ec:box-body>
@@ -49,95 +51,93 @@
 			invoiceEntity.itens = {};
 			invoiceEntity.order = '${vars.invoice.order}';
 		</script>
-		<ec:form id="invoiceForm">
-			<ed:row>
-				<ed:col>
-					<ec:table>
-						<ec:table-header>
-							<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.tax" bundle="${messages}"/></center></ec:table-col>
-							<ec:table-col><center><fmt:message key="table_product.total" bundle="${messages}"/></center></ec:table-col>
-						</ec:table-header>
-						<ec:table-body>
-							<c:forEach items="${vars.invoice.itens}" var="product">
-								<script type="text/javascript">
-									invoiceEntity.itens['${product.serial}'] = '${product.units}';
-								</script>
-								<ec:table-row>
-									<ec:table-col><center>${product.serial}</center></ec:table-col>
-									<ec:table-col><center>${product.product.name}</center></ec:table-col>
-									<ec:table-col><center>${product.product.description}</center></ec:table-col>
-									<ec:table-col classStyle="qty form-group has-feedback" >
-										<ec:textfield maxlength="2" name="${product.serial}" value="${product.units}">
-											<ec:event type="keyup">
-												var $form = $.AppContext.utils.getById('invoiceForm');
-												var $field = $form.getField('${product.serial}');
+		<ed:row>
+			<ed:col>
+				<ec:table>
+					<ec:table-header>
+						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.tax" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="table_product.total" bundle="${messages}"/></center></ec:table-col>
+					</ec:table-header>
+					<ec:table-body>
+						<c:forEach items="${vars.invoice.itens}" var="product">
+							<script type="text/javascript">
+								invoiceEntity.itens['${product.serial}'] = '${product.units}';
+							</script>
+							<ec:table-row>
+								<ec:table-col><center>${product.serial}</center></ec:table-col>
+								<ec:table-col><center>${product.product.name}</center></ec:table-col>
+								<ec:table-col><center>${product.product.description}</center></ec:table-col>
+								<ec:table-col classStyle="qty form-group has-feedback" >
+									<ec:textfield maxlength="2" name="itens[${product.serial}]" value="${product.units}">
+										<ec:event type="keyup">
+											var $form = $.AppContext.utils.getById('invoiceForm');
+											var $field = $form.getField('itens[${product.serial}]');
+											
+											invoiceEntity.itens['${product.serial}'] = $field.getValue();
+											
+											var $i = parseFloat(invoiceEntity.itens['${product.serial}']);
+											var $max = parseFloat('${product.units}');
+											
+											if(isNaN($i) || isNaN($max) || $i < 0 || $i > $max){
+												return;
+											}
+											
+											$.AppContext.utils.postJson(
+												'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/recalc_invoice',
+												invoiceEntity,
+												function ($e){
 												
-												invoiceEntity.itens['${product.serial}'] = $field.getValue();
-												
-												var $i = parseFloat(invoiceEntity.itens['${product.serial}']);
-												var $max = parseFloat('${product.units}');
-												
-												if(isNaN($i) || isNaN($max) || $i < 0 || $i > $max){
-													return;
-												}
-												
-												$.AppContext.utils.postJson(
-													'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/recalc_invoice',
-													invoiceEntity,
-													function ($e){
-													
-														if(!$e.itens){
-															return;
-														}
-														
-														for (let $j = 0; $j < $e.itens.length; $j++) {
-															var $i = $e.itens[$j];
-														  
-														  	if($i.serial == '${product.serial}'){
-
-																$.AppContext.utils.getById('${product.serial}_subtotal').setValue($i.currency + '<br>' + (Math.round($i.subtotal * 100) / 100).toFixed(2) );
-																$.AppContext.utils.getById('${product.serial}_discount').setValue($i.currency + '<br>' + (Math.round($i.discounts * 100) / 100).toFixed(2) );
-																$.AppContext.utils.getById('${product.serial}_tax').setValue($i.currency + '<br>' + (Math.round($i.taxes * 100) / 100).toFixed(2) );
-																$.AppContext.utils.getById('${product.serial}_total').setValue($i.currency + '<br>' + (Math.round($i.total * 100) / 100).toFixed(2) );
-																
-																$.AppContext.utils.getById('subtotal').setValue($i.currency + ' ' + (Math.round($e.subtotal * 100) / 100).toFixed(2) );
-																$.AppContext.utils.getById('discounts').setValue($i.currency + ' ' + (Math.round($e.discounts * 100) / 100).toFixed(2) );
-																$.AppContext.utils.getById('taxes').setValue($i.currency + ' ' + (Math.round($e.taxes * 100) / 100).toFixed(2) );
-																$.AppContext.utils.getById('total').setValue($i.currency + ' ' + (Math.round($e.total * 100) / 100).toFixed(2) );
-															}
-														  
-														}
-														
+													if(!$e.itens){
+														return;
 													}
-												);
-												
-											</ec:event>
-											<ec:field-validator>
-												<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
-												<ec:field-validator-rule name="between" message="Must be between 0 to ${product.units}">
-														<ec:field-validator-param name="min">0</ec:field-validator-param>
-														<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
-												</ec:field-validator-rule>
-											</ec:field-validator>
-										</ec:textfield>
-									</ec:table-col>
-									<ec:table-col><center id="${product.serial}_subtotal">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
-									<ec:table-col><center id="${product.serial}_discount">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
-									<ec:table-col><center id="${product.serial}_tax">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
-									<ec:table-col><center id="${product.serial}_total">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
-								</ec:table-row>
-							</c:forEach>
-						</ec:table-body>
-					</ec:table>
-				</ed:col>
-			</ed:row>
-		</ec:form>
+													
+													for (let $j = 0; $j < $e.itens.length; $j++) {
+														var $i = $e.itens[$j];
+													  
+													  	if($i.serial == '${product.serial}'){
+
+															$.AppContext.utils.getById('${product.serial}_subtotal').setValue($i.currency + '<br>' + (Math.round($i.subtotal * 100) / 100).toFixed(2) );
+															$.AppContext.utils.getById('${product.serial}_discount').setValue($i.currency + '<br>' + (Math.round($i.discounts * 100) / 100).toFixed(2) );
+															$.AppContext.utils.getById('${product.serial}_tax').setValue($i.currency + '<br>' + (Math.round($i.taxes * 100) / 100).toFixed(2) );
+															$.AppContext.utils.getById('${product.serial}_total').setValue($i.currency + '<br>' + (Math.round($i.total * 100) / 100).toFixed(2) );
+															
+															$.AppContext.utils.getById('subtotal').setValue($i.currency + ' ' + (Math.round($e.subtotal * 100) / 100).toFixed(2) );
+															$.AppContext.utils.getById('discounts').setValue($i.currency + ' ' + (Math.round($e.discounts * 100) / 100).toFixed(2) );
+															$.AppContext.utils.getById('taxes').setValue($i.currency + ' ' + (Math.round($e.taxes * 100) / 100).toFixed(2) );
+															$.AppContext.utils.getById('total').setValue($i.currency + ' ' + (Math.round($e.total * 100) / 100).toFixed(2) );
+														}
+													  
+													}
+													
+												}
+											);
+											
+										</ec:event>
+										<ec:field-validator>
+											<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+											<ec:field-validator-rule name="between" message="Must be between 0 to ${product.units}">
+													<ec:field-validator-param name="min">0</ec:field-validator-param>
+													<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
+											</ec:field-validator-rule>
+										</ec:field-validator>
+									</ec:textfield>
+								</ec:table-col>
+								<ec:table-col><center id="${product.serial}_subtotal">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_discount">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_tax">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_total">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
+							</ec:table-row>
+						</c:forEach>
+					</ec:table-body>
+				</ec:table>
+			</ed:col>
+		</ed:row>
 		<ed:row>
 			<ed:col size="5">
 			</ed:col>
@@ -163,6 +163,18 @@
 				</ec:description-list>
 			</ed:col>
 		</ed:row>
-	
+		<ed:row>
+			<ed:col id="invoiceFormResult">
+			</ed:col>
+		</ed:row>
 	</ec:box-body>
+	<ec:box-footer>
+		<ec:button label="Back" align="right" actionType="button">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}');			
+			</ec:event>
+		</ec:button>
+		<ec:button actionType="submit" label="Save" align="right"/>
+	</ec:box-footer>
 </ec:box>
+</ec:form>

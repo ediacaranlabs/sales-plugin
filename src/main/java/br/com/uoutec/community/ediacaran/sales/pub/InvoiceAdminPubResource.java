@@ -132,7 +132,7 @@ public class InvoiceAdminPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/front/panel/invoice/details")
+	@View("${plugins.ediacaran.sales.template}/admin/invoice/details")
 	@Result("vars")
 	public Map<String,Object> orderDetail(
 			@DetachedName
