@@ -55,6 +55,8 @@ public class Order implements Serializable{
 	@Pattern(regexp = CommonValidation.CURRENCY)
 	private String currency;
 	
+	private LocalDateTime completeInvoice;
+	
 	@Valid
 	private List<Invoice> invoices;
 	
@@ -126,6 +128,14 @@ public class Order implements Serializable{
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	public LocalDateTime getCompleteInvoice() {
+		return completeInvoice;
+	}
+
+	public void setCompleteInvoice(LocalDateTime completeInvoice) {
+		this.completeInvoice = completeInvoice;
 	}
 
 	public List<Invoice> getInvoice() {

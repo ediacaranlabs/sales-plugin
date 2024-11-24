@@ -76,7 +76,7 @@ public class AdminMenuListener
 					.setName("Invoices")
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.invoices)
-					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices");
+					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices");
 		}
 		
 	}

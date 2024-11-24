@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -427,24 +428,97 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	private void checkInvoice(Order order, Invoice invoice
-			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+			) throws ItemNotFoundOrderRegistryException, 
+		InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException {
 
+		Map<String, ProductRequest> transientItens = toMap(order.getItens());
+		
+		loadInvoicesToCalculateUnits(order.getInvoice(), invoice, transientItens);
+		checkIsCompletedInvoice(transientItens);
+		checkInvalidUnits(transientItens, invoice);		
+		
+	}
+	
+	private void checkInvalidUnits(Map<String, ProductRequest> map, Invoice invoice
+			) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
+
+		for(ProductRequest pr: invoice.getItens()) {
+			
+			ProductRequest tpr = map.get(pr.getSerial());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
+			}
+
+			if(pr.getUnits() <= 0 || pr.getUnits() > tpr.getUnits()) {
+				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			}
+			
+			if(tpr.getUnits() - pr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			}
+			
+		}
+		
+	}
+	
+	private boolean isCompletedInvoice(Order order, List<Invoice> invoices) throws CompletedInvoiceRegistryException {
+		boolean isInvoiceComplete = true;
+		
+		 Map<String, ProductRequest> map = toMap(order.getItens());
+		 
+		for(ProductRequest tpr: map.values()) {
+
+			if(tpr.getUnits() > 0) {
+				isInvoiceComplete = false;
+			}
+			
+		}
+		
+		return isInvoiceComplete;
+	}
+
+	private void checkIsCompletedInvoice(Map<String, ProductRequest> map
+			) throws CompletedInvoiceRegistryException {
+		boolean isInvoiceComplete = true;
+		
+		for(ProductRequest tpr: map.values()) {
+
+			if(tpr.getUnits() > 0) {
+				isInvoiceComplete = false;
+			}
+			
+		}
+		
+		if(isInvoiceComplete) {
+			throw new CompletedInvoiceRegistryException();
+		}
+	}
+	
+	private Map<String, ProductRequest> toMap(Collection<ProductRequest> values){
+		
 		Map<String, ProductRequest> transientItens = new HashMap<>();
 		
-		for(ProductRequest pr: order.getItens()) {
+		for(ProductRequest pr: values) {
 			ProductRequest tpr = new ProductRequest(pr);
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		
-		if(order.getInvoice() != null) {
-			for(Invoice i: order.getInvoice()) {
+		return transientItens;
+	}
+	
+	private void loadInvoicesToCalculateUnits(Collection<Invoice> invoices, Invoice actualInvoice, 
+			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
+		
+		if(invoices != null) {
+			for(Invoice i: invoices) {
 				
-				if(i.getId().equals(invoice.getId())) {
+				if(i.getId().equals(actualInvoice.getId())) {
 					continue;
 				}
 				
 				for(ProductRequest pr: i.getItens()) {
-					ProductRequest tpr = transientItens.get(pr.getSerial());
+					ProductRequest tpr = productRequests.get(pr.getSerial());
 					
 					tpr.setUnits(tpr.getUnits() - pr.getUnits());
 					
@@ -456,26 +530,12 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			}
 		}
 		
-		for(ProductRequest pr: invoice.getItens()) {
-			ProductRequest tpr = transientItens.get(pr.getSerial());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
-			}
-
-			tpr.setUnits(tpr.getUnits() - pr.getUnits());
-			
-			if(tpr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-			}
-		}
-		
 	}
 	
 	private void registryNewInvoice(Invoice entity, Order order) 
 			throws PaymentGatewayException, EntityAccessException, 
 			ValidationException, ItemNotFoundOrderRegistryException, 
-			InvalidUnitsOrderRegistryException{
+			InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException{
 		validateInvoice(entity, saveValidations);
 		checkInvoice(order, entity);
 		entityAccess.save(entity);
@@ -484,7 +544,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	private void updateInvoice(Invoice entity, Order order
 			) throws EntityAccessException, ValidationException, 
-			ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException{
+			ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException{
 		validateInvoice(entity, updateValidations);
 		checkInvoice(order, entity);
 		entityAccess.update(entity);

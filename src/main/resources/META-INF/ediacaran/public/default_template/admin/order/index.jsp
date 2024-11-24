@@ -80,6 +80,7 @@
 					</ec:table-header>
 					<ec:table-body>
 						<ec:forEach items="!{response.data}" var="item">
+						<ec:table-row>
 							<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.owner}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
@@ -87,13 +88,14 @@
 							<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>
-								<ec:button icon="search" style="info">
+								<ec:button id="!{item.id}_button" icon="search" style="info" actionType="button">
 									<ec:event type="click">
 										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/!{item.id}');
 									</ec:event>
 								</ec:button>
 								</ec:center>
 							</ec:table-col>
+						</ec:table-row>
 						</ec:forEach>
 					</ec:table-body>
 				</ec:table>
