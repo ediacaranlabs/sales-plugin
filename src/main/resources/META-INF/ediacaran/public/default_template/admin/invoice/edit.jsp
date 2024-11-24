@@ -72,7 +72,7 @@
 									<ec:table-col><center>${product.serial}</center></ec:table-col>
 									<ec:table-col><center>${product.product.name}</center></ec:table-col>
 									<ec:table-col><center>${product.product.description}</center></ec:table-col>
-									<ec:table-col classStyle="qty">
+									<ec:table-col classStyle="qty form-group has-feedback" >
 										<ec:textfield maxlength="2" name="${product.serial}" value="${product.units}">
 											<ec:event type="keyup">
 												var $form = $.AppContext.utils.getById('invoiceForm');
@@ -80,25 +80,36 @@
 												
 												invoiceEntity.itens['${product.serial}'] = $field.getValue();
 												
+												var $i = parseFloat(invoiceEntity.itens['${product.serial}']);
+												var $max = parseFloat('${product.units}');
+												
+												if(isNaN($i) || isNaN($max) || $i < 0 || $i > $max){
+													return;
+												}
+												
 												$.AppContext.utils.postJson(
 													'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/recalc_invoice',
 													invoiceEntity,
 													function ($e){
+													
+														if(!$e.itens){
+															return;
+														}
 														
 														for (let $j = 0; $j < $e.itens.length; $j++) {
 															var $i = $e.itens[$j];
 														  
 														  	if($i.serial == '${product.serial}'){
 
-																$.AppContext.utils.getById('${product.serial}_subtotal').setValue($i.currency + '<br>' + $i.subtotal);
-																$.AppContext.utils.getById('${product.serial}_discount').setValue($i.currency + '<br>' + $i.discounts);
-																$.AppContext.utils.getById('${product.serial}_tax').setValue($i.currency + '<br>' + $i.taxes);
-																$.AppContext.utils.getById('${product.serial}_total').setValue($i.currency + '<br>' + $i.total);
+																$.AppContext.utils.getById('${product.serial}_subtotal').setValue($i.currency + '<br>' + (Math.round($i.subtotal * 100) / 100).toFixed(2) );
+																$.AppContext.utils.getById('${product.serial}_discount').setValue($i.currency + '<br>' + (Math.round($i.discounts * 100) / 100).toFixed(2) );
+																$.AppContext.utils.getById('${product.serial}_tax').setValue($i.currency + '<br>' + (Math.round($i.taxes * 100) / 100).toFixed(2) );
+																$.AppContext.utils.getById('${product.serial}_total').setValue($i.currency + '<br>' + (Math.round($i.total * 100) / 100).toFixed(2) );
 																
-																$.AppContext.utils.getById('subtotal').setValue($i.currency + ' ' + $e.subtotal);
-																$.AppContext.utils.getById('discounts').setValue($i.currency + ' ' + $e.discounts);
-																$.AppContext.utils.getById('taxes').setValue($i.currency + ' ' + $e.taxes);
-																$.AppContext.utils.getById('total').setValue($i.currency + ' ' + $e.total);
+																$.AppContext.utils.getById('subtotal').setValue($i.currency + ' ' + (Math.round($e.subtotal * 100) / 100).toFixed(2) );
+																$.AppContext.utils.getById('discounts').setValue($i.currency + ' ' + (Math.round($e.discounts * 100) / 100).toFixed(2) );
+																$.AppContext.utils.getById('taxes').setValue($i.currency + ' ' + (Math.round($e.taxes * 100) / 100).toFixed(2) );
+																$.AppContext.utils.getById('total').setValue($i.currency + ' ' + (Math.round($e.total * 100) / 100).toFixed(2) );
 															}
 														  
 														}
@@ -107,6 +118,13 @@
 												);
 												
 											</ec:event>
+											<ec:field-validator>
+												<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+												<ec:field-validator-rule name="between" message="Must be between 0 to ${product.units}">
+														<ec:field-validator-param name="min">0</ec:field-validator-param>
+														<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
+												</ec:field-validator-rule>
+											</ec:field-validator>
 										</ec:textfield>
 									</ec:table-col>
 									<ec:table-col><center id="${product.serial}_subtotal">${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>

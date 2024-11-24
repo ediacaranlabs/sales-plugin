@@ -1,6 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
@@ -9,6 +11,7 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -38,6 +41,8 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 	@NotNull(groups = DataValidation.class)
 	private String currency;
 
+	private List<TaxPubEntity> taxes;
+	
 	@NotNull(groups = DataValidation.class)
 	private Map<String, String> addData;
 	
@@ -52,6 +57,14 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 		this.id = e.getId();
 		this.product = e.getProduct() == null? null : new ProductPubEntity(e.getProduct());
 		this.units = e.getUnits();
+		
+		this.taxes = new ArrayList<>();
+		
+		if(e.getTaxes() != null) {
+			for(Tax t: e.getTaxes()) {
+				this.taxes.add(new TaxPubEntity(t));
+			}
+		}
 	}
 
 	public String getId() {

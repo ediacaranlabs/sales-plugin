@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
@@ -44,6 +45,17 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 	public InvoicePubEntity(){
 	}
 
+	public InvoicePubEntity(Invoice e){
+		this.id = e.getId();
+		this.order = e.getOrder();
+		if(e.getItens() != null) {
+			this.itens = new HashMap<>();
+			e.getItens().forEach((i)->{
+				this.itens.put(i.getSerial(), i.getUnits());
+			});
+		}
+	}
+	
 	public String getId() {
 		return id;
 	}

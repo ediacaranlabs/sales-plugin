@@ -29,13 +29,13 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceRecalcPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceRecalcPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
@@ -209,7 +209,8 @@ public class InvoiceAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
-	public Serializable recalc(
+	@Result(mappingType = MappingTypes.OBJECT)
+	public InvoiceRecalcPubEntity recalc(
 			@DetachedName
 			InvoicePubEntity invoicePubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
