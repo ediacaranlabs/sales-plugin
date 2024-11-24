@@ -43,7 +43,7 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 	@Constructor
 	public InvoicePubEntity(){
 	}
-	
+
 	public String getId() {
 		return id;
 	}

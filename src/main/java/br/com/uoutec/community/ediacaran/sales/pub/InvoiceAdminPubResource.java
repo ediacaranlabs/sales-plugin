@@ -29,6 +29,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceRecalcPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearchResultPubEntity;
@@ -130,7 +131,36 @@ public class InvoiceAdminPubResource {
 		
 	}
 	
-	@Action("/new/{order}")
+	@Action("/show/{id}")
+	@View("${plugins.ediacaran.sales.template}/front/panel/invoice/details")
+	@Result("vars")
+	public Map<String,Object> orderDetail(
+			@DetachedName
+			InvoicePubEntity invoicePubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Invoice invoice;
+		try{
+			invoice = invoicePubEntity.rebuild(true, false, false);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.details.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("invoice", invoice);
+		return map;
+	}
+	
+	@Action("/new/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/edit")
 	@Result("vars")
 	public Map<String,Object> newInvoice(
@@ -175,6 +205,34 @@ public class InvoiceAdminPubResource {
 		return map;
 	}
 
+	@Action("/recalc_invoice")
+	@RequestMethod("POST")
+	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
+	@ResponseType(MediaTypes.APPLICATION_JSON)
+	public Serializable recalc(
+			@DetachedName
+			InvoicePubEntity invoicePubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Invoice invoice;
+		try{
+			invoice = invoicePubEntity.rebuild(invoicePubEntity.getId() != null, true, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+
+		return new InvoiceRecalcPubEntity(invoice);
+	}
+	
 	@Action("/save")
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
 	@Result("vars")

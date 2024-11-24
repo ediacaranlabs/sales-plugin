@@ -172,4 +172,11 @@
 		</ed:row>
 	
 	</ec:box-body>
+	<ec:box-footer>
+		<ec:button label="Create invoice" align="right" style="info">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/new/${vars.order.id}');
+			</ec:event>
+		</ec:button>
+	</ec:box-footer>
 </ec:box>

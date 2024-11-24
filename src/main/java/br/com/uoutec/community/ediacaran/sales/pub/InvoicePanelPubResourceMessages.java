@@ -6,7 +6,7 @@ public class InvoicePanelPubResourceMessages {
 
 	public static final String RESOURCE_BUNDLE = 
 			MessageBundle
-			.toPackageID(OrderPanelPubResource.class);
+			.toPackageID(InvoicePanelPubResource.class);
 	
 	public final class index{
 		

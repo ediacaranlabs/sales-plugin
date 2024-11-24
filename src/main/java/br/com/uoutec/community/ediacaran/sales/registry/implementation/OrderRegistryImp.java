@@ -291,11 +291,8 @@ public class OrderRegistryImp
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
 		
-		SystemUserID userID = getSystemUserID();
-		SystemUser user = getSystemUser(userID);
-
 		try{
-			return orderEntityAccess.getOrders(user.getId(), status, first, max);
+			return orderEntityAccess.getOrders(null, status, first, max);
 		}
 		catch(Throwable e){
 			e.printStackTrace();
@@ -406,10 +403,11 @@ public class OrderRegistryImp
 				throw new OrderRegistryException(order.getPayment().getTotal() + " <> " + value);
 			}
 			
-			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
 			
 		}
 
+		order.setStatus(OrderStatus.PAYMENT_RECEIVED);
+		order.getPayment().setReceivedFrom(LocalDateTime.now());
 		this.registerOrder(order);
 		
 	}

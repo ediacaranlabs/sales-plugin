@@ -109,7 +109,7 @@ public class Invoice implements Serializable{
 	public BigDecimal getSubtotal(){
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
-			value.add(pr.getTotal());
+			value = value.add(pr.getTotal());
 		}
 		return value;
 	}
@@ -118,7 +118,7 @@ public class Invoice implements Serializable{
 
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
-			value.add(pr.getDiscount());
+			value = value.add(pr.getDiscount());
 		}
 		return value;
 		
@@ -128,7 +128,7 @@ public class Invoice implements Serializable{
 		
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
-			value.add(pr.getTax());
+			value = value.add(pr.getTax());
 		}
 		return value;
 	}
@@ -136,7 +136,7 @@ public class Invoice implements Serializable{
 	public BigDecimal getTotal(){
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
-			value.add(pr.getTotal());
+			value = value.add(pr.getTotal());
 		}
 		return value;
 	}

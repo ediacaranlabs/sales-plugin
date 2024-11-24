@@ -260,6 +260,7 @@ public class OrderEntity implements Serializable{
 		e.setStatus(this.status);
 		e.setCartID(this.cartID);
 		e.setPaymentType(this.paymentType);
+		e.setCurrency(this.currency);
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();

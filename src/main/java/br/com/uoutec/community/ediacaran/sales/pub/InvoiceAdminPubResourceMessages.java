@@ -6,7 +6,7 @@ public class InvoiceAdminPubResourceMessages {
 
 	public static final String RESOURCE_BUNDLE = 
 			MessageBundle
-			.toPackageID(OrderAdminPubResource.class);
+			.toPackageID(InvoiceAdminPubResource.class);
 	
 	public final class index{
 		
@@ -35,6 +35,16 @@ public class InvoiceAdminPubResourceMessages {
 			public static final String fail_load_entity = "new_invoice.error.fail_load_entity";
 
 			public static final String create_invoice = "new_invoice.error.create_invoice";
+			
+		}
+		
+	}
+
+	public final class details{
+		
+		public final class error{
+			
+			public static final String fail_load_entity = "details.error.fail_load_entity";
 			
 		}
 		

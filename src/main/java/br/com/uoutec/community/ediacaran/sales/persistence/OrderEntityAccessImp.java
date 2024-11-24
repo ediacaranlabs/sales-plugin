@@ -339,11 +339,19 @@ public class OrderEntityAccessImp
 		    
 		    criteria.select(from);
 		    
-		    criteria.where(
-		    		builder.and(
-		    				builder.equal(from.get("owner"), owner)
-    				)
-    		);
+		    List<Predicate> and = new ArrayList<Predicate>();
+
+		    if(owner != null) {
+		    	and.add(builder.equal(from.get("owner"), owner));
+		    }
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
 		    
 	    	List<javax.persistence.criteria.Order> orderList = 
 	    			new ArrayList<javax.persistence.criteria.Order>();
