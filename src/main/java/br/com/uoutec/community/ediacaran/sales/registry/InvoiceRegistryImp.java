@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +11,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -65,7 +61,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Inject
 	private SubjectProvider subjectProvider;
 	
-	
 	@Override
 	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
 		
@@ -84,9 +79,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			}
 			
 			if(entity.getId() == null){
+				validateInvoice(entity, saveValidations);
 				this.registryNewInvoice(entity, order);
 			}
 			else{
+				validateInvoice(entity, updateValidations);
 				this.updateInvoice(entity, order);
 			}
 		}
@@ -254,8 +251,20 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		if(actualOrder == null) {
 			throw new OrderNotFoundRegistryException(order.getId());
 		}
+
+		List<Invoice> actualInvoices;
+		SystemUser user;
 		
-		return createInvoice(actualOrder);
+		try {
+			user = new SystemUser();
+			user.setId(actualOrder.getOwner());
+			actualInvoices = entityAccess.findByOrder(actualOrder.getId(), user);
+		}
+		catch(Throwable e) {
+			throw new OrderNotFoundRegistryException(e);
+		}
+		
+		return createInvoice(actualOrder, actualInvoices);
 	}
 	
 	@Override
@@ -297,65 +306,20 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 	}
 	
-	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException {
+	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message
+			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException{
 
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		Order actualOrder = orderRegistry.findById(order.getId());
 		
-		if(actualOrder.getOwner() != systemUser.getId()) {
-			throw new InvoiceRegistryException("invalid user: " + actualOrder.getOwner() + " != " + systemUser.getId());
-		}
-		
 		Invoice i = createInvoice(actualOrder, itens);
 		
-		checkInvoice(actualOrder, i);
-		
-		SystemUser user;
-		
-		try{
-			user = this.systemUserRegistry.findById(actualOrder.getOwner());
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException("usuário não encontrado: " + actualOrder.getOwner());
-		}
+		registryNewInvoice(i, actualOrder);
 
-		
-		//Processa os itens do pedido
-
-		for(ProductRequest productRequest: i.getItens()){
-			try{
-				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, actualOrder, productRequest);
-			}
-			catch(Throwable e){
-				throw new InvoiceRegistryException(
-					"falha ao processar o produto/serviço " + productRequest.getId(), e);
-			}
-		}
-
-
-		try {
-			entityAccess.save(i);
-			entityAccess.flush();
-		}
-		catch(Throwable e){
-			throw new InvoiceRegistryException(
-				"invoice error: " + actualOrder.getId(), e);
-		}
-		
-		//Registra as alterações do pedido
-		//this.registerOrder(order);
-		
-		//Registra o evento no log
-		orderRegistry.registryLog(actualOrder.getId(), message != null? message : "Criada a fatura #" + i.getId() );
-		
 		return i;
 	}
 
-	private Invoice createInvoice(Order order) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+	private Invoice createInvoice(Order order, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 
 		Map<String, ProductRequest> transientItens = new HashMap<>();
 		
@@ -364,8 +328,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		
-		if(order.getInvoice() != null) {
-			for(Invoice i: order.getInvoice()) {
+		if(invoices != null) {
+			for(Invoice i: invoices) {
 				
 				for(ProductRequest pr: i.getItens()) {
 					ProductRequest tpr = transientItens.get(pr.getSerial());
@@ -426,159 +390,43 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		return i;
 	}
-	
-	private void checkInvoice(Order order, Invoice invoice
-			) throws ItemNotFoundOrderRegistryException, 
-		InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException {
 
-		checkIsCompletedInvoice(order, order.getInvoice());
-		checkUnits(order, invoice);		
+	private void registryNewInvoice(Invoice entity, Order order
+			) throws OrderStatusNotAllowedRegistryException, UnmodifiedOrderStatusRegistryException, 
+			OrderRegistryException, InvoiceRegistryException, EntityAccessException {
 		
-	}
-	
-	private void checkUnits(Order order, Invoice invoice
-			) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
-
-		Map<String, ProductRequest> map = toMap(order.getItens());
-		 loadInvoicesToCalculateUnits(order.getInvoice(), null, map);
+		InvoiceNewRegistry invoiceNewRegistry = 
+				new InvoiceNewRegistry(
+						productTypeRegistry, 
+						systemUserRegistry, 
+						EntityContextPlugin.getEntity(OrderRegistry.class), 
+						entityAccess
+				);
 		
-		for(ProductRequest pr: invoice.getItens()) {
-			
-			ProductRequest tpr = map.get(pr.getSerial());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
-			}
-
-			if(pr.getUnits() <= 0 || pr.getUnits() > tpr.getUnits()) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-			}
-			
-			if(tpr.getUnits() - pr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-			}
-			
-		}
+		SystemUser user = new SystemUser();
+		user.setId(entity.getOwner());
 		
-	}
-	
-	private boolean isCompletedInvoice(Order order, Collection<Invoice> invoices
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
-		boolean isInvoiceComplete = true;
-		
-		 Map<String, ProductRequest> map = toMap(order.getItens());
-		 loadInvoicesToCalculateUnits(invoices, null,map);
-		 
-		for(ProductRequest tpr: map.values()) {
-
-			if(tpr.getUnits() > 0) {
-				isInvoiceComplete = false;
-				break;
-			}
-			
-		}
-		
-		return isInvoiceComplete;
-	}
-
-	private void checkIsCompletedInvoice(Order order, Collection<Invoice> invoices
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
-		
-		if(isCompletedInvoice(order, invoices)) {
-			throw new CompletedInvoiceRegistryException();
-		}
-	}
-	
-	private Map<String, ProductRequest> toMap(Collection<ProductRequest> values){
-		
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: values) {
-			ProductRequest tpr = new ProductRequest(pr);
-			transientItens.put(pr.getSerial(), tpr);
-		}
-		
-		return transientItens;
-	}
-	
-	private void loadInvoicesToCalculateUnits(Collection<Invoice> invoices, Invoice actualInvoice, 
-			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
-		
-		if(invoices != null) {
-			for(Invoice i: invoices) {
-				
-				if(actualInvoice != null && i.getId().equals(actualInvoice.getId())) {
-					continue;
-				}
-				
-				for(ProductRequest pr: i.getItens()) {
-					ProductRequest tpr = productRequests.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
-				}
-				
-			}
-		}
-		
-	}
-	
-	private void registryNewInvoice(Invoice entity, Order order) 
-			throws PaymentGatewayException, EntityAccessException, 
-			ValidationException, ItemNotFoundOrderRegistryException, 
-			InvalidUnitsOrderRegistryException, InvoiceRegistryException{
-		
-		validateInvoice(entity, saveValidations);
-		checkInvoice(order, entity);
-		
-		if(order.getCompleteInvoice() == null) {
-			List<Invoice> invoices = new ArrayList<>(order.getInvoice());
-			invoices.add(entity);
-			
-			if(isCompletedInvoice(order, invoices)) {
-				order.setCompleteInvoice(LocalDateTime.now());
-				OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-				try {
-					orderRegistry.registerOrder(order);
-				}
-				catch(Throwable ex) {
-					throw new InvoiceRegistryException(ex);
-				}
-			}
-		}
-		
-		entityAccess.save(entity);
-		entityAccess.flush();
+		invoiceNewRegistry.create(order, user, entity, null);
 	}
 
 	private void updateInvoice(Invoice entity, Order order
-			) throws EntityAccessException, ValidationException, 
-			ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException {
 		
-		validateInvoice(entity, updateValidations);
-		checkInvoice(order, entity);
+		SystemUser user = new SystemUser();
+		user.setId(order.getOwner());
 		
-		if(order.getCompleteInvoice() == null) {
-			List<Invoice> invoices = new ArrayList<>(order.getInvoice());
-			invoices.add(entity);
-			
-			if(isCompletedInvoice(order, invoices)) {
-				order.setCompleteInvoice(LocalDateTime.now());
-				OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-				try {
-					orderRegistry.registerOrder(order);
-				}
-				catch(Throwable ex) {
-					throw new InvoiceRegistryException(ex);
-				}
-			}
-		}
+		SystemUser actualUser = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
+		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(order, actualUser, entityAccess);
+		
+		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity);
 		
 		entityAccess.update(entity);
 		entityAccess.flush();
+		
+		List<Invoice> allInvoices = new ArrayList<>(actualInvoices);
+		allInvoices.add(entity);
+		InvoiceRegistryUtil.markAsComplete(order, allInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		
 	}
 	
 	private void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{
@@ -607,5 +455,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		return ()->jaaPrincipal.getName();
 	}
+	
 	
 }

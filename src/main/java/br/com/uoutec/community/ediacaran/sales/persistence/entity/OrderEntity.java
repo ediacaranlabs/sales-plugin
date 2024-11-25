@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -275,6 +274,7 @@ public class OrderEntity implements Serializable{
 			e.setItens(l);
 		}
 
+		/*
 		if(this.invoices != null){
 			List<Invoice> l = new ArrayList<Invoice>();
 			for(InvoiceEntity k: this.invoices){
@@ -282,6 +282,7 @@ public class OrderEntity implements Serializable{
 			}
 			e.setInvoice(l);
 		}
+		*/
 		
 		if(this.taxes != null){
 			List<Tax> tax = new ArrayList<Tax>();

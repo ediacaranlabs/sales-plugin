@@ -539,7 +539,7 @@ public class OrderRegistryImp
 		order.setStatus(OrderStatus.ON_HOLD);
 		order.setId(null);
 		order.setOwner(systemUser.getId());
-		order.setInvoice(null);
+		//order.setInvoice(null);
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());

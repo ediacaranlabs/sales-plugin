@@ -57,8 +57,8 @@ public class Order implements Serializable{
 	
 	private LocalDateTime completeInvoice;
 	
-	@Valid
-	private List<Invoice> invoices;
+	//@Valid
+	//private List<Invoice> invoices;
 	
 	@Valid
 	private Shipping shipping;
@@ -138,6 +138,7 @@ public class Order implements Serializable{
 		this.completeInvoice = completeInvoice;
 	}
 
+	/*
 	public List<Invoice> getInvoice() {
 		return invoices;
 	}
@@ -145,7 +146,8 @@ public class Order implements Serializable{
 	public void setInvoice(List<Invoice> invoices) {
 		this.invoices = invoices;
 	}
-
+    */
+	
 	public String getCurrency() {
 		return currency;
 	}
