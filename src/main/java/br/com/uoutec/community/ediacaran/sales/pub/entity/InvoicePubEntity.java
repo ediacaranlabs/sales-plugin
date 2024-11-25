@@ -1,8 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
@@ -119,20 +117,24 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 		
 		if(this.itens != null) {
 			
-			List<ProductRequest> empty = new ArrayList<>();
+			//List<ProductRequest> empty = new ArrayList<>();
 			
 			for(ProductRequest i: o.getItens()) {
 				Integer units = this.itens.get(i.getSerial());
 				i.setUnits(units == null? 0 : units.intValue());
 				
+				/*
 				if(i.getUnits() <= 0) {
 					empty.add(i);
 				}
+				*/
 			}
 
+			/*
 			for(ProductRequest i: empty) {
 				o.getItens().remove(i);
 			}
+			*/
 			
 		}
 		

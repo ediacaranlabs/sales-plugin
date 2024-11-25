@@ -173,6 +173,11 @@
 	
 	</ec:box-body>
 	<ec:box-footer>
+		<ec:button label="Search" align="right" actionType="button">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders');
+			</ec:event>
+		</ec:button>
 		<ec:button label="Create invoice" align="right" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/new/${vars.order.id}');

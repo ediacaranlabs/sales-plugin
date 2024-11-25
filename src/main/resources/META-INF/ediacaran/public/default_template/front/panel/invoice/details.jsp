@@ -96,6 +96,17 @@
 				</ec:description-list>
 			</ed:col>
 		</ed:row>
-	
 	</ec:box-body>
+	<ec:box-footer>
+		<ec:button label="Search" align="right">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices');			
+			</ec:event>
+		</ec:button>
+		<ec:button label="Order" align="right">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.invoice.order}');			
+			</ec:event>
+		</ec:button>
+	</ec:box-footer>
 </ec:box>

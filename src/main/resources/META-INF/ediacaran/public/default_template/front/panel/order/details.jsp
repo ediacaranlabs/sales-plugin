@@ -170,6 +170,12 @@
 				</ec:tabs>
 			</ed:col>
 		</ed:row>
-	
 	</ec:box-body>
+	<ec:box-footer>
+		<ec:button label="Search" align="right">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders');			
+			</ec:event>
+		</ec:button>
+	</ec:box-footer>
 </ec:box>

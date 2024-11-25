@@ -260,6 +260,11 @@ public class InvoiceAdminPubResource {
 		}
 
 		try{
+			invoice.setItens(
+				invoice.getItens().stream()
+					.filter((e)->e.getUnits() > 0)
+					.collect(Collectors.toList())
+			);
 			invoiceRegistry.registerInvoice(invoice);
 		}
 		catch(Throwable ex){
