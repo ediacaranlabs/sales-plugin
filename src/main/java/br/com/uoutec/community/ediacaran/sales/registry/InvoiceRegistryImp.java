@@ -431,17 +431,17 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			) throws ItemNotFoundOrderRegistryException, 
 		InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException {
 
-		Map<String, ProductRequest> transientItens = toMap(order.getItens());
-		
-		loadInvoicesToCalculateUnits(order.getInvoice(), invoice, transientItens);
-		checkIsCompletedInvoice(transientItens);
-		checkInvalidUnits(transientItens, invoice);		
+		checkIsCompletedInvoice(order, order.getInvoice());
+		checkUnits(order, invoice);		
 		
 	}
 	
-	private void checkInvalidUnits(Map<String, ProductRequest> map, Invoice invoice
+	private void checkUnits(Order order, Invoice invoice
 			) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 
+		Map<String, ProductRequest> map = toMap(order.getItens());
+		 loadInvoicesToCalculateUnits(order.getInvoice(), null, map);
+		
 		for(ProductRequest pr: invoice.getItens()) {
 			
 			ProductRequest tpr = map.get(pr.getSerial());
@@ -462,15 +462,18 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 	}
 	
-	private boolean isCompletedInvoice(Order order, List<Invoice> invoices) throws CompletedInvoiceRegistryException {
+	private boolean isCompletedInvoice(Order order, Collection<Invoice> invoices
+			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		boolean isInvoiceComplete = true;
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens());
+		 loadInvoicesToCalculateUnits(invoices, null,map);
 		 
 		for(ProductRequest tpr: map.values()) {
 
 			if(tpr.getUnits() > 0) {
 				isInvoiceComplete = false;
+				break;
 			}
 			
 		}
@@ -478,19 +481,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		return isInvoiceComplete;
 	}
 
-	private void checkIsCompletedInvoice(Map<String, ProductRequest> map
-			) throws CompletedInvoiceRegistryException {
-		boolean isInvoiceComplete = true;
+	private void checkIsCompletedInvoice(Order order, Collection<Invoice> invoices
+			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		
-		for(ProductRequest tpr: map.values()) {
-
-			if(tpr.getUnits() > 0) {
-				isInvoiceComplete = false;
-			}
-			
-		}
-		
-		if(isInvoiceComplete) {
+		if(isCompletedInvoice(order, invoices)) {
 			throw new CompletedInvoiceRegistryException();
 		}
 	}
@@ -513,7 +507,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		if(invoices != null) {
 			for(Invoice i: invoices) {
 				
-				if(i.getId().equals(actualInvoice.getId())) {
+				if(actualInvoice != null && i.getId().equals(actualInvoice.getId())) {
 					continue;
 				}
 				
@@ -535,18 +529,54 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private void registryNewInvoice(Invoice entity, Order order) 
 			throws PaymentGatewayException, EntityAccessException, 
 			ValidationException, ItemNotFoundOrderRegistryException, 
-			InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException{
+			InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+		
 		validateInvoice(entity, saveValidations);
 		checkInvoice(order, entity);
+		
+		if(order.getCompleteInvoice() == null) {
+			List<Invoice> invoices = new ArrayList<>(order.getInvoice());
+			invoices.add(entity);
+			
+			if(isCompletedInvoice(order, invoices)) {
+				order.setCompleteInvoice(LocalDateTime.now());
+				OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+				try {
+					orderRegistry.registerOrder(order);
+				}
+				catch(Throwable ex) {
+					throw new InvoiceRegistryException(ex);
+				}
+			}
+		}
+		
 		entityAccess.save(entity);
 		entityAccess.flush();
 	}
 
 	private void updateInvoice(Invoice entity, Order order
 			) throws EntityAccessException, ValidationException, 
-			ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException{
+			ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+		
 		validateInvoice(entity, updateValidations);
 		checkInvoice(order, entity);
+		
+		if(order.getCompleteInvoice() == null) {
+			List<Invoice> invoices = new ArrayList<>(order.getInvoice());
+			invoices.add(entity);
+			
+			if(isCompletedInvoice(order, invoices)) {
+				order.setCompleteInvoice(LocalDateTime.now());
+				OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+				try {
+					orderRegistry.registerOrder(order);
+				}
+				catch(Throwable ex) {
+					throw new InvoiceRegistryException(ex);
+				}
+			}
+		}
+		
 		entityAccess.update(entity);
 		entityAccess.flush();
 	}

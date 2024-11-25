@@ -89,7 +89,7 @@
 								<ec:center>
 								<ec:button id="!{item.id}_button" icon="search" style="info" actionType="button">
 									<ec:event type="click">
-										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices/show/!{item.id}');
+										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/show/!{item.id}');
 									</ec:event>
 								</ec:button>
 								</ec:center>
