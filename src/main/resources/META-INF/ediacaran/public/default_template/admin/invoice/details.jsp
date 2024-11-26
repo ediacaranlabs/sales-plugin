@@ -23,6 +23,7 @@
 	</ed:row>
 </section>
 
+<ec:form id="cancelForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/cancel" method="POST" update="invoiceFormResult">
 <ec:box>
 	<ec:box-header><b><fmt:message key="invoice_id" bundle="${messages}"/></b> #${vars.invoice.id}</ec:box-header>
 	<ec:box-body>
@@ -72,7 +73,17 @@
 		</ed:row>
 
 		<ed:row>
-			<ed:col size="5">
+			<ed:col size="5" classStyle="form-group has-feedback">
+				<input type="hidden" name="id" value="${vars.invoice.id}">
+				<ec:textarea label="Justification" name="justification" rows="5">${vars.invoice.justification}</ec:textarea>
+				<ec:field-validator form="cancelForm" field="justification">
+					<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+					<ec:field-validator-rule name="stringLength" message="0 to 255">
+							<ec:field-validator-param name="min">0</ec:field-validator-param>
+							<ec:field-validator-param name="max">255</ec:field-validator-param>
+					</ec:field-validator-rule>
+				</ec:field-validator>
+			
 			</ed:col>
 			<ed:col size="7">
 				<p>
@@ -96,13 +107,17 @@
 				</ec:description-list>
 			</ed:col>
 		</ed:row>
-	
+		<ed:row>
+			<ed:col id="invoiceFormResult"></ed:col>
+		</ed:row>	
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Order" align="right">
+		<ec:button label="Cancel" align="right" actionType="submit"/>
+		<ec:button label="Order" align="right" actionType="button">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}');			
 			</ec:event>
 		</ec:button>
 	</ec:box-footer>
 </ec:box>
+</ec:form>
