@@ -122,6 +122,7 @@
 							</ec:table-header>
 							<ec:table-body>
 								<c:forEach items="${vars.invoices}" var="invoice">
+								<c:if test="${invoice.cancelDate == null}">
 								<ec:table-row>
 									<ec:table-col><center><small>${invoice.id}</small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.toStringDate(locale)}</small></center></ec:table-col>
@@ -133,6 +134,7 @@
 										<fmt:message key="table_invoice.actions.details" bundle="${messages}"/>
 									</a></small></center></ec:table-col>
 								</ec:table-row>
+								</c:if>
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
