@@ -27,6 +27,7 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
+import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
@@ -39,6 +40,9 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceRecalcPubEntity
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
+import br.com.uoutec.community.ediacaran.security.BasicRoles;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
+import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
@@ -64,6 +68,8 @@ public class InvoiceAdminPubResource {
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/index")
 	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.SHOW)
 	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -86,6 +92,8 @@ public class InvoiceAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.SEARCH)
 	public synchronized Serializable search(
 			@DetachedName InvoiceSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -135,7 +143,9 @@ public class InvoiceAdminPubResource {
 	@Action("/show/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/details")
 	@Result("vars")
-	public Map<String,Object> orderDetail(
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.SHOW)
+	public Map<String,Object> invoiceDetail(
 			@DetachedName
 			InvoicePubEntity invoicePubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -164,6 +174,8 @@ public class InvoiceAdminPubResource {
 	@Action("/new/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/edit")
 	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.CREATE)
 	public Map<String,Object> newInvoice(
 			@DetachedName
 			OrderPubEntity orderPubEntity,
@@ -211,6 +223,8 @@ public class InvoiceAdminPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.EDIT)
 	public InvoiceRecalcPubEntity recalc(
 			@DetachedName
 			InvoicePubEntity invoicePubEntity,
@@ -239,6 +253,8 @@ public class InvoiceAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
 	@Result("vars")
 	@RequestMethod("POST")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.SAVE)
 	public Map<String,Object> save(
 			@DetachedName
 			InvoicePubEntity invoicePubEntity,
@@ -287,6 +303,8 @@ public class InvoiceAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
 	@Result("vars")
 	@RequestMethod("POST")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.CANCEL)
 	public Map<String,Object> cancel(
 			@Basic(bean = "id")
 			String id,
