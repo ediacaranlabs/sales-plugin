@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -35,6 +36,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
@@ -644,12 +646,10 @@ public class OrderRegistryImp
 	/**
 	 * Cria o estorno de um pedido.
 	 * @param order
-	 * @throws OrderRegistryException
+	 * @throws RegistryException 
 	 */
 	@Override
-	public void createRefound(String orderID, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException{
+	public void createRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());
 		
@@ -668,7 +668,7 @@ public class OrderRegistryImp
 	
 	private void unsafeCreateRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException{
+		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
 		
 		Order order = findById(orderID);
 		
@@ -683,6 +683,7 @@ public class OrderRegistryImp
 					order.getStatus() + " -> " + OrderStatus.REFOUND);
 		}
 
+		/*
 		SystemUser user;
 		try{
 			user = this.systemUserRegistry.findById(order.getOwner());
@@ -691,22 +692,27 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(
 				"Falha ao recarregar os dados do cliente" + order.getId(), e);
 		}
+		*/
 		
 		//atualiza o status do pedido
 		order.setStatus(OrderStatus.REFOUND);
 		
+		invoiceRegistry.cancelInvoices(order, message);
+		
+		/*
 		//Processa os itens do pedido
 		for(ProductRequest productRequest: order.getItens()){
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.refoundItem(user, order, productRequest);
+				productTypeHandler.removeItem(user, order, productRequest);
 			}
 			catch(Throwable e){
 				throw new OrderRegistryException(
 					"falha ao processar o produto/serviço " + productRequest.getId(), e);
 			}
 		}
+		*/
 		
 		//Registra as alterações do pedido
 		this.registerOrder(order);
@@ -717,9 +723,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	public void revertRefound(String orderID, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException{
+	public void revertRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.REFOUND.getRevertPermission());
 		
@@ -738,7 +742,7 @@ public class OrderRegistryImp
 	
 	private void unsafeRevertRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException{
+		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
 		
 		Order order = findById(orderID);
 		
@@ -753,6 +757,7 @@ public class OrderRegistryImp
 					order.getStatus() + " -> " + OrderStatus.CANCELED_REFOUND);
 		}
 
+		/*
 		SystemUser user;
 		
 		try{
@@ -762,22 +767,28 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(
 				"Falha ao recarregar os dados do cliente" + order.getId(), e);
 		}
+		*/
 		
 		//atualiza o status do pedido
 		order.setStatus(OrderStatus.CANCELED_REFOUND);
 		
+		Invoice invoice = invoiceRegistry.toInvoice(order);
+		invoiceRegistry.registerInvoice(invoice);
+		
+		/*
 		//Processa os itens do pedido
 		for(ProductRequest productRequest: order.getItens()){
 			try{
 				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.revertRefoundItem(user, order, productRequest);
+				productTypeHandler.registryItem(user, order, productRequest);
 			}
 			catch(Throwable e){
 				throw new OrderRegistryException(
 					"falha ao processar o produto/serviço " + productRequest.getId());
 			}
 		}
+		*/
 		
 		//Registra as alterações do pedido
 		this.registerOrder(order);

@@ -41,10 +41,8 @@ public interface ProductTypeHandler {
 	void registryItem(SystemUser user, Order order, ProductRequest productRequest)
 			throws ProductTypeHandlerException;
 
-	void revertRefoundItem(SystemUser user, Order order, ProductRequest productRequest)
+	void removeItem(SystemUser user, Order order, ProductRequest productRequest)
 			throws ProductTypeHandlerException;
 	
-	void refoundItem(SystemUser user, Order order, ProductRequest productRequest) throws
-		ProductTypeHandlerException;
 	
 }

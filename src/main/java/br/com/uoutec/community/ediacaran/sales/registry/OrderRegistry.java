@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
+import br.com.uoutec.entity.registry.RegistryException;
 
 public interface OrderRegistry extends PublicBean {
 
@@ -37,18 +38,18 @@ public interface OrderRegistry extends PublicBean {
 	void registerPayment(Order o, String currency, BigDecimal value
 			) throws OrderRegistryException, PaymentGatewayException;
 	
-	void createRefound(String order, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException;
+	void createRefound(String order, String message) throws RegistryException;
 			
-	void revertRefound(String order, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException;
+	void revertRefound(String order, String message) throws RegistryException;
 			
 	Shipping createShipping(String order, 
 			boolean useAlternativeAdress, String shippingCode) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException;
+	
+	boolean isAvailability(Cart cart, SystemUserID userID) 
+			throws ProductTypeHandlerException, ProductTypeRegistryException, 
+			OrderRegistryException, SystemUserRegistryException;
 	
 	Order findById(String id) throws OrderRegistryException;
 

@@ -12,6 +12,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -42,6 +43,13 @@ public class InvoiceEntity implements Serializable{
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
 	private OrderEntity order;
+
+	@Column(name="dat_cancellation")
+	private LocalDateTime cancelDate;
+	
+	@Lob
+	@Column(name="dsc_cancellation")
+	private String cancelJustification;
 	
 	@Column(name="vlr_value", scale=3, precision=12)
 	private BigDecimal value;
@@ -72,6 +80,8 @@ public class InvoiceEntity implements Serializable{
 		this.date = e.getDate();
 		this.id = e.getId();
 		this.currency = e.getCurrency();
+		this.cancelDate = e.getCancelDate();
+		this.cancelJustification = e.getCancelJustification();
 		
 		if(e.getOwner() > 0) {
 			this.owner = new SystemUserEntity();
@@ -178,6 +188,8 @@ public class InvoiceEntity implements Serializable{
 		e.setId(this.id);
 		e.setOrder(this.order == null? null : this.order.getId());
 		e.setCurrency(this.currency);
+		e.setCancelDate(this.cancelDate);
+		e.setCancelJustification(this.cancelJustification);
 		
 		if(this.owner != null) {
 			e.setOwner(this.owner.getId());

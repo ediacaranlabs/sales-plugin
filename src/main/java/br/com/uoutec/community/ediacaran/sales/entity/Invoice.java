@@ -40,6 +40,10 @@ public class Invoice implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
+	private LocalDateTime cancelDate;
+	
+	private String cancelJustification;
+	
 	@Valid
 	private List<ProductRequest> itens;
 	
@@ -85,6 +89,22 @@ public class Invoice implements Serializable{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public LocalDateTime getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(LocalDateTime cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public String getCancelJustification() {
+		return cancelJustification;
+	}
+
+	public void setCancelJustification(String cancelJustification) {
+		this.cancelJustification = cancelJustification;
 	}
 
 	public String toStringDate(Locale locale) {
