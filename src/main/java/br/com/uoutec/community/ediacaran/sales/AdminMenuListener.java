@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales;
 
 import br.com.uoutec.community.ediacaran.front.pub.Menu;
 import br.com.uoutec.community.ediacaran.front.pub.MenuBar;
+import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectMetadata;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectValue;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsManagerDriver.ObjectsManagerDriverListener;
@@ -64,19 +65,25 @@ public class AdminMenuListener
 				.setName("Sales")
 				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.name)
+				.setRole(BasicRoles.USER)
+				.setPermission(SalesUserPermissions.ORDER.ALL)
 				.addItem("orders")
 					.setIcon("circle")
 					.setName("Orders")
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.orders)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders")
+					.setRole(BasicRoles.USER)
+					.setPermission(SalesUserPermissions.ORDER.SHOW)
 				.getParent()
 					.addItem("invoices")
 					.setIcon("circle")
 					.setName("Invoices")
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.invoices)
-					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices");
+					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices")
+					.setRole(BasicRoles.USER)
+					.setPermission(SalesUserPermissions.ORDER.SHOW);
 		}
 		
 	}

@@ -59,18 +59,18 @@ public class SecurityPluginInstaller {
 		am.registerAuthorization(SalesUserPermissions.ORDER.FIELDS.PAYMENT,	"Order - Edit payment field",	"Payment order field", 	null);
 		am.registerAuthorization(SalesUserPermissions.ORDER.FIELDS.STATUS,	"Order - Edit order field",		"Status order field", 	null);
 
-		am.registerAuthorization(SalesUserPermissions.INVOICE.ALL,			"Invoice - Manager",				"Invoice Manager", 		null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.SHOW,			"Invoice - Show",					"Show invoice", 		null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.CREATE,		"Invoice - Create",				"Create invoice", 			null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.EDIT,			"Invoice - Edit",					"Edit invoice", 		null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.SAVE,			"Invoice - Save",					"Save invoice", 		null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.DELETE,		"Invoice - Delete",				"Delete invoice",			null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.SEARCH,		"Invoice - Search",				"Search invoice", 			null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.CANCEL,		"Invoice - Cancel",				"Cancel invoice", 			null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ALL,	"Invoice - fields",				"Invoice fields", 			null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ID,	"Invoice - Edit id field",		"Id invoice field", 		null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ORDER,	"Invoice - Edit order field",		"Order invoice field",	null);
-		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ITENS,	"Invoice - Edit itens field",		"Itens invoice field", 	null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.ALL,			"Invoice - Manager",			"Invoice Manager", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.SHOW,			"Invoice - Show",				"Show invoice", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.CREATE,		"Invoice - Create",				"Create invoice", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.EDIT,			"Invoice - Edit",				"Edit invoice", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.SAVE,			"Invoice - Save",				"Save invoice", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.DELETE,		"Invoice - Delete",				"Delete invoice",		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.SEARCH,		"Invoice - Search",				"Search invoice", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.CANCEL,		"Invoice - Cancel",				"Cancel invoice", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ALL,	"Invoice - fields",				"Invoice fields", 		null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ID,	"Invoice - Edit id field",		"Id invoice field", 	null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ORDER,	"Invoice - Edit order field",	"Order invoice field",	null);
+		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ITENS,	"Invoice - Edit itens field",	"Itens invoice field", 	null);
 		
 	}
 	
