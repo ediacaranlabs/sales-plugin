@@ -28,6 +28,7 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
+import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResult;
@@ -41,6 +42,9 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
+import br.com.uoutec.community.ediacaran.security.BasicRoles;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
+import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -75,6 +79,8 @@ public class OrderAdminPubResource {
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/order/index")
 	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.ORDER.SHOW)
 	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -101,6 +107,8 @@ public class OrderAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.ORDER.SEARCH)
 	public synchronized Serializable search(
 			@DetachedName OrderSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -149,6 +157,8 @@ public class OrderAdminPubResource {
 	@Action("/edit/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/edit")
 	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.ORDER.EDIT)
 	public Map<String,Object> edit(
 			@DetachedName
 			OrderPubEntity orderPubEntity,
