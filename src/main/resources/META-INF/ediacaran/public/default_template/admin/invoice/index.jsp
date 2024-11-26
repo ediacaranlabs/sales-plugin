@@ -30,13 +30,18 @@
 				<ed:col size="1">
 	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="1">
+				<ed:col size="2">
 	    			<ec:textfield name="order" label="#Order" placeholder="#{form.order.placeholder}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="3">
 	    			<ec:textfield name="ownerName" label="Owner" placeholder="owner" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="3">
+				<ed:col size="1">
+					<ec:label>Canceled</ec:label>
+	    			<ec:radio label="yes" value="true" name="canceled"/>
+	    			<ec:radio label="no" value="false" name="canceled" selected="true"/>
+				</ed:col>
+				<ed:col size="2">
 	    			<ec:datefield label="From" name="startDate">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
@@ -54,7 +59,7 @@
 	    				</ec:event>
 	    			</ec:datefield>
 				</ed:col>
-				<ed:col size="3">
+				<ed:col size="2">
 	    			<ec:textfield label="Mínimum (Total)" name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
 	    			<ec:textfield label="Maximum (Total)" name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
 				</ed:col>

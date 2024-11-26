@@ -30,6 +30,8 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 
 	private BigDecimal maxTotal;
 	
+	private Boolean canceled;
+	
 	private String order;
 	
 	private Integer page;
@@ -67,6 +69,14 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+	public Boolean getCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(Boolean canceled) {
+		this.canceled = canceled;
 	}
 
 	public OrderStatus getStatus() {
@@ -162,6 +172,7 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 		o.setStartDate(startDate);
 		o.setOwnerName(this.ownerName);
 		o.setOrder(order);
+		o.setCanceled(canceled);
 	}
 	
 }

@@ -142,24 +142,20 @@ public class InvoiceRegistryUtil {
 	public static void markAsComplete(Order order, List<Invoice> invoices, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
 		
-		if(order.getCompleteInvoice() == null) {
-			
-			if(isCompletedInvoice(order, invoices)) {
-				order.setCompleteInvoice(LocalDateTime.now());
-			}
-			else {
-				order.setCompleteInvoice(null);
-			}
-			
-			try {
-				orderRegistry.registerOrder(order);
-			}
-			catch(Throwable ex) {
-				throw new InvoiceRegistryException(ex);
-			}
-			
+		if(isCompletedInvoice(order, invoices)) {
+			order.setCompleteInvoice(LocalDateTime.now());
+		}
+		else {
+			order.setCompleteInvoice(null);
 		}
 		
+		try {
+			orderRegistry.registerOrder(order);
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
+			
 	}
 
 	public static void checkCanceledInvoice(Invoice invoice) throws CanceledInvoiceRegistryException {

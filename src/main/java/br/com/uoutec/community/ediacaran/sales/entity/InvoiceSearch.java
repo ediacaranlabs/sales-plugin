@@ -24,6 +24,8 @@ public class InvoiceSearch implements Serializable{
 
 	private BigDecimal maxTotal;
 	
+	private Boolean canceled;
+	
 	private Integer page;
 	
 	private Integer resultPerPage;
@@ -66,6 +68,14 @@ public class InvoiceSearch implements Serializable{
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
+	}
+
+	public Boolean getCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(Boolean canceled) {
+		this.canceled = canceled;
 	}
 
 	public BigDecimal getMinTotal() {

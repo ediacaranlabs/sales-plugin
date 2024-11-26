@@ -75,7 +75,7 @@
 		<ed:row>
 			<ed:col size="5" classStyle="form-group has-feedback">
 				<input type="hidden" name="id" value="${vars.invoice.id}">
-				<ec:textarea label="Justification" name="justification" rows="5">${vars.invoice.justification}</ec:textarea>
+				<ec:textarea label="Justification" name="justification" rows="5" enabled="${vars.invoice.cancelDate == null}">${vars.invoice.cancelJustification}</ec:textarea>
 				<ec:field-validator form="cancelForm" field="justification">
 					<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
 					<ec:field-validator-rule name="stringLength" message="0 to 255">
@@ -112,12 +112,12 @@
 		</ed:row>	
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Cancel" align="right" actionType="submit"/>
 		<ec:button label="Order" align="right" actionType="button">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}');			
 			</ec:event>
 		</ec:button>
+		<ec:button label="Cancel Invoice" align="right" enabled="${vars.invoice.cancelDate == null}"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

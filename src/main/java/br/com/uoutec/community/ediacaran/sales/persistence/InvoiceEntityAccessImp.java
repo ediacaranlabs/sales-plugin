@@ -282,6 +282,15 @@ public class InvoiceEntityAccessImp
 		    	and.add(builder.equal(from.get("id"), value.getId()));
 		    }
 
+		    if(value.getCanceled() != null) {
+		    	if(value.getCanceled()) {
+			    	and.add(builder.isNotNull(from.get("cancelDate")));
+		    	}
+		    	else {
+			    	and.add(builder.isNull(from.get("cancelDate")));
+		    	}
+		    }
+		    
 		    if(value.getOrder() != null) {
 		    	and.add(builder.equal(orderJoin.get("id"), value.getOrder()));
 		    }

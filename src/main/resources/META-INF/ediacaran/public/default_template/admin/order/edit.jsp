@@ -122,7 +122,7 @@
 							</ec:table-header>
 							<ec:table-body>
 								<c:forEach items="${vars.invoices}" var="invoice">
-								<ec:table-row>
+								<ec:table-row style="${invoice.cancelDate != null? 'danger' : ''}">
 									<ec:table-col><center><small>${invoice.id}</small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.toStringDate(locale)}</small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.subtotal}"/></small></center></ec:table-col>

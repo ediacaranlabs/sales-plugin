@@ -483,6 +483,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		if(invoices != null) {
 			for(Invoice i: invoices) {
 				
+				if(i.getCancelDate() != null) {
+					continue;
+				}
+				
 				for(ProductRequest pr: i.getItens()) {
 					ProductRequest tpr = transientItens.get(pr.getSerial());
 					
