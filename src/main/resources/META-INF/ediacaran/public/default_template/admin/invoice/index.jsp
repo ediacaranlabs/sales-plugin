@@ -25,7 +25,7 @@
 <ec:box>
 	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
-		<ec:data-table id="invoiceSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices/search">
+		<ec:data-table id="invoiceSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/search">
 			<ed:row>
 				<ed:col size="1">
 	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>

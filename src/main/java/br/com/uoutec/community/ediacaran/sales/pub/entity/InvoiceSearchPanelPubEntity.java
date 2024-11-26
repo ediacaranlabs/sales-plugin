@@ -32,6 +32,7 @@ public class InvoiceSearchPanelPubEntity extends InvoiceSearchPubEntity {
 			throw new AuthenticationRequiredException();
 		}
 		
+		o.setCanceled(false);
 		o.setOwner(user.getId());
 		o.setOwnerName(null);
 	}
