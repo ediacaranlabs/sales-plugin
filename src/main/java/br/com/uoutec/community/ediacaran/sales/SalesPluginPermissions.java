@@ -173,6 +173,10 @@ public final class SalesPluginPermissions {
 			return new RuntimeSecurityPermission(basePermission + "find");
 		}
 
+		public static SecurityPermission getCancelPermission() {
+			return new RuntimeSecurityPermission(basePermission + "cancel");
+		}
+		
 		public static SecurityPermission getCreatePermission() {
 			return new RuntimeSecurityPermission(basePermission + "create");
 		}

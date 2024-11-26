@@ -32,7 +32,15 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException;
 	
+	void cancelInvoice(Invoice invoice, SystemUserID userID, String justification) throws InvoiceRegistryException;
+	
+	void cancelInvoice(Invoice invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException;
+	
 	void cancelInvoices(Order order, String justification) throws InvoiceRegistryException;
+
+	void cancelInvoices(Order invoice, SystemUserID userID, String justification) throws InvoiceRegistryException;
+	
+	void cancelInvoices(Order invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException;
 	
 	Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

@@ -69,5 +69,17 @@ public class InvoiceAdminPubResourceMessages {
 		}
 		
 	}
+
+	public final class cancel{
+		
+		public final class error{
+			
+			public static final String fail_load_entity = "cancel.error.fail_load_entity";
+			
+			public static final String register = "cancel.error.register";
+			
+		}
+		
+	}
 	
 }

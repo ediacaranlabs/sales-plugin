@@ -61,6 +61,10 @@ public class InvoiceRegistryUtil {
 		if(invoices != null) {
 			for(Invoice i: invoices) {
 				
+				if(i.getCancelDate() != null) {
+					continue;
+				}
+				
 				if(actualInvoice != null && i.getId().equals(actualInvoice.getId())) {
 					continue;
 				}
@@ -142,15 +146,30 @@ public class InvoiceRegistryUtil {
 			
 			if(isCompletedInvoice(order, invoices)) {
 				order.setCompleteInvoice(LocalDateTime.now());
-				try {
-					orderRegistry.registerOrder(order);
-				}
-				catch(Throwable ex) {
-					throw new InvoiceRegistryException(ex);
-				}
 			}
+			else {
+				order.setCompleteInvoice(null);
+			}
+			
+			try {
+				orderRegistry.registerOrder(order);
+			}
+			catch(Throwable ex) {
+				throw new InvoiceRegistryException(ex);
+			}
+			
 		}
 		
+	}
+
+	public static void checkCanceledInvoice(Invoice invoice) throws CanceledInvoiceRegistryException {
+		if(isCanceledInvoice(invoice)) {
+			throw new CanceledInvoiceRegistryException(invoice.getId());
+		}
+	}
+	
+	public static boolean isCanceledInvoice(Invoice invoice) {
+		return invoice.getCancelDate() != null;
 	}
 	
 }

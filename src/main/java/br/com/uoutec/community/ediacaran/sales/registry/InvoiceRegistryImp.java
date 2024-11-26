@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -265,6 +266,157 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 		
 		return createInvoice(actualOrder, actualInvoices);
+	}
+	
+	@Override
+	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException {
+		cancelInvoice(invoice, null, justification);
+	}
+	
+	@Override
+	public void cancelInvoice(Invoice invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
+		
+		SystemUser systemUser;
+		
+		try {
+			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+				userID = getSystemUserID();
+			}
+			systemUser = getSystemUser(userID);
+		}
+		catch (SystemUserRegistryException e) {
+			throw new InvoiceRegistryException(e);
+		}
+		
+		cancelInvoice(invoice, systemUser, justification);
+	}
+	
+	@Override
+	public void cancelInvoice(Invoice invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException{
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
+		
+		List<Invoice> invoices;
+		
+		try {
+			Invoice actualInvoice = entityAccess.findById(invoice.getId());
+			invoices = Arrays.asList(actualInvoice);
+		}
+		catch (EntityAccessException e) {
+			throw new InvoiceRegistryException(e);
+		}
+
+		try {
+			unsafeCancelInvoices(invoices, justification, systemUser);
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
+		
+	}
+	
+	@Override
+	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException {
+		cancelInvoices(order, null, justification);
+	}
+	
+	@Override
+	public void cancelInvoices(Order invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
+		
+		SystemUser systemUser;
+		
+		try {
+			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+				userID = getSystemUserID();
+			}
+			systemUser = getSystemUser(userID);
+		}
+		catch (SystemUserRegistryException e) {
+			throw new InvoiceRegistryException(e);
+		}
+		
+		cancelInvoices(invoice, systemUser, justification);
+	}
+
+	
+	@Override
+	public void cancelInvoices(Order order, SystemUser systemUser, String justification) throws InvoiceRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
+		
+		List<Invoice> invoices;
+		
+		try {
+			SystemUser user = new SystemUser();
+			user.setId(order.getOwner());
+			invoices = entityAccess.findByOrder(order.getId(), user);
+		}
+		catch (EntityAccessException e) {
+			throw new InvoiceRegistryException(e);
+		}
+
+		try {
+			unsafeCancelInvoices(invoices, justification, null);
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
+	}
+
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification, SystemUser user
+			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, InvoiceRegistryException {
+
+		Map<String,List<Invoice>> map = new HashMap<>();
+		
+		for(Invoice i: invoices) {
+			
+			if(i.getCancelDate() != null) {
+				continue;
+			}
+			
+			List<Invoice> l = map.get(i.getOrder());
+			
+			if(l == null) {
+				l = new ArrayList<>();
+				map.put(i.getOrder(), l);
+			}
+			
+			l.add(i);
+		}
+		
+		if(map.isEmpty()) {
+			return;
+		}
+		
+		LocalDateTime cancelDate = LocalDateTime.now();
+		
+		for(List<Invoice> is: map.values()) {
+			for(Invoice i: is) {
+				i.setCancelDate(cancelDate);
+				i.setCancelJustification(justification);
+				entityAccess.update(i);
+			}
+		}
+
+		entityAccess.flush();
+
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		
+		for(String orderID: map.keySet()) {
+			Order order = orderRegistry.findById(orderID);
+			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
+			InvoiceRegistryUtil.markAsComplete(order, actualInvoices, orderRegistry);
+		}
+		
+		for(String orderID: map.keySet()) {
+			Order order = orderRegistry.findById(orderID);
+			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
+			for(Invoice i: actualInvoices) {
+				orderRegistry.registryLog(order.getId(), "#" + i.getId() + ": " +  justification);
+			}
+			
+		}
+		
 	}
 	
 	@Override

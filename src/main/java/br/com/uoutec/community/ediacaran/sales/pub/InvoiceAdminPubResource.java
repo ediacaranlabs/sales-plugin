@@ -40,6 +40,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchPubEntity
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -272,6 +273,54 @@ public class InvoiceAdminPubResource {
 					.getString(
 							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
 							InvoiceAdminPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("invoice", invoice);
+		return map;
+	}
+
+	@Action("/cancel")
+	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
+	@Result("vars")
+	@RequestMethod("POST")
+	public Map<String,Object> cancel(
+			@Basic(bean = "id")
+			String id,
+			@Basic(bean = "justification")
+			String justification,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Invoice invoice;
+		try{
+			invoice = invoiceRegistry.findById(id);
+			if(invoice == null) {
+				throw new NullPointerException(id);
+			}
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.cancel.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+
+		try{
+			invoiceRegistry.cancelInvoice(invoice,  SystemUserRegistry.CURRENT_USER, justification);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.cancel.error.register, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);

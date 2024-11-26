@@ -8,22 +8,18 @@ public class InvoiceRegistryException extends RegistryException{
 
 	public InvoiceRegistryException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InvoiceRegistryException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public InvoiceRegistryException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	public InvoiceRegistryException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }
