@@ -66,7 +66,7 @@ public class FreePaymentGateway implements PaymentGateway{
 	}
 
 	@Override
-	public boolean isApplicable(Cart cart) {
+	public boolean isApplicable(Cart cart, SystemUser user) {
 		return cart.getTotal().compareTo(BigDecimal.ZERO) == 0;
 	}
 

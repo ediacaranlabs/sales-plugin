@@ -25,6 +25,6 @@ public interface PaymentGateway {
 	
 	String getName();
 	
-	boolean isApplicable(Cart cart);
+	boolean isApplicable(Cart cart, SystemUser user);
 	
 }

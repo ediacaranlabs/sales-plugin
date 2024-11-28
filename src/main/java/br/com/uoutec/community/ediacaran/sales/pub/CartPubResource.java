@@ -28,30 +28,22 @@ import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebFlowController;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
-import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
-import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
+import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
-import br.com.uoutec.community.ediacaran.security.Subject;
-import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
-import br.com.uoutec.community.ediacaran.user.SystemUserEntityTypes;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -62,45 +54,9 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartPubResource {
 
-	//public static final String CART_BEAN_NAME	= "cart";
-	
-	//public static final String CART_BEAN_SCOPE	= ScopeType.IO;
-	
-	@Transient
-	@Inject
-	private SubjectProvider subjectProvider;
-	
 	@Transient
 	@Inject
 	private ErrorMappingProvider errorMappingProvider;
-	
-	@Transient
-	@Inject
-	private CountryRegistry countryRegistry;
-	
-	@Transient
-	@Inject
-	private PaymentGatewayRegistry paymentGatewayProvider;
-
-	@Transient
-	@Inject
-	private OrderRegistry orderRegistry;
-	
-	@Transient
-	@Inject
-	private SystemUserRegistry systemUserRegistry;
-	
-	@Transient
-	@Inject
-	private ProductRegistry productRegistry;
-	
-	@Transient
-	@Inject
-	private SystemUserEntityTypes systemUserEntityTypes;
-	
-	@Transient
-	@Inject
-	private CartRegistry cartRegistry;
 	
 	@Transient
 	@Inject
@@ -109,6 +65,10 @@ public class CartPubResource {
 	@Transient
 	@Inject
 	private Cart cart;
+	
+	@Transient
+	@Inject
+	private CartService cartService;
 	
 	public CartPubResource(){
 	}
@@ -123,22 +83,29 @@ public class CartPubResource {
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
 		SystemUser user;
 		
 		try {
+			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
 			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
 			result.put("user", user);
-			if(user != null) {
-				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways(cart);
-				result.put("payment_gateway_list", paymentGatewayList);
-			}
-			
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
+
+		try {
+			if(user != null) {
+				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
+				result.put("payment_gateway_list", paymentGatewayList);
+			}
+		}
+		catch(Throwable ex) {
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
 		
 		return result;
 	}
@@ -150,22 +117,33 @@ public class CartPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
+		Map<String,Object> result = new HashMap<String, Object>();
+		
+		SystemUser user;
+		
+		try {
+			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
+			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			result.put("user", user);
+		}
+		catch(Throwable ex) {
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "paymentDetails", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
 		try{
-			Subject subject = subjectProvider.getSubject();
-			
-			Map<String,Object> result = new HashMap<String, Object>();
-			
-			if(subject.isAuthenticated()) {
-				List<PaymentGateway> paymentGatewayList = paymentGatewayProvider.getPaymentGateways(cart);
+			if(user != null) {
+				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
 				result.put("payment_gateway_list", paymentGatewayList);
 			}
 			
-			return result;
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "paymentDetails", "load", locale,  ex);
 			throw new InvalidRequestException(error, ex);
 		}
+
+		return result;
 		
 	}
 	
@@ -178,7 +156,7 @@ public class CartPubResource {
 			Locale locale) throws InvalidRequestException{
 		
 		try{
-			PaymentGateway pg = paymentGatewayProvider.getPaymentGateway(code);
+			PaymentGateway pg = cartService.getPaymentGateway(code);
 
 			if(pg == null){
 				throw new IllegalStateException("não foi encontrado o gateway de pagamento: " + code);
@@ -223,7 +201,7 @@ public class CartPubResource {
 			Locale locale) throws InvalidRequestException{
 		
 		try{
-			this.cartRegistry.setQuantity(cart, productIndex, qty);
+			cartService.setQuantity(cart, productIndex, qty);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "updateUnits", "updateQuantity", locale, ex);
@@ -276,7 +254,7 @@ public class CartPubResource {
 		}
 		
 		try{
-			this.cartRegistry.add(cart, product, addData, 1);
+			cartService.add(cart, product, addData, 1);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "addProduct", locale, ex);
@@ -300,7 +278,7 @@ public class CartPubResource {
 			Locale locale) throws InvalidRequestException{
 		
 		try{
-			this.cartRegistry.remove(cart, productIndex);
+			cartService.remove(cart, productIndex);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "remove", "removeProduct", locale, ex);
@@ -370,7 +348,7 @@ public class CartPubResource {
 		/* checkout */
 		
 		try{
-			Checkout checkoutResult = this.cartRegistry.checkout(cart, payment, "Pedido criado via website.");
+			Checkout checkoutResult = cartService.checkout(cart, user, payment, "Pedido criado via website.");
 			String paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
 		}
