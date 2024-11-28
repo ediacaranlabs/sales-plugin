@@ -5,6 +5,36 @@
 	<artifactId>sales-ediacaran-plugin</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
+	
+	<organization>
+		<name>UoUTec</name>
+		<url>https://www.uoutec.com.br/</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<repositories>
+		<repository>
+			<id>uoutec-deploy</id>
+			<url>https://www.uoutec.com.br/maven/deploy/</url>
+		</repository>
+	</repositories>
+
+	<developers>
+		<developer>
+			<name>Afonso Brandao</name>
+			<email>afonso.rbn@gmail.com</email>
+			<organization>Brandao</organization>
+			<organizationUrl>https://www.linkedin.com/in/brandaoafonso/</organizationUrl>
+		</developer>
+	</developers>
+		
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  		<junit.jupiter.version>5.9.1</junit.jupiter.version>
