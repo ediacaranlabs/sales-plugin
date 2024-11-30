@@ -36,6 +36,8 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
@@ -69,6 +71,10 @@ public class CartPubResource {
 	@Transient
 	@Inject
 	private CartService cartService;
+
+	@Transient
+	@Inject
+	private ProductTypeRegistry productTypeRegistry;
 	
 	public CartPubResource(){
 	}
@@ -366,6 +372,15 @@ public class CartPubResource {
 		
 	}
 
+	public String getProductCartView(String code) throws ProductTypeRegistryException {
+		try {
+			return productTypeRegistry.getProductType(code).getHandler().getProductCartView();
+		}
+		catch(Throwable e) {
+			return null;
+		}
+	}
+	
 	public Cart getCart() {
 		return cart;
 	}
