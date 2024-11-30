@@ -1,7 +1,9 @@
-package br.com.uoutec.community.ediacaran.sales.entity;
+package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.io.Serializable;
 import java.util.List;
+
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
 
 public class InvoiceSearchResultPubEntity implements Serializable {
 	

@@ -10,6 +10,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -59,6 +61,10 @@ public class CartService {
 	public Checkout checkout(Cart cart, SystemUser systemUser, Payment payment, String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
 		return cartRegistry.checkout(cart, systemUser,  payment, message);
+	}
+	
+	public ProductSearchResult search(ProductSearch value) {
+		return null;
 	}
 	
 }

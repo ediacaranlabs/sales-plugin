@@ -12,15 +12,18 @@ import javax.validation.constraints.Pattern;
 
 import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.ResultActionImp;
+import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Controller;
 import org.brandao.brutos.annotation.DetachedName;
 import org.brandao.brutos.annotation.MappingTypes;
+import org.brandao.brutos.annotation.ResponseType;
 import org.brandao.brutos.annotation.Result;
 import org.brandao.brutos.annotation.ScopeType;
 import org.brandao.brutos.annotation.Transient;
 import org.brandao.brutos.annotation.View;
+import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.RequestMethodTypes;
 import org.brandao.brutos.annotation.web.ResponseErrors;
@@ -31,9 +34,13 @@ import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
@@ -379,6 +386,40 @@ public class CartAdminPubResource {
 		catch(Throwable e) {
 			return null;
 		}
+	}
+	
+	@Action("/search")
+	@RequestMethod("POST")
+	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
+	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@Result(mappingType = MappingTypes.OBJECT)
+	public ProductSearchResultPubEntity searchProduct(
+			@DetachedName
+			InvoicePubEntity invoicePubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		ProductSearch search = null;
+		try{
+			
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchProduct", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+
+		ProductSearchResult result;
+		try{
+			result = cartService.search(search);
+			
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchProduct", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return new ProductSearchResultPubEntity(result);
 	}
 	
 	public Cart getCart() {
