@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -67,6 +69,22 @@ public class ProductRegistryImp
 		
 	}
 
+	@Override
+	public ProductSearchResult search(ProductSearch value) throws ProductRegistryException {
+		try{
+			int page = value.getPage() == null? 0 : value.getPage().intValue();
+			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+			
+			int firstResult = page*maxItens;
+			int maxResults = maxItens + 1;
+			List<Product> products = entityAccess.searchProduct(value, firstResult, maxResults);
+			
+			return new ProductSearchResult(products.size() > maxItens, -1, page, products.size() > maxItens? products.subList(0, maxItens -1) : products);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
 	@Override
 	public void flush() {
 		entityAccess.flush();

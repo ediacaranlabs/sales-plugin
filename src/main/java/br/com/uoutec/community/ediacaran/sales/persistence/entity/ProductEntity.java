@@ -16,6 +16,7 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity
 @Table(name="rw_product")
@@ -35,7 +36,7 @@ public class ProductEntity implements Serializable{
 	@Column(name="dsc_description")
 	@Lob
 	private String description;
-	
+
 	@Column(name="cod_product_type")
 	private String productType;
 
@@ -49,6 +50,12 @@ public class ProductEntity implements Serializable{
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
+	@Column(name="dsc_name_search", length=128)
+	private String nameSearch;
+	
+	@Column(name="dsc_description_search", length=255)
+	private String descriptionSearch;
+	
 	public ProductEntity(){
 	}
 	
@@ -60,6 +67,16 @@ public class ProductEntity implements Serializable{
 		this.periodType     = e.getPeriodType();
 		this.id             = e.getId() <= 0? null : e.getId();
 		this.name           = e.getName();
+		
+		if(e.getDescription() != null) {
+			this.descriptionSearch = StringUtil.toSearch(e.getDescription());
+			this.descriptionSearch = this.descriptionSearch.length() > 255? this.descriptionSearch.substring(0, 253) : this.descriptionSearch;
+		}
+		
+		if(e.getName() != null) {
+			this.name = StringUtil.toSearch(e.getName());
+		}
+
 	}
 	
 	public Integer getId() {
@@ -116,6 +133,22 @@ public class ProductEntity implements Serializable{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getNameSearch() {
+		return nameSearch;
+	}
+
+	public void setNameSearch(String nameSearch) {
+		this.nameSearch = nameSearch;
+	}
+
+	public String getDescriptionSearch() {
+		return descriptionSearch;
+	}
+
+	public void setDescriptionSearch(String descriptionSearch) {
+		this.descriptionSearch = descriptionSearch;
 	}
 
 	public Product toEntity(){

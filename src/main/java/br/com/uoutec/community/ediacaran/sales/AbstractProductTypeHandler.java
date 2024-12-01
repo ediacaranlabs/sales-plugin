@@ -74,7 +74,7 @@ public abstract class AbstractProductTypeHandler
 	@Override
 	public String getProductFormView() {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		return varParser.getValue("${plugins.ediacaran.sales.template}/admin/order/product_form.jsp");
+		return varParser.getValue("${plugins.ediacaran.sales.template}/admin/cart/product_form.jsp");
 	}
 	
 	@Override

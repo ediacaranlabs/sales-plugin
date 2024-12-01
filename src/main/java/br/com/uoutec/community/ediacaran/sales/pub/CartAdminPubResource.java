@@ -31,15 +31,17 @@ import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebFlowController;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
+import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
@@ -395,14 +397,14 @@ public class CartAdminPubResource {
 	@Result(mappingType = MappingTypes.OBJECT)
 	public ProductSearchResultPubEntity searchProduct(
 			@DetachedName
-			InvoicePubEntity invoicePubEntity,
+			ProductSearchPubEntity productSearch,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
 		ProductSearch search = null;
 		try{
-			
+			search = productSearch.rebuild(false, true, true);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchProduct", "load", locale, ex);
@@ -412,7 +414,6 @@ public class CartAdminPubResource {
 		ProductSearchResult result;
 		try{
 			result = cartService.search(search);
-			
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchProduct", "load", locale, ex);
@@ -420,6 +421,52 @@ public class CartAdminPubResource {
 		}
 		
 		return new ProductSearchResultPubEntity(result);
+	}
+	
+	@Action("/product-form/{protectedID}")
+	@RequestMethod(RequestMethodTypes.GET)
+	@ResponseErrors(rendered=false, name="exception")
+	public ResultAction productForm(
+			@DetachedName
+			ProductPubEntity productPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException{
+
+		Product product;
+		ProductTypeHandler productTypeHandler;
+		try{
+			product = productPubEntity.rebuild(true, false, false);
+			
+			ProductType productType = productTypeRegistry.getProductType(product.getProductType());
+			productTypeHandler = productType.getHandler();
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "loadData", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+
+		ResultAction ra = new ResultActionImp();
+		
+		try{
+			String view = productTypeHandler.getProductFormView();
+			
+			if(view != null){
+				ra.setView(view, true);
+			}
+			else{
+				ra.setContentType(String.class);
+				ra.setContent("");
+			}
+			
+			ra.add("product", product);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return ra;
+		
 	}
 	
 	public Cart getCart() {

@@ -14,6 +14,10 @@ public class ProductSearch {
 
 	private String productType;
 	
+	private Integer page;
+	
+	private Integer resultPerPage;
+	
 	public String getName() {
 		return name;
 	}
@@ -53,5 +57,21 @@ public class ProductSearch {
 	public void setProductType(String productType) {
 		this.productType = productType;
 	}
-	
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public Integer getResultPerPage() {
+		return resultPerPage;
+	}
+
+	public void setResultPerPage(Integer resultPerPage) {
+		this.resultPerPage = resultPerPage;
+	}
+
 }
