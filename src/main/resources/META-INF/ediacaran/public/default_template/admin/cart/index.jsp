@@ -7,7 +7,6 @@
 
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
-
 <section class="inner-headline">
 	<ed:row>
 		<ed:col size="4">
@@ -97,23 +96,25 @@
 					
 					<ec:data-result var="response">
 						<ec:forEach items="!{response.itens}" var="item">
-							<ec:form id="product_!{item.protectedID}">
-								<ed:row>
-									<ed:col size="12" id="product_content_!{item.protectedID}">
-										<script type="text/javascript">
-											$.AppContext.utils.updateContentByID(
-													'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-form/!{item.protectedID}', 
-													'product_content_!{item.protectedID}'
-											);
-										</script>
-									</ed:col>
-								</ed:row>
-								<ed:row>
-									<ed:col size="12">
-										<ec:button label="Select" align="right"/>
-									</ed:col>
-								</ed:row>
-							</ec:form>
+							<ec:box>
+								<ec:box-body>
+									<ec:form id="product_!{item.protectedID}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/add/!{item.protectedID}" >
+										<ed:row>
+											<ed:col size="10" id="product_content_!{item.protectedID}">
+												<script type="text/javascript">
+													$.AppContext.utils.updateContentByID(
+															'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-form/!{item.protectedID}', 
+															'product_content_!{item.protectedID}'
+													);
+												</script>
+											</ed:col>
+											<ed:col size="2">
+												<ec:button label="Add" align="right"/>
+											</ed:col>
+										</ed:row>
+									</ec:form>
+								</ec:box-body>
+							</ec:box>
 						</ec:forEach>
 					</ec:data-result>
 				</ec:data-table>
