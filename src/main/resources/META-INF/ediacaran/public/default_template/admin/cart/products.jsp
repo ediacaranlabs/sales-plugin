@@ -44,6 +44,12 @@
 </style>
 <ed:row>
 	<ed:col id="products-list" size="9">
+		<ed:row>
+			<ed:col size="12">
+					<h3>Products</h3>
+					<hr>
+			</ed:col>
+		</ed:row>
 		<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
 			<c:set var="productRequest" scope="request" value="${productRequest}" />
 			<ec:include uri="${Controller.getProductCartView(productRequest.product.productType)}" resolved="true" />

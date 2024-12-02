@@ -30,7 +30,7 @@
 				<ed:col size="2">
 	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="3">
+				<ed:col size="2">
 	    			<ec:textfield name="ownerName" label="Owner" placeholder="owner" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
@@ -63,8 +63,13 @@
 		    			<ec:textfield label="Mínimum (Total)" name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
 		    			<ec:textfield label="Maximum (Total)" name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="1">
-					<ec:button icon="search" style="info" actionType="submit" align="right"/>
+				<ed:col size="2">
+					<ec:button label="New" style="info" actionType="button" align="right">
+						<ec:event type="click">
+							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart');
+						</ec:event>
+					</ec:button>
+					<ec:button icon="search" label="Search" style="info" actionType="submit" align="right"/>
 				</ed:col>
 			</ed:row>
 			
