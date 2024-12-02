@@ -5,16 +5,23 @@
 <%@page trimDirectiveWhitespaces="true" %>
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:box>
+	<%--
 	<ec:box-header>
 		<h3>${product.name}</h3>
 	</ec:box-header>
+	--%>
 	<ec:box-body>
 	
 		<ed:row>
+			<%--
 			<ed:col size="2">
 				<ec:image align="center" src="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png"/>
 			</ed:col>
-			<ed:col size="10">
+			--%>
+			<ed:col size="2">
+				${product.name}
+			</ed:col>
+			<ed:col size="8">
 				<ec:center>${product.description}</ec:center>
 				<p>
 			</ed:col>
