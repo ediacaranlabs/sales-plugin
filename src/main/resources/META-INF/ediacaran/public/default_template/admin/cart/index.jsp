@@ -44,6 +44,78 @@
 			</ed:col>
 		</ed:row>
 		<!-- /products-table -->
+
+		<ed:row>
+			<ed:col size="6">
+				
+			</ed:col>
+			<ed:col size="6">
+			
+			
+				<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/search">
+					<ed:row>
+						<ed:col size="12">
+								<h3>Products Search</h3>
+								<hr>
+						</ed:col>
+					</ed:row>
+					<ed:row>
+						<ed:col size="4">
+			    			<ec:textfield name="name" label="Name" placeholder="name" bundle="${messages}"/>
+						</ed:col>
+						<ed:col size="4">
+			    			<ec:textfield name="description" label="Description" placeholder="description" bundle="${messages}"/>
+						</ed:col>
+						<ed:col size="4">
+				    			<ec:textfield label="Mínimum (Cost)" name="minCost" placeholder="min cost" bundle="${messages}"/>
+				    			<ec:textfield label="Maximum (Cost)" name="maxCost" placeholder="max cost" bundle="${messages}"/>
+						</ed:col>
+					</ed:row>
+					<ed:row>
+						<ed:col size="12">
+							<ec:button icon="search" label="Search" style="info" actionType="submit" align="right"/>
+						</ed:col>
+					</ed:row>
+					
+					<ec:data-result var="response">
+						<ec:table>
+							<ec:table-header>
+								<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+								<ec:table-col><ec:center>Owner</ec:center></ec:table-col>
+								<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
+								<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
+								<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+								<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
+							</ec:table-header>
+							<ec:table-body>
+								<ec:forEach items="!{response.data}" var="item">
+								<ec:table-row>
+									<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+									<ec:table-col><ec:center>!{item.owner}</ec:center></ec:table-col>
+									<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
+									<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
+									<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+									<ec:table-col>
+										<ec:center>
+										<ec:button id="!{item.id}_button" icon="search" style="info" actionType="button">
+											<ec:event type="click">
+												$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/!{item.id}');
+											</ec:event>
+										</ec:button>
+										</ec:center>
+									</ec:table-col>
+								</ec:table-row>
+								</ec:forEach>
+							</ec:table-body>
+						</ec:table>
+					</ec:data-result>
+				</ec:data-table>
+			
+			
+			
+				
+			</ed:col>
+		</ed:row>
 		
 		<!-- payment-area -->
 		<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
