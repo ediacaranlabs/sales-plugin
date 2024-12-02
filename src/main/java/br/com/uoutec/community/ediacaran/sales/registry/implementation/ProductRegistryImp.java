@@ -75,7 +75,7 @@ public class ProductRegistryImp
 			int page = value.getPage() == null? 0 : value.getPage().intValue();
 			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
 			
-			int firstResult = page*maxItens;
+			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
 			List<Product> products = entityAccess.searchProduct(value, firstResult, maxResults);
 			

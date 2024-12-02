@@ -3,6 +3,9 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.MappingTypes;
+
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -17,6 +20,7 @@ public class ProductSearchResultPubEntity extends AbstractPubEntity<ProductSearc
 	
 	private Integer page;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductPubEntity> itens;
 
 	public ProductSearchResultPubEntity(ProductSearchResult e) {

@@ -115,6 +115,8 @@ public class CartAdminPubResource {
 				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
 				result.put("payment_gateway_list", paymentGatewayList);
 			}
+			
+			result.put("productTypes", productTypeRegistry.getProductTypes());
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);

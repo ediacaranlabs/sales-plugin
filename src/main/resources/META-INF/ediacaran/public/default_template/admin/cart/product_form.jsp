@@ -20,7 +20,7 @@
 			</ed:col>
 			<ed:col size="2">
 				<ec:center>
-						${product.product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${product.subtotal}"/>
+						${product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${product.cost}"/>
 				</ec:center>
 			</ed:col>
 		</ed:row>

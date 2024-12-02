@@ -18,6 +18,8 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -32,6 +34,9 @@ public class CartService {
 
 	@Inject
 	private CartRegistry cartRegistry;
+	
+	@Inject
+	private ProductRegistry productRegistry;
 	
 	public List<PaymentGateway> getPaymentGateways(Cart cart, SystemUser user){
 		return paymentGatewayProvider.getPaymentGateways(cart, user);
@@ -63,8 +68,8 @@ public class CartService {
 		return cartRegistry.checkout(cart, systemUser,  payment, message);
 	}
 	
-	public ProductSearchResult search(ProductSearch value) {
-		return null;
+	public ProductSearchResult search(ProductSearch value) throws ProductRegistryException {
+		return productRegistry.search(value);
 	}
 	
 }
