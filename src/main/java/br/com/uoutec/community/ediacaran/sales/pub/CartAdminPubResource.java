@@ -220,24 +220,24 @@ public class CartAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
-		ProductRequest product;
-		ProductTypeHandler productTypeHandler;
-		
+		ProductRequest product = null;
+		ProductTypeHandler productTypeHandler = null;
+		Throwable exception = null;
 		try{
-			cartService.setQuantity(cart, productIndex, qty);
 			product = cart.get(productIndex);
 			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
 			productTypeHandler = productType.getHandler();
+			cartService.setQuantity(cart, productIndex, qty);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "updateQuantity", locale, ex);
-			throw new InvalidRequestException(error, ex);
+			exception = new InvalidRequestException(error, ex);
 		}
 		
 		ResultAction ra = new ResultActionImp();
 		
 		try{
-			String view = productTypeHandler.getProductOrderView();
+			String view = productTypeHandler == null? null : productTypeHandler.getProductOrderView();
 			
 			if(view != null){
 				ra.setView(view, true);
@@ -251,8 +251,10 @@ public class CartAdminPubResource {
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "view", locale, ex);
-			throw new InvalidRequestException(error, ex);
+			exception = new InvalidRequestException(error, ex);
 		}
+
+		ra.add("exception", exception);
 		
 		return ra;
 		
