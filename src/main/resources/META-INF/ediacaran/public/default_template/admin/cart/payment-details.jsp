@@ -23,7 +23,7 @@
 						
 						$form.submit(
 							false, 
-							"${plugins.ediacaran.sales.web_path}/cart/payment-type/" + $paymentTypeValue, 
+							"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-type/" + $paymentTypeValue, 
 							"payment_form_area"
 						);
 						
@@ -43,12 +43,11 @@
 			$.AppContext.onload(function(){			
 				$.AppContext.utils
 					.updateContentByID(
-							"#!${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}", 
+							"#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-type/${vars.payment_gateway_list.get(0).id}", 
 							"payment_form_area"
 					);
 			});	
 		</script>
-			<jsp:include page="${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}"/>
 		</c:if>
 	</ed:col>
 </ed:row>

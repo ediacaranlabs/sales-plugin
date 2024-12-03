@@ -42,6 +42,7 @@
 										if($intQTY > 0){
 											$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
 											$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
+											$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
 										}
 									</ec:event>
 									<ec:field-validator>
@@ -102,6 +103,7 @@
 								if($intQTY > 0){
 									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
 									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
+									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
 								}
 							</ec:event>
 							<ec:field-validator>
