@@ -42,6 +42,19 @@
 </style>
 
 <c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
+	<ed:row>
+		<ed:col size="12" id="product_content_cart_${productRequest.serial}">
+			<script type="text/javascript">
+				$.AppContext.utils.updateContentByID(
+						'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-cart/${productRequest.serial}', 
+						'product_content_cart_${productRequest.serial}'
+				);
+			</script>
+		</ed:col>
+	</ed:row>
+
+	<%--
 	<c:set var="productRequest" scope="request" value="${productRequest}" />
 	<ec:include uri="${Controller.getProductCartView(productRequest.product.productType)}" resolved="true" />
+	--%>
 </c:forEach>

@@ -34,7 +34,8 @@
 									var $form  = $.AppContext.utils.getById('update-item-cart-form-min-${productRequest.serial}');
 									var $units = $form.getField('units');
 									var $qty   = $units.getValue();
-									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/units/${productRequest.serial}/' + $qty, "product_content");
+									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
+									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
 								</ec:event>
 							</ec:select>
 						</ec:form>
@@ -46,7 +47,7 @@
 					</ed:col>
 					<ed:col id="cart_item_description_${step.index}">
 						<ec:center>
-							<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${pageContext.request.contextPath}/cart/remove">
+							<ec:form id="remove-item-cart-form-${productRequest.serial}" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/remove">
 								<input type="hidden" name="product" value="${productRequest.serial}">
 								<ec:button label="" icon="trash" actionType="submit" style="danger"/>
 							</ec:form>
@@ -78,7 +79,8 @@
 							var $form  = $.AppContext.utils.getById('update-item-cart-form-${productRequest.serial}');
 							var $units = $form.getField('units');
 							var $qty   = $units.getValue();
-							$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "cart_result");
+							$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
+							$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
 						</ec:event>
 					</ec:select>
 				</ec:form>

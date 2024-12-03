@@ -35,6 +35,7 @@ import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
@@ -210,9 +211,8 @@ public class CartAdminPubResource {
 	
 	@Action("/units/{product:[A-Za-z0-9\\-]{1,128}}/{qty:\\d{1,3}}")
 	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
-	@View("${plugins.ediacaran.sales.template}/admin/cart/cart_result")
 	@ResponseErrors(rendered=false, name="productException")
-	public void updateUnits(
+	public ResultAction updateUnits(
 			@Basic(bean="qty")
 			Integer qty,
 			@Basic(bean="product")
@@ -220,13 +220,41 @@ public class CartAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
+		ProductRequest product;
+		ProductTypeHandler productTypeHandler;
+		
 		try{
 			cartService.setQuantity(cart, productIndex, qty);
+			product = cart.get(productIndex);
+			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
+			productTypeHandler = productType.getHandler();
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "updateQuantity", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
+		
+		ResultAction ra = new ResultActionImp();
+		
+		try{
+			String view = productTypeHandler.getProductOrderView();
+			
+			if(view != null){
+				ra.setView(view, true);
+			}
+			else{
+				ra.setContentType(String.class);
+				ra.setContent("");
+			}
+			
+			ra.add("productRequest", product);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return ra;
 		
 	}
 	
@@ -457,6 +485,50 @@ public class CartAdminPubResource {
 		
 	}
 
+	@Action("/product-cart/{serial:[A-Za-z0-9\\\\-]{1,128}}")
+	@RequestMethod(RequestMethodTypes.GET)
+	@ResponseErrors(rendered=false, name="exception")
+	public ResultAction productCart(
+			@Basic(bean = "serial")
+			String serial,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException{
+
+		ProductRequest product;
+		ProductTypeHandler productTypeHandler;
+		try{
+			product = cart.get(serial);
+			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
+			productTypeHandler = productType.getHandler();
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "loadData", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+
+		ResultAction ra = new ResultActionImp();
+		
+		try{
+			String view = productTypeHandler.getProductOrderView();
+			
+			if(view != null){
+				ra.setView(view, true);
+			}
+			else{
+				ra.setContentType(String.class);
+				ra.setContent("");
+			}
+			
+			ra.add("productRequest", product);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return ra;
+		
+	}	
 	public Cart getCart() {
 		return cart;
 	}

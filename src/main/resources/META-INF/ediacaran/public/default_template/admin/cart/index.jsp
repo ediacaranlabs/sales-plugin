@@ -52,7 +52,7 @@
 				<ec:tabs>
 					<ec:tabs-item title="My products/services" active="true">
 						<span id="product_content">
-							<jsp:include page="products.jsp"/>
+							<jsp:include page="${plugins.ediacaran.sales.template}/admin/cart/products.jsp"/>
 						</span>
 					</ec:tabs-item>
 					<ec:tabs-item title="Products/Services">
