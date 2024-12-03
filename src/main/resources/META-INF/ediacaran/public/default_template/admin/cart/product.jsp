@@ -25,26 +25,39 @@
 					</ed:col>
 				</ed:row>
 				<ed:row>
-					<ed:col>
+					<ed:col classStyle="form-group has-feedback">
 						<ec:form id="update-item-cart-form-min-${productRequest.serial}">
 							<ec:event type="submit">
 								$event.handler.preventDefault();
 							</ec:event>
-							<ec:textfield name="units" value="${productRequest.units}"> <!-- style="width: 60px" -->
-								<ec:event type="change">
-									var $form  = $.AppContext.utils.getById('update-item-cart-form-min-${productRequest.serial}');
-									var $units = $form.getField('units');
-									var $qty   = $units.getValue();
-		
-									var $intQTY = parseInt($qty);
-									
-									if($intQTY > 0){
-										$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
-										$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
-									}
-								</ec:event>
-							</ec:textfield>
-							${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}
+							<ec:field-group>
+								<ec:textfield name="units" value="${productRequest.units}"> <!-- style="width: 60px" -->
+									<ec:event type="change">
+										var $form  = $.AppContext.utils.getById('update-item-cart-form-min-${productRequest.serial}');
+										var $units = $form.getField('units');
+										var $qty   = $units.getValue();
+			
+										var $intQTY = parseInt($qty);
+										
+										if($intQTY > 0){
+											$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
+											$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
+										}
+									</ec:event>
+									<ec:field-validator>
+										<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+										<ec:field-validator-rule name="between" message="Must be between 0 to ${empty productRequest.maxExtra || productRequest.maxExtra < 0? 1 : productRequest.maxExtra}">
+												<ec:field-validator-param name="min">0</ec:field-validator-param>
+												<ec:field-validator-param name="max">${empty productRequest.maxExtra || productRequest.maxExtra < 0? 1 : productRequest.maxExtra}</ec:field-validator-param>
+										</ec:field-validator-rule>
+									</ec:field-validator>
+								</ec:textfield>
+								<c:if test="${!empty productRequest.product.periodType && productRequest.product.periodType != 'UNITS'}">
+									<ec:append-field>
+										<ec:prepend-field-item>${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:prepend-field-item>
+									</ec:append-field>
+								</c:if>
+							</ec:field-group>
 						</ec:form>
 					</ed:col>
 					<ed:col id="cart_item_value_${step.index}">
@@ -72,26 +85,40 @@
 				<ec:center>${productRequest.description}</ec:center>
 				<p>
 			</ed:col>
-			<ed:col size="2">
+			<ed:col size="2" classStyle="form-group has-feedback">
 				<ec:form id="update-item-cart-form-${productRequest.serial}">
 					<ec:event type="submit">
 						$event.handler.preventDefault();
 					</ec:event>
-					<ec:textfield name="units" value="${productRequest.units}"> <!-- style="width: 60px" -->
-						<ec:event type="change">
-							var $form  = $.AppContext.utils.getById('update-item-cart-form-${productRequest.serial}');
-							var $units = $form.getField('units');
-							var $qty   = $units.getValue();
-
-							var $intQTY = parseInt($qty);
-							
-							if($intQTY > 0){
-								$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
-								$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
-							}
-						</ec:event>
-					</ec:textfield>
-					${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}
+					<ec:field-group>
+						<ec:textfield name="units" value="${productRequest.units}"> <!-- style="width: 60px" -->
+							<ec:event type="change">
+								var $form  = $.AppContext.utils.getById('update-item-cart-form-${productRequest.serial}');
+								var $units = $form.getField('units');
+								var $qty   = $units.getValue();
+	
+								var $intQTY = parseInt($qty);
+								
+								if($intQTY > 0){
+									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/units/${productRequest.serial}/' + $qty, "product_content_cart_${productRequest.serial}");
+									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
+								}
+							</ec:event>
+							<ec:field-validator>
+								<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+								<ec:field-validator-rule name="between" message="Must be between 0 to ${empty productRequest.maxExtra || productRequest.maxExtra < 0? 1 : productRequest.maxExtra}">
+										<ec:field-validator-param name="min">0</ec:field-validator-param>
+										<ec:field-validator-param name="max">${empty productRequest.maxExtra || productRequest.maxExtra < 0? 1 : productRequest.maxExtra}</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+						<c:if test="${!empty productRequest.product.periodType && productRequest.product.periodType != 'UNITS'}">
+							<ec:append-field>
+								<ec:prepend-field-item>${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:prepend-field-item>
+							</ec:append-field>
+						</c:if>
+					</ec:field-group>
+					
 				</ec:form>
 			</ed:col>
 			<ed:col id="cart_item_value_${step.index}" size="2">

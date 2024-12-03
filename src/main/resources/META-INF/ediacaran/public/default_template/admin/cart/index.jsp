@@ -8,13 +8,14 @@
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 <style>
+
 #product_content {
-	min-height: 500px;
+	min-height: 200px;
 	display: block;
 }
 
 #productSearchForm_result {
-	min-height: 500px;
+	min-height: 200px;
 	display: block;
 }
 </style>
