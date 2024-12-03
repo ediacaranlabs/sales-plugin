@@ -14,6 +14,7 @@ import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
+import org.brandao.brutos.annotation.Actions;
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Controller;
 import org.brandao.brutos.annotation.DetachedName;
@@ -28,7 +29,6 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.RequestMethodTypes;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.web.HttpStatus;
-import org.brandao.brutos.web.WebFlowController;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
@@ -61,7 +61,10 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
 @Controller(value="${plugins.ediacaran.front.admin_context}/cart", defaultActionName="/")
-@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/admin/cart/products"))
+@Actions({
+	@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/admin/cart/products")),
+	@Action(value="/widgets", view=@View("${plugins.ediacaran.sales.template}/admin/cart/widgets"))
+})
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartAdminPubResource {
 
@@ -207,7 +210,7 @@ public class CartAdminPubResource {
 	
 	@Action("/units/{product:[A-Za-z0-9\\-]{1,128}}/{qty:\\d{1,3}}")
 	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
-	@View("${plugins.ediacaran.sales.template}/admin/cart/products")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/cart_result")
 	@ResponseErrors(rendered=false, name="productException")
 	public void updateUnits(
 			@Basic(bean="qty")
@@ -229,6 +232,7 @@ public class CartAdminPubResource {
 	
 	@Action("/add/{protectedID}")
 	@RequestMethod({RequestMethodTypes.POST, RequestMethodTypes.GET})
+	@View("${plugins.ediacaran.sales.template}/admin/cart/cart_result")
 	public void add(
 			@DetachedName 
 			@NotNull 
@@ -254,20 +258,13 @@ public class CartAdminPubResource {
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "loadProductData", locale, ex);
-			WebFlowController.redirect()
-				.put("productException", new InvalidRequestException(error, ex))
-				.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
-			return;
+			throw new InvalidRequestException(error, ex);
 		}
 
 		if(product == null){
 			Throwable ex = new IllegalStateException("product");
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "productNotFound", locale, ex);
-			
-			WebFlowController.redirect()
-			.put("productException", new InvalidRequestException(error))
-			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
-			return;
+			throw new InvalidRequestException(error, ex);
 		}
 		
 		try{
@@ -275,18 +272,14 @@ public class CartAdminPubResource {
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "addProduct", locale, ex);
-			
-			WebFlowController.redirect()
-			.put("productException", new InvalidRequestException(error, ex))
-			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
-			return;
+			throw new InvalidRequestException(error, ex);
 		}
 
-		WebFlowController.redirectTo(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 	}
 	
 	@Action("/remove")
 	@RequestMethod(RequestMethodTypes.POST)
+	@View("${plugins.ediacaran.sales.template}/admin/cart/cart_result")
 	public void remove(
 			@Pattern(regexp="[A-Za-z0-9\\#\\-]{1,128}")
 			@Basic(bean="product")
@@ -299,15 +292,8 @@ public class CartAdminPubResource {
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "remove", "removeProduct", locale, ex);
-			
-			WebFlowController.redirect()
-			.put("productException", new InvalidRequestException(error, ex))
-			.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
-			return;
+			throw new InvalidRequestException(error, ex);
 		}
-		
-		WebFlowController.redirect()
-		.to(varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/"));
 	}
 
 	@Action("/checkout")
@@ -385,7 +371,7 @@ public class CartAdminPubResource {
 
 	public String getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
-			return productTypeRegistry.getProductType(code).getHandler().getProductCartView();
+			return productTypeRegistry.getProductType(code).getHandler().getProductOrderView();
 		}
 		catch(Throwable e) {
 			return null;
@@ -470,7 +456,7 @@ public class CartAdminPubResource {
 		return ra;
 		
 	}
-	
+
 	public Cart getCart() {
 		return cart;
 	}
