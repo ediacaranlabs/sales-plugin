@@ -27,6 +27,9 @@
 				<ed:row>
 					<ed:col>
 						<ec:form id="update-item-cart-form-min-${productRequest.serial}">
+							<ec:event type="submit">
+								$event.handler.preventDefault();
+							</ec:event>
 							<ec:textfield name="units" value="${productRequest.units}"> <!-- style="width: 60px" -->
 								<ec:event type="change">
 									var $form  = $.AppContext.utils.getById('update-item-cart-form-min-${productRequest.serial}');
@@ -71,6 +74,9 @@
 			</ed:col>
 			<ed:col size="2">
 				<ec:form id="update-item-cart-form-${productRequest.serial}">
+					<ec:event type="submit">
+						$event.handler.preventDefault();
+					</ec:event>
 					<ec:textfield name="units" value="${productRequest.units}"> <!-- style="width: 60px" -->
 						<ec:event type="change">
 							var $form  = $.AppContext.utils.getById('update-item-cart-form-${productRequest.serial}');
