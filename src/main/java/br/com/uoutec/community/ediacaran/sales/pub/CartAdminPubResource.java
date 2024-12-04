@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -59,13 +58,13 @@ import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.SystemUserEntityTypes;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.manager.SearchResult;
-import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserManagerPubResourceMessages;
+import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserSearchPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserSearchResponse;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserSearch;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
@@ -103,6 +102,10 @@ public class CartAdminPubResource {
 	@Transient
 	@Inject
 	private CountryRegistry countryRegistry;
+
+	@Transient
+	@Inject
+	private SystemUserRegistry systemUserRegistry;
 	
 	@Transient
 	@Inject
@@ -594,7 +597,7 @@ public class CartAdminPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
-	public ProductSearchResultPubEntity searchUsers(
+	public SystemUserSearchResultPubEntity searchUsers(
 			@DetachedName SystemUserSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
@@ -605,32 +608,16 @@ public class CartAdminPubResource {
 			search = request.rebuild(false, true, true);
 		}
 		catch(Throwable ex) {
-			logger.error("request fail", ex);
-			String error = i18nRegistry
-					.getString(
-							SystemUserManagerPubResourceMessages.RESOURCE_BUNDLE,
-							SystemUserManagerPubResourceMessages.search.error.fail_load, 
-							locale);
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchUsers", "load", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 
 		try {
-			int page = request.getPage() == null? 0 : request.getPage();
-			int firstResult = (page-1)*10;
-			int maxResult = 11;
-			List<SystemUser> list = registry.searchSystemUser(search, firstResult, maxResult);
-			List<SystemUserSearchResponse> result = list.stream()
-					.map((e)->new SystemUserSearchResponse(e, locale)).collect(Collectors.toList());
-			boolean hasNextPage = result.size() > 10;
-			return new SearchResult<SystemUserSearchResponse>(-1, page, hasNextPage, result);
+			SystemUserSearchResult result = systemUserRegistry.searchSystemUser(search);
+			return new SystemUserSearchResultPubEntity(result);
 		}
 		catch(Throwable ex) {
-			logger.error("request fail", ex);
-			String error = i18nRegistry
-					.getString(
-							SystemUserManagerPubResourceMessages.RESOURCE_BUNDLE,
-							SystemUserManagerPubResourceMessages.search.error.fail_load, 
-							locale);
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchUsers", "search", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 	}
