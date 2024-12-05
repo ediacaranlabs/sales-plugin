@@ -61,7 +61,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserPubEntity;
+import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserAdminPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserSearchPubEntity;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -129,12 +129,13 @@ public class CartAdminPubResource {
 		Map<String,Object> result = new HashMap<String, Object>();
 		
 		try {
-			result.put("user",					new SystemUser());
-			result.put("payment_gateway_list",	cartService.getPaymentGateways(cart, new SystemUser()));
-			result.put("productTypes",			productTypeRegistry.getProductTypes());
-			result.put("user_data_view",		systemUserEntityTypes.getSystemUserEntityView(new SystemUser()));
-			result.put("countries",				countryRegistry.getAll(locale));
-			result.put("subject",				subjectProvider.getSubject());
+			result.put("user",						new SystemUser());
+			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, new SystemUser()));
+			result.put("productTypes",				productTypeRegistry.getProductTypes());
+			result.put("user_data_view",			systemUserEntityTypes.getSystemUserEntityView(new SystemUser()));
+			result.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
+			result.put("countries",					countryRegistry.getAll(locale));
+			result.put("subject",					subjectProvider.getSubject());
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
@@ -545,29 +546,48 @@ public class CartAdminPubResource {
 		return ra;
 		
 	}
-	
-	@Action({"/user/{protectedID}", "/user"})
-	@RequestMethod({"POST", "GET"})
+
+	@Action("/user/{protectedID}")
+	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
-	public ResultAction showUser(
-			@DetachedName SystemUserPubEntity systemUserPubEntity,			
+	public ResultAction loadUser(
+			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
+		return editUser(systemUserPubEntity, false, locale);
+	}
+	
+	@Action("/user")
+	@RequestMethod(RequestMethodTypes.POST)
+	@Result("vars")
+	public ResultAction showUser(
+			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+		return editUser(systemUserPubEntity, true, locale);
+	}
 		
+	public ResultAction editUser(
+			SystemUserAdminPubEntity systemUserPubEntity,
+			boolean override,
+			Locale locale) throws InvalidRequestException {
+		
+
 		try{
 			if(systemUserPubEntity == null) {
-				systemUserPubEntity = new SystemUserPubEntity();
+				systemUserPubEntity = new SystemUserAdminPubEntity();
 			}
 			
 			Map<String,Object> vars = new HashMap<String, Object>();
 			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, false, false);
+			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, override, override);
 			List<Country> countries = this.countryRegistry.getAll(locale);
 			String userDataView     = this.systemUserEntityTypes.getSystemUserEntityView(systemUser);
 			
-			vars.put("user",           systemUser);
-			vars.put("countries",      countries);
-			vars.put("subject",        subjectProvider.getSubject());
+			vars.put("user",					systemUser);
+			vars.put("countries",				countries);
+			vars.put("subject",					subjectProvider.getSubject());
+			vars.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
 
 			ResultAction ra = new ResultActionImp();
 			ra.setView(userDataView, true).add("vars", vars);

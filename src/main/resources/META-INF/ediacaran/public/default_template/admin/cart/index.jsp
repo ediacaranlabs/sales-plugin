@@ -36,13 +36,6 @@
 
 <ec:box>
 	<ec:box-body>
-		<c:if test="${!empty vars.user && !vars.user.complete}">
-			<ec:alert style="danger">
-				<a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart">
-					<fmt:message key="cart_review.retriction_msg" bundle="${messages}" />
-				</a>
-			</ec:alert>
-		</c:if>
 		<ed:row>
 			<ed:col size="12" id="cart_result">
 			</ed:col>
