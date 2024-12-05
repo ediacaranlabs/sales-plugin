@@ -128,25 +128,13 @@ public class CartAdminPubResource {
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		SystemUser user;
-		
 		try {
-			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
-			result.put("user", user);
-		}
-		catch(Throwable ex) {
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}
-
-		try {
-			if(user != null) {
-				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
-				result.put("payment_gateway_list", paymentGatewayList);
-			}
-			
-			result.put("productTypes", productTypeRegistry.getProductTypes());
+			result.put("user",					new SystemUser());
+			result.put("payment_gateway_list",	cartService.getPaymentGateways(cart, new SystemUser()));
+			result.put("productTypes",			productTypeRegistry.getProductTypes());
+			result.put("user_data_view",		systemUserEntityTypes.getSystemUserEntityView(new SystemUser()));
+			result.put("countries",				countryRegistry.getAll(locale));
+			result.put("subject",				subjectProvider.getSubject());
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
@@ -573,9 +561,9 @@ public class CartAdminPubResource {
 			
 			Map<String,Object> vars = new HashMap<String, Object>();
 			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, true, false);
+			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, false, false);
 			List<Country> countries = this.countryRegistry.getAll(locale);
-			String userDataView     = this.systemUserEntityTypes.getSystemUserManagerEntityView(systemUser);
+			String userDataView     = this.systemUserEntityTypes.getSystemUserEntityView(systemUser);
 			
 			vars.put("user",           systemUser);
 			vars.put("countries",      countries);

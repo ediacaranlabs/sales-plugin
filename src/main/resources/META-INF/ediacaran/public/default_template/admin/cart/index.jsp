@@ -62,9 +62,18 @@
 							<jsp:include page="${plugins.ediacaran.sales.template}/admin/cart/products.jsp"/>
 						</span>
 						
-						<!-- payment-area -->
 						<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
-							<c:if test="${!empty pageContext.request.userPrincipal}">
+							<ed:row>
+								<ed:col size="12">
+										<h3>Client</h3>
+										<hr>
+								</ed:col>
+							</ed:row>
+							<ed:row>
+								<ed:col id="user_data_view" size="12">
+									<ec:include uri="${vars.user_data_view}" resolved="true" />
+								</ed:col>
+							</ed:row>
 							<ed:row>
 								<ed:col size="12">
 										<h3><fmt:message key="cart_review.payment.title" bundle="${messages}" /></h3>
@@ -76,8 +85,6 @@
 									<jsp:include page="payment-details.jsp"/>
 								</ed:col>
 							</ed:row>
-							</c:if>
-							
 							<ed:row>
 								<ed:col size="12">
 									<div id="result-checkout" class="result-check"></div>
@@ -85,7 +92,6 @@
 							</ed:row>
 						
 						</ec:form>
-						<!-- /payment-area -->	
 						
 					</ec:tabs-item>
 					<ec:tabs-item title="Products/Services">
@@ -136,6 +142,95 @@
 							</ec:data-result>
 						</ec:data-table>
 					</ec:tabs-item>
+					<ec:tabs-item title="Clients">
+					
+						<ec:data-table id="user_form_search" 
+							action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/search-users">
+							<ed:row>
+								<ed:col size="4">
+					    			<ec:textfield 
+					    				name="firstName" 
+					    				placeholder="first name"
+					    				bundle="${messages}"/>
+								</ed:col>
+								<ed:col size="4">
+					    			<ec:textfield 
+					    				name="lastName" 
+					    				placeholder="last name"
+					    				bundle="${messages}"/>
+								</ed:col>
+								<ed:col size="4">
+					    			<ec:textfield 
+					    				name="email" 
+					    				placeholder="email"
+					    				bundle="${messages}"/>
+								</ed:col>
+							</ed:row>
+							<ed:row>
+								<ed:col size="3">
+					    			<ec:select name="country">
+					    				<ec:option value=""></ec:option>
+					    				<c:forEach  items="${vars.countries}" var="country" >
+						    				<ec:option value="${country.isoAlpha3}">${country.name}</ec:option>
+					    				</c:forEach>
+					    			</ec:select>
+								</ed:col>
+								<ed:col size="3">
+					    			<ec:textfield 
+					    				name="city" 
+					    				placeholder="city"
+					    				bundle="${messages}"/>
+								</ed:col>
+								<ed:col size="6">
+									<ec:button icon="search" label="Search" style="info" actionType="submit" align="right"/>
+								</ed:col>
+							</ed:row>
+							<ec:data-result var="response">
+							<ec:table style="striped">
+								<ec:table-header>
+									<ec:table-col>
+										<b><fmt:message key="First name" bundle="${messages}"/></b>
+									</ec:table-col>
+									<ec:table-col>
+										<b><fmt:message key="Last name" bundle="${messages}"/></b>
+									</ec:table-col>
+									<ec:table-col>
+										<b><fmt:message key="email" bundle="${messages}"/></b>
+									</ec:table-col>
+									<ec:table-col>
+										<b><fmt:message key="country" bundle="${messages}"/></b>
+									</ec:table-col>
+									<ec:table-col>
+									</ec:table-col>
+								</ec:table-header>
+								<ec:table-body>
+								<ec:forEach items="!{response.itens}" var="item">
+								<ec:table-row>
+									<ec:table-col>
+										!{item.firstName}
+									</ec:table-col>
+									<ec:table-col>
+										!{item.lastName}
+									</ec:table-col>
+									<ec:table-col>
+										!{item.email}
+									</ec:table-col>
+									<ec:table-col>
+										!{item.country.name}
+									</ec:table-col>
+									<ec:table-col>
+										<ec:form id="product_!{item.protectedID}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user/!{item.protectedID}" update="user_data_view">
+											<ec:button label="Select" align="right" actionType="submit"/>
+										</ec:form>
+									</ec:table-col>
+								</ec:table-row>
+								</ec:forEach>
+								</ec:table-body>
+							</ec:table>
+							</ec:data-result>
+						</ec:data-table>
+															
+					</ec:tabs-item>					
 				</ec:tabs>
 			</ed:col>
 			<!-- /products-table -->
