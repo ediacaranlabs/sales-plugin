@@ -45,47 +45,24 @@
 			<ed:col size="10">
 				<ec:tabs>
 					<ec:tabs-item title="Cart" active="true">
-						<ed:row>
-							<ed:col size="12">
-									<h3>Products</h3>
-									<hr>
-							</ed:col>
-						</ed:row>
-						<span id="product_content">
-							<jsp:include page="${plugins.ediacaran.sales.template}/admin/cart/products.jsp"/>
-						</span>
-						
-						<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
-							<ed:row>
-								<ed:col size="12">
-										<h3>Client</h3>
-										<hr>
-								</ed:col>
-							</ed:row>
-							<ed:row>
-								<ed:col id="user_data_view" size="12">
+					
+						<ec:accordion>
+							<ec:accordion-item title="Products" active="true">
+								<span id="product_content">
+									<jsp:include page="${plugins.ediacaran.sales.template}/admin/cart/products.jsp"/>
+								</span>
+							</ec:accordion-item>
+							<ec:accordion-item title="Client">
+								<span id="user_data_view">
 									<ec:include uri="${vars.user_data_view}" resolved="true" />
-								</ed:col>
-							</ed:row>
-							<ed:row>
-								<ed:col size="12">
-										<h3><fmt:message key="cart_review.payment.title" bundle="${messages}" /></h3>
-										<hr>
-								</ed:col>
-							</ed:row>
-							<ed:row>
-								<ed:col id="cart_payment_details" size="12">
+								</span>
+							</ec:accordion-item>
+							<ec:accordion-item title="Payment method">
+								<span id="cart_payment_details">
 									<jsp:include page="payment-details.jsp"/>
-								</ed:col>
-							</ed:row>
-							<ed:row>
-								<ed:col size="12">
-									<div id="result-checkout" class="result-check"></div>
-								</ed:col>
-							</ed:row>
-						
-						</ec:form>
-						
+								</span>
+							</ec:accordion-item>
+						</ec:accordion>
 					</ec:tabs-item>
 					<ec:tabs-item title="Products/Services">
 						<ec:data-table id="productSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/search">
