@@ -111,12 +111,14 @@
 							<hr>
 							
 							<ec:data-result var="response">
+								<ed:row>
 								<ec:forEach items="!{response.itens}" var="item">
+									<ed:col size="3">
 									<ec:box>
 										<ec:box-body>
 											<ec:form id="product_!{item.protectedID}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/add/!{item.protectedID}" update="cart_result">
 												<ed:row>
-													<ed:col size="10" id="product_content_!{item.protectedID}">
+													<ed:col size="12" id="product_content_!{item.protectedID}">
 														<script type="text/javascript">
 															$.AppContext.utils.updateContentByID(
 																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-form/!{item.protectedID}', 
@@ -124,14 +126,18 @@
 															);
 														</script>
 													</ed:col>
-													<ed:col size="2">
-														<ec:button label="Add" align="right" actionType="submit" form="product_!{item.protectedID}"/>
+												</ed:row>
+												<ed:row>
+													<ed:col size="12">
+														<ec:button label="Add" align="right" actionType="submit"/>
 													</ed:col>
 												</ed:row>
 											</ec:form>
 										</ec:box-body>
 									</ec:box>
+									</ed:col>
 								</ec:forEach>
+								</ed:row>
 							</ec:data-result>
 						</ec:data-table>
 					</ec:tabs-item>
