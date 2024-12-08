@@ -34,6 +34,7 @@ import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.entity.Country;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
@@ -52,7 +53,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
-import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.SystemUserEntityTypes;
@@ -60,7 +60,6 @@ import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserAdminPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserSearchPubEntity;
@@ -89,7 +88,7 @@ public class CartAdminPubResource {
 	
 	@Transient
 	@Inject
-	private Cart cart;
+	private AdminCart adminCart;
 	
 	@Transient
 	@Inject
@@ -129,10 +128,12 @@ public class CartAdminPubResource {
 		Map<String,Object> result = new HashMap<String, Object>();
 		
 		try {
+			adminCart.setCart(new Cart());
+			adminCart.setUser(new SystemUser());
 			result.put("user",						new SystemUser());
-			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, new SystemUser()));
+			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getUser()));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
-			result.put("user_data_view",			systemUserEntityTypes.getSystemUserEntityView(new SystemUser()));
+			result.put("user_data_view",			systemUserEntityTypes.getSystemUserEntityView(adminCart.getUser()));
 			result.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("subject",					subjectProvider.getSubject());
@@ -155,24 +156,11 @@ public class CartAdminPubResource {
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		SystemUser user;
-		
-		try {
-			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
-			result.put("user", user);
-		}
-		catch(Throwable ex) {
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "paymentDetails", "load", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}
-		
 		try{
-			if(user != null) {
-				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
-				result.put("payment_gateway_list", paymentGatewayList);
-			}
+			List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(adminCart.getCart(), adminCart.getUser());
 			
+			result.put("user", adminCart.getUser());
+			result.put("payment_gateway_list", paymentGatewayList);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "paymentDetails", "load", locale,  ex);
@@ -198,10 +186,6 @@ public class CartAdminPubResource {
 				throw new IllegalStateException("não foi encontrado o gateway de pagamento: " + code);
 			}
 			
-			if(cart == null){
-				throw new IllegalStateException("carrinho não encontrado");
-			}
-	
 			String view = pg.getView();
 			
 			ResultAction ra = new ResultActionImp();
@@ -215,7 +199,7 @@ public class CartAdminPubResource {
 			}
 			
 			ra.add("paymentGateway", pg);
-			ra.add("cart",           cart);
+			ra.add("cart",           adminCart.getUser());
 			return ra;
 		}
 		catch(Throwable ex){
@@ -239,10 +223,10 @@ public class CartAdminPubResource {
 		ProductTypeHandler productTypeHandler = null;
 		Throwable exception = null;
 		try{
-			product = cart.get(productIndex);
+			product = adminCart.getCart().get(productIndex);
 			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
 			productTypeHandler = productType.getHandler();
-			cartService.setQuantity(cart, productIndex, qty);
+			cartService.setQuantity(adminCart.getCart(), productIndex, qty);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "updateQuantity", locale, ex);
@@ -313,7 +297,7 @@ public class CartAdminPubResource {
 		}
 		
 		try{
-			cartService.add(cart, product, addData, 1);
+			cartService.add(adminCart.getCart(), product, addData, 1);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "addProduct", locale, ex);
@@ -333,7 +317,7 @@ public class CartAdminPubResource {
 			Locale locale) throws InvalidRequestException{
 		
 		try{
-			cartService.remove(cart, productIndex);
+			cartService.remove(adminCart.getCart(), productIndex);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "remove", "removeProduct", locale, ex);
@@ -347,39 +331,10 @@ public class CartAdminPubResource {
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
 	public String checkout(
-			@Basic(bean="customer")
-			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
 			@Basic(bean="payment")
 			PaymentPubEntity paymentPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
-
-		if(authenticatedSystemUserPubEntity == null) {
-			authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-		}
-		
-		/* user */
-		
-		SystemUser user = null;
-		
-		try{
-			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
-		}
-		catch(InvalidRequestException ex){
-			
-			Throwable cause = ex.getCause();
-			
-			if(cause instanceof AuthenticationRequiredException) {
-				return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
-			}
-			
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "loadUserData", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}
-		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "loadUserData", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}
 		
 		/* Payment */
 		
@@ -396,8 +351,8 @@ public class CartAdminPubResource {
 		/* checkout */
 		
 		try{
-			Checkout checkoutResult = cartService.checkout(cart, user, payment, "Pedido criado via website.");
-			String paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
+			Checkout checkoutResult = cartService.checkout(adminCart.getCart(), adminCart.getUser(), payment, "Pedido criado via website.");
+			String paymentResource = checkoutResult.getPaymentGateway().redirectView(adminCart.getUser(), checkoutResult.getOrder());
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
 		}
 		catch(EmptyOrderException ex){
@@ -514,7 +469,7 @@ public class CartAdminPubResource {
 		ProductRequest product;
 		ProductTypeHandler productTypeHandler;
 		try{
-			product = cart.get(serial);
+			product = adminCart.getCart().get(serial);
 			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
 			productTypeHandler = productType.getHandler();
 		}
@@ -566,7 +521,16 @@ public class CartAdminPubResource {
 			Locale locale) throws InvalidRequestException {
 		return editUser(systemUserPubEntity, true, locale);
 	}
-		
+
+	@Action("/new-user")
+	@RequestMethod({RequestMethodTypes.POST, RequestMethodTypes.GET})
+	@Result("vars")
+	public ResultAction newUser(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+		return editUser(null, false, locale);
+	}
+	
 	public ResultAction editUser(
 			SystemUserAdminPubEntity systemUserPubEntity,
 			boolean override,
@@ -600,6 +564,25 @@ public class CartAdminPubResource {
 		}
 	}
 
+	@Action("/select-user")
+	@RequestMethod(RequestMethodTypes.POST)
+	@View("${plugins.ediacaran.sales.template}/admin/cart/select_user_result")
+	public void selectUser(
+			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try{
+			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
+			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, true, true);
+			adminCart.setUser(systemUser);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showUser", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+	}
+	
 	@Action("/search-users")
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
@@ -631,7 +614,7 @@ public class CartAdminPubResource {
 	}
 	
 	public Cart getCart() {
-		return cart;
+		return adminCart.getCart();
 	}
 	
 	public List<Widget> getWidgets(){

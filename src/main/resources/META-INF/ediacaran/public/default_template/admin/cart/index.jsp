@@ -136,9 +136,11 @@ $.AppContext.onload(function(){
 							<ed:col>
 								<ec:tabs>
 									<ec:tabs-item title="Client" active="true">
+										<ec:form id="form_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select-user" update="cart_result">
 										<span id="user_data_view">
 											<ec:include uri="${vars.user_data_view}" resolved="true" />
 										</span>
+										</ec:form>
 									</ec:tabs-item>
 									<ec:tabs-item title="Search">
 									
@@ -233,13 +235,7 @@ $.AppContext.onload(function(){
 						</ed:row>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Next" actionType="button" align="right">
-									<ec:event type="click">
-										var $accordion = $.AppContext.utils.getById('cart_steps');
-										var $accordionItens = $accordion.getItens();
-										$accordionItens[2].select();
-									</ec:event>
-								</ec:button>
+								<ec:button label="Next" actionType="submit"  align="right" form="form_user"/>
 								<ec:button label="Back" actionType="button" align="right">
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
@@ -248,6 +244,12 @@ $.AppContext.onload(function(){
 									</ec:event>
 								</ec:button>
 								<ec:button label="New" actionType="button" align="right">
+									<ec:event type="click">
+										$.AppContext.utils.updateContentByID(
+											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/new-user', 
+											'user_data_view'
+										);									
+									</ec:event>
 								</ec:button>
 							</ed:col>
 						</ed:row>

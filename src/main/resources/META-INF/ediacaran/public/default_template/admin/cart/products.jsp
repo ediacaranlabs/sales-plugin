@@ -71,3 +71,9 @@
 	});
 	</script>
 </c:if>
+<script type="text/javascript">
+$.AppContext.onload(function(){
+	$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
+	$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
+});
+</script>
