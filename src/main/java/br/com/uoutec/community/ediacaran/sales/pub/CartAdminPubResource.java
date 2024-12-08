@@ -509,7 +509,7 @@ public class CartAdminPubResource {
 			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
-		return editUser(systemUserPubEntity, false, locale);
+		return editUser(systemUserPubEntity, false, false, locale);
 	}
 	
 	@Action("/user")
@@ -519,7 +519,7 @@ public class CartAdminPubResource {
 			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
-		return editUser(systemUserPubEntity, true, locale);
+		return editUser(systemUserPubEntity, true, false, locale);
 	}
 
 	@Action("/new-user")
@@ -528,12 +528,13 @@ public class CartAdminPubResource {
 	public ResultAction newUser(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
-		return editUser(null, false, locale);
+		return editUser(null, false, false, locale);
 	}
 	
 	public ResultAction editUser(
 			SystemUserAdminPubEntity systemUserPubEntity,
 			boolean override,
+			boolean validate, 
 			Locale locale) throws InvalidRequestException {
 		
 
@@ -544,7 +545,7 @@ public class CartAdminPubResource {
 			
 			Map<String,Object> vars = new HashMap<String, Object>();
 			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, override, override);
+			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, override, validate);
 			List<Country> countries = this.countryRegistry.getAll(locale);
 			String userDataView     = this.systemUserEntityTypes.getSystemUserEntityView(systemUser);
 			
