@@ -126,7 +126,8 @@ $.AppContext.onload(function(){
 								<ec:button label="Next" actionType="button" align="right">
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
-										$accordion.select("cart_client");
+										var $accordionItens = $accordion.getItens();
+										$accordionItens[1].select();
 									</ec:event>
 								</ec:button>
 							</ed:col>
@@ -236,13 +237,15 @@ $.AppContext.onload(function(){
 								<ec:button label="Next" actionType="button" align="right">
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
-										$accordion.select("cart_payment");
+										var $accordionItens = $accordion.getItens();
+										$accordionItens[2].select();
 									</ec:event>
 								</ec:button>
 								<ec:button label="Back" actionType="button" align="right">
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
-										$accordion.select("cart_products");
+										var $accordionItens = $accordion.getItens();
+										$accordionItens[0].select();
 									</ec:event>
 								</ec:button>
 								<ec:button label="New" actionType="button" align="right">
@@ -260,7 +263,8 @@ $.AppContext.onload(function(){
 								<ec:button label="Back" actionType="button" align="right">
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
-										$accordion.select("cart_client");
+										var $accordionItens = $accordion.getItens();
+										$accordionItens[1].select();
 									</ec:event>
 								</ec:button>
 							</ed:col>
