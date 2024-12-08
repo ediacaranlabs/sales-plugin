@@ -4,6 +4,17 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
+<script type="text/javascript">
+$.AppContext.onload(function(){			
+
+	var $accordion = $.AppContext.utils.getById('cart_steps');
+	$accordion.select("cart_products");
+	$accordion.setEnabled("cart_products", false);
+	$accordion.setEnabled("cart_client", false);
+	$accordion.setEnabled("cart_payment", false);
+		
+});
+</script>
 
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
@@ -46,21 +57,59 @@
 				<ec:tabs>
 					<ec:tabs-item title="Cart" active="true">
 					
-						<ec:accordion>
-							<ec:accordion-item title="Products" active="true">
+						<ec:accordion id="cart_steps">
+							<ec:accordion-item id="cart_products" title="Products">
 								<span id="product_content">
 									<jsp:include page="${plugins.ediacaran.sales.template}/admin/cart/products.jsp"/>
 								</span>
+								<ed:row>
+									<ed:col>
+										<ec:button label="Next" actionType="button" align="right">
+											<ec:event type="click">
+												var $accordion = $.AppContext.utils.getById('cart_steps');
+												$accordion.select("cart_client");
+											</ec:event>
+										</ec:button>
+									</ed:col>
+								</ed:row>
 							</ec:accordion-item>
-							<ec:accordion-item title="Client">
+							<ec:accordion-item  id="cart_client" title="Client">
 								<span id="user_data_view">
 									<ec:include uri="${vars.user_data_view}" resolved="true" />
 								</span>
+								<ed:row>
+									<ed:col>
+										<ec:button label="Next" actionType="button" align="right">
+											<ec:event type="click">
+												var $accordion = $.AppContext.utils.getById('cart_steps');
+												$accordion.select("cart_payment");
+											</ec:event>
+										</ec:button>
+										<ec:button label="Back" actionType="button" align="right">
+											<ec:event type="click">
+												var $accordion = $.AppContext.utils.getById('cart_steps');
+												$accordion.select("cart_products");
+											</ec:event>
+										</ec:button>
+										<ec:button label="New" actionType="button" align="right">
+										</ec:button>
+									</ed:col>
+								</ed:row>
 							</ec:accordion-item>
-							<ec:accordion-item title="Payment method">
+							<ec:accordion-item id="cart_payment" title="Payment method">
 								<span id="cart_payment_details">
 									<jsp:include page="payment-details.jsp"/>
 								</span>
+								<ed:row>
+									<ed:col>
+										<ec:button label="Back" actionType="button" align="right">
+											<ec:event type="click">
+												var $accordion = $.AppContext.utils.getById('cart_steps');
+												$accordion.select("cart_client");
+											</ec:event>
+										</ec:button>
+									</ed:col>
+								</ed:row>
 							</ec:accordion-item>
 						</ec:accordion>
 					</ec:tabs-item>
