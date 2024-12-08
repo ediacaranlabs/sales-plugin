@@ -41,20 +41,33 @@
 }
 </style>
 
-<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
-	<ed:row>
-		<ed:col size="12" id="product_content_cart_${productRequest.serial}">
-			<script type="text/javascript">
-				$.AppContext.utils.updateContentByID(
-						'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-cart/${productRequest.serial}', 
-						'product_content_cart_${productRequest.serial}'
-				);
-			</script>
-		</ed:col>
-	</ed:row>
+<c:if test="${Controller.cart.itens.size() == 0}">
+	<ec:center id="empty_cart"><ec:icon icon="shopping-cart" size="3"/> <h3>Empty cart</h3></ec:center>
+	<script type="text/javascript">
+	$.AppContext.onload(function(){			
+		var $nextButton = $.AppContext.utils.getById('products_next_button');
+		$nextButton.setEnabled(false);
+	});
+	</script>
+</c:if>
 
-	<%--
-	<c:set var="productRequest" scope="request" value="${productRequest}" />
-	<ec:include uri="${Controller.getProductCartView(productRequest.product.productType)}" resolved="true" />
-	--%>
-</c:forEach>
+<c:if test="${Controller.cart.itens.size() != 0}">
+	<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
+		<ed:row>
+			<ed:col size="12" id="product_content_cart_${productRequest.serial}">
+				<script type="text/javascript">
+					$.AppContext.utils.updateContentByID(
+							'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-cart/${productRequest.serial}', 
+							'product_content_cart_${productRequest.serial}'
+					);
+				</script>
+			</ed:col>
+		</ed:row>
+	</c:forEach>
+	<script type="text/javascript">
+	$.AppContext.onload(function(){			
+		var $nextButton = $.AppContext.utils.getById('products_next_button');
+		$nextButton.setEnabled(true);
+	});
+	</script>
+</c:if>
