@@ -196,6 +196,10 @@ $.AppContext.onload(function(){
 									    				bundle="${messages}"/>
 												</ed:col>
 												<ed:col size="6">
+												</ed:col>
+											</ed:row>
+											<ed:row>
+												<ed:col>
 													<ec:button icon="search" label="Search" style="dark" actionType="submit" align="right"/>
 												</ed:col>
 											</ed:row>
