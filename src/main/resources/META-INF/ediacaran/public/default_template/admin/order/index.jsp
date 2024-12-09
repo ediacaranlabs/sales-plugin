@@ -51,7 +51,7 @@
 		    				</ec:event>
 		    			</ec:datefield>
 				</ed:col>
-				<ed:col size="2">
+				<ed:col size="3">
 					<ec:select label="Status" name="status">
 						<ec:option value=""><fmt:message key="form.status.placeholder" bundle="${messages}"/></ec:option>
 						<c:forEach items="${vars.statusList}" var="status">
@@ -59,17 +59,19 @@
 						</c:forEach>
 					</ec:select>
 				</ed:col>
-				<ed:col size="2">
+				<ed:col size="3">
 		    			<ec:textfield label="Mínimum (Total)" name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
 		    			<ec:textfield label="Maximum (Total)" name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="2">
-					<ec:button label="New" style="info" actionType="button" align="right">
+			</ed:row>
+			<ed:row>
+				<ed:col>
+					<ec:button label="New" icon="plus" style="dark" actionType="button" align="right">
 						<ec:event type="click">
 							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart');
 						</ec:event>
 					</ec:button>
-					<ec:button icon="search" label="Search" style="info" actionType="submit" align="right"/>
+					<ec:button icon="search" label="Search" style="dark" actionType="submit" align="right"/>
 				</ed:col>
 			</ed:row>
 			

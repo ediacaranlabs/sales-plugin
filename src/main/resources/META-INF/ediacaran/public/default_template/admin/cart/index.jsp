@@ -64,7 +64,7 @@ $.AppContext.onload(function(){
 									
 										<ec:data-table id="productSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/search">
 											<ed:row>
-												<ed:col size="4">
+												<ed:col size="5">
 									    			<ec:textfield name="name" label="Name" placeholder="name" bundle="${messages}"/>
 												</ed:col>
 												<ed:col size="3">
@@ -74,12 +74,14 @@ $.AppContext.onload(function(){
 														</c:forEach>
 													</ec:select>
 												</ed:col>
-												<ed:col size="3">
+												<ed:col size="4">
 										    			<ec:textfield label="Mínimum (Cost)" name="minCost" placeholder="min cost" bundle="${messages}"/>
 										    			<ec:textfield label="Maximum (Cost)" name="maxCost" placeholder="max cost" bundle="${messages}"/>
 												</ed:col>
-												<ed:col size="2">
-													<ec:button icon="search" label="Search" form="productSearchForm" style="dark" actionType="submit" align="right"/>				
+											</ed:row>
+											<ed:row>
+												<ed:col>
+													<ec:button icon="search" label="Search" form="productSearchForm" style="dark" actionType="submit" align="right"/>
 												</ed:col>
 											</ed:row>
 											<hr>
@@ -87,7 +89,7 @@ $.AppContext.onload(function(){
 											<ec:data-result var="response">
 												<ed:row>
 												<ec:forEach items="!{response.itens}" var="item">
-													<ed:col size="3">
+													<ed:col size="6">
 													<ec:box>
 														<ec:box-body>
 															<ec:form id="product_!{item.protectedID}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/add/!{item.protectedID}" update="cart_result">
@@ -103,7 +105,7 @@ $.AppContext.onload(function(){
 																</ed:row>
 																<ed:row>
 																	<ed:col size="12">
-																		<ec:button label="Add" align="right" actionType="submit" style="dark"/>
+																		<ec:button label="Add" icon="plus" align="right" actionType="submit" style="dark"/>
 																	</ed:col>
 																</ed:row>
 															</ec:form>
@@ -128,13 +130,13 @@ $.AppContext.onload(function(){
 										$accordionItens[1].select();
 									</ec:event>
 								</ec:button>
-								<ec:button label="Search" actionType="button" align="right" style="dark">
+								<ec:button label="Search" icon="search" actionType="button" align="right" style="dark">
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('products_tabs');
 										$tabs.select("search_products_tabs");
 									</ec:event>
 								</ec:button>
-								<ec:button label="Itens" actionType="button" align="right" style="dark">
+								<ec:button label="Itens" icon="list" actionType="button" align="right" style="dark">
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('products_tabs');
 										$tabs.select("itens_products_tabs");
@@ -231,7 +233,7 @@ $.AppContext.onload(function(){
 														!{item.country.name}
 													</ec:table-col>
 													<ec:table-col>
-														<ec:button id="button_product_!{item.protectedID}" label="Select" align="right" actionType="button" style="dark">
+														<ec:button id="button_product_!{item.protectedID}" label="Select" icon="check" align="right" actionType="button" style="dark">
 														<ec:event type="click">
 															
 															$.AppContext.utils.updateContentByID(
@@ -266,7 +268,7 @@ $.AppContext.onload(function(){
 										$accordionItens[0].select();
 									</ec:event>
 								</ec:button>
-								<ec:button label="New" actionType="button" align="right" style="dark">
+								<ec:button label="New" icon="plus" actionType="button" align="right" style="dark">
 									<ec:event type="click">
 										$.AppContext.utils.updateContentByID(
 											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/new-user', 
@@ -274,7 +276,7 @@ $.AppContext.onload(function(){
 										);									
 									</ec:event>
 								</ec:button>
-								<ec:button label="Search" actionType="button" align="right" style="dark">
+								<ec:button label="Search" icon="search" actionType="button" align="right" style="dark">
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('client_tabs');
 										var $tab = $tabs.getItem("search_client_tabs");
@@ -290,7 +292,7 @@ $.AppContext.onload(function(){
 						</span>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Checkout" actionType="button" align="right" style="dark"/>
+								<ec:button label="Checkout" icon="check-circle" actionType="button" align="right" style="dark"/>
 								<ec:button label="< Back" actionType="button" align="right" style="dark">
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
