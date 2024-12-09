@@ -69,5 +69,57 @@ public final class SalesUserPermissions {
 		}
 		
 	}
+
+	public static final class CLIENT {
+
+		public static final String ALL 		= SalesUserPermissions.ALL + ":CLIENT";
+		
+		public static final String CREATE	= ALL + ":NEW";
+		
+		public static final String SHOW		= ALL + ":SHOW";
+
+		public static final String SEARCH	= ALL + ":SEARCH";
+
+		public static final String EDIT		= ALL + ":EDIT";
+
+		public static final String SAVE		= ALL + ":SAVE";
+
+		public static final String DELETE	= ALL + ":DELETE";
+		
+		public static final class FIELDS {
+
+			public static final String ALL 		= SalesUserPermissions.CLIENT.ALL +  ":FIELDS";
+
+			public static final String ID 			= ALL + ":ID";
+
+			public static final String FIRST_NAME 	= ALL + ":FIRST_NAME";
+
+			public static final String LAST_NAME 	= ALL + ":LAST_NAME";
+			
+			public static final String EMAIL	 	= ALL + ":EMAIL";
+			
+			public static final String ORGANIZATION	= ALL + ":ORGANIZATION";
+			
+			public static final String COUNTRY		= ALL + ":COUNTRY";
+			
+			public static final String ADDRESS		= ALL + ":ADDRESS";
+			
+			public static final String COMPLEMENT	= ALL + ":COMPLEMENT";
+			
+			public static final String CITY			= ALL + ":CITY";
+
+			public static final String REGION		= ALL + ":REGION";
+			
+			public static final String ZIP			= ALL + ":ZIP";
+
+			public static final String ACTIVED		= ALL + ":ACTIVED";
+			
+			public static final String PHONE		= ALL + ":PHONE";
+			
+			public static final String DOCUMENT		= ALL + ":DOCUMENT";
+			
+		}
+		
+	}
 	
 }

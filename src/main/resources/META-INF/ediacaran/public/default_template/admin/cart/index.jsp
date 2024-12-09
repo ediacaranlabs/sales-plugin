@@ -81,7 +81,7 @@ $.AppContext.onload(function(){
 											</ed:row>
 											<ed:row>
 												<ed:col>
-													<ec:button icon="search" label="Search" form="productSearchForm" style="dark" actionType="submit" align="right"/>
+													<ec:button icon="search" label="Search" form="productSearchForm"  actionType="submit" align="right"/>
 												</ed:col>
 											</ed:row>
 											<hr>
@@ -105,7 +105,7 @@ $.AppContext.onload(function(){
 																</ed:row>
 																<ed:row>
 																	<ed:col size="12">
-																		<ec:button label="Add" icon="plus" align="right" actionType="submit" style="dark"/>
+																		<ec:button label="Add" icon="plus" align="right" actionType="submit" />
 																	</ed:col>
 																</ed:row>
 															</ec:form>
@@ -123,20 +123,20 @@ $.AppContext.onload(function(){
 						</ed:row>
 						<ed:row>
 							<ed:col>
-								<ec:button id="products_next_button" label="Next >" actionType="button" align="right" style="dark">
+								<ec:button id="products_next_button" label="Next >" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
 										var $accordionItens = $accordion.getItens();
 										$accordionItens[1].select();
 									</ec:event>
 								</ec:button>
-								<ec:button label="Search" icon="search" actionType="button" align="right" style="dark">
+								<ec:button label="Search" icon="search" actionType="button" align="right" >
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('products_tabs');
 										$tabs.select("search_products_tabs");
 									</ec:event>
 								</ec:button>
-								<ec:button label="Itens" icon="list" actionType="button" align="right" style="dark">
+								<ec:button label="Itens" icon="list" actionType="button" align="right" >
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('products_tabs');
 										$tabs.select("itens_products_tabs");
@@ -200,7 +200,7 @@ $.AppContext.onload(function(){
 											</ed:row>
 											<ed:row>
 												<ed:col>
-													<ec:button icon="search" label="Search" style="dark" actionType="submit" align="right"/>
+													<ec:button icon="search" label="Search"  actionType="submit" align="right"/>
 												</ed:col>
 											</ed:row>
 											<ec:data-result var="response">
@@ -237,7 +237,7 @@ $.AppContext.onload(function(){
 														!{item.country.name}
 													</ec:table-col>
 													<ec:table-col>
-														<ec:button id="button_product_!{item.protectedID}" label="Select" icon="check" align="right" actionType="button" style="dark">
+														<ec:button id="button_product_!{item.protectedID}" label="Select" icon="check" align="right" actionType="button" >
 														<ec:event type="click">
 															
 															$.AppContext.utils.updateContentByID(
@@ -264,15 +264,15 @@ $.AppContext.onload(function(){
 						</ed:row>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Next >" actionType="submit"  align="right" form="form_user" style="dark"/>
-								<ec:button label="< Back" actionType="button" align="right" style="dark">
+								<ec:button label="Next >" actionType="submit"  align="right" form="form_user" />
+								<ec:button label="< Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
 										var $accordionItens = $accordion.getItens();
 										$accordionItens[0].select();
 									</ec:event>
 								</ec:button>
-								<ec:button label="New" icon="plus" actionType="button" align="right" style="dark">
+								<ec:button label="New" icon="plus" actionType="button" align="right" >
 									<ec:event type="click">
 										$.AppContext.utils.updateContentByID(
 											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/new-user', 
@@ -280,7 +280,7 @@ $.AppContext.onload(function(){
 										);									
 									</ec:event>
 								</ec:button>
-								<ec:button label="Search" icon="search" actionType="button" align="right" style="dark">
+								<ec:button label="Search" icon="search" actionType="button" align="right" >
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('client_tabs');
 										var $tab = $tabs.getItem("search_client_tabs");
@@ -296,8 +296,8 @@ $.AppContext.onload(function(){
 						</span>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Checkout" icon="check-circle" actionType="button" align="right" style="dark"/>
-								<ec:button label="< Back" actionType="button" align="right" style="dark">
+								<ec:button label="Checkout" icon="check-circle" actionType="button" align="right" />
+								<ec:button label="< Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
 										var $accordionItens = $accordion.getItens();

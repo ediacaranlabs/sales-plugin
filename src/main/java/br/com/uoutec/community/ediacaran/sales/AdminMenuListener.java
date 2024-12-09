@@ -83,7 +83,16 @@ public class AdminMenuListener
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.invoices)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices")
 					.setRole(BasicRoles.USER)
-					.setPermission(SalesUserPermissions.ORDER.SHOW);
+					.setPermission(SalesUserPermissions.ORDER.SHOW)
+				.getParent()
+					.addItem("clients")
+					.setIcon("circle")
+					.setName("Clients")
+					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.clients)
+					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients")
+					.setRole(BasicRoles.USER)
+					.setPermission(SalesUserPermissions.CLIENT.SHOW);
 		}
 		
 	}

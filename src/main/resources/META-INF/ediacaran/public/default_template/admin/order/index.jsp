@@ -66,12 +66,12 @@
 			</ed:row>
 			<ed:row>
 				<ed:col>
-					<ec:button label="New" icon="plus" style="dark" actionType="button" align="right">
+					<ec:button label="New" icon="plus"  actionType="button" align="right">
 						<ec:event type="click">
 							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart');
 						</ec:event>
 					</ec:button>
-					<ec:button icon="search" label="Search" style="dark" actionType="submit" align="right"/>
+					<ec:button icon="search" label="Search"  actionType="submit" align="right"/>
 				</ed:col>
 			</ed:row>
 			

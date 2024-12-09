@@ -33,6 +33,8 @@ public class AdminMenuListenerMessages {
 					public static final String orders = "admin_menu.sales_menu.itens.orders";
 	
 					public static final String invoices = "admin_menu.sales_menu.itens.invoices";
+
+					public static final String clients = "admin_menu.sales_menu.itens.clients";
 					
 				}
 				
