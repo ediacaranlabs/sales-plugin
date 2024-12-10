@@ -7,7 +7,7 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <input type="hidden" value="${vars.client.protectedID}" name="protectedID">
 <ed:row>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="email"
 			label="#{form.email}"
@@ -36,7 +36,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="firstName"
 			label="#{form.first_name}"
@@ -65,7 +65,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="lastName"
 			label="#{form.last_name}"
@@ -94,7 +94,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="data.document"
 			label="#{form.document}"
@@ -126,7 +126,9 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+</ed:row>
+<ed:row>
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="organization"
 			label="#{form.organization}"
@@ -151,9 +153,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-</ed:row>
-<ed:row>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:select
 			id="user_country"
 			name="country.isoAlpha3"
@@ -206,7 +206,7 @@
 			</ec:event>
 		</ec:select>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="address"
 			label="#{form.address}"
@@ -235,7 +235,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="complement"
 			label="#{form.complement}"
@@ -262,7 +262,7 @@
 	</ed:col>
 </ed:row>
 <ed:row>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="city"
 			label="#{form.city}"
@@ -291,7 +291,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="region"
 			label="#{form.region}"
@@ -316,7 +316,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="zip"
 			label="#{form.zip}"
@@ -345,7 +345,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="phone"
 			label="#{form.phone}"
@@ -370,42 +370,4 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
-		<c:if test="${vars.completeForm}">
-			<ec:radio 
-				name="activated"
-				label="#{form.activated}"
-				value="true"
-				selected="${vars.client.activated}"
-				readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ACTIVATED'])}"
-				inline="true"
-				bundle="${messages}">
-				<ec:field-validator form="client_form">
-					<ec:field-validator-rule 
-						name="stringLength" 
-						message="#{form.activated.validation.string_length}" 
-						bundle="${messages}">
-							<ec:field-validator-param name="min">1</ec:field-validator-param>
-					</ec:field-validator-rule>
-				</ec:field-validator>		 
-			 </ec:radio>
-			<ec:radio 
-				name="activated"
-				label="#{form.deactivated}"
-				value="false"
-				selected="${!vars.client.activated}"
-				readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ACTIVATED'])}"
-				inline="true"
-				bundle="${messages}">
-				<ec:field-validator form="client_form">
-					<ec:field-validator-rule 
-						name="stringLength" 
-						message="#{form.deactivated.validation.string_length}" 
-						bundle="${messages}">
-							<ec:field-validator-param name="min">1</ec:field-validator-param>
-					</ec:field-validator-rule>
-				</ec:field-validator>		 
-		 	</ec:radio>
-		</c:if>
-	 </ed:col>	
 </ed:row>

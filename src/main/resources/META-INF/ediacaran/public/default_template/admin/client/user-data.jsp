@@ -7,7 +7,7 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <input type="hidden" value="${vars.client.protectedID}" name="protectedID">
 <ed:row>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="email"
 			label="#{form.email}"
@@ -36,7 +36,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="firstName"
 			label="#{form.first_name}"
@@ -65,7 +65,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="lastName"
 			label="#{form.last_name}"
@@ -94,7 +94,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="organization"
 			label="#{form.organization}"
@@ -121,7 +121,7 @@
 	</ed:col>
 </ed:row>
 <ed:row>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:select
 			id="user_country"
 			name="country.isoAlpha3"
@@ -174,7 +174,7 @@
 			</ec:event>
 		</ec:select>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="address"
 			label="#{form.address}"
@@ -203,7 +203,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="complement"
 			label="#{form.complement}"
@@ -230,7 +230,7 @@
 	</ed:col>
 </ed:row>
 <ed:row>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="city"
 			label="#{form.city}"
@@ -259,7 +259,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="region"
 			label="#{form.region}"
@@ -284,7 +284,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="zip"
 			label="#{form.zip}"
@@ -313,7 +313,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="phone"
 			label="#{form.phone}"
@@ -338,6 +338,4 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col classStyle="form-group has-feedback">
-	 </ed:col>
 </ed:row>
