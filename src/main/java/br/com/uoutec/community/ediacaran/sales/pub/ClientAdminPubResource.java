@@ -37,9 +37,6 @@ import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
-import br.com.uoutec.community.ediacaran.user.pub.entity.PermissionsPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.entity.RolesPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserManagerPubResourceMessages;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserSearch;
@@ -124,7 +121,7 @@ public class ClientAdminPubResource {
 		
 		try{
 			SystemUserSearchResult result = systemUserRegistry.searchSystemUser(search);
-			return new ClientSearchResultPubEntity(result);
+			return new ClientSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -154,10 +151,9 @@ public class ClientAdminPubResource {
 			boolean isNew = systemUserPubEntity.getProtectedID() == null;
 			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, false, false);
 			
-			vars.put("user",			systemUser);
+			vars.put("client",			systemUser);
 			vars.put("countries",      countryRegistry.getAll(locale));
-			vars.put("user_data_view", clientEntityTypes.getClientEntityView(systemUser));
-
+			vars.put("client_data_view", clientEntityTypes.getClientEntityView(systemUser));
 			return vars;
 		}
 		catch(Throwable ex){
@@ -176,7 +172,7 @@ public class ClientAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction editNewView(
-			@DetachedName SystemUserPubEntity systemUserPubEntity,			
+			@DetachedName ClientPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
@@ -185,7 +181,7 @@ public class ClientAdminPubResource {
 			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
 			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, true, false);
 			
-			vars.put("user",           systemUser);
+			vars.put("client",           systemUser);
 			vars.put("countries",      countryRegistry.getAll(locale));
 			vars.put("subject",        subjectProvider.getSubject());
 
@@ -211,9 +207,7 @@ public class ClientAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SAVE)
 	public Map<String,Object> save(
-			@DetachedName SystemUserPubEntity systemUserPubEntity,
-			@DetachedName PermissionsPubEntity permissionsPubEntity,
-			@DetachedName RolesPubEntity rolesPubEntity,
+			@DetachedName ClientPubEntity systemUserPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		

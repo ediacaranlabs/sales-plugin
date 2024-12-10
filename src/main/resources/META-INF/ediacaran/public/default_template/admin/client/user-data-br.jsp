@@ -5,17 +5,17 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" prefix="ed"%>
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
-<input type="hidden" value="${vars.user.protectedID}" name="protectedID">
+<input type="hidden" value="${vars.client.protectedID}" name="protectedID">
 <ed:row>
 	<ed:col classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="email"
 			label="#{form.email}"
-			value="${vars.user.email}"
+			value="${vars.client.email}"
 			placeholder="#{form.email.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:EMAIL'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.validation.email.not_empty}" 
@@ -40,11 +40,11 @@
 		<ec:textfield 
 			name="firstName"
 			label="#{form.first_name}"
-			value="${vars.user.firstName}"
+			value="${vars.client.firstName}"
 			placeholder="#{form.first_name.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.validation.first_name.not_empty}" 
@@ -69,11 +69,11 @@
 		<ec:textfield 
 			name="lastName"
 			label="#{form.last_name}"
-			value="${vars.user.lastName}"
+			value="${vars.client.lastName}"
 			placeholder="#{form.last_name.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.last_name.validation.not_empty}" 
@@ -98,16 +98,16 @@
 		<ec:textfield 
 			name="data.document"
 			label="#{form.document}"
-			value="${empty vars.user.addData['document']? '' : '***********'}"
+			value="${empty vars.client.addData['document']? '' : '***********'}"
 			placeholder="#{form.document.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:DOCUMENT'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.document.validation.not_empty}" 
 					bundle="${messages}"/>
-				<c:if test="${empty vars.user.addData['document']}">
+				<c:if test="${empty vars.client.addData['document']}">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.document.validation.regexp}"
@@ -115,7 +115,7 @@
 					<ec:field-validator-param name="regexp" raw="true">/^([0-9]{11,11}|[0-9]{14,14})$/</ec:field-validator-param>
 				</ec:field-validator-rule>
 				</c:if>
-				<c:if test="${!empty vars.user.addData['document']}">
+				<c:if test="${!empty vars.client.addData['document']}">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.document.validation.regexp}"
@@ -130,11 +130,11 @@
 		<ec:textfield 
 			name="organization"
 			label="#{form.organization}"
-			value="${vars.user.organization}"
+			value="${vars.client.organization}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ORGANIZATION'])}"
 			placeholder="#{form.organization.placeholder}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.organization.validation.regexp}"
@@ -156,7 +156,7 @@
 	<ed:col classStyle="form-group has-feedback">
 		<ec:select
 			id="user_country"
-			name="country"
+			name="country.isoAlpha3"
 			label="#{form.country}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
 			bundle="${messages}">
@@ -168,10 +168,10 @@
 				<ec:option 
 					label="${country.name}"
 					value="${country.isoAlpha3}"
-					selected="${vars.user.country.isoAlpha3 == country.isoAlpha3}" 
+					selected="${vars.client.country.isoAlpha3 == country.isoAlpha3}" 
 					bundle="${messages}"/>
 			</c:forEach>
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.country.validation.not_empty}" 
@@ -193,14 +193,14 @@
 					return;
 				}
 				
-				var $countryField = $form.getField('country');
+				var $countryField = $form.getField('country.isoAlpha3');
 				var $country = $countryField.getValue();
 				
 				if($country){
 					$form.submit(
 						false, 
-						"${vars.user_data_view_updater}", 
-						"user_data_view"
+						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit", 
+						"client_data_view"
 					);
 				}
 			</ec:event>
@@ -210,11 +210,11 @@
 		<ec:textfield 
 			name="address"
 			label="#{form.address}"
-			value="${vars.user.address}"
+			value="${vars.client.address}"
 			placeholder="#{form.address.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.address.validation.not_empty}" 
@@ -239,11 +239,11 @@
 		<ec:textfield 
 			name="complement"
 			label="#{form.complement}"
-			value="${vars.user.complement}"
+			value="${vars.client.complement}"
 			placeholder="#{form.complement.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.complement.validation.regexp}"
@@ -266,11 +266,11 @@
 		<ec:textfield 
 			name="city"
 			label="#{form.city}"
-			value="${vars.user.city}"
+			value="${vars.client.city}"
 			placeholder="#{form.city.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.city.validation.not_empty}" 
@@ -295,11 +295,11 @@
 		<ec:textfield 
 			name="region"
 			label="#{form.region}"
-			value="${vars.user.region}"
+			value="${vars.client.region}"
 			placeholder="#{form.region.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.region.validation.regexp}"
@@ -320,11 +320,11 @@
 		<ec:textfield 
 			name="zip"
 			label="#{form.zip}"
-			value="${vars.user.zip}"
+			value="${vars.client.zip}"
 			placeholder="#{form.zip.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.zip.validation.not_empty}" 
@@ -349,11 +349,11 @@
 		<ec:textfield 
 			name="phone"
 			label="#{form.phone}"
-			value="${vars.user.phone}"
+			value="${vars.client.phone}"
 			placeholder="#{form.phone.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:PHONE'])}"
 			bundle="${messages}">
-			<ec:field-validator form="form_user">
+			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.phone.validation.regexp}"
@@ -376,11 +376,11 @@
 				name="activated"
 				label="#{form.activated}"
 				value="true"
-				selected="${vars.user.activated}"
+				selected="${vars.client.activated}"
 				readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ACTIVATED'])}"
 				inline="true"
 				bundle="${messages}">
-				<ec:field-validator form="form_user">
+				<ec:field-validator form="client_form">
 					<ec:field-validator-rule 
 						name="stringLength" 
 						message="#{form.activated.validation.string_length}" 
@@ -393,11 +393,11 @@
 				name="activated"
 				label="#{form.deactivated}"
 				value="false"
-				selected="${!vars.user.activated}"
+				selected="${!vars.client.activated}"
 				readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ACTIVATED'])}"
 				inline="true"
 				bundle="${messages}">
-				<ec:field-validator form="form_user">
+				<ec:field-validator form="client_form">
 					<ec:field-validator-rule 
 						name="stringLength" 
 						message="#{form.deactivated.validation.string_length}" 

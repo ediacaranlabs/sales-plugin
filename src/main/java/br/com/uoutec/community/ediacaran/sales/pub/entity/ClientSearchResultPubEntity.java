@@ -2,8 +2,10 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -23,14 +25,18 @@ public class ClientSearchResultPubEntity extends AbstractPubEntity<SystemUserSea
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ClientPubEntity> itens;
 
-	public ClientSearchResultPubEntity(SystemUserSearchResult e) {
+	@Constructor
+	public ClientSearchResultPubEntity() {
+	}
+	
+	public ClientSearchResultPubEntity(SystemUserSearchResult e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.isHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
 			for(SystemUser p: e.getItens()) {
-				ClientPubEntity x = new ClientPubEntity(p).getType();
+				ClientPubEntity x = new ClientPubEntity(p, locale).getType();
 				x.setData(null);
 				itens.add(x);
 			}

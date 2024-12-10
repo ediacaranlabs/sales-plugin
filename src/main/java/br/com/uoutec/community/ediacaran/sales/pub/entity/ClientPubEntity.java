@@ -1,17 +1,16 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.util.Locale;
+
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
-import br.com.uoutec.community.ediacaran.persistence.entity.Country;
-import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserPubEntity;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
-import br.com.uoutec.entityresourcebundle.EntityResourceBundle;
 
 public class ClientPubEntity extends SystemUserPubEntity{
 
@@ -22,8 +21,8 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		super.setActivated(false);
 	}
 	
-	public ClientPubEntity(SystemUser e){
-		super(e);
+	public ClientPubEntity(SystemUser e, Locale locale){
+		super(e, locale);
 		super.setActivated(false);
 	}
 	
@@ -64,10 +63,7 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		}
 		
 		if(super.getCountry() != null && subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.COUNTRY)) {
-			CountryRegistry registry = EntityContextPlugin.getEntity(CountryRegistry.class);
-			Country c = registry.getCountryByIsoAlpha3(super.getCountry());
-			c = EntityResourceBundle.getEntity(c, Country.class, null);
-			o.setCountry(c);
+			o.setCountry(getCountry().rebuild(true, false, false));
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ORGANIZATION)) {

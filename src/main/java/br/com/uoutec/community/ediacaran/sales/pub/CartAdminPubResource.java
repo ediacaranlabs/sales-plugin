@@ -606,7 +606,7 @@ public class CartAdminPubResource {
 
 		try {
 			SystemUserSearchResult result = systemUserRegistry.searchSystemUser(search);
-			return new SystemUserSearchResultPubEntity(result);
+			return new SystemUserSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchUsers", "search", locale, ex);

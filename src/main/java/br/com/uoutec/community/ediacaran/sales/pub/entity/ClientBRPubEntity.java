@@ -1,5 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.util.Locale;
+
 import javax.validation.constraints.Pattern;
 
 import org.brandao.brutos.annotation.Constructor;
@@ -31,8 +33,8 @@ public class ClientBRPubEntity extends ClientPubEntity{
 	public ClientBRPubEntity(){
 	}
 	
-	public ClientBRPubEntity(SystemUser e){
-		super(e);
+	public ClientBRPubEntity(SystemUser e, Locale locale){
+		super(e, locale);
 		
 		if(e instanceof SystemUserBR) {
 			SystemUserBR o = (SystemUserBR)e;

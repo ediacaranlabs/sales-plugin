@@ -30,27 +30,27 @@
 			<ed:row>
 				<ed:col size="4">
 	    			<ec:textfield 
+	    				label="First Name"
 	    				name="firstName" 
-	    				placeholder="first name"
 	    				bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="4">
 	    			<ec:textfield 
+	    				label="Last Name"
 	    				name="lastName" 
-	    				placeholder="last name"
 	    				bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="4">
 	    			<ec:textfield 
+	    				label="Email"
 	    				name="email" 
-	    				placeholder="email"
 	    				bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			<ed:row>
 				<ed:col size="3">
-	    			<ec:select name="country">
-	    				<ec:option value=""></ec:option>
+	    			<ec:select label="Country" name="country">
+	    				<ec:option value="">Select a Country</ec:option>
 	    				<c:forEach  items="${vars.countries}" var="country" >
 		    				<ec:option value="${country.isoAlpha3}">${country.name}</ec:option>
 	    				</c:forEach>
@@ -58,8 +58,8 @@
 				</ed:col>
 				<ed:col size="3">
 	    			<ec:textfield 
+	    				label="City"
 	    				name="city" 
-	    				placeholder="city"
 	    				bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="6">
@@ -104,9 +104,9 @@
 						!{item.country.name}
 					</ec:table-col>
 					<ec:table-col>
-						<ec:button label="Edit" icon="pencil" align="right" actionType="button" >
+						<ec:button id="edit_client_button_!{item.protectedID}"  label="Edit" icon="pencil" align="right" actionType="button" >
 						<ec:event type="click">
-							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/client/!{item.protectedID}');
+							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit/!{item.protectedID}');
 						</ec:event>
 						</ec:button>
 					</ec:table-col>
