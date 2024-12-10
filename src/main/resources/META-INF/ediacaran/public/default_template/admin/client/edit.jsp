@@ -26,9 +26,6 @@
 
 <ec:form id="client_form" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/save" update="client_update_result">
 	<ec:box>
-		<ec:box-header>
-			Client Information
-		</ec:box-header>
 		<ec:box-body>
 			<span id="client_data_view">
 				<ec:include uri="${vars.client_data_view}" resolved="true" />
