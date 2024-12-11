@@ -104,7 +104,7 @@
 						!{item.country.name}
 					</ec:table-col>
 					<ec:table-col>
-						<ec:button id="edit_client_button_!{item.protectedID}"  label="Edit" icon="pencil" align="right" actionType="button" >
+						<ec:button label="Edit" icon="pencil" align="right" actionType="button" >
 						<ec:event type="click">
 							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit/!{item.protectedID}');
 						</ec:event>
