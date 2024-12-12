@@ -165,6 +165,36 @@ public class ClientAdminPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 	}
+
+	@Action("/address")
+	@View(value="${plugins.ediacaran.sales.template}/admin/client/address")
+	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
+	public Map<String,Object> address(
+			@DetachedName ClientPubEntity systemUserPubEntity,			
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+		
+		try{
+			Map<String,Object> vars = new HashMap<String, Object>();
+			boolean isNew = systemUserPubEntity.getProtectedID() == null;
+			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, false, false);
+			
+			vars.put("client",			systemUser);
+			vars.put("countries",      countryRegistry.getAll(locale));
+			vars.put("client_data_view", clientEntityTypes.getClientEntityView(systemUser));
+			return vars;
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ClientAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ClientAdminPubResourceMessages.edit.error.fail_load, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+	}
 	
 	@Action("/edit")
 	@RequestMethod("POST")

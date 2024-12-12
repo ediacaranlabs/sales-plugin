@@ -364,7 +364,24 @@
 		
 	</ec:tabs-item>
 	<ec:tabs-item title="Shipping address">
-		
+
+		<ed:row>
+			<ed:col id="shippingList">
+				<c:forEach items="${vars.client.shippingAddress}" var="shippingAddress">
+					<c:set var="shippingAddress" value="${shippingAddress}" scope="request"/>
+					<jsp:include page="addresses.jsp"/>
+				</c:forEach>
+			</ed:col>
+		</ed:row>
+		<ed:row>
+			<ed:col>
+				<ec:button label="Add Address" align="right" actionType="button">
+					<ec:event type="click">
+						$.AppContext.utils.content.append("shippingList",$.AppContext.utils.applyTemplate("addressTemplate", {}));
+					</ec:event>
+				</ec:button>
+			</ed:col>
+		</ed:row>
 	</ec:tabs-item>				
 </ec:tabs>
 
