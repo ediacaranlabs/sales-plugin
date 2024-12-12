@@ -349,10 +349,14 @@
 <ec:tabs>
 	<ec:tabs-item title="Billing address" active="true">
 		<ed:row>
+			<ed:col id="billingList">
+			</ed:col>
+		</ed:row>
+		<ed:row>
 			<ed:col>
-				<ec:button>
+				<ec:button label="Add Address" align="right" actionType="button">
 					<ec:event type="click">
-						
+						$.AppContext.utils.content.append("billingList",$.AppContext.utils.applyTemplate("addressTemplate", {}));
 					</ec:event>
 				</ec:button>
 			</ed:col>
@@ -368,13 +372,12 @@
 <ec:template var="obj" id="addressTemplate">
 	<span formgroup="billingAddressList" formgrouptype="index">
 		<ec:accordion>
-			<ec:accordion-item title="${vars.client.address} ${vars.client.complement} ${vars.client.city} ${vars.client.region} ${vars.client.country.name} - ${vars.client.zip}">
+			<ec:accordion-item title="">
 				<ed:row>
 					<ed:col size="5" classStyle="form-group has-feedback">
 						<ec:textfield 
 							name="firstName"
 							label="#{form.first_name}"
-							value="${vars.client.firstName}"
 							placeholder="#{form.first_name.placeholder}"
 							readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 							bundle="${messages}">
@@ -403,7 +406,6 @@
 						<ec:textfield 
 							name="lastName"
 							label="#{form.last_name}"
-							value="${vars.client.lastName}"
 							placeholder="#{form.last_name.placeholder}"
 							readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 							bundle="${messages}">
