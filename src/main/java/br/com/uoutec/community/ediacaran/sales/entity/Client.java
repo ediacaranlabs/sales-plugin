@@ -1,11 +1,17 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.List;
+
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 public class Client extends SystemUser{
 
 	private static final long serialVersionUID = 2658609156376778575L;
 
+	private List<Address> shippingAddress;
+	
+	private Address billingAddress;
+	
 	public Client() {
 	}
 	
@@ -26,6 +32,22 @@ public class Client extends SystemUser{
 		this.region = user.getRegion();
 		this.template = user.getTemplate();
 		this.zip = user.getZip();
+	}
+
+	public List<Address> getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(List<Address> shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 
 }

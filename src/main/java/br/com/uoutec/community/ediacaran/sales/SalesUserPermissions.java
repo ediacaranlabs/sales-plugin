@@ -117,6 +117,10 @@ public final class SalesUserPermissions {
 			public static final String PHONE		= ALL + ":PHONE";
 			
 			public static final String DOCUMENT		= ALL + ":DOCUMENT";
+
+			public static final String SHIPPING_ADDRESSES	= ALL + ":SHIPPING_ADDRESSES";
+
+			public static final String BILLING_ADDRESS		= ALL + ":BILLING_ADDRESS";
 			
 		}
 		
