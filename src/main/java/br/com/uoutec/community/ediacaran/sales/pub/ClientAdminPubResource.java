@@ -27,19 +27,20 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserManagerPubResourceMessages;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserSearch;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -54,7 +55,7 @@ public class ClientAdminPubResource {
 	
 	@Transient
 	@Inject
-	private SystemUserRegistry systemUserRegistry;
+	private ClientRegistry clientRegistry;
 	
 	@Transient
 	@Inject
@@ -104,7 +105,7 @@ public class ClientAdminPubResource {
 			Locale locale){
 
 		
-		SystemUserSearch search;
+		ClientSearch search;
 		try{
 			search = request.rebuild(false, true, true);
 		}
@@ -120,7 +121,7 @@ public class ClientAdminPubResource {
 		
 		
 		try{
-			SystemUserSearchResult result = systemUserRegistry.searchSystemUser(search);
+			ClientSearchResult result = clientRegistry.searchClient(search);
 			return new ClientSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){
@@ -237,15 +238,15 @@ public class ClientAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SAVE)
 	public Map<String,Object> save(
-			@DetachedName ClientPubEntity systemUserPubEntity,
+			@DetachedName ClientPubEntity clientPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
-		SystemUser systemUser;
+		Client client;
 		boolean isNew = true;
 		try{
-			isNew = systemUserPubEntity.getProtectedID() == null;
-			systemUser = systemUserPubEntity.rebuild(!isNew, true, true);
+			isNew = clientPubEntity.getProtectedID() == null;
+			client = (Client)clientPubEntity.rebuild(!isNew, true, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -257,7 +258,7 @@ public class ClientAdminPubResource {
 		}
 		
 		try{
-			systemUserRegistry.registerUser(systemUser);
+			clientRegistry.registerClient(client);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -269,7 +270,7 @@ public class ClientAdminPubResource {
 		}
 		
 		Map<String,Object> vars = new HashMap<>();
-		vars.put("protectedID", systemUser.getProtectedID());
+		vars.put("protectedID", client.getProtectedID());
 		
 		return vars;
 	}

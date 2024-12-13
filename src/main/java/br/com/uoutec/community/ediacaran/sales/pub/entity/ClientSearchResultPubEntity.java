@@ -8,11 +8,12 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class ClientSearchResultPubEntity extends AbstractPubEntity<SystemUserSearchResult> {
+public class ClientSearchResultPubEntity extends AbstractPubEntity<ClientSearchResult> {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
@@ -29,13 +30,13 @@ public class ClientSearchResultPubEntity extends AbstractPubEntity<SystemUserSea
 	public ClientSearchResultPubEntity() {
 	}
 	
-	public ClientSearchResultPubEntity(SystemUserSearchResult e, Locale locale) {
+	public ClientSearchResultPubEntity(ClientSearchResult e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.isHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
-			for(SystemUser p: e.getItens()) {
+			for(Client p: e.getItens()) {
 				ClientPubEntity x = new ClientPubEntity(p, locale).getType();
 				x.setData(null);
 				itens.add(x);
@@ -44,17 +45,17 @@ public class ClientSearchResultPubEntity extends AbstractPubEntity<SystemUserSea
 	}
 
 	@Override
-	protected boolean isEqualId(SystemUserSearchResult instance) throws Throwable {
+	protected boolean isEqualId(ClientSearchResult instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected boolean hasId(SystemUserSearchResult instance) throws Throwable {
+	protected boolean hasId(ClientSearchResult instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected SystemUserSearchResult reloadEntity() throws Throwable {
+	protected ClientSearchResult reloadEntity() throws Throwable {
 		return null;
 	}
 
@@ -64,12 +65,12 @@ public class ClientSearchResultPubEntity extends AbstractPubEntity<SystemUserSea
 	}
 
 	@Override
-	protected SystemUserSearchResult createNewInstance() throws Throwable {
-		return new SystemUserSearchResult();
+	protected ClientSearchResult createNewInstance() throws Throwable {
+		return new ClientSearchResult();
 	}
 
 	@Override
-	protected void copyTo(SystemUserSearchResult o, boolean reload, boolean override, boolean validate) throws Throwable {
+	protected void copyTo(ClientSearchResult o, boolean reload, boolean override, boolean validate) throws Throwable {
 		o.setHasNextPage(this.hasNextPage == null? false: this.hasNextPage.booleanValue());
 		o.setMaxPages(this.maxPages == null? -1 : this.maxPages.intValue());
 		o.setPage(this.page == null? -1 : this.page.intValue());

@@ -6,10 +6,10 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class ClientSearchPubEntity extends AbstractPubEntity<SystemUserSearch> {
+public class ClientSearchPubEntity extends AbstractPubEntity<ClientSearch> {
 
 	private static final long serialVersionUID = 7674988526885634067L;
 
@@ -90,17 +90,17 @@ public class ClientSearchPubEntity extends AbstractPubEntity<SystemUserSearch> {
 	}
 	
 	@Override
-	protected boolean isEqualId(SystemUserSearch instance) throws Throwable {
+	protected boolean isEqualId(ClientSearch instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected boolean hasId(SystemUserSearch instance) throws Throwable {
+	protected boolean hasId(ClientSearch instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected SystemUserSearch reloadEntity() throws Throwable {
+	protected ClientSearch reloadEntity() throws Throwable {
 		throw new IllegalStateException();
 	}
 
@@ -109,12 +109,12 @@ public class ClientSearchPubEntity extends AbstractPubEntity<SystemUserSearch> {
 	}
 
 	@Override
-	protected SystemUserSearch createNewInstance() throws Throwable {
-		return new SystemUserSearch();
+	protected ClientSearch createNewInstance() throws Throwable {
+		return new ClientSearch();
 	}
 
 	@Override
-	protected void copyTo(SystemUserSearch o, boolean reload, boolean override,
+	protected void copyTo(ClientSearch o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setCity(city);
 		o.setCountry(country);
