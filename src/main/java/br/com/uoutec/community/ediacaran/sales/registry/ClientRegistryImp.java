@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.DoPrivilegedException;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
@@ -25,8 +26,6 @@ public class ClientRegistryImp
 	extends AbstractRegistry 
 	implements ClientRegistry{
 
-	public static final String basePermission = "app.registry.user.";
-
 	@Inject
 	private AddressEntityAccess addressEntityAccess;
 
@@ -43,6 +42,9 @@ public class ClientRegistryImp
 
 	@Override
 	public void registerClient(Client entity) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getRegisterPermission());
+		
 		try {
 			ContextSystemSecurityCheck.doPrivileged(()->{
 				systemUserRegistry.registerUser(entity);
@@ -56,6 +58,9 @@ public class ClientRegistryImp
 
 	@Override
 	public void removeClient(Client entity) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getRemovePermission());
+		
 		try {
 			ContextSystemSecurityCheck.doPrivileged(()->{
 				systemUserRegistry.remove(entity);
@@ -69,6 +74,9 @@ public class ClientRegistryImp
 
 	@Override
 	public Client findById(int id) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getFindPermission());
+		
 		try {
 			SystemUser user =ContextSystemSecurityCheck.doPrivileged(()->{
 				return systemUserRegistry.findById(id);
@@ -93,6 +101,8 @@ public class ClientRegistryImp
 
 	@Override
 	public ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getSearchPermission());
 		
 		try {
 			SystemUserSearchResult usr = ContextSystemSecurityCheck.doPrivileged(()->{
@@ -121,6 +131,9 @@ public class ClientRegistryImp
 
 	@Override
 	public void registerAddress(Address address) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRegisterPermission());
+		
 		try{
 			if(address.getId() == null) {
 				addressEntityAccess.save(address);
@@ -136,6 +149,9 @@ public class ClientRegistryImp
 
 	@Override
 	public void removeAddress(Address address) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
+		
 		try{
 			addressEntityAccess.delete(address);
     	}
@@ -146,6 +162,9 @@ public class ClientRegistryImp
 
 	@Override
 	public Address getAddressByID(int id) throws ClientRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getFindPermission());
+		
 		try{
 			return addressEntityAccess.findById(id);
     	}
@@ -156,6 +175,9 @@ public class ClientRegistryImp
 
 	@Override
 	public List<Address> getAddress(Client value, String type) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getListPermission());
+		
 		try{
 			return addressEntityAccess.getList(value, type);
     	}

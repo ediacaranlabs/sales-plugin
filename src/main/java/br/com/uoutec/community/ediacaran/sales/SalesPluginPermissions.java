@@ -182,5 +182,49 @@ public final class SalesPluginPermissions {
 		}
 		
 	}
+
+	public static class CLIENT_REGISTRY {
+
+		public static final String basePermission = SalesPluginPermissions.basePermission + "client.";
+		
+		public static SecurityPermission getRegisterPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register");
+		}
+
+		public static SecurityPermission getSearchPermission() {
+			return new RuntimeSecurityPermission(basePermission + "search");
+		}
+
+		public static SecurityPermission getRemovePermission() {
+			return new RuntimeSecurityPermission(basePermission + "remove");
+		}
+		
+		public static SecurityPermission getFindPermission() {
+			return new RuntimeSecurityPermission(basePermission + "find");
+		}
+
+		public static class ADDRESS {
+
+			public static final String basePermission = SalesPluginPermissions.basePermission + "address.";
+			
+			public static SecurityPermission getRegisterPermission() {
+				return new RuntimeSecurityPermission(basePermission + "register");
+			}
+
+			public static SecurityPermission getFindPermission() {
+				return new RuntimeSecurityPermission(basePermission + "find");
+			}
+			
+			public static SecurityPermission getRemovePermission() {
+				return new RuntimeSecurityPermission(basePermission + "remove");
+			}
+
+			public static SecurityPermission getListPermission() {
+				return new RuntimeSecurityPermission(basePermission + "list");
+			}
+			
+		}
+		
+	}
 	
 }
