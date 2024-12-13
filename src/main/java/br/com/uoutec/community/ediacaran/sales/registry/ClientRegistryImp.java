@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
+import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
 public class ClientRegistryImp 
@@ -50,8 +51,57 @@ public class ClientRegistryImp
 				systemUserRegistry.registerUser(entity);
 				return null;
 			});
+			
+			List<Address> shippingAddresses = entity.getShippingAddress();
+			
+			if(shippingAddresses != null) {
+				
+				for(Address e: shippingAddresses) {
+					
+					if(e.getOwner() == null) {
+						e.setOwner(entity.getId());
+					}
+					else
+					if(e.getOwner() != entity.getId()) {
+						throw new IllegalStateException(e.getOwner() + " != " + entity.getId());
+					}
+					
+					if(e.getId() == null) {
+						addressEntityAccess.save(e);
+					}
+					else {
+						addressEntityAccess.update(e);
+					}
+					
+				}
+				
+			}
+			
+			if(entity.getBillingAddress() != null) {
+				Address e = entity.getBillingAddress();
+				
+				if(e.getOwner() == null) {
+					e.setOwner(entity.getId());
+				}
+				else
+				if(e.getOwner() != entity.getId()) {
+					throw new IllegalStateException(e.getOwner() + " != " + entity.getId());
+				}
+				
+				if(e.getId() == null) {
+					addressEntityAccess.save(e);
+				}
+				else {
+					addressEntityAccess.update(e);
+				}
+				
+			}
+			
 		}
 		catch(DoPrivilegedException ex) {
+			throw new ClientRegistryException(ex.getCause());
+		}
+		catch(EntityAccessException ex) {
 			throw new ClientRegistryException(ex.getCause());
 		}
 	}
