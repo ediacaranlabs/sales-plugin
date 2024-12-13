@@ -2,30 +2,28 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.util.List;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.user.entity.Address;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
-import br.com.uoutec.persistence.EntityAccessException;
 
 public interface ClientRegistry extends PublicBean{
 
-	void registerClient(Client entity) throws InvoiceRegistryException;
+	void registerClient(Client entity) throws ClientRegistryException;
 	
-	void removeClient(Invoice entity) throws InvoiceRegistryException;
+	void removeClient(Client entity) throws ClientRegistryException;
 	
-	Client findById(String id) throws InvoiceRegistryException;
+	Client findById(int id) throws ClientRegistryException;
 
-	List<Client> searchClient(ClientSearch value) throws InvoiceRegistryException;
+	ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException;
 	
-	void registerAddress(Address address, SystemUser value, String type) throws EntityAccessException;
+	void registerAddress(Address address) throws ClientRegistryException;
 
-	void removeAddress(Address address, SystemUser value) throws EntityAccessException;
+	void removeAddress(Address address) throws ClientRegistryException;
 	
-	Address getAddressByID(int id) throws EntityAccessException;
+	Address getAddressByID(int id) throws ClientRegistryException;
 	
-	List<Address> getAddress(Client value, String type) throws EntityAccessException;
+	List<Address> getAddress(Client value, String type) throws ClientRegistryException;
 	
 }
