@@ -168,6 +168,7 @@ public class AddressEntity implements PublicType, Serializable{
 			e.setCountry(this.country == null? null : this.country.toEntity());
 			e.setRegion(this.region);
 			e.setZip(this.zip);
+			e.setId(this.id);
 			return e;
 		}
 		catch(Throwable ex){

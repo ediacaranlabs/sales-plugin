@@ -288,6 +288,7 @@ public class ClientAdminPubResource {
 		try{
 			clientRegistry.registerClient(client);
 			for(Address e: shippingAddress) {
+				e.setType(Client.SHIPPING);
 				clientRegistry.registerAddress(e, client);
 			}
 			for(Address e: removedShippingAddress) {
@@ -295,6 +296,7 @@ public class ClientAdminPubResource {
 			}
 			
 			if(billingAddress != null) {
+				billingAddress.setType(Client.BILLING);
 				clientRegistry.registerAddress(billingAddress, client);
 			}
 		}
@@ -308,7 +310,9 @@ public class ClientAdminPubResource {
 		}
 		
 		Map<String,Object> vars = new HashMap<>();
-		vars.put("protectedID", client.getProtectedID());
+		vars.put("client", client);
+		vars.put("shippingAddress", removedShippingAddress);
+		vars.put("billingAddress", billingAddress);
 		
 		return vars;
 	}

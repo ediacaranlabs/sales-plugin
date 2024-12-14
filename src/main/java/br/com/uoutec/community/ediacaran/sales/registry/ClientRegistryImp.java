@@ -185,12 +185,14 @@ public class ClientRegistryImp
 		address.setOwner(client.getId());
 		
 		try{
+			
 			if(address.getId() == null) {
 				addressEntityAccess.save(address);
 			}
 			else {
 				addressEntityAccess.update(address);
 			}
+			addressEntityAccess.flush();
     	}
     	catch(Throwable e){
     		throw new ClientRegistryException(e);
@@ -223,6 +225,7 @@ public class ClientRegistryImp
 		
 		try{
 			addressEntityAccess.delete(address);
+			addressEntityAccess.flush();
     	}
     	catch(Throwable e){
     		throw new ClientRegistryException(e);

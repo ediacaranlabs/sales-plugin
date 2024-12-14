@@ -107,11 +107,11 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		}
 
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.BILLING_ADDRESS)) {
-			o.setUseDefaultBillingAddress(useDefaultBillingAddress == null? true : useDefaultBillingAddress);
+			o.setUseDefaultBillingAddress(useDefaultBillingAddress == null? false : useDefaultBillingAddress);
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
-			o.setUseDefaultShippingAddress(useDefaultShippingAddress == null? true : useDefaultShippingAddress);
+			o.setUseDefaultShippingAddress(useDefaultShippingAddress == null? false : useDefaultShippingAddress);
 		}
 	}
 	
