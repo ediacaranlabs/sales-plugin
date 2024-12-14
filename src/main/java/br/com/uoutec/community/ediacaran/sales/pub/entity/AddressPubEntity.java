@@ -61,6 +61,8 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 	@Pattern(regexp=CommonValidation.ZIP, groups={DataValidation.class})
 	private String zip;
 	
+	private Boolean deleted;
+	
 	@Constructor
 	public AddressPubEntity(){
 	}
@@ -140,6 +142,30 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 
 	public void setProtectedID(String protectedID) {
 		this.protectedID = protectedID;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	@Override

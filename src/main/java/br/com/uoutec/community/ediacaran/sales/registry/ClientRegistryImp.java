@@ -20,6 +20,8 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
+import br.com.uoutec.i18n.ValidationException;
+import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
@@ -47,61 +49,20 @@ public class ClientRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getRegisterPermission());
 		
 		try {
+			ValidatorBean.validate(entity);
+		}
+		catch(ValidationException e) {
+			throw new ClientRegistryException(e.getMessage(), e);
+		}
+
+		try {
 			ContextSystemSecurityCheck.doPrivileged(()->{
 				systemUserRegistry.registerUser(entity);
 				return null;
 			});
 			
-			List<Address> shippingAddresses = entity.getShippingAddress();
-			
-			if(shippingAddresses != null) {
-				
-				for(Address e: shippingAddresses) {
-					
-					if(e.getOwner() == null) {
-						e.setOwner(entity.getId());
-					}
-					else
-					if(e.getOwner() != entity.getId()) {
-						throw new IllegalStateException(e.getOwner() + " != " + entity.getId());
-					}
-					
-					if(e.getId() == null) {
-						addressEntityAccess.save(e);
-					}
-					else {
-						addressEntityAccess.update(e);
-					}
-					
-				}
-				
-			}
-			
-			if(entity.getBillingAddress() != null) {
-				Address e = entity.getBillingAddress();
-				
-				if(e.getOwner() == null) {
-					e.setOwner(entity.getId());
-				}
-				else
-				if(e.getOwner() != entity.getId()) {
-					throw new IllegalStateException(e.getOwner() + " != " + entity.getId());
-				}
-				
-				if(e.getId() == null) {
-					addressEntityAccess.save(e);
-				}
-				else {
-					addressEntityAccess.update(e);
-				}
-				
-			}
-			
 		}
 		catch(DoPrivilegedException ex) {
-			throw new ClientRegistryException(ex.getCause());
-		}
-		catch(EntityAccessException ex) {
 			throw new ClientRegistryException(ex.getCause());
 		}
 	}
@@ -180,9 +141,37 @@ public class ClientRegistryImp
 	}
 
 	@Override
-	public void registerAddress(Address address) throws ClientRegistryException {
+	public void registerAddress(Address address, Client client) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRegisterPermission());
+		
+		try {
+			ValidatorBean.validate(address);
+		}
+		catch(ValidationException e) {
+			throw new ClientRegistryException(e.getMessage(), e);
+		}
+		
+		try {
+			if(address.getId() != null) {
+				
+				Address tmp = addressEntityAccess.findById(address.getId());
+				
+				if(tmp == null) {
+					throw new ClientRegistryException("address not found: " + address.getId());
+				}
+				
+				if(tmp.getOwner() != client.getId()) {
+					throw new ClientRegistryException("invalid client: " + client.getId());
+				}
+				
+			}
+		}
+		catch(EntityAccessException e) {
+			throw new ClientRegistryException(e.getMessage(), e);
+		}
+		
+		address.setOwner(client.getId());
 		
 		try{
 			if(address.getId() == null) {
@@ -198,9 +187,28 @@ public class ClientRegistryImp
 	}
 
 	@Override
-	public void removeAddress(Address address) throws ClientRegistryException {
+	public void removeAddress(Address address, Client client) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
+		
+		try {
+			if(address.getId() != null) {
+				
+				Address tmp = addressEntityAccess.findById(address.getId());
+				
+				if(tmp == null) {
+					throw new ClientRegistryException("address not found: " + address.getId());
+				}
+				
+				if(tmp.getOwner() != client.getId()) {
+					throw new ClientRegistryException("invalid client: " + client.getId());
+				}
+				
+			}
+		}
+		catch(EntityAccessException e) {
+			throw new ClientRegistryException(e.getMessage(), e);
+		}
 		
 		try{
 			addressEntityAccess.delete(address);
@@ -224,7 +232,21 @@ public class ClientRegistryImp
 	}
 
 	@Override
-	public List<Address> getAddress(Client value, String type) throws ClientRegistryException {
+	public Address getAddress(Client value, String type) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getListPermission());
+		
+		try{
+			List<Address> list = addressEntityAccess.getList(value, type);
+			return list == null || list.isEmpty()? null : list.get(0);
+    	}
+    	catch(Throwable e){
+    		throw new ClientRegistryException(e);
+    	}
+	}
+	
+	@Override
+	public List<Address> getAddresses(Client value, String type) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getListPermission());
 		

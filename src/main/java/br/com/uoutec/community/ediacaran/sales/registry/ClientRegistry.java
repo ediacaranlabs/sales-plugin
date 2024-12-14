@@ -18,12 +18,14 @@ public interface ClientRegistry extends PublicBean{
 
 	ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException;
 	
-	void registerAddress(Address address) throws ClientRegistryException;
+	void registerAddress(Address address, Client client) throws ClientRegistryException;
 
-	void removeAddress(Address address) throws ClientRegistryException;
+	void removeAddress(Address address, Client client) throws ClientRegistryException;
 	
 	Address getAddressByID(int id) throws ClientRegistryException;
 	
-	List<Address> getAddress(Client value, String type) throws ClientRegistryException;
+	Address getAddress(Client value, String type) throws ClientRegistryException;
+
+	List<Address> getAddresses(Client value, String type) throws ClientRegistryException;
 	
 }

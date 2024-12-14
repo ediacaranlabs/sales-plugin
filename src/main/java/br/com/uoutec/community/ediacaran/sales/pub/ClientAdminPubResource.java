@@ -1,6 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -27,9 +29,11 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchResultPubEntity;
@@ -155,6 +159,8 @@ public class ClientAdminPubResource {
 			vars.put("client",			systemUser);
 			vars.put("countries",      countryRegistry.getAll(locale));
 			vars.put("client_data_view", clientEntityTypes.getClientEntityView(systemUser));
+			vars.put("billing_address", clientRegistry.getAddress((Client)systemUser, Client.BILLING));
+			vars.put("shipping_addresses", clientRegistry.getAddresses((Client)systemUser, Client.SHIPPING));
 			return vars;
 		}
 		catch(Throwable ex){
@@ -172,19 +178,13 @@ public class ClientAdminPubResource {
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
-	public Map<String,Object> address(
-			@DetachedName ClientPubEntity systemUserPubEntity,			
+	public Map<String,Object> address(			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		try{
 			Map<String,Object> vars = new HashMap<String, Object>();
-			boolean isNew = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, false, false);
-			
-			vars.put("client",			systemUser);
 			vars.put("countries",      countryRegistry.getAll(locale));
-			vars.put("client_data_view", clientEntityTypes.getClientEntityView(systemUser));
 			return vars;
 		}
 		catch(Throwable ex){
@@ -203,14 +203,15 @@ public class ClientAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction editNewView(
-			@DetachedName ClientPubEntity systemUserPubEntity,			
+			@DetachedName
+			ClientPubEntity clientPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		try{
 			Map<String,Object> vars = new HashMap<String, Object>();
-			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, true, false);
+			boolean isNew           = clientPubEntity.getProtectedID() == null;
+			SystemUser systemUser   = clientPubEntity.rebuild(!isNew, true, false);
 			
 			vars.put("client",           systemUser);
 			vars.put("countries",      countryRegistry.getAll(locale));
@@ -238,15 +239,40 @@ public class ClientAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SAVE)
 	public Map<String,Object> save(
-			@DetachedName ClientPubEntity clientPubEntity,
+			@Basic(bean="client")
+			ClientPubEntity clientPubEntity,
+			@Basic(bean="shippingAddress")
+			List<AddressPubEntity> shippingAddresses,
+			@Basic(bean="billingAddress")
+			AddressPubEntity billingAddresses,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		Client client;
+		List<Address> shippingAddress = new ArrayList<>();
+		List<Address> removedShippingAddress = new ArrayList<>();
+		Address billingAddress = null;
+		
 		boolean isNew = true;
 		try{
 			isNew = clientPubEntity.getProtectedID() == null;
 			client = (Client)clientPubEntity.rebuild(!isNew, true, true);
+			
+			if(shippingAddresses != null) {
+				for(AddressPubEntity e: shippingAddresses) {
+					if(e.getDeleted() == null || !e.getDeleted().booleanValue()) {
+						shippingAddress.add(e.rebuild(e.getProtectedID() != null, true, true));
+					}
+					else {
+						removedShippingAddress.add(e.rebuild(e.getProtectedID() != null, true, true));
+					}
+				}
+			}
+			
+			if(billingAddresses != null) {
+				billingAddress = billingAddresses.rebuild(billingAddresses.getProtectedID() != null, true, true);
+			}
+			
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -259,6 +285,16 @@ public class ClientAdminPubResource {
 		
 		try{
 			clientRegistry.registerClient(client);
+			for(Address e: shippingAddress) {
+				clientRegistry.registerAddress(e, client);
+			}
+			for(Address e: removedShippingAddress) {
+				clientRegistry.removeAddress(e, client);
+			}
+			
+			if(billingAddress != null) {
+				clientRegistry.registerAddress(billingAddress, client);
+			}
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

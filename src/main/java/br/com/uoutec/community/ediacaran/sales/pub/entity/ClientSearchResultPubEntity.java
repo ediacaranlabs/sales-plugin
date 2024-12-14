@@ -10,7 +10,6 @@ import org.brandao.brutos.annotation.MappingTypes;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class ClientSearchResultPubEntity extends AbstractPubEntity<ClientSearchResult> {
@@ -76,10 +75,11 @@ public class ClientSearchResultPubEntity extends AbstractPubEntity<ClientSearchR
 		o.setPage(this.page == null? -1 : this.page.intValue());
 		
 		if(this.itens != null) {
-			List<SystemUser> list = new ArrayList<>();
+			List<Client> list = new ArrayList<>();
 			for(ClientPubEntity p: this.itens) {
-				list.add(p.rebuild(reload, override, validate));
+				list.add((Client)p.rebuild(reload, override, validate));
 			}
+			o.setItens(list);
 		}
 	}
 
