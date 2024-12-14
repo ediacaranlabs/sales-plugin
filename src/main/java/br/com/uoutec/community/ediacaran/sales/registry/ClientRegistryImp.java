@@ -100,7 +100,7 @@ public class ClientRegistryImp
 			EntityInheritanceManager entityInheritanceUtil = 
 					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
 				
-			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), user);
+			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
 		}
 		catch(DoPrivilegedException ex) {
 			throw new ClientRegistryException(ex.getCause());
@@ -127,7 +127,7 @@ public class ClientRegistryImp
 			List<Client> cl = new ArrayList<>();
 			
 			for(SystemUser e: usr.getItens()) {
-				cl.add(entityInheritanceUtil.getInstance(Client.class, e.getCountry().getIsoAlpha3(), e));
+				cl.add(entityInheritanceUtil.getInstance(Client.class, e.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {e}));
 			}
 
 			return new ClientSearchResult(usr.isHasNextPage(), usr.getMaxPages(), usr.getPage(), cl);

@@ -4,6 +4,7 @@ import javax.validation.constraints.Pattern;
 
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritance;
 import br.com.uoutec.community.ediacaran.system.util.DocumentUtil;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserBR;
 
 @EntityInheritance(base=Client.class, name="BRA")
@@ -17,7 +18,8 @@ public class ClientBR extends Client{
 	public ClientBR() {
 	}
 
-	public ClientBR(SystemUserBR user) {
+	public ClientBR(SystemUser userBR) {
+		SystemUserBR user = (SystemUserBR)userBR;
 		this.activated = user.isActivated();
 		this.addData = user.getAddData();
 		this.address = user.getAddress();
