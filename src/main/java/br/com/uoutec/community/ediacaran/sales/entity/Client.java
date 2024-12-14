@@ -10,6 +10,10 @@ public class Client extends SystemUser{
 	
 	public static final String BILLING = "billing";
 	
+	private boolean useDefaultBillingAddress;
+	
+	private boolean useDefaultShippingAddress;
+	
 	public Client() {
 	}
 	
@@ -30,6 +34,28 @@ public class Client extends SystemUser{
 		this.region = user.getRegion();
 		this.template = user.getTemplate();
 		this.zip = user.getZip();
+
+		if(user.getAddData() != null) {
+			this.useDefaultBillingAddress = "true".equals(user.getAddData().get("useDefaultBillingAddress"));
+			this.useDefaultShippingAddress = "true".equals(user.getAddData().get("useDefaultShippingAddress"));
+		}
+		
+	}
+
+	public boolean isUseDefaultBillingAddress() {
+		return useDefaultBillingAddress;
+	}
+
+	public void setUseDefaultBillingAddress(boolean useDefaultBillingAddress) {
+		this.useDefaultBillingAddress = useDefaultBillingAddress;
+	}
+
+	public boolean isUseDefaultShippingAddress() {
+		return useDefaultShippingAddress;
+	}
+
+	public void setUseDefaultShippingAddress(boolean useDefaultShippingAddress) {
+		this.useDefaultShippingAddress = useDefaultShippingAddress;
 	}
 
 }

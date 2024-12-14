@@ -18,6 +18,10 @@ public class ClientPubEntity extends SystemUserPubEntity{
 
 	private static final long serialVersionUID = 1391868122764939558L;
 
+	private Boolean useDefaultBillingAddress;
+	
+	private Boolean useDefaultShippingAddress;
+	
 	@Constructor
 	public ClientPubEntity(){
 		super.setActivated(false);
@@ -33,6 +37,22 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		super.setActivated(activated);
 	}
 	
+	public Boolean getUseDefaultBillingAddress() {
+		return useDefaultBillingAddress;
+	}
+
+	public void setUseDefaultBillingAddress(Boolean useDefaultBillingAddress) {
+		this.useDefaultBillingAddress = useDefaultBillingAddress;
+	}
+
+	public Boolean getUseDefaultShippingAddress() {
+		return useDefaultShippingAddress;
+	}
+
+	public void setUseDefaultShippingAddress(Boolean useDefaultShippingAddress) {
+		this.useDefaultShippingAddress = useDefaultShippingAddress;
+	}
+
 	@Override
 	protected void copyTo(SystemUser x, boolean reload, boolean override,
 			boolean validate) throws Throwable {
@@ -86,6 +106,13 @@ public class ClientPubEntity extends SystemUserPubEntity{
 			o.setZip(super.getZip());
 		}
 
+		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.BILLING_ADDRESS)) {
+			o.setUseDefaultBillingAddress(useDefaultBillingAddress == null? true : useDefaultBillingAddress);
+		}
+		
+		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
+			o.setUseDefaultShippingAddress(useDefaultShippingAddress == null? true : useDefaultShippingAddress);
+		}
 	}
 	
 	protected SystemUser reloadEntity() throws Throwable {

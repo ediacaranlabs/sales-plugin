@@ -173,18 +173,20 @@ public class ClientAdminPubResource {
 		}
 	}
 
-	@Action("/address")
+	@Action({"/address", "/address/{type}"})
 	@View(value="${plugins.ediacaran.sales.template}/admin/client/address")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
-	public Map<String,Object> address(			
+	public Map<String,Object> address(
+			@Basic(bean="type")
+			String type, 
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		try{
 			Map<String,Object> vars = new HashMap<String, Object>();
-			vars.put("countries",      countryRegistry.getAll(locale));
+			vars.put("countries", countryRegistry.getAll(locale));
 			return vars;
 		}
 		catch(Throwable ex){

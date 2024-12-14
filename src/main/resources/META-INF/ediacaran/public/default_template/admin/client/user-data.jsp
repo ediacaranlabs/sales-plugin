@@ -349,18 +349,53 @@
 <ec:tabs>
 	<ec:tabs-item title="Billing address" active="true">
 		<ed:row>
-			<ed:col id="billingList">
-				<span id="billingAddress_${billing_address.protectedID}" formgroup="billingAddress" formgrouptype="index">
-					<c:set var="address" value="${billing_address}" scope="request"/>
-					<jsp:include page="address.jsp"/>
-				</span>
+			<ed:col>
+				<ec:checkbox label="use default" name="defaultBillingAddress" value="true" selected="${!empty vars.client.protectedID && vars.client.useDefaultBillingAddress}">
+					<ec:event type="change">
+						var $form = $.AppContext.utils.getById('client_form');
+						var $defaultBillingAddress = $form.getField('defaultBillingAddress');
+						var $checked = $defaultBillingAddress.getValue() === 'true';
+						
+						if($checked){
+							$.AppContext.utils.content.update("billingAddress_${billing_address.protectedID}", "");
+						}
+						else{
+							$.AppContext.utils.loadResourceContent("billingAddress_${billing_address.protectedID}", "${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address");
+						}
+						
+					</ec:event>
+				</ec:checkbox>
 			</ed:col>
 		</ed:row>
+		<ed:row>
+			<ed:col id="billingAddress_${billing_address.protectedID}">
+				<c:if test="${!vars.client.useDefaultBillingAddress}">
+					<c:set var="address" value="${billing_address}" scope="request"/>
+					<jsp:include page="address.jsp"/>
+				</c:if>
+			</ed:col>
+		</ed:row>
+	
 	</ec:tabs-item>
 	<ec:tabs-item title="Shipping address">
-
+	
 		<ed:row>
-			<ed:col id="shippingList">
+			<ed:col>
+				<ec:checkbox label="use default" name="defaultShippingAddress" value="true" selected="${!empty vars.client.protectedID && vars.client.useDefaultShippingAddress}">
+					<ec:event type="change">
+						var $form = $.AppContext.utils.getById('client_form');
+						var $defaultShippingAddress = $form.getField('defaultBillingAddress');
+						var $checked = $defaultShippingAddress.getValue() === 'true';
+						
+						if($checked){
+							$.AppContext.utils.content.update("shippingAddressList", "");
+						}
+					</ec:event>
+				</ec:checkbox>
+			</ed:col>
+		</ed:row>
+		<ed:row>
+			<ed:col id="shippingAddressList">
 				<c:forEach items="${vars.shipping_addresses}" var="shippingAddress">
 					<span id="shippingAddress_${shippingAddress.protectedID}" formgroup="shippingAddressList" formgrouptype="index">
 						<c:set var="address" value="${shippingAddress}" scope="request"/>
@@ -373,10 +408,11 @@
 			<ed:col>
 				<ec:button label="Add Address" align="right" actionType="button">
 					<ec:event type="click">
-						$.AppContext.utils.content.append("shippingList",$.AppContext.utils.applyTemplate("addressTemplate", {}));
+						$.AppContext.utils.appendContentByID("shippingAddressList", "${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address-group");
 					</ec:event>
 				</ec:button>
 			</ed:col>
 		</ed:row>
+
 	</ec:tabs-item>				
 </ec:tabs>

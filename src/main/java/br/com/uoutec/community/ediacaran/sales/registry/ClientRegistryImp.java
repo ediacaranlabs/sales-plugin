@@ -1,7 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -55,6 +57,15 @@ public class ClientRegistryImp
 			throw new ClientRegistryException(e.getMessage(), e);
 		}
 
+		Map<String, String> dta = entity.getAddData();
+		if(dta == null) {
+			dta = new HashMap<>();
+			entity.setAddData(dta);
+		}
+		
+		dta.put("useDefaultBillingAddress", String.valueOf(entity.isUseDefaultBillingAddress()));
+		dta.put("useDefaultShippingAddress", String.valueOf(entity.isUseDefaultShippingAddress()));
+		
 		try {
 			ContextSystemSecurityCheck.doPrivileged(()->{
 				systemUserRegistry.registerUser(entity);
