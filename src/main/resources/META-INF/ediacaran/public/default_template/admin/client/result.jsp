@@ -13,8 +13,18 @@
 	$.AppContext.onload(function(){			
 	
 		var $form = $.AppContext.utils.getById('client_form');
-		var $protectedID = $form.getField('protectedID');
-		$protectedID.setValue('${vars.protectedID}');
+		
+		var $protectedID = $form.getField('client.protectedID');
+		$protectedID.setValue('${vars.client.protectedID}');
+
+		var $billingAddress = $form.getField('billingAddress.protectedID');
+		$billingAddress.setValue('${vars.billingAddress.protectedID}');
+
+		<c:forEach items="${vars.shippingAddress}" var="shippingAddress" varStatus="shippingAddressStep">
+		var $shippingAddress = $form.getField('shippingAddress[${shippingAddressStep.index}].protectedID');
+		$shippingAddress.setValue('${shippingAddress.protectedID}');
+		</c:forEach>
+		
 	});
 	</script>
 	<ec:alert style="success">

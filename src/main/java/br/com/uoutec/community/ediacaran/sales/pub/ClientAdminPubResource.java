@@ -154,13 +154,13 @@ public class ClientAdminPubResource {
 		try{
 			Map<String,Object> vars = new HashMap<String, Object>();
 			boolean isNew = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, false, false);
+			Client client   = (Client) systemUserPubEntity.rebuild(!isNew, false, false);
 			
-			vars.put("client",			systemUser);
+			vars.put("client",			client);
 			vars.put("countries",      countryRegistry.getAll(locale));
-			vars.put("client_data_view", clientEntityTypes.getClientEntityView(systemUser));
-			vars.put("billing_address", clientRegistry.getAddress((Client)systemUser, Client.BILLING));
-			vars.put("shipping_addresses", clientRegistry.getAddresses((Client)systemUser, Client.SHIPPING));
+			vars.put("client_data_view", clientEntityTypes.getClientEntityView(client));
+			vars.put("billing_address", clientRegistry.getAddress(client, Client.BILLING));
+			vars.put("shipping_addresses", clientRegistry.getAddresses(client, Client.SHIPPING));
 			return vars;
 		}
 		catch(Throwable ex){
@@ -317,7 +317,7 @@ public class ClientAdminPubResource {
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("client", client);
-		vars.put("shippingAddress", removedShippingAddress);
+		vars.put("shippingAddress", shippingAddress);
 		vars.put("billingAddress", billingAddress);
 		
 		return vars;

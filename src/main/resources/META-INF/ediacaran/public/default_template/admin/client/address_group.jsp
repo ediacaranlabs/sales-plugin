@@ -11,3 +11,12 @@
 		</ec:accordion-item>
 	</ec:accordion>					
 </span>
+<script language="javascript">
+	$.AppContext.onload(function(){
+	
+		var $formObj = $.AppContext.utils.getById('client_form');
+		$formObj.updateFieldIndex();
+		$formObj.updateFieldNames();
+		
+	});
+</script>

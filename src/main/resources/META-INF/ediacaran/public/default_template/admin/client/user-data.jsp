@@ -352,7 +352,8 @@
 	<ec:tabs-item title="Billing address" active="true">
 		<ed:row>
 			<ed:col>
-				<ec:checkbox label="use default" name="defaultBillingAddress" value="true" selected="${empty vars.client.protectedID || vars.client.useDefaultBillingAddress}">
+				<span formgroup="client">
+				<ec:checkbox label="use default" name="useDefaultBillingAddress" value="true" selected="${empty vars.client.protectedID || vars.client.useDefaultBillingAddress}">
 					<ec:event type="change">
 						var $form = $event.source.getFirstParent(function($e){
 							return $e.getTagName() == 'form';
@@ -362,7 +363,7 @@
 							return;
 						}
 						
-						var $defaultBillingAddress = $form.getField('defaultBillingAddress');
+						var $defaultBillingAddress = $form.getField('client.useDefaultBillingAddress');
 						var $checked = $defaultBillingAddress.getValue() === 'true';
 						
 						if($checked){
@@ -372,8 +373,12 @@
 							$.AppContext.utils.loadResourceContent("billingAddress", "${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address");
 						}
 						
+						$form.updateFieldIndex();
+						$form.updateFieldNames();
+						
 					</ec:event>
 				</ec:checkbox>
+				</span>
 			</ed:col>
 		</ed:row>
 			<ed:row>
@@ -391,7 +396,8 @@
 	
 		<ed:row>
 			<ed:col>
-				<ec:checkbox label="use default" name="defaultShippingAddress" value="true" selected="${empty vars.client.protectedID || vars.client.useDefaultShippingAddress}">
+				<span formgroup="client">
+				<ec:checkbox label="use default" name="useDefaultShippingAddress" value="true" selected="${empty vars.client.protectedID || vars.client.useDefaultShippingAddress}">
 					<ec:event type="change">
 						var $form = $event.source.getFirstParent(function($e){
 							return $e.getTagName() == 'form';
@@ -401,14 +407,24 @@
 							return;
 						}
 					
-						var $defaultShippingAddress = $form.getField('defaultBillingAddress');
+						var $defaultShippingAddress = $form.getField('client.useDefaultShippingAddress');
 						var $checked = $defaultShippingAddress.getValue() === 'true';
+						var $addshippingAddressButton = $.AppContext.utils.getById('addshippingAddressButton');
 						
 						if($checked){
 							$.AppContext.utils.content.update("shippingAddressList", "");
+							$addshippingAddressButton.setEnabled(false);						
 						}
+						else{
+							$addshippingAddressButton.setEnabled(true);						
+						}
+						
+						$form.updateFieldIndex();
+						$form.updateFieldNames();
+
 					</ec:event>
 				</ec:checkbox>
+				</span>
 			</ed:col>
 		</ed:row>
 			<ed:row>
@@ -421,9 +437,9 @@
 			</ed:row>
 		<ed:row>
 			<ed:col>
-				<ec:button label="Add Address" align="right" actionType="button">
+				<ec:button id="addshippingAddressButton" label="Add Address" align="right" actionType="button" enabled="${!vars.client.useDefaultShippingAddress}">
 					<ec:event type="click">
-						$.AppContext.utils.appendContentByID("shippingAddressList", "${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/group");
+						$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/group", "shippingAddressList");
 					</ec:event>
 				</ec:button>
 			</ed:col>

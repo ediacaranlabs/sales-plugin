@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
+import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
@@ -127,6 +128,13 @@ public class ClientPubEntity extends SystemUserPubEntity{
 	
 	protected Class<?> getGenericType() {
 		return ClientPubEntity.class;
+	}
+
+	protected void loadProperties(GenericPubEntity<SystemUser> e) {
+		super.loadProperties(e);
+		ClientPubEntity u = (ClientPubEntity)e;
+		this.useDefaultBillingAddress = u.useDefaultBillingAddress;
+		this.useDefaultShippingAddress = u.useDefaultShippingAddress;
 	}
 	
 }
