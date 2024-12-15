@@ -174,20 +174,23 @@ public class ClientAdminPubResource {
 	}
 
 	@Action({"/address", "/address/{type}"})
-	@View(value="${plugins.ediacaran.sales.template}/admin/client/address")
-	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
-	public Map<String,Object> address(
+	public ResultAction address(
 			@Basic(bean="type")
 			String type, 
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
+		Map<String,Object> vars = new HashMap<String, Object>();
+		ResultAction ra = new ResultActionImp();
+		ra.setView(
+				"${plugins.ediacaran.sales.template}/admin/client/address" + ("group".equals(type)? "_group" : "") + ".jsp", 
+				true)
+		.add("vars", vars);
+		
 		try{
-			Map<String,Object> vars = new HashMap<String, Object>();
 			vars.put("countries", countryRegistry.getAll(locale));
-			return vars;
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -195,8 +198,11 @@ public class ClientAdminPubResource {
 							ClientAdminPubResourceMessages.RESOURCE_BUNDLE,
 							ClientAdminPubResourceMessages.edit.error.fail_load, 
 							locale);
-			throw new InvalidRequestException(error, ex);
+			ra.add("exception", new InvalidRequestException(error, ex));
 		}
+		
+		return ra;
+		
 	}
 	
 	@Action("/edit")

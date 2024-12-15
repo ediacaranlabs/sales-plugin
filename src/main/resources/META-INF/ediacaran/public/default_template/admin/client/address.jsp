@@ -5,6 +5,7 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" prefix="ed"%>
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
+<input type="hidden" value="${address.protectedID}" name="protectedID">
 <ed:row>
 	<ed:col size="5" classStyle="form-group has-feedback">
 		<ec:textfield 
