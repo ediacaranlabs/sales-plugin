@@ -249,7 +249,7 @@ public class ClientAdminPubResource {
 	public Map<String,Object> save(
 			@Basic(bean="client")
 			ClientPubEntity clientPubEntity,
-			@Basic(bean="shippingAddress")
+			@Basic(bean="shippingAddress", mappingType = MappingTypes.OBJECT)
 			List<AddressPubEntity> shippingAddresses,
 			@Basic(bean="billingAddress")
 			AddressPubEntity billingAddresses,

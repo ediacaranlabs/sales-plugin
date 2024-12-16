@@ -74,6 +74,7 @@ public class AddressEntity implements PublicType, Serializable{
 		this.country        = e.getCountry() == null? null : new CountryHibernateEntity(e.getCountry());
 		this.region         = e.getRegion();
 		this.zip            = e.getZip();
+		this.id             = e.getId();
 	}
 
 	public Integer getId() {
@@ -169,6 +170,7 @@ public class AddressEntity implements PublicType, Serializable{
 			e.setRegion(this.region);
 			e.setZip(this.zip);
 			e.setId(this.id);
+			e.setOwner(this.systemUserID);
 			return e;
 		}
 		catch(Throwable ex){

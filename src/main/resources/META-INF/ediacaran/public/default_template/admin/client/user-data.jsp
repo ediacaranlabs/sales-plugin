@@ -383,12 +383,12 @@
 		</ed:row>
 			<ed:row>
 				<ed:col>
-					<c:if test="${!vars.client.useDefaultBillingAddress}">
-						<c:set var="address" value="${vars.billing_address}" scope="request"/>
-						<span id="billingAddress" formgroup="billingAddress">
-							<jsp:include page="address.jsp"/>
-						</span>	
-					</c:if>
+					<span id="billingAddress" formgroup="billingAddress">
+						<c:if test="${!vars.client.useDefaultBillingAddress}">
+							<c:set var="address" value="${vars.billing_address}" scope="request"/>
+								<jsp:include page="address.jsp"/>
+						</c:if>
+					</span>	
 				</ed:col>
 			</ed:row>
 	</ec:tabs-item>
