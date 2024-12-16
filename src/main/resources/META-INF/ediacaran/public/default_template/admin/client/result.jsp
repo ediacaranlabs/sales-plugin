@@ -18,7 +18,10 @@
 		$protectedID.setValue('${vars.client.protectedID}');
 
 		var $billingAddress = $form.getField('billingAddress.protectedID');
-		$billingAddress.setValue('${vars.billingAddress.protectedID}');
+		
+		if($billingAddress){
+			$billingAddress.setValue('${vars.billingAddress.protectedID}');
+		}
 
 		<c:forEach items="${vars.shippingAddress}" var="shippingAddress" varStatus="shippingAddressStep">
 		var $shippingAddress = $form.getField('shippingAddress[${shippingAddressStep.index}].protectedID');

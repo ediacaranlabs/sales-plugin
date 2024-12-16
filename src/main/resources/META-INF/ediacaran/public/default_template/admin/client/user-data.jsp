@@ -373,9 +373,6 @@
 							$.AppContext.utils.loadResourceContent("billingAddress", "${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address");
 						}
 						
-						$form.updateFieldIndex();
-						$form.updateFieldNames();
-						
 					</ec:event>
 				</ec:checkbox>
 				</span>
@@ -412,16 +409,13 @@
 						var $addshippingAddressButton = $.AppContext.utils.getById('addshippingAddressButton');
 						
 						if($checked){
-							$.AppContext.utils.content.update("shippingAddressList", "");
+							//$.AppContext.utils.content.update("shippingAddressList", "");
 							$addshippingAddressButton.setEnabled(false);						
 						}
 						else{
 							$addshippingAddressButton.setEnabled(true);						
 						}
 						
-						$form.updateFieldIndex();
-						$form.updateFieldNames();
-
 					</ec:event>
 				</ec:checkbox>
 				</span>
