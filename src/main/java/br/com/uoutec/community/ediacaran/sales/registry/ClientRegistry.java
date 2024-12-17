@@ -21,6 +21,8 @@ public interface ClientRegistry extends PublicBean{
 	void registerAddress(Address address, Client client) throws ClientRegistryException;
 
 	void removeAddress(Address address, Client client) throws ClientRegistryException;
+
+	void removeAddress(Client value, String type) throws ClientRegistryException;
 	
 	Address getAddressByID(int id) throws ClientRegistryException;
 	

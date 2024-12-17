@@ -92,6 +92,28 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="keydown">
+				var $form = $.AppContext.utils.getById('client_form');
+				var $source = $event.source;
+				
+				var $group = $source.getFirstParent(function($e){
+					return $e.getAttribute("formgroup") == 'shippingAddress';
+				});
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion != null){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getAttribute("group-path");
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
 		</ec:textfield>
 	</ed:col>
 </ed:row>				
@@ -127,6 +149,28 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="change">
+				var $form = $.AppContext.utils.getById('client_form');
+				var $source = $event.source;
+				
+				var $group = $source.getFirstParent(function($e){
+					return $e.getAttribute("formgroup") == 'shippingAddress';
+				});
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion != null){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getAttribute("group-path");
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
 		</ec:select>
 	</ed:col>					
 	<ed:col size="6" classStyle="form-group has-feedback">
@@ -156,6 +200,28 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="keydown">
+				var $form = $.AppContext.utils.getById('client_form');
+				var $source = $event.source;
+				
+				var $group = $source.getFirstParent(function($e){
+					return $e.getAttribute("formgroup") == 'shippingAddress';
+				});
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion != null){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getAttribute("group-path");
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
 		</ec:textfield>
 	</ed:col>
 	<ed:col size="1" classStyle="form-group has-feedback">
@@ -181,6 +247,28 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="keydown">
+				var $form = $.AppContext.utils.getById('client_form');
+				var $source = $event.source;
+				
+				var $group = $source.getFirstParent(function($e){
+					return $e.getAttribute("formgroup") == 'shippingAddress';
+				});
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion != null){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getAttribute("group-path");
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
 		</ec:textfield>
 	</ed:col>
 	<ed:col size="2" classStyle="form-group has-feedback">
@@ -210,6 +298,28 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="keydown">
+				var $form = $.AppContext.utils.getById('client_form');
+				var $source = $event.source;
+				
+				var $group = $source.getFirstParent(function($e){
+					return $e.getAttribute("formgroup") == 'shippingAddress';
+				});
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion != null){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getAttribute("group-path");
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
 		</ec:textfield>
 	</ed:col>
 	<ed:col size="1" classStyle="form-group has-feedback">
@@ -235,6 +345,37 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="keyup">
+				var $form = $.AppContext.utils.getById('client_form');
+				var $source = $event.source;
+				
+				var $group = $source.getFirstParent(function($e){
+					return $e.getAttribute("formgroup") == 'shippingAddress';
+				});
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion != null){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getAttribute("group-path");
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
 		</ec:textfield>
 	</ed:col>
 </ed:row>
+<script language="javascript">
+	$.AppContext.onload(function(){
+	
+		var $formObj = $.AppContext.utils.getById('client_form');
+		$formObj.updateFieldIndex();
+		$formObj.updateFieldNames();
+		
+	});
+</script>

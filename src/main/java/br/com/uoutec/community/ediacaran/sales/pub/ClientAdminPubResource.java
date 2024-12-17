@@ -293,6 +293,7 @@ public class ClientAdminPubResource {
 		
 		try{
 			clientRegistry.registerClient(client);
+			
 			for(Address e: shippingAddress) {
 				e.setType(Client.SHIPPING);
 				clientRegistry.registerAddress(e, client);

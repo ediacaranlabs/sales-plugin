@@ -36,8 +36,8 @@ public class Client extends SystemUser{
 		this.zip = user.getZip();
 
 		if(user.getAddData() != null) {
-			this.useDefaultBillingAddress = "true".equals(user.getAddData().get("useDefaultBillingAddress"));
-			this.useDefaultShippingAddress = "true".equals(user.getAddData().get("useDefaultShippingAddress"));
+			this.useDefaultBillingAddress = "true".equals(user.getAddData().get("useDefaultBillingAddress")) || user.getAddData().get("useDefaultBillingAddress") == null;
+			this.useDefaultShippingAddress = "true".equals(user.getAddData().get("useDefaultShippingAddress")) || user.getAddData().get("useDefaultShippingAddress") == null;
 		}
 		
 	}

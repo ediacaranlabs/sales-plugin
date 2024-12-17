@@ -6,17 +6,13 @@
 
 <span formgroup="shippingAddress" formgrouptype="index">
 	<ec:accordion>
-		<ec:accordion-item title="">
+		<ec:accordion-item title="${address.address} ${address.complement} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}">
 			<jsp:include page="address.jsp"/>
+			<ed:row>
+				<ed:col>
+					<ec:checkbox label="Remove" value="true" name="deleted" align="right"/>
+				</ed:col>
+			</ed:row>
 		</ec:accordion-item>
 	</ec:accordion>					
 </span>
-<script language="javascript">
-	$.AppContext.onload(function(){
-	
-		var $formObj = $.AppContext.utils.getById('client_form');
-		$formObj.updateFieldIndex();
-		$formObj.updateFieldNames();
-		
-	});
-</script>

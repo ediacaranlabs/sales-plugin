@@ -28,6 +28,19 @@
 		$shippingAddress.setValue('${shippingAddress.protectedID}');
 		</c:forEach>
 		
+		var $shippingAddressList = $.AppContext.utils.getById('shippingAddressList');
+		var $addressList = $shippingAddressList.search(function($e){
+			return $e.getAttribute("formgroup") == 'shippingAddress';
+		});
+		
+		for (let $addr of $addressList){
+			let $path = $addr.getAttribute("group-path");
+			let $deleted = $form.getField($path + ".deleted");
+			
+			if($deleted.getValue()){
+				$addr.remove();
+			}
+		}
 	});
 	</script>
 	<ec:alert style="success">

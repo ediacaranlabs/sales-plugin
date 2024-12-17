@@ -185,6 +185,14 @@ public class ClientRegistryImp
 		address.setOwner(client.getId());
 		
 		try{
+			if(Client.BILLING.equals(address.getType()) && address.getId() == null){
+				List<Address> list = addressEntityAccess.getList(client, Client.BILLING);
+				
+				for(Address e: list) {
+					addressEntityAccess.delete(e);
+				}
+
+			}
 			
 			if(address.getId() == null) {
 				addressEntityAccess.save(address);
@@ -192,11 +200,31 @@ public class ClientRegistryImp
 			else {
 				addressEntityAccess.update(address);
 			}
+			
 			addressEntityAccess.flush();
     	}
     	catch(Throwable e){
     		throw new ClientRegistryException(e);
     	}
+	}
+
+	@Override
+	public void removeAddress(Client value, String type) throws ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
+		
+		try {
+			List<Address> list = addressEntityAccess.getList(value, type);
+			
+			for(Address e: list) {
+				addressEntityAccess.delete(e);
+			}
+			addressEntityAccess.flush();
+		}
+		catch(EntityAccessException e) {
+			throw new ClientRegistryException(e.getMessage(), e);
+		}
+
 	}
 
 	@Override
@@ -231,7 +259,7 @@ public class ClientRegistryImp
     		throw new ClientRegistryException(e);
     	}
 	}
-
+	
 	@Override
 	public Address getAddressByID(int id) throws ClientRegistryException {
 
