@@ -211,7 +211,7 @@ public class ClientAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction editNewView(
-			@DetachedName
+			@Basic(bean="client")
 			ClientPubEntity clientPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {

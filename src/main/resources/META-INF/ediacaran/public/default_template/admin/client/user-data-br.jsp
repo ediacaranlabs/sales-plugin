@@ -155,7 +155,6 @@
 	</ed:col>
 	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:select
-			id="user_country"
 			name="country.isoAlpha3"
 			label="#{form.country}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
@@ -185,22 +184,21 @@
 				</ec:field-validator-rule>
 			</ec:field-validator>
 			<ec:event type="change">
-				var $form = $event.source.getFirstParent(function($e){
-					return $e.getTagName() == 'form';
-				});
-				
-				if($form == null){
-					return;
-				}
-				
-				var $countryField = $form.getField('country.isoAlpha3');
+				var $source = $event.source;
+				var $form = $source.getForm();
+				var $countryField = $form.getField($source.getAttribute('name'));
 				var $country = $countryField.getValue();
+				var $group = $source.getFormGroup();
 				
 				if($country){
 					$form.submit(
 						false, 
 						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit", 
-						"client_data_view"
+						$group.getAttribute("id"),
+						function($r){
+							$form.updateFieldIndex();
+							$form.updateFieldNames();
+						}
 					);
 				}
 			</ec:event>

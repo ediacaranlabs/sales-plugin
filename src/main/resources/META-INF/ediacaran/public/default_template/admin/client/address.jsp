@@ -92,19 +92,17 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
-			<ec:event type="keydown">
-				var $form = $.AppContext.utils.getById('client_form');
+			<ec:event type="keyup">
 				var $source = $event.source;
+				var $form = $source.getForm();
 				
-				var $group = $source.getFirstParent(function($e){
-					return $e.getAttribute("formgroup") == 'shippingAddress';
-				});
+				var $group = $source.getFormGroup();
 				
 				var $accordion = $group.getFirstChild();
 				
-				if($accordion != null){
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
-					var $path = $group.getAttribute("group-path");
+					var $path = $group.getPath();
 					var $address = $form.getField($path + ".address");
 					var $complement = $form.getField($path + ".complement");
 					var $city = $form.getField($path + ".city");
@@ -149,19 +147,17 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
-			<ec:event type="change">
-				var $form = $.AppContext.utils.getById('client_form');
+			<ec:event type="keyup">
 				var $source = $event.source;
+				var $form = $source.getForm();
 				
-				var $group = $source.getFirstParent(function($e){
-					return $e.getAttribute("formgroup") == 'shippingAddress';
-				});
+				var $group = $source.getFormGroup();
 				
 				var $accordion = $group.getFirstChild();
 				
-				if($accordion != null){
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
-					var $path = $group.getAttribute("group-path");
+					var $path = $group.getPath();
 					var $address = $form.getField($path + ".address");
 					var $complement = $form.getField($path + ".complement");
 					var $city = $form.getField($path + ".city");
@@ -245,19 +241,17 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
-			<ec:event type="keydown">
-				var $form = $.AppContext.utils.getById('client_form');
+			<ec:event type="keyup">
 				var $source = $event.source;
+				var $form = $source.getForm();
 				
-				var $group = $source.getFirstParent(function($e){
-					return $e.getAttribute("formgroup") == 'shippingAddress';
-				});
+				var $group = $source.getFormGroup();
 				
 				var $accordion = $group.getFirstChild();
 				
-				if($accordion != null){
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
-					var $path = $group.getAttribute("group-path");
+					var $path = $group.getPath();
 					var $address = $form.getField($path + ".address");
 					var $complement = $form.getField($path + ".complement");
 					var $city = $form.getField($path + ".city");
@@ -296,19 +290,17 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
-			<ec:event type="keydown">
-				var $form = $.AppContext.utils.getById('client_form');
+			<ec:event type="keyup">
 				var $source = $event.source;
+				var $form = $source.getForm();
 				
-				var $group = $source.getFirstParent(function($e){
-					return $e.getAttribute("formgroup") == 'shippingAddress';
-				});
+				var $group = $source.getFormGroup();
 				
 				var $accordion = $group.getFirstChild();
 				
-				if($accordion != null){
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
-					var $path = $group.getAttribute("group-path");
+					var $path = $group.getPath();
 					var $address = $form.getField($path + ".address");
 					var $complement = $form.getField($path + ".complement");
 					var $city = $form.getField($path + ".city");
@@ -344,18 +336,16 @@
 				</ec:field-validator-rule>
 			</ec:field-validator>
 			<ec:event type="keyup">
-				var $form = $.AppContext.utils.getById('client_form');
 				var $source = $event.source;
+				var $form = $source.getForm();
 				
-				var $group = $source.getFirstParent(function($e){
-					return $e.getAttribute("formgroup") == 'shippingAddress';
-				});
+				var $group = $source.getFormGroup();
 				
 				var $accordion = $group.getFirstChild();
 				
-				if($accordion != null){
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
-					var $path = $group.getAttribute("group-path");
+					var $path = $group.getPath();
 					var $address = $form.getField($path + ".address");
 					var $complement = $form.getField($path + ".complement");
 					var $city = $form.getField($path + ".city");
