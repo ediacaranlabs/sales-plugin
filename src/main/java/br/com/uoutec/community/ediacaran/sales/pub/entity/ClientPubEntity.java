@@ -114,11 +114,18 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
 			o.setUseDefaultShippingAddress(useDefaultShippingAddress == null? false : useDefaultShippingAddress);
 		}
+		
 	}
 	
 	protected SystemUser reloadEntity() throws Throwable {
 		ClientRegistry registry = EntityContextPlugin.getEntity(ClientRegistry.class);
-		return registry.findById(super.getId());
+		Client user = registry.findById(super.getId());
+		
+		if(user != null && !user.getClass().isAssignableFrom(Client.class)) {
+			user = new Client(user);
+		}
+		return user;
+		
 	}
 	
 	@Override

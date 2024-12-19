@@ -123,7 +123,6 @@
 <ed:row>
 	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:select
-			id="user_country"
 			name="country.isoAlpha3"
 			label="#{form.country}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
@@ -163,11 +162,7 @@
 					$form.submit(
 						false, 
 						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit", 
-						$group.getAttribute("id"),
-						function($r){
-							$form.updateFieldIndex();
-							$form.updateFieldNames();
-						}
+						$group.getAttribute("id")
 					);
 				}
 			</ec:event>

@@ -98,7 +98,7 @@
 		<ec:textfield 
 			name="data.document"
 			label="#{form.document}"
-			value="${empty vars.client.addData['document']? '' : '***********'}"
+			value="${empty vars.client.document? '' : '***********'}"
 			placeholder="#{form.document.placeholder}"
 			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:DOCUMENT'])}"
 			bundle="${messages}">
@@ -194,11 +194,7 @@
 					$form.submit(
 						false, 
 						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit", 
-						$group.getAttribute("id"),
-						function($r){
-							$form.updateFieldIndex();
-							$form.updateFieldNames();
-						}
+						$group.getAttribute("id")
 					);
 				}
 			</ec:event>

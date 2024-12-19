@@ -8,6 +8,9 @@ import org.brandao.brutos.annotation.Constructor;
 
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientBR;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritance;
@@ -78,17 +81,19 @@ public class ClientBRPubEntity extends ClientPubEntity{
 
 		super.copyTo(o, reload, override, validate);
 		
-		if(!(o instanceof SystemUserBR)) {
+		if(!(o instanceof ClientBR)) {
 			return;
 		}
 		
-		SystemUserBR e = (SystemUserBR)o;
+		ClientBR e = (ClientBR)o;
 
 		SubjectProvider subjectProvider = EntityContextPlugin.getEntity(SubjectProvider.class); 
 		Subject subject = subjectProvider.getSubject();
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.DOCUMENT)) {
-			e.setDocument(this.document);
+			if(this.document != null && !EMPTY_DOCUMENT.equals(this.document)) {
+				e.setDocument(this.document);
+			}
 		}
 		
 	}
@@ -103,9 +108,20 @@ public class ClientBRPubEntity extends ClientPubEntity{
 		}
 	}
 	
+	protected SystemUser reloadEntity() throws Throwable {
+		ClientRegistry registry = EntityContextPlugin.getEntity(ClientRegistry.class);
+		Client user = registry.findById(super.getId());
+		
+		if(user != null && !(user instanceof ClientBR)) {
+			user = new ClientBR(user);
+		}
+		
+		return user;
+	}
+	
 	@Override
 	protected SystemUser createNewInstance() throws Throwable {
-		return new SystemUserBR();
+		return new ClientBR();
 	}
 	
 }

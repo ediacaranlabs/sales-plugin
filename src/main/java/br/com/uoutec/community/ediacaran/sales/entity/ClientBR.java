@@ -20,8 +20,10 @@ public class ClientBR extends Client{
 
 	public ClientBR(SystemUser userBR) {
 		super(userBR);
-		SystemUserBR user = (SystemUserBR)userBR;
-		this.document = user.getDocument();
+		if(userBR instanceof SystemUserBR) {
+			SystemUserBR user = (SystemUserBR)userBR;
+			this.document = user.getDocument();
+		}
 	}
 	
 	public String getDocument() {
