@@ -22,7 +22,7 @@ public class ClientBR extends Client{
 		super(userBR);
 		if(userBR instanceof SystemUserBR) {
 			SystemUserBR user = (SystemUserBR)userBR;
-			this.document = user.getDocument();
+			this.setDocument(user.getDocument());
 		}
 	}
 	
@@ -35,7 +35,7 @@ public class ClientBR extends Client{
 	}
 
 	public boolean isComplete() {
-		return super.isComplete() && DocumentUtil.isValidCPF_CNPJ(document);
+		return super.isComplete() && DocumentUtil.isValidCPF_CNPJ(document == null? null : document );
 	}
 	
 }
