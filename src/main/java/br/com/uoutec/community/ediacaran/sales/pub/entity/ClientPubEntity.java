@@ -121,9 +121,11 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		ClientRegistry registry = EntityContextPlugin.getEntity(ClientRegistry.class);
 		Client user = registry.findById(super.getId());
 		
+		/*
 		if(user != null && !user.getClass().isAssignableFrom(Client.class)) {
 			user = new Client(user);
 		}
+		*/
 		return user;
 		
 	}
