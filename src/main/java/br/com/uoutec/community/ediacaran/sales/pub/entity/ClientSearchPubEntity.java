@@ -14,6 +14,9 @@ public class ClientSearchPubEntity extends AbstractPubEntity<ClientSearch> {
 	private static final long serialVersionUID = 7674988526885634067L;
 
 	@Pattern(regexp=CommonValidation.NAME_FORMAT)
+	private String fullName;
+	
+	@Pattern(regexp=CommonValidation.NAME_FORMAT)
 	private String firstName;
 	
 	@Pattern(regexp=CommonValidation.NAME_FORMAT)
@@ -33,6 +36,14 @@ public class ClientSearchPubEntity extends AbstractPubEntity<ClientSearch> {
 	@Max(100)
 	private Integer resultPerPage;
 	
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -116,6 +127,7 @@ public class ClientSearchPubEntity extends AbstractPubEntity<ClientSearch> {
 	@Override
 	protected void copyTo(ClientSearch o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
+		o.setFullName(fullName);
 		o.setCity(city);
 		o.setCountry(country);
 		o.setEmail(email);

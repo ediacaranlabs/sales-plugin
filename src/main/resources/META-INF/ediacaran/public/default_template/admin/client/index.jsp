@@ -28,26 +28,18 @@
 		<ec:data-table id="client_search_form" 
 			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/search">
 			<ed:row>
-				<ed:col size="4">
+				<ed:col size="3">
 	    			<ec:textfield 
-	    				label="First Name"
-	    				name="firstName" 
+	    				label="Name"
+	    				name="fullName" 
 	    				bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="4">
-	    			<ec:textfield 
-	    				label="Last Name"
-	    				name="lastName" 
-	    				bundle="${messages}"/>
-				</ed:col>
-				<ed:col size="4">
+				<ed:col size="3">
 	    			<ec:textfield 
 	    				label="Email"
 	    				name="email" 
 	    				bundle="${messages}"/>
 				</ed:col>
-			</ed:row>
-			<ed:row>
 				<ed:col size="3">
 	    			<ec:select label="Country" name="country">
 	    				<ec:option value="">Select a Country</ec:option>
@@ -61,8 +53,6 @@
 	    				label="City"
 	    				name="city" 
 	    				bundle="${messages}"/>
-				</ed:col>
-				<ed:col size="6">
 				</ed:col>
 			</ed:row>
 			<ed:row>

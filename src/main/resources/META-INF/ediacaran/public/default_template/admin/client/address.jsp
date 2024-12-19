@@ -7,7 +7,7 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <input type="hidden" value="${address.protectedID}" name="protectedID">
 <ed:row>
-	<ed:col size="5" classStyle="form-group has-feedback">
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="firstName"
 			value="${address.firstName}"
@@ -36,7 +36,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="5" classStyle="form-group has-feedback">
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="lastName"
 			value="${address.lastName}"
@@ -65,6 +65,8 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
+</ed:row>				
+<ed:row>
 	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="zip"
@@ -114,9 +116,103 @@
 			</ec:event>
 		</ec:textfield>
 	</ed:col>
-</ed:row>				
-<ed:row style="form">
-	<ed:col size="2" classStyle="form-group has-feedback">
+	<ed:col size="10" classStyle="form-group has-feedback">
+		<ec:textfield 
+			name="address"
+			value="${address.address}"
+			label="#{form.address}"
+			placeholder="#{form.address.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
+			bundle="${messages}">
+			<ec:field-validator form="client_form">
+				<ec:field-validator-rule 
+					name="notEmpty" 
+					message="#{form.address.validation.not_empty}" 
+					bundle="${messages}"/>
+				<ec:field-validator-rule 
+					name="regexp"
+					message="#{form.address.validation.regexp}"
+					bundle="${messages}">
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+				</ec:field-validator-rule>
+				<ec:field-validator-rule 
+					name="stringLength" 
+					message="#{form.address.validation.string_length}" 
+					bundle="${messages}">
+						<ec:field-validator-param name="min">3</ec:field-validator-param>
+						<ec:field-validator-param name="max">60</ec:field-validator-param>
+				</ec:field-validator-rule>
+			</ec:field-validator>
+			<ec:event type="keyup">
+				var $source = $event.source;
+				var $form = $source.getForm();
+				
+				var $group = $source.getFormGroup();
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getPath();
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
+		</ec:textfield>
+	</ed:col>
+</ed:row>
+<ed:row>
+	<ed:col size="3" classStyle="form-group has-feedback">
+		<ec:textfield 
+			name="complement"
+			value="${address.complement}"
+			label="#{form.complement}"
+			placeholder="#{form.complement.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
+			bundle="${messages}">
+			<ec:field-validator form="client_form">
+				<ec:field-validator-rule 
+					name="regexp"
+					message="#{form.complement.validation.regexp}"
+					bundle="${messages}">
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+				</ec:field-validator-rule>
+				<ec:field-validator-rule 
+					name="stringLength" 
+					message="#{form.complement.validation.string_length}" 
+					bundle="${messages}">
+						<ec:field-validator-param name="min">3</ec:field-validator-param>
+						<ec:field-validator-param name="max">60</ec:field-validator-param>
+				</ec:field-validator-rule>
+			</ec:field-validator>
+			<ec:event type="keyup">
+				var $source = $event.source;
+				var $form = $source.getForm();
+				
+				var $group = $source.getFormGroup();
+				
+				var $accordion = $group.getFirstChild();
+				
+				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+					var $item = $accordion.getItens()[0];
+					var $path = $group.getPath();
+					var $address = $form.getField($path + ".address");
+					var $complement = $form.getField($path + ".complement");
+					var $city = $form.getField($path + ".city");
+					var $region = $form.getField($path + ".region");
+					var $country = $form.getField($path + ".country.isoAlpha3");
+					var $zip = $form.getField($path + ".zip");
+					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+				}
+			</ec:event>
+		</ec:textfield>
+	</ed:col>
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:select
 			name="country.isoAlpha3"
 			value="${address.country.isoAlpha3}"
@@ -168,29 +264,25 @@
 				}
 			</ec:event>
 		</ec:select>
-	</ed:col>					
-	<ed:col size="6" classStyle="form-group has-feedback">
+	</ed:col>
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="address"
-			value="${address.address}"
-			label="#{form.address}"
-			placeholder="#{form.address.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
+			name="region"
+			value="${address.region}"
+			label="#{form.region}"
+			placeholder="#{form.region.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
-					name="notEmpty" 
-					message="#{form.address.validation.not_empty}" 
-					bundle="${messages}"/>
-				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.address.validation.regexp}"
+					message="#{form.region.validation.regexp}"
 					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.address.validation.string_length}" 
+					message="#{form.region.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
@@ -218,52 +310,7 @@
 			</ec:event>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="1" classStyle="form-group has-feedback">
-		<ec:textfield 
-			name="complement"
-			value="${address.complement}"
-			label="#{form.complement}"
-			placeholder="#{form.complement.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
-			bundle="${messages}">
-			<ec:field-validator form="client_form">
-				<ec:field-validator-rule 
-					name="regexp"
-					message="#{form.complement.validation.regexp}"
-					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
-				</ec:field-validator-rule>
-				<ec:field-validator-rule 
-					name="stringLength" 
-					message="#{form.complement.validation.string_length}" 
-					bundle="${messages}">
-						<ec:field-validator-param name="min">3</ec:field-validator-param>
-						<ec:field-validator-param name="max">60</ec:field-validator-param>
-				</ec:field-validator-rule>
-			</ec:field-validator>
-			<ec:event type="keyup">
-				var $source = $event.source;
-				var $form = $source.getForm();
-				
-				var $group = $source.getFormGroup();
-				
-				var $accordion = $group.getFirstChild();
-				
-				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
-					var $item = $accordion.getItens()[0];
-					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
-					var $city = $form.getField($path + ".city");
-					var $region = $form.getField($path + ".region");
-					var $country = $form.getField($path + ".country.isoAlpha3");
-					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
-				}
-			</ec:event>
-		</ec:textfield>
-	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="city"
 			value="${address.city}"
@@ -312,58 +359,4 @@
 			</ec:event>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="1" classStyle="form-group has-feedback">
-		<ec:textfield 
-			name="region"
-			value="${address.region}"
-			label="#{form.region}"
-			placeholder="#{form.region.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
-			bundle="${messages}">
-			<ec:field-validator form="client_form">
-				<ec:field-validator-rule 
-					name="regexp"
-					message="#{form.region.validation.regexp}"
-					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
-				</ec:field-validator-rule>
-				<ec:field-validator-rule 
-					name="stringLength" 
-					message="#{form.region.validation.string_length}" 
-					bundle="${messages}">
-						<ec:field-validator-param name="min">3</ec:field-validator-param>
-						<ec:field-validator-param name="max">60</ec:field-validator-param>
-				</ec:field-validator-rule>
-			</ec:field-validator>
-			<ec:event type="keyup">
-				var $source = $event.source;
-				var $form = $source.getForm();
-				
-				var $group = $source.getFormGroup();
-				
-				var $accordion = $group.getFirstChild();
-				
-				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
-					var $item = $accordion.getItens()[0];
-					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
-					var $city = $form.getField($path + ".city");
-					var $region = $form.getField($path + ".region");
-					var $country = $form.getField($path + ".country.isoAlpha3");
-					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
-				}
-			</ec:event>
-		</ec:textfield>
-	</ed:col>
 </ed:row>
-<script language="javascript">
-	$.AppContext.onload(function(){
-	
-		var $formObj = $.AppContext.utils.getById('client_form');
-		$formObj.updateFieldIndex();
-		$formObj.updateFieldNames();
-		
-	});
-</script>
