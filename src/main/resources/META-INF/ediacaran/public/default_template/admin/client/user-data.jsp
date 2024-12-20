@@ -128,26 +128,26 @@
 	</ed:col>
 	<ed:col size="7" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="address"
-			label="#{form.address}"
-			value="${vars.client.address}"
-			placeholder="#{form.address.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
+			name="addressLine1"
+			label="#{form.address_line1}"
+			value="${vars.client.addressLine1}"
+			placeholder="#{form.address_line1.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
-					message="#{form.address.validation.not_empty}" 
+					message="#{form.address_line1.validation.not_empty}" 
 					bundle="${messages}"/>
 				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.address.validation.regexp}"
+					message="#{form.address_line1.validation.regexp}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.address.validation.string_length}" 
+					message="#{form.address_line1.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
@@ -157,22 +157,22 @@
 	</ed:col>	
 	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="complement"
-			label="#{form.complement}"
-			value="${vars.client.complement}"
-			placeholder="#{form.complement.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
+			name="addressLine2"
+			label="#{form.address_line2}"
+			value="${vars.client.addressLine2}"
+			placeholder="#{form.address_line2.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.complement.validation.regexp}"
+					message="#{form.address_line2.validation.regexp}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.complement.validation.string_length}" 
+					message="#{form.address_line2.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>

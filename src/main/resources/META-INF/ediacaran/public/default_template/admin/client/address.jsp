@@ -114,39 +114,39 @@
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
+					var $addressLine1 = $form.getField($path + ".addressLine1");
+					var $addressLine2 = $form.getField($path + ".addressLine2");
 					var $city = $form.getField($path + ".city");
 					var $region = $form.getField($path + ".region");
 					var $country = $form.getField($path + ".country.isoAlpha3");
 					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+					$item.setTitle($addressLine1.getValue() + " " + $addressLine2.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
 				}
 			</ec:event>
 		</ec:textfield>
 	</ed:col>
 	<ed:col size="10" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="address"
-			value="${address.address}"
-			label="#{form.address}"
-			placeholder="#{form.address.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
+			name="addressLine1"
+			value="${address.addressLine1}"
+			label="#{form.address_line1}"
+			placeholder="#{form.address_line1.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="notEmpty" 
-					message="#{form.address.validation.not_empty}" 
+					message="#{form.address_line1.validation.not_empty}" 
 					bundle="${messages}"/>
 				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.address.validation.regexp}"
+					message="#{form.address_line1.validation.regexp}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.address.validation.string_length}" 
+					message="#{form.address_line1.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
@@ -163,13 +163,13 @@
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
+					var $addressLine1 = $form.getField($path + ".addressLine1");
+					var $addressLine2 = $form.getField($path + ".addressLine2");
 					var $city = $form.getField($path + ".city");
 					var $region = $form.getField($path + ".region");
 					var $country = $form.getField($path + ".country.isoAlpha3");
 					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+					$item.setTitle($addressLine1.getValue() + " " + $addressLine2.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
 				}
 			</ec:event>
 		</ec:textfield>
@@ -178,22 +178,22 @@
 <ed:row>
 	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="complement"
-			value="${address.complement}"
-			label="#{form.complement}"
-			placeholder="#{form.complement.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
+			name="addressLine2"
+			value="${address.addressLine2}"
+			label="#{form.address_line2}"
+			placeholder="#{form.address_line2.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.complement.validation.regexp}"
+					message="#{form.address_line2.validation.regexp}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.complement.validation.string_length}" 
+					message="#{form.address_line2.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
@@ -210,13 +210,13 @@
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
+					var $addressLine1 = $form.getField($path + ".addressLine1");
+					var $addressLine2 = $form.getField($path + ".addressLine2");
 					var $city = $form.getField($path + ".city");
 					var $region = $form.getField($path + ".region");
 					var $country = $form.getField($path + ".country.isoAlpha3");
 					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+					$item.setTitle($addressLine1.getValue() + " " + $addressLine2.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
 				}
 			</ec:event>
 		</ec:textfield>
@@ -263,13 +263,13 @@
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
+					var $addressLine1 = $form.getField($path + ".addressLine1");
+					var $addressLine2 = $form.getField($path + ".addressLine2");
 					var $city = $form.getField($path + ".city");
 					var $region = $form.getField($path + ".region");
 					var $country = $form.getField($path + ".country.isoAlpha3");
 					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+					$item.setTitle($addressLine1.getValue() + " " + $addressLine2.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
 				}
 			</ec:event>
 		</ec:select>
@@ -308,13 +308,13 @@
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
+					var $addressLine1 = $form.getField($path + ".addressLine1");
+					var $addressLine2 = $form.getField($path + ".addressLine2");
 					var $city = $form.getField($path + ".city");
 					var $region = $form.getField($path + ".region");
 					var $country = $form.getField($path + ".country.isoAlpha3");
 					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+					$item.setTitle($addressLine1.getValue() + " " + $addressLine2.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
 				}
 			</ec:event>
 		</ec:textfield>
@@ -357,13 +357,13 @@
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
-					var $address = $form.getField($path + ".address");
-					var $complement = $form.getField($path + ".complement");
+					var $addressLine1 = $form.getField($path + ".addressLine1");
+					var $addressLine2 = $form.getField($path + ".addressLine2");
 					var $city = $form.getField($path + ".city");
 					var $region = $form.getField($path + ".region");
 					var $country = $form.getField($path + ".country.isoAlpha3");
 					var $zip = $form.getField($path + ".zip");
-					$item.setTitle($address.getValue() + " " + $complement.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
+					$item.setTitle($addressLine1.getValue() + " " + $addressLine2.getValue() + " " + $city.getValue() + " " + $region.getValue() + " " + $country.getValue() + " - " + $zip.getValue());
 				}
 			</ec:event>
 		</ec:textfield>

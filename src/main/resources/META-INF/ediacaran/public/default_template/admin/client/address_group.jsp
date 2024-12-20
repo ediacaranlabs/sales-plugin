@@ -6,7 +6,7 @@
 
 <span formgroup="shippingAddress" formgrouptype="index">
 	<ec:accordion>
-		<ec:accordion-item title="${address.address} ${address.complement} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}">
+		<ec:accordion-item title="${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}">
 			<jsp:include page="address.jsp"/>
 			<ed:row>
 				<ed:col>
