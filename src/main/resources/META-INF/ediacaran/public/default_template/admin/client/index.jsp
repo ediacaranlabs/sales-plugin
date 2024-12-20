@@ -12,11 +12,11 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2>Clients</h2>
+				<h2><fmt:message key="title" bundle="${messages}" /></h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
-			<ec:breadcrumb title="Clients" bundle="${messages}">
+			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
 			</ec:breadcrumb>
 		</ed:col>
@@ -30,19 +30,19 @@
 			<ed:row>
 				<ed:col size="3">
 	    			<ec:textfield 
-	    				label="Name"
+	    				label="#{form.fullname}"
 	    				name="fullName" 
 	    				bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="3">
 	    			<ec:textfield 
-	    				label="Email"
+	    				label="#{form.email}"
 	    				name="email" 
 	    				bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="3">
-	    			<ec:select label="Country" name="country">
-	    				<ec:option value="">Select a Country</ec:option>
+	    			<ec:select label="#{form.country}" name="country" bundle="${messages}">
+	    				<ec:option value="" label="#{form.country.empty}" bundle="${messages}"/>
 	    				<c:forEach  items="${vars.countries}" var="country" >
 		    				<ec:option value="${country.isoAlpha3}">${country.name}</ec:option>
 	    				</c:forEach>
@@ -50,30 +50,30 @@
 				</ed:col>
 				<ed:col size="3">
 	    			<ec:textfield 
-	    				label="City"
+	    				label="#{form.city}"
 	    				name="city" 
 	    				bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			<ed:row>
 				<ed:col>
-					<ec:button icon="search" label="Search"  actionType="submit" align="right"/>
+					<ec:button icon="search" label="#{form.search}"  actionType="submit" align="right" bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			<ec:data-result var="response">
 			<ec:table style="striped">
 				<ec:table-header>
 					<ec:table-col>
-						<b>First name</b>
+						<b><fmt:message key="form.result.title.first_name" bundle="${messages}" /></b>
 					</ec:table-col>
 					<ec:table-col>
-						<b>Last name</b>
+						<b><fmt:message key="form.result.title.last_name" bundle="${messages}" /></b>
 					</ec:table-col>
 					<ec:table-col>
-						<b>email</b>
+						<b><fmt:message key="form.result.title.email" bundle="${messages}" /></b>
 					</ec:table-col>
 					<ec:table-col>
-						<b>Country</b>
+						<b><fmt:message key="form.result.title.country" bundle="${messages}" /></b>
 					</ec:table-col>
 					<ec:table-col>
 					</ec:table-col>
@@ -94,7 +94,7 @@
 						!{item.country.name}
 					</ec:table-col>
 					<ec:table-col>
-						<ec:button label="Edit" icon="pencil" align="right" actionType="button" >
+						<ec:button label="#{form.result.button.edit}" icon="pencil" align="right" actionType="button" bundle="${messages}">
 						<ec:event type="click">
 							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit/!{item.protectedID}');
 						</ec:event>
