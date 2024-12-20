@@ -3,6 +3,8 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" prefix="ed"%>
+<ec:setTemplatePackage name="admin"/>
+<ec:setBundle var="messages" locale="${locale}"/>
 
 <span formgroup="shippingAddress" formgrouptype="index">
 	<ec:accordion>
@@ -10,7 +12,7 @@
 			<jsp:include page="address.jsp"/>
 			<ed:row>
 				<ed:col>
-					<ec:checkbox label="Remove" value="true" name="deleted" align="right"/>
+					<ec:checkbox label="#{remove.label}" value="true" name="deleted" align="right" bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 		</ec:accordion-item>
