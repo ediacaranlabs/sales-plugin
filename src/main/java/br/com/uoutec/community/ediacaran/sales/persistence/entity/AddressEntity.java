@@ -45,11 +45,11 @@ public class AddressEntity implements PublicType, Serializable{
 	@Column(name="set_type", length=32)
 	private String type;
 	
-	@Column(name="dsc_address", length=128)
-	private String address;
+	@Column(name="dsc_address_l1", length=128)
+	private String addressLine1;
 
-	@Column(name="dsc_complement", length=68)
-	private String complement;
+	@Column(name="dsc_address_l2", length=68)
+	private String addressLine2;
 
 	@Column(name="dsc_city", length=68)
 	private String city;
@@ -68,9 +68,9 @@ public class AddressEntity implements PublicType, Serializable{
 		this.lastName       = e.getLastName();
 		this.type           = e.getType();
 		this.systemUserID   = e.getOwner();
-		this.address        = e.getAddress();
+		this.addressLine1   = e.getAddressLine1();
 		this.city           = e.getCity();
-		this.complement     = e.getComplement();
+		this.addressLine2   = e.getAddressLine2();
 		this.country        = e.getCountry() == null? null : new CountryHibernateEntity(e.getCountry());
 		this.region         = e.getRegion();
 		this.zip            = e.getZip();
@@ -101,20 +101,37 @@ public class AddressEntity implements PublicType, Serializable{
 		this.country = country;
 	}
 
-	public String getAddress() {
-		return address;
+
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getComplement() {
-		return complement;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setComplement(String complement) {
-		this.complement = complement;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getAddressLine1() {
+		return addressLine1;
+	}
+
+	public void setAddressLine1(String addressLine1) {
+		this.addressLine1 = addressLine1;
+	}
+
+	public String getAddressLine2() {
+		return addressLine2;
+	}
+
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
 	}
 
 	public String getCity() {
@@ -163,9 +180,9 @@ public class AddressEntity implements PublicType, Serializable{
 			
 			e.setFirstName(this.firstName);
 			e.setLastName(this.lastName);
-			e.setAddress(this.address);
+			e.setAddressLine1(this.addressLine1);
 			e.setCity(this.city);
-			e.setComplement(this.complement);
+			e.setAddressLine2(this.addressLine2);
 			e.setCountry(this.country == null? null : this.country.toEntity());
 			e.setRegion(this.region);
 			e.setZip(this.zip);

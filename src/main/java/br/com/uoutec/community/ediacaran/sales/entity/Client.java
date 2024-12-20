@@ -20,9 +20,9 @@ public class Client extends SystemUser{
 	public Client(SystemUser user) {
 		this.activated = user.isActivated();
 		this.addData = user.getAddData();
-		this.address = user.getAddress();
+		this.addressLine1 = user.getAddressLine1();
 		this.city = user.getCity();
-		this.complement = user.getComplement();
+		this.addressLine2 = user.getAddressLine2();
 		this.country = user.getCountry();
 		this.email = user.getEmail();
 		this.firstName = user.getFirstName();

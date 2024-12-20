@@ -45,10 +45,10 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 	
 	@NotNull(groups={DataValidation.class})
 	@Pattern(regexp=CommonValidation.ADDRESS_FORMAT, groups={DataValidation.class})
-	private String address;
+	private String addressLine1;
 	
 	@Pattern(regexp=CommonValidation.ADDRESS_FORMAT, groups={DataValidation.class})
-	private String complement;
+	private String addressLine2;
 	
 	@NotNull(groups={DataValidation.class})
 	@Pattern(regexp=CommonValidation.NAME_FORMAT, groups={DataValidation.class})
@@ -69,9 +69,9 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 	
 	public AddressPubEntity(Address e, Locale locale){
 		this.protectedID = e.getProtectedID();
-		this.address = e.getAddress();
+		this.addressLine1 = e.getAddressLine1();
 		this.city = e.getCity();
-		this.complement = e.getComplement();
+		this.addressLine2 = e.getAddressLine2();
 		
 		this.country = e.getCountry() == null? null : new CountryPubEntity(e.getCountry(), locale);
 		this.id = e.getId();
@@ -96,20 +96,20 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 		this.country = country;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getAddressLine1() {
+		return addressLine1;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setAddressLine1(String addressLine1) {
+		this.addressLine1 = addressLine1;
 	}
 
-	public String getComplement() {
-		return complement;
+	public String getAddressLine2() {
+		return addressLine2;
 	}
 
-	public void setComplement(String complement) {
-		this.complement = complement;
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
 	}
 
 	public String getCity() {
@@ -221,16 +221,16 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 			o.setLastName(this.lastName);
 		}
 		
-		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ADDRESS)) {
-			o.setAddress(this.address);
+		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ADDRESS_LINE1)) {
+			o.setAddressLine1(this.addressLine1);
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.CITY)) {
 			o.setCity(this.city);
 		}
 		
-		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.COMPLEMENT)) {
-			o.setComplement(this.complement);
+		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ADDRESS_LINE2)) {
+			o.setAddressLine2(this.addressLine2);
 		}
 		
 		if(country != null && subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.COUNTRY)) {

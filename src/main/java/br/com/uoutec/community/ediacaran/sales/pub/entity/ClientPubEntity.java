@@ -75,16 +75,16 @@ public class ClientPubEntity extends SystemUserPubEntity{
 			o.setLastName(super.getLastName());
 		}
 		
-		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ADDRESS)) {
-			o.setAddress(super.getAddress());
+		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ADDRESS_LINE1)) {
+			o.setAddressLine1(super.getAddressLine1());
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.CITY)) {
 			o.setCity(super.getCity());
 		}
 		
-		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.COMPLEMENT)) {
-			o.setComplement(super.getComplement());
+		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.ADDRESS_LINE2)) {
+			o.setAddressLine2(super.getAddressLine2());
 		}
 		
 		if(super.getCountry() != null && subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.COUNTRY)) {

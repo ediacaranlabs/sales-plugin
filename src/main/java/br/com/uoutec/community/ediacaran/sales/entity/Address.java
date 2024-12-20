@@ -35,10 +35,10 @@ public class Address implements Serializable{
 	
 	@NotNull(groups={DataValidation.class})
 	@Pattern(regexp=CommonValidation.ADDRESS_FORMAT)
-	protected String address;
+	protected String addressLine1;
 	
 	@Pattern(regexp=CommonValidation.ADDRESS_FORMAT)
-	protected String complement;
+	protected String addressLine2;
 	
 	@NotNull(groups={DataValidation.class})
 	@Pattern(regexp=CommonValidation.NAME_FORMAT)
@@ -109,20 +109,21 @@ public class Address implements Serializable{
 		this.country = country;
 	}
 
-	public String getAddress() {
-		return address;
+
+	public String getAddressLine1() {
+		return addressLine1;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setAddressLine1(String addressLine1) {
+		this.addressLine1 = addressLine1;
 	}
 
-	public String getComplement() {
-		return complement;
+	public String getAddressLine2() {
+		return addressLine2;
 	}
 
-	public void setComplement(String complement) {
-		this.complement = complement;
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
 	}
 
 	public String getCity() {
