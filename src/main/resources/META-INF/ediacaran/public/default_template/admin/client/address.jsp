@@ -6,6 +6,15 @@
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 <input type="hidden" value="${address.protectedID}" name="protectedID">
+<script language="javascript">
+	$.AppContext.onload(function(){
+	
+		var $formObj = $.AppContext.utils.getById('client_form');
+		$formObj.updateFieldIndex();
+		$formObj.updateFieldNames();
+		
+	});
+</script>
 <ed:row>
 	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield 
@@ -360,12 +369,3 @@
 		</ec:textfield>
 	</ed:col>
 </ed:row>
-<script language="javascript">
-	$.AppContext.onload(function(){
-	
-		var $formObj = $.AppContext.utils.getById('client_form');
-		$formObj.updateFieldIndex();
-		$formObj.updateFieldNames();
-		
-	});
-</script>
