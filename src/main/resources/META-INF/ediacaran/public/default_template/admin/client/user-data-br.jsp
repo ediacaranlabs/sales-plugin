@@ -6,8 +6,9 @@
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 <input type="hidden" value="${vars.client.protectedID}" name="protectedID">
-<ed:row>
-	<ed:col size="2" classStyle="form-group has-feedback">
+
+<ed:row style="form">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="email"
 			label="#{form.email}"
@@ -36,7 +37,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="4" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="firstName"
 			label="#{form.first_name}"
@@ -65,7 +66,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="4" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="lastName"
 			label="#{form.last_name}"
@@ -94,7 +95,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="data.document"
 			label="#{form.document}"
@@ -107,7 +108,7 @@
 					name="notEmpty" 
 					message="#{form.document.validation.not_empty}" 
 					bundle="${messages}"/>
-				<c:if test="${empty vars.client.addData['document']}">
+				<c:if test="${empty vars.client.document}">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.document.validation.regexp}"
@@ -115,7 +116,7 @@
 					<ec:field-validator-param name="regexp" raw="true">/^([0-9]{11,11}|[0-9]{14,14})$/</ec:field-validator-param>
 				</ec:field-validator-rule>
 				</c:if>
-				<c:if test="${!empty vars.client.addData['document']}">
+				<c:if test="${!empty vars.client.document}">
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.document.validation.regexp}"
@@ -127,25 +128,29 @@
 		</ec:textfield>
 	</ed:col>
 </ed:row>
-<ed:row>
+<ed:row style="form">
 	<ed:col size="2" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="organization"
-			label="#{form.organization}"
-			value="${vars.client.organization}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ORGANIZATION'])}"
-			placeholder="#{form.organization.placeholder}"
+			name="zip"
+			label="#{form.zip}"
+			value="${vars.client.zip}"
+			placeholder="#{form.zip.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
+					name="notEmpty" 
+					message="#{form.zip.validation.not_empty}" 
+					bundle="${messages}"/>
+				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.organization.validation.regexp}"
+					message="#{form.zip.validation.regexp}"
 					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
+					<ec:field-validator-param name="regexp" raw="true">/^[0-9]{3,}$/</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.organization.validation.string_length}" 
+					message="#{form.zip.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
@@ -153,7 +158,63 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
+	<ed:col size="7" classStyle="form-group has-feedback">
+		<ec:textfield 
+			name="address"
+			label="#{form.address}"
+			value="${vars.client.address}"
+			placeholder="#{form.address.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
+			bundle="${messages}">
+			<ec:field-validator form="client_form">
+				<ec:field-validator-rule 
+					name="notEmpty" 
+					message="#{form.address.validation.not_empty}" 
+					bundle="${messages}"/>
+				<ec:field-validator-rule 
+					name="regexp"
+					message="#{form.address.validation.regexp}"
+					bundle="${messages}">
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+				</ec:field-validator-rule>
+				<ec:field-validator-rule 
+					name="stringLength" 
+					message="#{form.address.validation.string_length}" 
+					bundle="${messages}">
+						<ec:field-validator-param name="min">3</ec:field-validator-param>
+						<ec:field-validator-param name="max">60</ec:field-validator-param>
+				</ec:field-validator-rule>
+			</ec:field-validator>
+		</ec:textfield>
+	</ed:col>	
+	<ed:col size="3" classStyle="form-group has-feedback">
+		<ec:textfield 
+			name="complement"
+			label="#{form.complement}"
+			value="${vars.client.complement}"
+			placeholder="#{form.complement.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
+			bundle="${messages}">
+			<ec:field-validator form="client_form">
+				<ec:field-validator-rule 
+					name="regexp"
+					message="#{form.complement.validation.regexp}"
+					bundle="${messages}">
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+				</ec:field-validator-rule>
+				<ec:field-validator-rule 
+					name="stringLength" 
+					message="#{form.complement.validation.string_length}" 
+					bundle="${messages}">
+						<ec:field-validator-param name="min">3</ec:field-validator-param>
+						<ec:field-validator-param name="max">60</ec:field-validator-param>
+				</ec:field-validator-rule>
+			</ec:field-validator>
+		</ec:textfield>
+	</ed:col>
+</ed:row>
+<ed:row style="form">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:select
 			name="country.isoAlpha3"
 			label="#{form.country}"
@@ -200,28 +261,24 @@
 			</ec:event>
 		</ec:select>
 	</ed:col>
-	<ed:col size="6" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="address"
-			label="#{form.address}"
-			value="${vars.client.address}"
-			placeholder="#{form.address.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS'])}"
+			name="region"
+			label="#{form.region}"
+			value="${vars.client.region}"
+			placeholder="#{form.region.placeholder}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
-					name="notEmpty" 
-					message="#{form.address.validation.not_empty}" 
-					bundle="${messages}"/>
-				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.address.validation.regexp}"
+					message="#{form.region.validation.regexp}"
 					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.address.validation.string_length}" 
+					message="#{form.region.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
@@ -229,34 +286,7 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
-		<ec:textfield 
-			name="complement"
-			label="#{form.complement}"
-			value="${vars.client.complement}"
-			placeholder="#{form.complement.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:COMPLEMENT'])}"
-			bundle="${messages}">
-			<ec:field-validator form="client_form">
-				<ec:field-validator-rule 
-					name="regexp"
-					message="#{form.complement.validation.regexp}"
-					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
-				</ec:field-validator-rule>
-				<ec:field-validator-rule 
-					name="stringLength" 
-					message="#{form.complement.validation.string_length}" 
-					bundle="${messages}">
-						<ec:field-validator-param name="min">3</ec:field-validator-param>
-						<ec:field-validator-param name="max">60</ec:field-validator-param>
-				</ec:field-validator-rule>
-			</ec:field-validator>
-		</ec:textfield>
-	</ed:col>
-</ed:row>
-<ed:row>
-	<ed:col size="6" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
 			name="city"
 			label="#{form.city}"
@@ -285,81 +315,27 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
+	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:textfield 
-			name="region"
-			label="#{form.region}"
-			value="${vars.client.region}"
-			placeholder="#{form.region.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
+			name="organization"
+			label="#{form.organization}"
+			value="${vars.client.organization}"
+			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ORGANIZATION'])}"
+			placeholder="#{form.organization.placeholder}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
 					name="regexp"
-					message="#{form.region.validation.regexp}"
+					message="#{form.organization.validation.regexp}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{form.region.validation.string_length}" 
+					message="#{form.organization.validation.string_length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
-				</ec:field-validator-rule>
-			</ec:field-validator>
-		</ec:textfield>
-	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
-		<ec:textfield 
-			name="zip"
-			label="#{form.zip}"
-			value="${vars.client.zip}"
-			placeholder="#{form.zip.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
-			bundle="${messages}">
-			<ec:field-validator form="client_form">
-				<ec:field-validator-rule 
-					name="notEmpty" 
-					message="#{form.zip.validation.not_empty}" 
-					bundle="${messages}"/>
-				<ec:field-validator-rule 
-					name="regexp"
-					message="#{form.zip.validation.regexp}"
-					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">/^[0-9]{3,}$/</ec:field-validator-param>
-				</ec:field-validator-rule>
-				<ec:field-validator-rule 
-					name="stringLength" 
-					message="#{form.zip.validation.string_length}" 
-					bundle="${messages}">
-						<ec:field-validator-param name="min">3</ec:field-validator-param>
-						<ec:field-validator-param name="max">60</ec:field-validator-param>
-				</ec:field-validator-rule>
-			</ec:field-validator>
-		</ec:textfield>
-	</ed:col>
-	<ed:col size="2" classStyle="form-group has-feedback">
-		<ec:textfield 
-			name="phone"
-			label="#{form.phone}"
-			value="${vars.client.phone}"
-			placeholder="#{form.phone.placeholder}"
-			readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:CLIENT:FIELDS:PHONE'])}"
-			bundle="${messages}">
-			<ec:field-validator form="client_form">
-				<ec:field-validator-rule 
-					name="regexp"
-					message="#{form.phone.validation.regexp}"
-					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">/^[0-9]{3,}$/</ec:field-validator-param>
-				</ec:field-validator-rule>
-				<ec:field-validator-rule 
-					name="stringLength" 
-					message="#{form.phone.validation.string_length}" 
-					bundle="${messages}">
-						<ec:field-validator-param name="min">3</ec:field-validator-param>
-						<ec:field-validator-param name="max">16</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
 		</ec:textfield>

@@ -360,3 +360,12 @@
 		</ec:textfield>
 	</ed:col>
 </ed:row>
+<script language="javascript">
+	$.AppContext.onload(function(){
+	
+		var $formObj = $.AppContext.utils.getById('client_form');
+		$formObj.updateFieldIndex();
+		$formObj.updateFieldNames();
+		
+	});
+</script>
