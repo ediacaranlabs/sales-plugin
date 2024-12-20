@@ -12,13 +12,13 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2>Client</h2>
+				<h2><fmt:message key="title" bundle="${messages}" /> </h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
-			<ec:breadcrumb title="Client" bundle="${messages}">
+			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
-				<ec:breadcrumb-path text="Clients" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients" />
+				<ec:breadcrumb-path text="#{parent.title}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients" bundle="${messages}"/>
 			</ec:breadcrumb>
 		</ed:col>
 	</ed:row>
@@ -31,11 +31,11 @@
 				<ec:include uri="${vars.client_data_view}" resolved="true" />
 			</span>
 			<ec:tabs>
-				<ec:tabs-item title="Billing address" active="true">
+				<ec:tabs-item title="#{tabs.billing_address.title}" active="true" bundle="${messages}">
 					<ed:row>
 						<ed:col>
 							<span formgroup="client">
-							<ec:checkbox label="use default" name="useDefaultBillingAddress" value="true" selected="${empty vars.client.protectedID || vars.client.useDefaultBillingAddress}">
+							<ec:checkbox label="#{tabs.billing_address.use_default.label}" name="useDefaultBillingAddress" value="true" bundle="${messages}" selected="${empty vars.client.protectedID || vars.client.useDefaultBillingAddress}">
 								<ec:event type="change">
 									var $form = $event.source.getFirstParent(function($e){
 										return $e.getTagName() == 'form';
@@ -71,12 +71,12 @@
 							</ed:col>
 						</ed:row>
 				</ec:tabs-item>
-				<ec:tabs-item title="Shipping address">
+				<ec:tabs-item title="#{tabs.shipping_address.title}" bundle="${messages}">
 				
 					<ed:row>
 						<ed:col>
 							<span formgroup="client">
-							<ec:checkbox label="use default" name="useDefaultShippingAddress" value="true" selected="${empty vars.client.protectedID || vars.client.useDefaultShippingAddress}">
+							<ec:checkbox label="#{tabs.shipping_address.use_default.label}" name="useDefaultShippingAddress" value="true" bundle="${messages}" selected="${empty vars.client.protectedID || vars.client.useDefaultShippingAddress}">
 								<ec:event type="change">
 									var $form = $event.source.getFirstParent(function($e){
 										return $e.getTagName() == 'form';
@@ -113,7 +113,7 @@
 						</ed:row>
 					<ed:row>
 						<ed:col>
-							<ec:button id="addshippingAddressButton" label="Add Address" align="right" actionType="button" enabled="${!vars.client.useDefaultShippingAddress}">
+							<ec:button id="addshippingAddressButton" label="#{tabs.shipping_address.add_address.label}" align="right" bundle="${messages}" actionType="button" enabled="${!vars.client.useDefaultShippingAddress}">
 								<ec:event type="click">
 									$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/group", "shippingAddressList");
 								</ec:event>
@@ -128,7 +128,7 @@
 			</ed:row>
 		</ec:box-body>
 		<ec:box-footer>
-			<ec:button label="Save" align="right" actionType="submit"/>
+			<ec:button label="#{save.label}" align="right" bundle="${messages}" actionType="submit"/>
 		</ec:box-footer>
 	</ec:box>
 </ec:form>
