@@ -14,7 +14,7 @@
 			label="#{form.email}"
 			value="${vars.client.email}"
 			placeholder="#{form.email.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:EMAIL'])}"
+			readonly="${empty vars.principal? true : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:EMAIL'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -43,7 +43,7 @@
 			label="#{form.first_name}"
 			value="${vars.client.firstName}"
 			placeholder="#{form.first_name.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
+			readonly="${empty vars.principal? !empty vars.client.firstName : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -72,7 +72,7 @@
 			label="#{form.last_name}"
 			value="${vars.client.lastName}"
 			placeholder="#{form.last_name.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
+			readonly="${empty vars.principal? !empty vars.client.lastName : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -186,7 +186,7 @@
 		<ec:select
 			name="country.isoAlpha3"
 			label="#{form.country}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
+			readonly="${empty vars.principal? !empty vars.client.country : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
 			bundle="${messages}">
 			<ec:option 
 				label="#{form.country.placeholder}" 
