@@ -7,6 +7,7 @@ import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.io.Vfs;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.persistence.entity.Country;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -26,17 +27,17 @@ public class ClientEntityTypes implements PublicBean{
 	@Inject
 	private PluginType pluginType;
 
-	public String getClientEntityView(SystemUser systemUser){
+	public String getClientEntityView(Client client){
 		return ContextSystemSecurityCheck.doPrivileged(()->{
-			return getClientEntityView0(systemUser);
+			return getClientEntityView0(client);
 		});
 	}
 	
-	private String getClientEntityView0(SystemUser systemUser){
+	private String getClientEntityView0(Client client){
 		
 		String context = varParser.getValue("${plugins.ediacaran.sales.web_path}");
 		String basePublicPath = getAdminPublicPath();
-		Country country = systemUser.getCountry();
+		Country country = client.getCountry();
 		
 		if(containsLocaleByCountry(country)){
 			

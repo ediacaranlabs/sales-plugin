@@ -33,9 +33,11 @@ import org.brandao.brutos.web.HttpStatus;
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.entity.Country;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
+import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -95,8 +97,7 @@ public class CartAdminPubResource {
 	private CartService cartService;
 
 	@Transient
-	@Inject
-	private SystemUserEntityTypes systemUserEntityTypes;
+	private ClientEntityTypes clientEntityTypes;
 
 	@Transient
 	@Inject
@@ -129,14 +130,14 @@ public class CartAdminPubResource {
 		
 		try {
 			adminCart.setCart(new Cart());
-			adminCart.setUser(new SystemUser());
-			result.put("user",						new SystemUser());
-			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getUser()));
+			adminCart.setClient(new Client());
+			result.put("client",					adminCart.getClient());
+			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getClient()));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
-			result.put("user_data_view",			systemUserEntityTypes.getSystemUserEntityView(adminCart.getUser()));
-			result.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
+			result.put("client_data_view",			clientEntityTypes.getClientEntityView(adminCart.getClient()));
+			//result.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
 			result.put("countries",					countryRegistry.getAll(locale));
-			result.put("subject",					subjectProvider.getSubject());
+			result.put("principal",					subjectProvider.getSubject().getPrincipal());
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
@@ -157,10 +158,11 @@ public class CartAdminPubResource {
 		Map<String,Object> result = new HashMap<String, Object>();
 		
 		try{
-			List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(adminCart.getCart(), adminCart.getUser());
+			List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(adminCart.getCart(), adminCart.getClient());
 			
-			result.put("user", adminCart.getUser());
-			result.put("payment_gateway_list", paymentGatewayList);
+			result.put("user", 					adminCart.getClient());
+			result.put("payment_gateway_list",	paymentGatewayList);
+			result.put("principal",				subjectProvider.getSubject().getPrincipal());
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "paymentDetails", "load", locale,  ex);
@@ -198,8 +200,8 @@ public class CartAdminPubResource {
 				ra.setContent("");
 			}
 			
-			ra.add("paymentGateway", pg);
-			ra.add("cart",           adminCart.getUser());
+			ra.add("paymentGateway",	pg);
+			ra.add("cart",				adminCart.getClient());
 			return ra;
 		}
 		catch(Throwable ex){
@@ -351,8 +353,8 @@ public class CartAdminPubResource {
 		/* checkout */
 		
 		try{
-			Checkout checkoutResult = cartService.checkout(adminCart.getCart(), adminCart.getUser(), payment, "Pedido criado via website.");
-			String paymentResource = checkoutResult.getPaymentGateway().redirectView(adminCart.getUser(), checkoutResult.getOrder());
+			Checkout checkoutResult = cartService.checkout(adminCart.getCart(), adminCart.getClient(), payment, "Pedido criado via website.");
+			String paymentResource = checkoutResult.getPaymentGateway().redirectView(adminCart.getClient(), checkoutResult.getOrder());
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
 		}
 		catch(EmptyOrderException ex){

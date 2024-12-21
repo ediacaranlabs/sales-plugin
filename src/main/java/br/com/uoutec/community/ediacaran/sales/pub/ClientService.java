@@ -3,95 +3,36 @@ package br.com.uoutec.community.ediacaran.sales.pub;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
-
 import br.com.uoutec.community.ediacaran.persistence.entity.Country;
-import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
-import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 
-@Singleton
-public class ClientService {
+public interface ClientService {
 
-	@Inject
-	private CountryRegistry countryRegistry;
+	List<Country> getCountries(Locale locale) throws CountryRegistryException;
 	
-	@Inject
-	private ClientRegistry clientRegistry;
+	ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException;
 	
-	public List<Country> getCountries(Locale locale) throws CountryRegistryException {
-		return countryRegistry.getAll(locale);
-	}
-	
-	public ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException{
-		return clientRegistry.searchClient(value);
-	}
-	
-	@Transactional
-	public void registerClient(Client entity) throws ClientRegistryException{
-		registerClient(entity, null, null, null);
-	}
+	void registerClient(Client entity) throws ClientRegistryException;
 
-	@Transactional
-	public void registerClient(Client entity, Address billingAddress, 
-			List<Address> addShippingAddress) throws ClientRegistryException{
-		registerClient(entity, billingAddress, addShippingAddress, null);
-	}
+	void registerClient(Client entity, Address billingAddress, 
+			List<Address> addShippingAddress) throws ClientRegistryException;
 
-	@Transactional
-	public void registerClient(Client entity, Address billingAddress) throws ClientRegistryException{
-		registerClient(entity, billingAddress, null, null);
-	}
+	void registerClient(Client entity, Address billingAddress) throws ClientRegistryException;
 
-	@Transactional
-	public void registerClient(Client entity, List<Address> addShippingAddress) throws ClientRegistryException{
-		registerClient(entity, null, addShippingAddress, null);
-	}
+	void registerClient(Client entity, List<Address> addShippingAddress) throws ClientRegistryException;
 	
-	@Transactional
-	public void registerClient(Client entity, Address billingAddress, 
-			List<Address> addShippingAddress, List<Address> removeShippingAddress) throws ClientRegistryException{
-		
-		clientRegistry.registerClient(entity);
-		
-		if(addShippingAddress != null) {
-			for(Address e: addShippingAddress) {
-				e.setType(Client.SHIPPING);
-				clientRegistry.registerAddress(e, entity);
-			}
-		}
-		
-		if(removeShippingAddress != null) {
-			for(Address e: removeShippingAddress) {
-				clientRegistry.removeAddress(e, entity);
-			}
-		}
-		
-		if(billingAddress != null) {
-			billingAddress.setType(Client.BILLING);
-			clientRegistry.registerAddress(billingAddress, entity);
-		}
-		
-	}
+	void registerClient(Client entity, Address billingAddress, 
+			List<Address> addShippingAddress, List<Address> removeShippingAddress) throws ClientRegistryException;
 	
-	@Transactional
-	public void removeClient(Client entity) throws ClientRegistryException{
-		clientRegistry.registerClient(entity);
-	}
+	void removeClient(Client entity) throws ClientRegistryException;
 	
-	public Address getAddress(Client value, String type) throws ClientRegistryException{
-		return clientRegistry.getAddress(value, type);
-	}
+	Address getAddress(Client value, String type) throws ClientRegistryException;
 
-	public List<Address> getAddresses(Client value, String type) throws ClientRegistryException{
-		return clientRegistry.getAddresses(value, type);
-	}
+	List<Address> getAddresses(Client value, String type) throws ClientRegistryException;
 	
 }

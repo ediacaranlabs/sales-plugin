@@ -41,7 +41,6 @@ import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserManagerPubResourceMessages;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -215,7 +214,7 @@ public class ClientAdminPubResource {
 		try{
 			Map<String,Object> vars = new HashMap<String, Object>();
 			boolean isNew           = clientPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = clientPubEntity.rebuild(!isNew, true, false);
+			Client systemUser       = (Client)clientPubEntity.rebuild(!isNew, true, false);
 			
 			vars.put("client",    systemUser);
 			vars.put("countries", clientService.getCountries(locale));

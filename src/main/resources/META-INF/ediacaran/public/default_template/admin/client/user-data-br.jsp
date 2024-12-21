@@ -14,7 +14,7 @@
 			label="#{form.email}"
 			value="${vars.client.email}"
 			placeholder="#{form.email.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:EMAIL'])}"
+			readonly="${empty vars.principal? true : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:EMAIL'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -43,7 +43,7 @@
 			label="#{form.first_name}"
 			value="${vars.client.firstName}"
 			placeholder="#{form.first_name.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
+			readonly="${empty vars.principal? !empty vars.client.firstName : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -72,7 +72,7 @@
 			label="#{form.last_name}"
 			value="${vars.client.lastName}"
 			placeholder="#{form.last_name.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
+			readonly="${empty vars.principal? !empty vars.client.lastName : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -101,7 +101,7 @@
 			label="#{form.document}"
 			value="${empty vars.client.document? '' : '***********'}"
 			placeholder="#{form.document.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:DOCUMENT'])}"
+			readonly="${empty vars.principal? !empty vars.client.document : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:DOCUMENT'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -135,7 +135,7 @@
 			label="#{form.zip}"
 			value="${vars.client.zip}"
 			placeholder="#{form.zip.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -164,7 +164,7 @@
 			label="#{form.address_line1}"
 			value="${vars.client.addressLine1}"
 			placeholder="#{form.address_line1.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -193,7 +193,7 @@
 			label="#{form.address_line2}"
 			value="${vars.client.addressLine2}"
 			placeholder="#{form.address_line2.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -218,7 +218,7 @@
 		<ec:select
 			name="country.isoAlpha3"
 			label="#{form.country}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
+			readonly="${empty vars.principal? !empty vars.client.country : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
 			bundle="${messages}">
 			<ec:option 
 				label="#{form.country.placeholder}" 
@@ -267,7 +267,7 @@
 			label="#{form.region}"
 			value="${vars.client.region}"
 			placeholder="#{form.region.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -292,7 +292,7 @@
 			label="#{form.city}"
 			value="${vars.client.city}"
 			placeholder="#{form.city.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">
 				<ec:field-validator-rule 
@@ -320,7 +320,7 @@
 			name="organization"
 			label="#{form.organization}"
 			value="${vars.client.organization}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ORGANIZATION'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ORGANIZATION'])}"
 			placeholder="#{form.organization.placeholder}"
 			bundle="${messages}">
 			<ec:field-validator form="client_form">

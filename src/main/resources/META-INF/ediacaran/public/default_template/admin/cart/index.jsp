@@ -151,7 +151,7 @@ $.AppContext.onload(function(){
 								<ec:tabs id="client_tabs">
 									<ec:tabs-item id="selected_client_tabs" title="Client" active="true">
 										<ec:form id="form_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select-user" update="cart_result">
-										<span id="user_data_view">
+										<span id="client_data_view">
 											<ec:include uri="${vars.user_data_view}" resolved="true" />
 										</span>
 										</ec:form>

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
 
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 @SessionScoped
 public class AdminCart implements Serializable{
@@ -14,7 +13,7 @@ public class AdminCart implements Serializable{
 
 	private Cart cart;
 	
-	private SystemUser user;
+	private Client client;
 	
 	public AdminCart() {
 	}
@@ -27,13 +26,12 @@ public class AdminCart implements Serializable{
 		this.cart = cart;
 	}
 
-	public SystemUser getUser() {
-		return user;
+	public Client getClient() {
+		return client;
 	}
 
-	public void setUser(SystemUser user) {
-		this.user = user;
+	public void setClient(Client client) {
+		this.client = client;
 	}
-	
 	
 }
