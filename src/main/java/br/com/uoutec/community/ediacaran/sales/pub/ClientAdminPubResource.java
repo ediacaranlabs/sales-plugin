@@ -26,7 +26,6 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
-import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
@@ -37,7 +36,6 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
@@ -59,19 +57,14 @@ public class ClientAdminPubResource {
 	
 	@Transient
 	@Inject
-	private ClientRegistry clientRegistry;
-	
-	@Transient
-	@Inject
-	private CountryRegistry countryRegistry;
-	
-	@Transient
-	@Inject
 	private ClientEntityTypes clientEntityTypes;
 
 	@Transient
 	@Inject
 	private SubjectProvider subjectProvider;
+	
+	@Inject
+	private ClientService clientService;
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/client/index")
@@ -84,7 +77,7 @@ public class ClientAdminPubResource {
 		
 		Map<String,Object> vars = new HashMap<>();
 		try{
-			vars.put("countries", countryRegistry.getAll(locale));
+			vars.put("countries", clientService.getCountries(locale));
 			return vars;
 		}
 		catch(Throwable ex){
@@ -125,7 +118,7 @@ public class ClientAdminPubResource {
 		
 		
 		try{
-			ClientSearchResult result = clientRegistry.searchClient(search);
+			ClientSearchResult result = clientService.searchClient(search);
 			return new ClientSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){
@@ -157,10 +150,10 @@ public class ClientAdminPubResource {
 			Client client   = (Client) systemUserPubEntity.rebuild(!isNew, false, false);
 			
 			vars.put("client",			client);
-			vars.put("countries",      countryRegistry.getAll(locale));
+			vars.put("countries",      clientService.getCountries(locale));
 			vars.put("client_data_view", clientEntityTypes.getClientEntityView(client));
-			vars.put("billing_address", clientRegistry.getAddress(client, Client.BILLING));
-			vars.put("shipping_addresses", clientRegistry.getAddresses(client, Client.SHIPPING));
+			vars.put("billing_address", clientService.getAddress(client, Client.BILLING));
+			vars.put("shipping_addresses", clientService.getAddresses(client, Client.SHIPPING));
 			return vars;
 		}
 		catch(Throwable ex){
@@ -190,7 +183,7 @@ public class ClientAdminPubResource {
 		.add("vars", vars);
 		
 		try{
-			vars.put("countries", countryRegistry.getAll(locale));
+			vars.put("countries", clientService.getCountries(locale));
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -222,7 +215,7 @@ public class ClientAdminPubResource {
 			SystemUser systemUser   = clientPubEntity.rebuild(!isNew, true, false);
 			
 			vars.put("client",           systemUser);
-			vars.put("countries",      countryRegistry.getAll(locale));
+			vars.put("countries",      clientService.getCountries(locale));
 			vars.put("subject",        subjectProvider.getSubject());
 
 			ResultAction ra = new ResultActionImp();
@@ -292,20 +285,8 @@ public class ClientAdminPubResource {
 		}
 		
 		try{
-			clientRegistry.registerClient(client);
-			
-			for(Address e: shippingAddress) {
-				e.setType(Client.SHIPPING);
-				clientRegistry.registerAddress(e, client);
-			}
-			for(Address e: removedShippingAddress) {
-				clientRegistry.removeAddress(e, client);
-			}
-			
-			if(billingAddress != null) {
-				billingAddress.setType(Client.BILLING);
-				clientRegistry.registerAddress(billingAddress, client);
-			}
+			clientService.registerClient(client, billingAddress, 
+					shippingAddress, removedShippingAddress);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
