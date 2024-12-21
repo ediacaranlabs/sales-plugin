@@ -45,6 +45,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
@@ -57,14 +59,10 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
-import br.com.uoutec.community.ediacaran.user.SystemUserEntityTypes;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserAdminPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserSearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserSearchPubEntity;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserSearch;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -97,6 +95,7 @@ public class CartAdminPubResource {
 	private CartService cartService;
 
 	@Transient
+	@Inject
 	private ClientEntityTypes clientEntityTypes;
 
 	@Transient
@@ -508,7 +507,7 @@ public class CartAdminPubResource {
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
 	public ResultAction loadUser(
-			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
+			@DetachedName ClientPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		return editUser(systemUserPubEntity, false, false, locale);
@@ -518,7 +517,7 @@ public class CartAdminPubResource {
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
 	public ResultAction showUser(
-			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
+			@DetachedName ClientPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		return editUser(systemUserPubEntity, true, false, locale);
@@ -534,27 +533,27 @@ public class CartAdminPubResource {
 	}
 	
 	public ResultAction editUser(
-			SystemUserAdminPubEntity systemUserPubEntity,
+			ClientPubEntity clientPubEntity,
 			boolean override,
 			boolean validate, 
 			Locale locale) throws InvalidRequestException {
 		
 
 		try{
-			if(systemUserPubEntity == null) {
-				systemUserPubEntity = new SystemUserAdminPubEntity();
+			if(clientPubEntity == null) {
+				clientPubEntity = new ClientPubEntity();
 			}
 			
 			Map<String,Object> vars = new HashMap<String, Object>();
-			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, override, validate);
-			List<Country> countries = this.countryRegistry.getAll(locale);
-			String userDataView     = this.systemUserEntityTypes.getSystemUserEntityView(systemUser);
+			boolean isNew           = clientPubEntity.getProtectedID() == null;
+			Client client           = (Client)clientPubEntity.rebuild(!isNew, override, validate);
+			List<Country> countries = countryRegistry.getAll(locale);
+			String userDataView     = clientEntityTypes.getClientEntityView(client);
 			
-			vars.put("user",					systemUser);
+			vars.put("client",					client);
 			vars.put("countries",				countries);
-			vars.put("subject",					subjectProvider.getSubject());
-			vars.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
+			vars.put("principal",				subjectProvider.getSubject().getPrincipal());
+			//vars.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
 
 			ResultAction ra = new ResultActionImp();
 			ra.setView(userDataView, true).add("vars", vars);
@@ -571,14 +570,15 @@ public class CartAdminPubResource {
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/admin/cart/select_user_result")
 	public void selectUser(
-			@DetachedName SystemUserAdminPubEntity systemUserPubEntity,			
+			@Basic(bean="client")
+			ClientPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 
 		try{
-			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
-			SystemUser systemUser   = systemUserPubEntity.rebuild(!isNew, true, true);
-			adminCart.setUser(systemUser);
+			boolean isNew	= systemUserPubEntity.getProtectedID() == null;
+			Client client	= (Client)systemUserPubEntity.rebuild(!isNew, true, true);
+			adminCart.setClient(client);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showUser", "view", locale, ex);
@@ -592,7 +592,7 @@ public class CartAdminPubResource {
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public SystemUserSearchResultPubEntity searchUsers(
-			@DetachedName SystemUserSearchPubEntity request,
+			@DetachedName ClientSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
 		

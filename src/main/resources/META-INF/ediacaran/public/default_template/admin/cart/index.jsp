@@ -151,8 +151,8 @@ $.AppContext.onload(function(){
 								<ec:tabs id="client_tabs">
 									<ec:tabs-item id="selected_client_tabs" title="Client" active="true">
 										<ec:form id="form_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select-user" update="cart_result">
-										<span id="client_data_view">
-											<ec:include uri="${vars.user_data_view}" resolved="true" />
+										<span id="client_data_view" formgroup="client">
+											<ec:include uri="${vars.client_data_view}" resolved="true" />
 										</span>
 										</ec:form>
 									</ec:tabs-item>
@@ -241,8 +241,8 @@ $.AppContext.onload(function(){
 														<ec:event type="click">
 															
 															$.AppContext.utils.updateContentByID(
-																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user/!{item.protectedID}', 
-																	'user_data_view'
+																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/form/!{item.protectedID}',
+																	'client_data_view'
 															);
 															
 															var $tabs = $.AppContext.utils.getById('client_tabs');
@@ -276,7 +276,7 @@ $.AppContext.onload(function(){
 									<ec:event type="click">
 										$.AppContext.utils.updateContentByID(
 											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/new-user', 
-											'user_data_view'
+											'client_data_view'
 										);									
 									</ec:event>
 								</ec:button>

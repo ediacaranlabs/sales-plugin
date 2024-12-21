@@ -199,6 +199,40 @@ public class ClientAdminPubResource {
 		return ra;
 		
 	}
+
+	@Action("/form/{client.protectedID}")
+	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
+	public ResultAction loadForm(
+			@Basic(bean="client")
+			ClientPubEntity clientPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+		
+		try{
+			Map<String,Object> vars = new HashMap<String, Object>();
+			boolean isNew           = clientPubEntity.getProtectedID() == null;
+			Client systemUser       = (Client)clientPubEntity.rebuild(!isNew, false, false);
+			
+			vars.put("client",    systemUser);
+			vars.put("countries", clientService.getCountries(locale));
+			vars.put("principal", subjectProvider.getSubject().getPrincipal());
+
+			ResultAction ra = new ResultActionImp();
+			ra.setView(clientEntityTypes.getClientEntityView(systemUser), true).add("vars", vars);
+			return ra;
+			
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ClientAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ClientAdminPubResourceMessages.edit.error.fail_load, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+	}
 	
 	@Action("/edit")
 	@RequestMethod("POST")
