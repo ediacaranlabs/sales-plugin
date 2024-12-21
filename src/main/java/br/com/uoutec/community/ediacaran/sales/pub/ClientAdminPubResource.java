@@ -78,6 +78,7 @@ public class ClientAdminPubResource {
 		Map<String,Object> vars = new HashMap<>();
 		try{
 			vars.put("countries", clientService.getCountries(locale));
+			vars.put("principal", subjectProvider.getSubject().getPrincipal());
 			return vars;
 		}
 		catch(Throwable ex){
@@ -149,11 +150,12 @@ public class ClientAdminPubResource {
 			boolean isNew = systemUserPubEntity.getProtectedID() == null;
 			Client client   = (Client) systemUserPubEntity.rebuild(!isNew, false, false);
 			
-			vars.put("client",			client);
-			vars.put("countries",      clientService.getCountries(locale));
-			vars.put("client_data_view", clientEntityTypes.getClientEntityView(client));
-			vars.put("billing_address", clientService.getAddress(client, Client.BILLING));
+			vars.put("client",			   client);
+			vars.put("countries",          clientService.getCountries(locale));
+			vars.put("client_data_view",   clientEntityTypes.getClientEntityView(client));
+			vars.put("billing_address",    clientService.getAddress(client, Client.BILLING));
 			vars.put("shipping_addresses", clientService.getAddresses(client, Client.SHIPPING));
+			vars.put("principal",          subjectProvider.getSubject().getPrincipal());
 			return vars;
 		}
 		catch(Throwable ex){
@@ -184,6 +186,7 @@ public class ClientAdminPubResource {
 		
 		try{
 			vars.put("countries", clientService.getCountries(locale));
+			vars.put("principal", subjectProvider.getSubject().getPrincipal());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -214,9 +217,9 @@ public class ClientAdminPubResource {
 			boolean isNew           = clientPubEntity.getProtectedID() == null;
 			SystemUser systemUser   = clientPubEntity.rebuild(!isNew, true, false);
 			
-			vars.put("client",           systemUser);
-			vars.put("countries",      clientService.getCountries(locale));
-			vars.put("subject",        subjectProvider.getSubject());
+			vars.put("client",    systemUser);
+			vars.put("countries", clientService.getCountries(locale));
+			vars.put("principal", subjectProvider.getSubject().getPrincipal());
 
 			ResultAction ra = new ResultActionImp();
 			ra.setView(clientEntityTypes.getClientEntityView(systemUser), true).add("vars", vars);
