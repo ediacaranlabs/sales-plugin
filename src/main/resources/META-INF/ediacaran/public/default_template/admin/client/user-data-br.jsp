@@ -16,7 +16,7 @@
 			placeholder="#{form.email.placeholder}"
 			readonly="${empty vars.principal? true : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:EMAIL'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.validation.email.not_empty}" 
@@ -45,7 +45,7 @@
 			placeholder="#{form.first_name.placeholder}"
 			readonly="${empty vars.principal? !empty vars.client.firstName : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.validation.first_name.not_empty}" 
@@ -74,7 +74,7 @@
 			placeholder="#{form.last_name.placeholder}"
 			readonly="${empty vars.principal? !empty vars.client.lastName : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.last_name.validation.not_empty}" 
@@ -103,7 +103,7 @@
 			placeholder="#{form.document.placeholder}"
 			readonly="${empty vars.principal? !empty vars.client.document : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:DOCUMENT'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.document.validation.not_empty}" 
@@ -137,7 +137,7 @@
 			placeholder="#{form.zip.placeholder}"
 			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.zip.validation.not_empty}" 
@@ -166,7 +166,7 @@
 			placeholder="#{form.address_line1.placeholder}"
 			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.address_line1.validation.not_empty}" 
@@ -195,7 +195,7 @@
 			placeholder="#{form.address_line2.placeholder}"
 			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.address_line2.validation.regexp}"
@@ -231,7 +231,7 @@
 					selected="${vars.client.country.isoAlpha3 == country.isoAlpha3}" 
 					bundle="${messages}"/>
 			</c:forEach>
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.country.validation.not_empty}" 
@@ -269,7 +269,7 @@
 			placeholder="#{form.region.placeholder}"
 			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.region.validation.regexp}"
@@ -294,7 +294,7 @@
 			placeholder="#{form.city.placeholder}"
 			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.city.validation.not_empty}" 
@@ -323,7 +323,7 @@
 			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ORGANIZATION'])}"
 			placeholder="#{form.organization.placeholder}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.organization.validation.regexp}"
