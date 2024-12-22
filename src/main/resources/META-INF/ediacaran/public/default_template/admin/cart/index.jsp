@@ -123,7 +123,7 @@ $.AppContext.onload(function(){
 						</ed:row>
 						<ed:row>
 							<ed:col>
-								<ec:button id="products_next_button" label="Next >" actionType="button" align="right" >
+								<ec:button id="products_next_button" label="Next" icon2="chevron-right" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
 										var $accordionItens = $accordion.getItens();
@@ -264,8 +264,8 @@ $.AppContext.onload(function(){
 						</ed:row>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Next >" actionType="submit"  align="right" form="form_user" />
-								<ec:button label="< Back" actionType="button" align="right" >
+								<ec:button label="Next" icon2="chevron-right" actionType="submit"  align="right" form="form_user" />
+								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
 										var $accordionItens = $accordion.getItens();
@@ -297,7 +297,7 @@ $.AppContext.onload(function(){
 						<ed:row>
 							<ed:col>
 								<ec:button label="Checkout" icon="check-circle" actionType="button" align="right" />
-								<ec:button label="< Back" actionType="button" align="right" >
+								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
 										var $accordionItens = $accordion.getItens();
