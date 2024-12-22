@@ -241,7 +241,7 @@ $.AppContext.onload(function(){
 														<ec:event type="click">
 															
 															$.AppContext.utils.updateContentByID(
-																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/form/!{item.protectedID}',
+																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit/!{item.protectedID}/form',
 																	'client_data_view'
 															);
 															
@@ -275,7 +275,7 @@ $.AppContext.onload(function(){
 								<ec:button label="New" icon="plus" actionType="button" align="right" >
 									<ec:event type="click">
 										$.AppContext.utils.updateContentByID(
-											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/new-user', 
+											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit?type=form', 
 											'client_data_view'
 										);									
 									</ec:event>

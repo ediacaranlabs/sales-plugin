@@ -134,28 +134,45 @@ public class ClientAdminPubResource {
 		
 	}
 	
-	@Action({"/edit/{protectedID}", "/edit"})
-	@View(value="${plugins.ediacaran.sales.template}/admin/client/edit")
-	@Result("vars")
+	@Action({
+		"/edit",
+		"/edit/{client.protectedID}", 
+		"/edit/{client.protectedID}/{type}"
+	})
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
-	public Map<String,Object> edit(
-			@DetachedName ClientPubEntity systemUserPubEntity,			
+	public ResultAction edit(
+			@Basic(bean = "client")
+			ClientPubEntity systemUserPubEntity,
+			@Basic(bean = "type")
+			String type,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		try{
+			ResultAction ra         = new ResultActionImp();
 			Map<String,Object> vars = new HashMap<String, Object>();
-			boolean isNew = systemUserPubEntity.getProtectedID() == null;
-			Client client   = (Client) systemUserPubEntity.rebuild(!isNew, false, false);
+			boolean isNew           = systemUserPubEntity.getProtectedID() == null;
+			Client client           = (Client) systemUserPubEntity.rebuild(!isNew, false, false);
+			
+			if(!"form".equals(type)) {
+				vars.put("client_data_view",   clientEntityTypes.getClientEntityView(client));
+				vars.put("billing_address",    clientService.getAddress(client, Client.BILLING));
+				vars.put("shipping_addresses", clientService.getAddresses(client, Client.SHIPPING));
+				
+				ra.setView("${plugins.ediacaran.sales.template}/admin/client/edit");
+			}
+			else {
+				ra.setView(clientEntityTypes.getClientEntityView(client), true);
+			}
 			
 			vars.put("client",			   client);
 			vars.put("countries",          clientService.getCountries(locale));
-			vars.put("client_data_view",   clientEntityTypes.getClientEntityView(client));
-			vars.put("billing_address",    clientService.getAddress(client, Client.BILLING));
-			vars.put("shipping_addresses", clientService.getAddresses(client, Client.SHIPPING));
 			vars.put("principal",          subjectProvider.getSubject().getPrincipal());
-			return vars;
+			
+			ra.add("vars", vars);
+			
+			return ra;
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -200,40 +217,6 @@ public class ClientAdminPubResource {
 		
 	}
 
-	@Action("/form/{client.protectedID}")
-	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
-	public ResultAction loadForm(
-			@Basic(bean="client")
-			ClientPubEntity clientPubEntity,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale) throws InvalidRequestException {
-		
-		try{
-			Map<String,Object> vars = new HashMap<String, Object>();
-			boolean isNew           = clientPubEntity.getProtectedID() == null;
-			Client systemUser       = (Client)clientPubEntity.rebuild(!isNew, false, false);
-			
-			vars.put("client",    systemUser);
-			vars.put("countries", clientService.getCountries(locale));
-			vars.put("principal", subjectProvider.getSubject().getPrincipal());
-
-			ResultAction ra = new ResultActionImp();
-			ra.setView(clientEntityTypes.getClientEntityView(systemUser), true).add("vars", vars);
-			return ra;
-			
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ClientAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ClientAdminPubResourceMessages.edit.error.fail_load, 
-							locale);
-			throw new InvalidRequestException(error, ex);
-		}
-	}
-	
 	@Action("/edit")
 	@RequestMethod("POST")
 	@Result("vars")
