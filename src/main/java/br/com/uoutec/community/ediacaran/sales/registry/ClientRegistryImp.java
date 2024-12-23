@@ -63,10 +63,30 @@ public class ClientRegistryImp
 			entity.setAddData(dta);
 		}
 		
-		dta.put("useDefaultBillingAddress", String.valueOf(entity.isUseDefaultBillingAddress()));
-		dta.put("useDefaultShippingAddress", String.valueOf(entity.isUseDefaultShippingAddress()));
-		
 		try {
+			ContextSystemSecurityCheck.doPrivileged(()->{
+				systemUserRegistry.registerUser(entity);
+				return null;
+			});
+
+			if(entity.getBillingAddress() != null) {
+				
+				if(entity.getBillingAddress().getId() <= 0) {
+					registerAddress(entity.getBillingAddress(), entity);
+				}
+				
+				dta.put("billingAddressId", String.valueOf(entity.getBillingAddress().getId()));
+				
+			}
+
+			if(entity.getShippingAddress() != null) {
+				if(entity.getShippingAddress().getId() <= 0) {
+					registerAddress(entity.getShippingAddress(), entity);
+				}
+				dta.put("shippingAddressId", String.valueOf(entity.getShippingAddress().getId()));
+			}
+			
+			
 			ContextSystemSecurityCheck.doPrivileged(()->{
 				systemUserRegistry.registerUser(entity);
 				return null;
@@ -164,7 +184,7 @@ public class ClientRegistryImp
 		}
 		
 		try {
-			if(address.getId() != null) {
+			if(address.getId() > 0) {
 				
 				Address tmp = addressEntityAccess.findById(address.getId());
 				
@@ -185,7 +205,8 @@ public class ClientRegistryImp
 		address.setOwner(client.getId());
 		
 		try{
-			if(Client.BILLING.equals(address.getType()) && address.getId() == null){
+			/*
+			if(Client.BILLING.equals(address.getType()) && address.getId() <= 0){
 				List<Address> list = addressEntityAccess.getList(client, Client.BILLING);
 				
 				for(Address e: list) {
@@ -193,8 +214,9 @@ public class ClientRegistryImp
 				}
 
 			}
+			*/
 			
-			if(address.getId() == null) {
+			if(address.getId() <= 0) {
 				addressEntityAccess.save(address);
 			}
 			else {
@@ -233,7 +255,7 @@ public class ClientRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
 		
 		try {
-			if(address.getId() != null) {
+			if(address.getId() <= 0) {
 				
 				Address tmp = addressEntityAccess.findById(address.getId());
 				

@@ -36,48 +36,29 @@ public class ClientServiceImp implements ClientService{
 	
 	@Transactional
 	public void registerClient(Client entity) throws ClientRegistryException{
-		registerClient(entity, null, null, null);
+		registerClient(entity, null, null);
 	}
 
 	@Transactional
-	public void registerClient(Client entity, Address billingAddress, 
-			List<Address> addShippingAddress) throws ClientRegistryException{
-		registerClient(entity, billingAddress, addShippingAddress, null);
-	}
-
-	@Transactional
-	public void registerClient(Client entity, Address billingAddress) throws ClientRegistryException{
-		registerClient(entity, billingAddress, null, null);
-	}
-
-	@Transactional
-	public void registerClient(Client entity, List<Address> addShippingAddress) throws ClientRegistryException{
-		registerClient(entity, null, addShippingAddress, null);
-	}
-	
-	@Transactional
-	public void registerClient(Client entity, Address billingAddress, 
-			List<Address> addShippingAddress, List<Address> removeShippingAddress) throws ClientRegistryException{
+	public void registerClient(Client entity, 
+			List<Address> addAddresses, List<Address> removeAddresses) throws ClientRegistryException{
 		
 		clientRegistry.registerClient(entity);
 		
-		if(addShippingAddress != null) {
-			for(Address e: addShippingAddress) {
-				e.setType(Client.SHIPPING);
+		if(addAddresses != null) {
+			for(Address e: addAddresses) {
+				e.setType(null);
 				clientRegistry.registerAddress(e, entity);
 			}
 		}
 		
-		if(removeShippingAddress != null) {
-			for(Address e: removeShippingAddress) {
+		if(removeAddresses != null) {
+			for(Address e: removeAddresses) {
 				clientRegistry.removeAddress(e, entity);
 			}
 		}
-		
-		if(billingAddress != null) {
-			billingAddress.setType(Client.BILLING);
-			clientRegistry.registerAddress(billingAddress, entity);
-		}
+
+		clientRegistry.registerClient(entity);
 		
 	}
 	

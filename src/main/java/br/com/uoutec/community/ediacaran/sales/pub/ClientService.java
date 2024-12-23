@@ -17,17 +17,8 @@ public interface ClientService {
 	
 	ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException;
 	
-	void registerClient(Client entity) throws ClientRegistryException;
-
-	void registerClient(Client entity, Address billingAddress, 
-			List<Address> addShippingAddress) throws ClientRegistryException;
-
-	void registerClient(Client entity, Address billingAddress) throws ClientRegistryException;
-
-	void registerClient(Client entity, List<Address> addShippingAddress) throws ClientRegistryException;
-	
-	void registerClient(Client entity, Address billingAddress, 
-			List<Address> addShippingAddress, List<Address> removeShippingAddress) throws ClientRegistryException;
+	void registerClient(Client entity, 
+			List<Address> addAddresses, List<Address> removeAddresses) throws ClientRegistryException;
 	
 	void removeClient(Client entity) throws ClientRegistryException;
 	

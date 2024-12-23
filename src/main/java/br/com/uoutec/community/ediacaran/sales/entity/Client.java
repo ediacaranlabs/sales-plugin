@@ -10,9 +10,9 @@ public class Client extends SystemUser{
 	
 	public static final String BILLING = "billing";
 	
-	private boolean useDefaultBillingAddress;
+	private transient Address billingAddress;
 	
-	private boolean useDefaultShippingAddress;
+	private transient Address shippingAddress;
 	
 	public Client() {
 	}
@@ -36,26 +36,42 @@ public class Client extends SystemUser{
 		this.zip = user.getZip();
 
 		if(user.getAddData() != null) {
-			this.useDefaultBillingAddress = "true".equals(user.getAddData().get("useDefaultBillingAddress")) || user.getAddData().get("useDefaultBillingAddress") == null;
-			this.useDefaultShippingAddress = "true".equals(user.getAddData().get("useDefaultShippingAddress")) || user.getAddData().get("useDefaultShippingAddress") == null;
+			if(user.getAddData().get("billingAddressId") != null) {
+				this.billingAddress = new Address();
+				this.billingAddress.setId(Integer.parseInt(user.getAddData().get("billingAddressId")));
+			}
+
+			if(user.getAddData().get("shippingAddressId") != null) {
+				this.billingAddress = new Address();
+				this.billingAddress.setId(Integer.parseInt(user.getAddData().get("shippingAddressId")));
+			}
+			
 		}
 		
 	}
 
-	public boolean isUseDefaultBillingAddress() {
-		return useDefaultBillingAddress;
+	public String getBillingAddressId() {
+		return this.billingAddress == null || billingAddress.getId() <= 0? null : String.valueOf(this.billingAddress.getId());
 	}
 
-	public void setUseDefaultBillingAddress(boolean useDefaultBillingAddress) {
-		this.useDefaultBillingAddress = useDefaultBillingAddress;
+	public Address getBillingAddress() {
+		return billingAddress;
 	}
 
-	public boolean isUseDefaultShippingAddress() {
-		return useDefaultShippingAddress;
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 
-	public void setUseDefaultShippingAddress(boolean useDefaultShippingAddress) {
-		this.useDefaultShippingAddress = useDefaultShippingAddress;
+	public String getShippinggAddressId() {
+		return this.shippingAddress == null || shippingAddress.getId() <= 0? null : String.valueOf(this.shippingAddress.getId());
+	}
+	
+	public Address getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
 	}
 
 }

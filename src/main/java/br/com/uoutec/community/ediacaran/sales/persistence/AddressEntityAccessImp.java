@@ -41,8 +41,7 @@ public class AddressEntityAccessImp
 		    
 			    criteria.where(
 		    		builder.and(
-						builder.equal(from.get("systemUserID"), value.getId()),
-						builder.equal(from.get("type"), type)
+						builder.equal(from.get("systemUserID"), value.getId())
 				));
 		    
 		    TypedQuery<AddressEntity> typed = entityManager.createQuery(criteria);			

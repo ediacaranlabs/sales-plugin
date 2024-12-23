@@ -12,28 +12,35 @@
 	<script type="text/javascript">
 	$.AppContext.onload(function(){			
 	
+		$.AppContext.utils.updateContentByID(
+				'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/selected-address/${vars.client.protectedID}', 
+				'selected_address'
+			);									
+		
 		var $form = $.AppContext.utils.getById('client_form');
 		
 		var $protectedID = $form.getField('client.protectedID');
 		$protectedID.setValue('${vars.client.protectedID}');
 
+		/*
 		var $billingAddress = $form.getField('billingAddress.protectedID');
 		
 		if($billingAddress){
 			$billingAddress.setValue('${vars.billingAddress.protectedID}');
 		}
-
-		<c:forEach items="${vars.shippingAddress}" var="shippingAddress" varStatus="shippingAddressStep">
-		var $shippingAddress = $form.getField('shippingAddress[${shippingAddressStep.index}].protectedID');
-		$shippingAddress.setValue('${shippingAddress.protectedID}');
+		*/
+		
+		<c:forEach items="${vars.addresses}" var="address" varStatus="addressStep">
+		var $address = $form.getField('addresses[${addressStep.index}].protectedID');
+		$address.setValue('${address.protectedID}');
 		</c:forEach>
 		
-		var $shippingAddressList = $.AppContext.utils.getById('shippingAddressList');
-		var $addressList = $shippingAddressList.search(function($e){
-			return $e.getAttribute("formgroup") == 'shippingAddress';
+		var $addressList = $.AppContext.utils.getById('addressList');
+		var $addrsArray = $addressList.search(function($e){
+			return $e.getAttribute("formgroup") == 'addresses';
 		});
 		
-		for (let $addr of $addressList){
+		for (let $addr of $addrsArray){
 			let $path = $addr.getAttribute("group-path");
 			let $deleted = $form.getField($path + ".deleted");
 			

@@ -31,78 +31,27 @@
 				<ec:include uri="${vars.client_data_view}" resolved="true" />
 			</span>
 			<ec:tabs>
-				<ec:tabs-item title="#{tabs.billing_address.title}" active="true" bundle="${messages}">
+				<ec:tabs-item title="Address" active="true" bundle="${messages}">
 					<ed:row>
-						<ed:col>
-							<span formgroup="client">
-							<ec:checkbox label="#{tabs.billing_address.use_default.label}" name="useDefaultBillingAddress" value="true" bundle="${messages}" selected="${empty vars.client.protectedID || vars.client.useDefaultBillingAddress}">
-								<ec:event type="change">
-									var $form = $event.source.getForm();
-									var $defaultBillingAddress = $form.getField('client.useDefaultBillingAddress');
-									var $checked = $defaultBillingAddress.getValue() === 'true';
-									
-									if($checked){
-										$.AppContext.utils.content.update("billingAddress", "");
-									}
-									else{
-										$.AppContext.utils.loadResourceContent("billingAddress", "${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address");
-									}
-									
-								</ec:event>
-							</ec:checkbox>
-							</span>
+						<ed:col id="selected_address">
+							<jsp:include page="address_selected.jsp"/>
 						</ed:col>
 					</ed:row>
-						<ed:row>
-							<ed:col>
-								<span id="billingAddress" formgroup="billingAddress">
-									<c:if test="${!vars.client.useDefaultBillingAddress}">
-										<c:set var="address" value="${vars.billing_address}" scope="request"/>
-											<jsp:include page="address.jsp"/>
-									</c:if>
-								</span>	
-							</ed:col>
-						</ed:row>
 				</ec:tabs-item>
-				<ec:tabs-item title="#{tabs.shipping_address.title}" bundle="${messages}">
-				
+				<ec:tabs-item title="Address list" bundle="${messages}">
 					<ed:row>
-						<ed:col>
-							<span formgroup="client">
-							<ec:checkbox label="#{tabs.shipping_address.use_default.label}" name="useDefaultShippingAddress" value="true" bundle="${messages}" selected="${empty vars.client.protectedID || vars.client.useDefaultShippingAddress}">
-								<ec:event type="change">
-									var $form = $event.source.getForm();
-								
-									var $defaultShippingAddress = $form.getField('client.useDefaultShippingAddress');
-									var $checked = $defaultShippingAddress.getValue() === 'true';
-									var $addshippingAddressButton = $.AppContext.utils.getById('addshippingAddressButton');
-									
-									if($checked){
-										//$.AppContext.utils.content.update("shippingAddressList", "");
-										$addshippingAddressButton.setEnabled(false);						
-									}
-									else{
-										$addshippingAddressButton.setEnabled(true);						
-									}
-									
-								</ec:event>
-							</ec:checkbox>
-							</span>
+						<ed:col id="addressList">
+							<c:forEach items="${vars.addresses}" var="address">
+								<c:set var="address" value="${address}" scope="request"/>
+								<jsp:include page="address_group.jsp"/>
+							</c:forEach>
 						</ed:col>
 					</ed:row>
-						<ed:row>
-							<ed:col id="shippingAddressList">
-								<c:forEach items="${vars.shipping_addresses}" var="shippingAddress">
-									<c:set var="address" value="${shippingAddress}" scope="request"/>
-									<jsp:include page="address_group.jsp"/>
-								</c:forEach>
-							</ed:col>
-						</ed:row>
 					<ed:row>
 						<ed:col>
-							<ec:button id="addshippingAddressButton" label="#{tabs.shipping_address.add_address.label}" align="right" bundle="${messages}" actionType="button" enabled="${!vars.client.useDefaultShippingAddress}">
+							<ec:button id="addshippingAddressButton" label="#{tabs.shipping_address.add_address.label}" align="right" bundle="${messages}" actionType="button">
 								<ec:event type="click">
-									$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/group", "shippingAddressList");
+									$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/group", "addressList");
 								</ec:event>
 							</ec:button>
 						</ed:col>

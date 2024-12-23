@@ -75,7 +75,7 @@ public class AddressPubEntity extends AbstractPubEntity<Address>{
 		
 		this.country = e.getCountry() == null? null : new CountryPubEntity(e.getCountry(), locale);
 		this.id = e.getId();
-		this.protectedID = e.getId() == null || e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
+		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
 		this.region = e.getRegion();
 		this.zip = e.getZip();
 	}

@@ -6,7 +6,7 @@
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 
-<span formgroup="shippingAddress" formgrouptype="index">
+<span formgroup="addresses" formgrouptype="index">
 	<ec:accordion>
 		<ec:accordion-item title="${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}">
 			<jsp:include page="address.jsp"/>

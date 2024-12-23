@@ -156,10 +156,8 @@ public class ClientAdminPubResource {
 			Client client           = (Client) systemUserPubEntity.rebuild(!isNew, false, false);
 			
 			if(!"form".equals(type)) {
-				vars.put("client_data_view",   clientEntityTypes.getClientEntityView(client));
-				vars.put("billing_address",    clientService.getAddress(client, Client.BILLING));
-				vars.put("shipping_addresses", clientService.getAddresses(client, Client.SHIPPING));
-				
+				vars.put("client_data_view", clientEntityTypes.getClientEntityView(client));
+				vars.put("addresses", clientService.getAddresses(client, null));
 				ra.setView("${plugins.ediacaran.sales.template}/admin/client/edit");
 			}
 			else {
@@ -195,6 +193,7 @@ public class ClientAdminPubResource {
 		
 		Map<String,Object> vars = new HashMap<String, Object>();
 		ResultAction ra = new ResultActionImp();
+		
 		ra.setView(
 				"${plugins.ediacaran.sales.template}/admin/client/address" + ("group".equals(type)? "_group" : "") + ".jsp", 
 				true)
@@ -217,6 +216,37 @@ public class ClientAdminPubResource {
 		
 	}
 
+	@Action({"/selected-address/{client.protectedID}"})
+	@View("${plugins.ediacaran.sales.template}/admin/client/address_selected")
+	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
+	public Map<String,Object> selectedAddress(
+			@Basic(bean = "client")
+			ClientPubEntity systemUserPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+		
+		Map<String,Object> vars = new HashMap<String, Object>();
+		
+		try{
+			Client client = (Client) systemUserPubEntity.rebuild(true, false, false);
+			vars.put("client", client);
+			vars.put("addresses", clientService.getAddresses(client, null));
+			vars.put("principal", subjectProvider.getSubject().getPrincipal());
+			return vars;
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ClientAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ClientAdminPubResourceMessages.edit.error.fail_load, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+	
 	@Action("/edit")
 	@RequestMethod("POST")
 	@Result("vars")
@@ -261,36 +291,29 @@ public class ClientAdminPubResource {
 	public Map<String,Object> save(
 			@Basic(bean="client")
 			ClientPubEntity clientPubEntity,
-			@Basic(bean="shippingAddress", mappingType = MappingTypes.OBJECT)
-			List<AddressPubEntity> shippingAddresses,
-			@Basic(bean="billingAddress")
-			AddressPubEntity billingAddresses,
+			@Basic(bean="addresses", mappingType = MappingTypes.OBJECT)
+			List<AddressPubEntity> addressesPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		Client client;
-		List<Address> shippingAddress = new ArrayList<>();
-		List<Address> removedShippingAddress = new ArrayList<>();
-		Address billingAddress = null;
+		List<Address> addresses = new ArrayList<>();
+		List<Address> removedAddresses = new ArrayList<>();
 		
 		boolean isNew = true;
 		try{
 			isNew = clientPubEntity.getProtectedID() == null;
 			client = (Client)clientPubEntity.rebuild(!isNew, true, true);
 			
-			if(shippingAddresses != null) {
-				for(AddressPubEntity e: shippingAddresses) {
+			if(addressesPubEntity != null) {
+				for(AddressPubEntity e: addressesPubEntity) {
 					if(e.getDeleted() == null || !e.getDeleted().booleanValue()) {
-						shippingAddress.add(e.rebuild(e.getProtectedID() != null, true, true));
+						addresses.add(e.rebuild(e.getProtectedID() != null, true, true));
 					}
 					else {
-						removedShippingAddress.add(e.rebuild(e.getProtectedID() != null, true, true));
+						removedAddresses.add(e.rebuild(e.getProtectedID() != null, true, true));
 					}
 				}
-			}
-			
-			if(billingAddresses != null) {
-				billingAddress = billingAddresses.rebuild(billingAddresses.getProtectedID() != null, true, true);
 			}
 			
 		}
@@ -304,8 +327,7 @@ public class ClientAdminPubResource {
 		}
 		
 		try{
-			clientService.registerClient(client, billingAddress, 
-					shippingAddress, removedShippingAddress);
+			clientService.registerClient(client, addresses, removedAddresses);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -318,8 +340,7 @@ public class ClientAdminPubResource {
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("client", client);
-		vars.put("shippingAddress", shippingAddress);
-		vars.put("billingAddress", billingAddress);
+		vars.put("addresses", addresses);
 		
 		return vars;
 	}

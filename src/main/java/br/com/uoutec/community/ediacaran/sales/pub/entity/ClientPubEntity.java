@@ -2,6 +2,8 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
@@ -19,9 +21,11 @@ public class ClientPubEntity extends SystemUserPubEntity{
 
 	private static final long serialVersionUID = 1391868122764939558L;
 
-	private Boolean useDefaultBillingAddress;
+	@Valid
+	private AddressPubEntity billingAddress;
 	
-	private Boolean useDefaultShippingAddress;
+	@Valid
+	private AddressPubEntity shippingAddress;
 	
 	@Constructor
 	public ClientPubEntity(){
@@ -38,20 +42,21 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		super.setActivated(activated);
 	}
 	
-	public Boolean getUseDefaultBillingAddress() {
-		return useDefaultBillingAddress;
+
+	public AddressPubEntity getBillingAddress() {
+		return billingAddress;
 	}
 
-	public void setUseDefaultBillingAddress(Boolean useDefaultBillingAddress) {
-		this.useDefaultBillingAddress = useDefaultBillingAddress;
+	public void setBillingAddress(AddressPubEntity billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 
-	public Boolean getUseDefaultShippingAddress() {
-		return useDefaultShippingAddress;
+	public AddressPubEntity getShippingAddress() {
+		return shippingAddress;
 	}
 
-	public void setUseDefaultShippingAddress(Boolean useDefaultShippingAddress) {
-		this.useDefaultShippingAddress = useDefaultShippingAddress;
+	public void setShippingAddress(AddressPubEntity shippingAddress) {
+		this.shippingAddress = shippingAddress;
 	}
 
 	@Override
@@ -108,11 +113,11 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		}
 
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.BILLING_ADDRESS)) {
-			o.setUseDefaultBillingAddress(useDefaultBillingAddress == null? false : useDefaultBillingAddress);
+			o.setBillingAddress(billingAddress == null? null : billingAddress.rebuild(true, false, true));
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
-			o.setUseDefaultShippingAddress(useDefaultShippingAddress == null? false : useDefaultShippingAddress);
+			o.setShippingAddress(shippingAddress == null? null : shippingAddress.rebuild(true, false, false));
 		}
 		
 	}
@@ -142,8 +147,8 @@ public class ClientPubEntity extends SystemUserPubEntity{
 	protected void loadProperties(GenericPubEntity<SystemUser> e) {
 		super.loadProperties(e);
 		ClientPubEntity u = (ClientPubEntity)e;
-		this.useDefaultBillingAddress = u.useDefaultBillingAddress;
-		this.useDefaultShippingAddress = u.useDefaultShippingAddress;
+		this.billingAddress = u.billingAddress;
+		this.shippingAddress = u.shippingAddress;
 	}
 	
 }

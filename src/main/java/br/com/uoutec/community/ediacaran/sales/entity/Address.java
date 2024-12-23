@@ -17,7 +17,7 @@ public class Address implements Serializable{
 	private static final long serialVersionUID = 422874914019058641L;
 
 	@Min(value=1, groups = IdValidation.class)
-	protected Integer id;
+	protected int id;
 	
 	@NotNull(groups={DataValidation.class})
 	private Integer owner;
@@ -58,14 +58,14 @@ public class Address implements Serializable{
 	}
 
 	public String getProtectedID() {
-		return id == null || id.intValue() <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
+		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
