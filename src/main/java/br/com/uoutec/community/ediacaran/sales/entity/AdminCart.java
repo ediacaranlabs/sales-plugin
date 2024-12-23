@@ -15,6 +15,10 @@ public class AdminCart implements Serializable{
 	
 	private Client client;
 	
+	private Address billingAddress;
+	
+	private Address shippingAddress;
+	
 	public AdminCart() {
 	}
 
@@ -32,6 +36,22 @@ public class AdminCart implements Serializable{
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public Address getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
 	}
 	
 }

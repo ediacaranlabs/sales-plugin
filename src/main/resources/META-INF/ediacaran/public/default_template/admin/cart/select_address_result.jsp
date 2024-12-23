@@ -9,12 +9,12 @@
 <c:if test="${empty exception}">
 	<script type="text/javascript">
 		$.AppContext.utils.updateContentByID(
-			'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/address', 
-			'client_address_form'
-		);									
+			'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 
+			'cart_payment_details'
+		);
 		
 		var $accordion = $.AppContext.utils.getById('cart_steps');
-		var $cartPayment = $accordion.getItem('cart_address');
+		var $cartPayment = $accordion.getItem('cart_payment');
 		$cartPayment.select();
 		
 	</script>

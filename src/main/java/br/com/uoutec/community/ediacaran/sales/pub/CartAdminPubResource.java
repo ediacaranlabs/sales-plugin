@@ -35,6 +35,7 @@ import br.com.uoutec.community.ediacaran.persistence.entity.Country;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
@@ -45,6 +46,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
@@ -505,7 +507,6 @@ public class CartAdminPubResource {
 
 	@Action("/user/{protectedID}")
 	@RequestMethod(RequestMethodTypes.GET)
-	@Result("vars")
 	public ResultAction loadUser(
 			@DetachedName ClientPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -515,7 +516,6 @@ public class CartAdminPubResource {
 	
 	@Action("/user")
 	@RequestMethod(RequestMethodTypes.POST)
-	@Result("vars")
 	public ResultAction showUser(
 			@DetachedName ClientPubEntity systemUserPubEntity,			
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -525,7 +525,6 @@ public class CartAdminPubResource {
 
 	@Action("/new-user")
 	@RequestMethod({RequestMethodTypes.POST, RequestMethodTypes.GET})
-	@Result("vars")
 	public ResultAction newUser(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
@@ -614,6 +613,78 @@ public class CartAdminPubResource {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "searchUsers", "search", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
+	}
+	
+	@Action("/client/address")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/address")
+	@RequestMethod(RequestMethodTypes.GET)
+	@Result("vars")
+	public Map<String,Object> showAddress(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try{
+			Map<String,Object> vars = new HashMap<String, Object>();
+			vars.put("client",					adminCart.getClient());
+			vars.put("billingAddress",			cartService.getBillingAddress(adminCart.getClient()));
+			vars.put("shippingAddresses",		cartService.getShippingAddresses(adminCart.getClient()));
+			return vars;
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showAddress", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+
+	@Action("/client/select-address")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/select_address_result")
+	@RequestMethod(RequestMethodTypes.POST)
+	@Result("vars")
+	public void selectAddress(
+			@Basic(bean = "selectedBillingAddress")
+			AddressPubEntity selectedBillingAddress, 
+			@Basic(bean = "billingAddress")
+			AddressPubEntity billingAddressPubEntity,
+			@Basic(bean = "selectedShippingAddress")
+			AddressPubEntity selectedShippingAddress, 
+			@Basic(bean = "shippingAddress")
+			AddressPubEntity shippingAddressPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		Address shippingAddress = null;
+		Address billingAddress = null;
+		
+		try {
+			if(selectedBillingAddress != null) {
+				billingAddress =
+						"new".equals(selectedBillingAddress.getProtectedID())?
+							billingAddressPubEntity.rebuild(false, true, true) :
+							selectedBillingAddress.rebuild(true, false, false);	
+			}
+
+			if(selectedShippingAddress != null) {
+				shippingAddress =
+						"new".equals(selectedShippingAddress.getProtectedID())?
+							shippingAddressPubEntity.rebuild(false, true, true) :
+							selectedShippingAddress.rebuild(true, false, false);	
+			}
+		}
+		catch(Throwable ex) {
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "selectAddress", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		try{
+			adminCart.setBillingAddress(billingAddress);
+			adminCart.setShippingAddress(shippingAddress);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showAddress", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
 	}
 	
 	public Cart getCart() {

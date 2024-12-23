@@ -29,6 +29,7 @@ import org.brandao.brutos.web.WebFlowController;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -43,7 +44,6 @@ import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -89,11 +89,11 @@ public class CartPubResource {
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		SystemUser user;
+		Client user;
 		
 		try {
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			user = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
 			result.put("user", user);
 		}
 		catch(Throwable ex) {
@@ -125,11 +125,11 @@ public class CartPubResource {
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		SystemUser user;
+		Client user;
 		
 		try {
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			user = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
 			result.put("user", user);
 		}
 		catch(Throwable ex) {
@@ -318,10 +318,10 @@ public class CartPubResource {
 		
 		/* user */
 		
-		SystemUser user = null;
+		Client user = null;
 		
 		try{
-			user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			user = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
 		}
 		catch(InvalidRequestException ex){
 			

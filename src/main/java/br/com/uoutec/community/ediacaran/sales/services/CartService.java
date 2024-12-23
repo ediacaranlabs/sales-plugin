@@ -5,8 +5,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -16,6 +19,8 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -23,7 +28,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 
 @Singleton
@@ -38,7 +42,22 @@ public class CartService {
 	@Inject
 	private ProductRegistry productRegistry;
 	
-	public List<PaymentGateway> getPaymentGateways(Cart cart, SystemUser user){
+	@Inject
+	private ClientRegistry clientRegistry;
+	
+	public Address getBillingAddress(Client client) throws ClientRegistryException {
+		return clientRegistry.getAddress(client, Client.BILLING); 
+	}
+
+	public List<Address> getShippingAddresses(Client client) throws ClientRegistryException {
+		return clientRegistry.getAddresses(client, Client.SHIPPING); 
+	}
+
+	public Address getShippingAddress(int id, Client client) throws ClientRegistryException {
+		return clientRegistry.getAddressByID(id); 
+	}
+	
+	public List<PaymentGateway> getPaymentGateways(Cart cart, Client user){
 		return paymentGatewayProvider.getPaymentGateways(cart, user);
 	}
 
@@ -63,7 +82,8 @@ public class CartService {
 		cartRegistry.remove(cart, serial);
 	}
 	
-	public Checkout checkout(Cart cart, SystemUser systemUser, Payment payment, String message) throws
+	@Transactional
+	public Checkout checkout(Cart cart, Client systemUser, Payment payment, String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
 		return cartRegistry.checkout(cart, systemUser,  payment, message);
 	}

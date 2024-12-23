@@ -24,7 +24,7 @@
 			placeholder="#{form.first_name.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.validation.first_name.not_empty}" 
@@ -53,7 +53,7 @@
 			placeholder="#{form.last_name.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.last_name.validation.not_empty}" 
@@ -84,7 +84,7 @@
 			placeholder="#{form.zip.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.zip.validation.not_empty}" 
@@ -133,7 +133,7 @@
 			placeholder="#{form.address_line1.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.address_line1.validation.not_empty}" 
@@ -184,7 +184,7 @@
 			placeholder="#{form.address_line2.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.address_line2.validation.regexp}"
@@ -239,7 +239,7 @@
 					selected="${address.country.isoAlpha3 == country.isoAlpha3}" 
 					bundle="${messages}"/>
 			</c:forEach>
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.country.validation.not_empty}" 
@@ -282,7 +282,7 @@
 			placeholder="#{form.region.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{form.region.validation.regexp}"
@@ -327,7 +327,7 @@
 			placeholder="#{form.city.placeholder}"
 			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
 			bundle="${messages}">
-			<ec:field-validator form="client_form">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{form.city.validation.not_empty}" 

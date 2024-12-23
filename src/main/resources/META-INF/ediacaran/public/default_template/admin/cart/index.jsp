@@ -265,7 +265,7 @@ $.AppContext.onload(function(){
 						</ed:row>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Next" icon2="chevron-right" actionType="submit"  align="right" form="form_user" />
+								<ec:button label="Next" icon2="chevron-right" actionType="submit"  align="right" form="form_user"/>
 								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
@@ -292,14 +292,13 @@ $.AppContext.onload(function(){
 						</ed:row>
 					</ec:accordion-item>
 					<ec:accordion-item id="cart_address" title="Address">
-						<span id="address">
-							<ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select-address" update="cart_result">
-								<jsp:include page="address.jsp"/>
-							</ec:form>
-						</span>
+						<ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/select-address" update="cart_result">
+							<span id="client_address_form">
+							</span>
+						</ec:form>
 						<ed:row>
 							<ed:col>
-								<ec:button label="Next" icon2="chevron-right" actionType="submit"  align="right" form="form_user" />
+								<ec:button label="Next" icon2="chevron-right" actionType="submit"  align="right" form="address_user" />
 								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
@@ -320,8 +319,8 @@ $.AppContext.onload(function(){
 								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
 									<ec:event type="click">
 										var $accordion = $.AppContext.utils.getById('cart_steps');
-										var $accordionItens = $accordion.getItens();
-										$accordionItens[1].select();
+										var $tab = $accordion.getItem("cart_address");
+										$tab.select();
 									</ec:event>
 								</ec:button>
 							</ed:col>
