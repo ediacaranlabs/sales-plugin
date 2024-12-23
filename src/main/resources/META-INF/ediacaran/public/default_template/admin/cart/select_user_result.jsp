@@ -14,7 +14,7 @@
 		);
 		
 		var $accordion = $.AppContext.utils.getById('cart_steps');
-		var $cartPayment = $accordion.getItem('cart_payment');
+		var $cartPayment = $accordion.getItem('cart_address');
 		$cartPayment.select();
 		
 	</script>

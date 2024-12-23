@@ -37,14 +37,7 @@
 							<span formgroup="client">
 							<ec:checkbox label="#{tabs.billing_address.use_default.label}" name="useDefaultBillingAddress" value="true" bundle="${messages}" selected="${empty vars.client.protectedID || vars.client.useDefaultBillingAddress}">
 								<ec:event type="change">
-									var $form = $event.source.getFirstParent(function($e){
-										return $e.getTagName() == 'form';
-									});
-									
-									if($form == null){
-										return;
-									}
-									
+									var $form = $event.source.getForm();
 									var $defaultBillingAddress = $form.getField('client.useDefaultBillingAddress');
 									var $checked = $defaultBillingAddress.getValue() === 'true';
 									
@@ -78,13 +71,7 @@
 							<span formgroup="client">
 							<ec:checkbox label="#{tabs.shipping_address.use_default.label}" name="useDefaultShippingAddress" value="true" bundle="${messages}" selected="${empty vars.client.protectedID || vars.client.useDefaultShippingAddress}">
 								<ec:event type="change">
-									var $form = $event.source.getFirstParent(function($e){
-										return $e.getTagName() == 'form';
-									});
-									
-									if($form == null){
-										return;
-									}
+									var $form = $event.source.getForm();
 								
 									var $defaultShippingAddress = $form.getField('client.useDefaultShippingAddress');
 									var $checked = $defaultShippingAddress.getValue() === 'true';

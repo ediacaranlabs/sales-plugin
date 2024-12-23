@@ -11,6 +11,7 @@ $.AppContext.onload(function(){
 	$accordion.select("cart_products");
 	$accordion.setEnabled("cart_products", false);
 	$accordion.setEnabled("cart_client", false);
+	$accordion.setEnabled("cart_address", false);
 	$accordion.setEnabled("cart_payment", false);
 		
 });
@@ -284,6 +285,25 @@ $.AppContext.onload(function(){
 									<ec:event type="click">
 										var $tabs = $.AppContext.utils.getById('client_tabs');
 										var $tab = $tabs.getItem("search_client_tabs");
+										$tab.select();
+									</ec:event>
+								</ec:button>
+							</ed:col>
+						</ed:row>
+					</ec:accordion-item>
+					<ec:accordion-item id="cart_address" title="Address">
+						<span id="address">
+							<ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select-address" update="cart_result">
+								<jsp:include page="address.jsp"/>
+							</ec:form>
+						</span>
+						<ed:row>
+							<ed:col>
+								<ec:button label="Next" icon2="chevron-right" actionType="submit"  align="right" form="form_user" />
+								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
+									<ec:event type="click">
+										var $accordion = $.AppContext.utils.getById('cart_steps');
+										var $tab = $accordion.getItem("cart_client");
 										$tab.select();
 									</ec:event>
 								</ec:button>
