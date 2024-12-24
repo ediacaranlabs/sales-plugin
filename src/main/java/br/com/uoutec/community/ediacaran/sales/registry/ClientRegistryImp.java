@@ -68,30 +68,6 @@ public class ClientRegistryImp
 				systemUserRegistry.registerUser(entity);
 				return null;
 			});
-
-			if(entity.getBillingAddress() != null) {
-				
-				if(entity.getBillingAddress().getId() <= 0) {
-					registerAddress(entity.getBillingAddress(), entity);
-				}
-				
-				dta.put("billingAddressId", String.valueOf(entity.getBillingAddress().getId()));
-				
-			}
-
-			if(entity.getShippingAddress() != null) {
-				if(entity.getShippingAddress().getId() <= 0) {
-					registerAddress(entity.getShippingAddress(), entity);
-				}
-				dta.put("shippingAddressId", String.valueOf(entity.getShippingAddress().getId()));
-			}
-			
-			
-			ContextSystemSecurityCheck.doPrivileged(()->{
-				systemUserRegistry.registerUser(entity);
-				return null;
-			});
-			
 		}
 		catch(DoPrivilegedException ex) {
 			throw new ClientRegistryException(ex.getCause());

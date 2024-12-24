@@ -10,9 +10,9 @@ public class Client extends SystemUser{
 	
 	public static final String BILLING = "billing";
 	
-	private transient Address billingAddress;
+	private Integer selectedBillingAddress;
 	
-	private transient Address shippingAddress;
+	private Integer selectedShippingAddress;
 	
 	public Client() {
 	}
@@ -36,48 +36,34 @@ public class Client extends SystemUser{
 		this.zip = user.getZip();
 
 		if(user.getAddData() != null) {
-			if(user.getAddData().get("billingAddressId") != null) {
-				int id = Integer.parseInt(user.getAddData().get("billingAddressId"));
-				if(id > 0) {
-					this.billingAddress = new Address();
-					this.billingAddress.setId(id);
-				}
+			
+			if(user.getAddData().get("selectedBillingAddress") != null) {
+				this.selectedBillingAddress = Integer.parseInt(user.getAddData().get("selectedBillingAddress"));
 			}
 
-			if(user.getAddData().get("shippingAddressId") != null) {
-				int id = Integer.parseInt(user.getAddData().get("shippingAddressId"));
-				if(id > 0) {
-					this.shippingAddress = new Address();
-					this.shippingAddress.setId(id);
-				}
+			if(user.getAddData().get("selectedShippingAddress") != null) {
+				this.selectedShippingAddress = Integer.parseInt(user.getAddData().get("selectedShippingAddress"));
 			}
 			
 		}
 		
 	}
 
-	public int getBillingAddressId() {
-		return this.billingAddress == null? 0 : billingAddress.getId();
+	public Integer getSelectedBillingAddress() {
+		return selectedBillingAddress;
 	}
 
-	public  Address getBillingAddress() {
-		return billingAddress;
+	public void setSelectedBillingAddress(Integer selectedBillingAddress) {
+		this.selectedBillingAddress = selectedBillingAddress;
 	}
 
-	public void setBillingAddress(Address billingAddress) {
-		this.billingAddress = billingAddress;
+	public Integer getSelectedShippingAddress() {
+		return selectedShippingAddress;
 	}
 
-	public int getShippingAddressId() {
-		return this.shippingAddress == null? 0 : shippingAddress.getId();
-	}
-	
-	public Address getShippingAddress() {
-		return shippingAddress;
+	public void setSelectedShippingAddress(Integer selectedShippingAddress) {
+		this.selectedShippingAddress = selectedShippingAddress;
 	}
 
-	public void setShippingAddress(Address shippingAddress) {
-		this.shippingAddress = shippingAddress;
-	}
 
 }

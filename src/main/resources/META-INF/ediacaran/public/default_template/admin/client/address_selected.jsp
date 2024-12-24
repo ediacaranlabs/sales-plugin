@@ -10,11 +10,11 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<span formgroup="client.billingAddress">
-			<ec:select name="protectedID">
+		<span formgroup="client">
+			<ec:select name="selectedBillingAddress">
 				<ec:option value="">${vars.client.addressLine1} ${vars.client.addressLine2} ${vars.client.city} ${vars.client.region} ${vars.client.country.isoAlpha3} - ${vars.client.zip} (Default Address)</ec:option>
 				<c:forEach items="${vars.addresses}" var="address">
-					<ec:option value="${address.protectedID}" selected="${vars.client.billingAddress.id == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}</ec:option>
+					<ec:option value="${address.protectedID}" selected="${vars.client.selectedBillingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}</ec:option>
 				</c:forEach>
 			</ec:select>		
 		</span>			
@@ -27,11 +27,11 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<span formgroup="client.shippingAddress">
-			<ec:select name="protectedID">
+		<span formgroup="client">
+			<ec:select name="selectedShippingAddress">
 				<ec:option value="">${vars.client.addressLine1} ${vars.client.addressLine2} ${vars.client.city} ${vars.client.region} ${vars.client.country.isoAlpha3} - ${vars.client.zip} (Default Address)</ec:option>
 				<c:forEach items="${vars.addresses}" var="address">
-					<ec:option value="${address.protectedID}" selected="${vars.client.shippingAddress.id == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}</ec:option>
+					<ec:option value="${address.protectedID}" selected="${vars.client.selectedShippingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}</ec:option>
 				</c:forEach>
 			</ec:select>		
 		</span>			

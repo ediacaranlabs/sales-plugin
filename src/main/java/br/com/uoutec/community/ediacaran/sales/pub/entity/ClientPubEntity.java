@@ -11,6 +11,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.entity.SystemUserPubEntity;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -19,9 +20,9 @@ public class ClientPubEntity extends SystemUserPubEntity{
 
 	private static final long serialVersionUID = 1391868122764939558L;
 
-	private AddressPubEntity billingAddress;
+	private String selectedBillingAddress;
 	
-	private AddressPubEntity shippingAddress;
+	private String selectedShippingAddress;
 	
 	@Constructor
 	public ClientPubEntity(){
@@ -38,21 +39,20 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		super.setActivated(activated);
 	}
 	
-
-	public AddressPubEntity getBillingAddress() {
-		return billingAddress;
+	public String getSelectedBillingAddress() {
+		return selectedBillingAddress;
 	}
 
-	public void setBillingAddress(AddressPubEntity billingAddress) {
-		this.billingAddress = billingAddress;
+	public void setSelectedBillingAddress(String selectedBillingAddress) {
+		this.selectedBillingAddress = selectedBillingAddress;
 	}
 
-	public AddressPubEntity getShippingAddress() {
-		return shippingAddress;
+	public String getSelectedShippingAddress() {
+		return selectedShippingAddress;
 	}
 
-	public void setShippingAddress(AddressPubEntity shippingAddress) {
-		this.shippingAddress = shippingAddress;
+	public void setSelectedShippingAddress(String selectedShippingAddress) {
+		this.selectedShippingAddress = selectedShippingAddress;
 	}
 
 	@Override
@@ -109,11 +109,15 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		}
 
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.BILLING_ADDRESS)) {
-			o.setBillingAddress(billingAddress == null? null : billingAddress.rebuild(true, false, true));
+			if(this.selectedBillingAddress != null) {
+				o.setSelectedBillingAddress(Integer.parseInt(SecretUtil.toID(this.selectedBillingAddress)));
+			}
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
-			o.setShippingAddress(shippingAddress == null? null : shippingAddress.rebuild(true, false, true));
+			if(this.selectedShippingAddress != null) {
+				o.setSelectedShippingAddress(Integer.parseInt(SecretUtil.toID(this.selectedShippingAddress)));
+			}
 		}
 		
 	}
@@ -143,8 +147,8 @@ public class ClientPubEntity extends SystemUserPubEntity{
 	protected void loadProperties(GenericPubEntity<SystemUser> e) {
 		super.loadProperties(e);
 		ClientPubEntity u = (ClientPubEntity)e;
-		this.billingAddress = u.billingAddress;
-		this.shippingAddress = u.shippingAddress;
+		this.selectedBillingAddress = u.selectedBillingAddress;
+		this.selectedShippingAddress = u.selectedShippingAddress;
 	}
 	
 }
