@@ -112,11 +112,17 @@ public class ClientPubEntity extends SystemUserPubEntity{
 			if(this.selectedBillingAddress != null) {
 				o.setSelectedBillingAddress(Integer.parseInt(SecretUtil.toID(this.selectedBillingAddress)));
 			}
+			else {
+				o.setSelectedBillingAddress(null);
+			}
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
 			if(this.selectedShippingAddress != null) {
 				o.setSelectedShippingAddress(Integer.parseInt(SecretUtil.toID(this.selectedShippingAddress)));
+			}
+			else {
+				o.setSelectedShippingAddress(null);
 			}
 		}
 		
