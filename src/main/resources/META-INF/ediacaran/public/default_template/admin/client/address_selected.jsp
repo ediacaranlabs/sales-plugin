@@ -10,7 +10,7 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<span formgroup="billingAddress">
+		<span formgroup="client.billingAddress">
 			<ec:select name="protectedID">
 				<ec:option value="">${vars.client.addressLine1} ${vars.client.addressLine2} ${vars.client.city} ${vars.client.region} ${vars.client.country.isoAlpha3} - ${vars.client.zip} (Default Address)</ec:option>
 				<c:forEach items="${vars.addresses}" var="address">
@@ -27,7 +27,7 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<span formgroup="shippingAddress">
+		<span formgroup="client.shippingAddress">
 			<ec:select name="protectedID">
 				<ec:option value="">${vars.client.addressLine1} ${vars.client.addressLine2} ${vars.client.city} ${vars.client.region} ${vars.client.country.isoAlpha3} - ${vars.client.zip} (Default Address)</ec:option>
 				<c:forEach items="${vars.addresses}" var="address">

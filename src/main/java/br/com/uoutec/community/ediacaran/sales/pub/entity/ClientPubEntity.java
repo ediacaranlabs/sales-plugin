@@ -2,8 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.Locale;
 
-import javax.validation.Valid;
-
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
@@ -21,10 +19,8 @@ public class ClientPubEntity extends SystemUserPubEntity{
 
 	private static final long serialVersionUID = 1391868122764939558L;
 
-	@Valid
 	private AddressPubEntity billingAddress;
 	
-	@Valid
 	private AddressPubEntity shippingAddress;
 	
 	@Constructor
@@ -117,7 +113,7 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		}
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
-			o.setShippingAddress(shippingAddress == null? null : shippingAddress.rebuild(true, false, false));
+			o.setShippingAddress(shippingAddress == null? null : shippingAddress.rebuild(true, false, true));
 		}
 		
 	}

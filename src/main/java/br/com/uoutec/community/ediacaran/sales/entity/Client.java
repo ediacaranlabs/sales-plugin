@@ -37,24 +37,30 @@ public class Client extends SystemUser{
 
 		if(user.getAddData() != null) {
 			if(user.getAddData().get("billingAddressId") != null) {
-				this.billingAddress = new Address();
-				this.billingAddress.setId(Integer.parseInt(user.getAddData().get("billingAddressId")));
+				int id = Integer.parseInt(user.getAddData().get("billingAddressId"));
+				if(id > 0) {
+					this.billingAddress = new Address();
+					this.billingAddress.setId(id);
+				}
 			}
 
 			if(user.getAddData().get("shippingAddressId") != null) {
-				this.billingAddress = new Address();
-				this.billingAddress.setId(Integer.parseInt(user.getAddData().get("shippingAddressId")));
+				int id = Integer.parseInt(user.getAddData().get("shippingAddressId"));
+				if(id > 0) {
+					this.shippingAddress = new Address();
+					this.shippingAddress.setId(id);
+				}
 			}
 			
 		}
 		
 	}
 
-	public String getBillingAddressId() {
-		return this.billingAddress == null || billingAddress.getId() <= 0? null : String.valueOf(this.billingAddress.getId());
+	public int getBillingAddressId() {
+		return this.billingAddress == null? 0 : billingAddress.getId();
 	}
 
-	public Address getBillingAddress() {
+	public  Address getBillingAddress() {
 		return billingAddress;
 	}
 
@@ -62,8 +68,8 @@ public class Client extends SystemUser{
 		this.billingAddress = billingAddress;
 	}
 
-	public String getShippinggAddressId() {
-		return this.shippingAddress == null || shippingAddress.getId() <= 0? null : String.valueOf(this.shippingAddress.getId());
+	public int getShippingAddressId() {
+		return this.shippingAddress == null? 0 : shippingAddress.getId();
 	}
 	
 	public Address getShippingAddress() {

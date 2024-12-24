@@ -43,6 +43,30 @@ public class ClientServiceImp implements ClientService{
 	public void registerClient(Client entity, 
 			List<Address> addAddresses, List<Address> removeAddresses) throws ClientRegistryException{
 		
+		Address billingAddress = entity.getBillingAddress();
+		Address shippingAddress = entity.getShippingAddress();
+		
+		try {
+			if(entity.getId() == null) {
+				entity.setBillingAddress(null);
+				entity.setShippingAddress(null);
+				clientRegistry.registerClient(entity);
+			}
+			
+			if(billingAddress != null) {
+				clientRegistry.registerAddress(billingAddress, entity);
+			}
+			
+			if(shippingAddress != null) {
+				clientRegistry.registerAddress(shippingAddress, entity);
+			}
+		}
+		finally {
+			entity.setBillingAddress(billingAddress);
+			entity.setShippingAddress(shippingAddress);
+		}
+		
+		
 		clientRegistry.registerClient(entity);
 		
 		if(addAddresses != null) {
