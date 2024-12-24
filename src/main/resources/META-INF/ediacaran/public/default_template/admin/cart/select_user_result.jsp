@@ -9,7 +9,7 @@
 <c:if test="${empty exception}">
 	<script type="text/javascript">
 		$.AppContext.utils.updateContentByID(
-			'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/address', 
+			'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/address/simplified', 
 			'client_address_form'
 		);									
 		

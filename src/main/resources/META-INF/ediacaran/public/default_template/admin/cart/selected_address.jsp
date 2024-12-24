@@ -26,7 +26,7 @@
 						var $selectedBillingAddress = $form.getField('selectedBillingAddress.protectedID');
 						
 						if($selectedBillingAddress.getValue() === 'new'){
-							$.AppContext.utils.updateContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address", "new_billing_address");
+							$.AppContext.utils.updateContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/simplified", "new_billing_address");
 						}
 						else{
 							$.AppContext.utils.content.update("new_billing_address", "");
@@ -65,7 +65,7 @@
 						var $selectedBillingAddress = $form.getField('selectedShippingAddress.protectedID');
 						
 						if($selectedBillingAddress.getValue() === 'new'){
-							$.AppContext.utils.updateContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address", "new_shipping_address");
+							$.AppContext.utils.updateContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/simplified", "new_shipping_address");
 						}
 						else{
 							$.AppContext.utils.content.update("new_shipping_address", "");

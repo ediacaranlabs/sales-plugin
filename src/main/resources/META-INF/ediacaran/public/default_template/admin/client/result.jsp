@@ -13,7 +13,7 @@
 	$.AppContext.onload(function(){			
 	
 		$.AppContext.utils.updateContentByID(
-				'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/selected-address/${vars.client.protectedID}', 
+				'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/select-address/${vars.client.protectedID}', 
 				'selected_address'
 			);									
 		

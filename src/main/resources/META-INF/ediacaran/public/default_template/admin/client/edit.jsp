@@ -51,7 +51,7 @@
 						<ed:col>
 							<ec:button id="addshippingAddressButton" label="#{tabs.shipping_address.add_address.label}" align="right" bundle="${messages}" actionType="button">
 								<ec:event type="click">
-									$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/group", "addressList");
+									$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address", "addressList");
 								</ec:event>
 							</ec:button>
 						</ed:col>
