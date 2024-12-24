@@ -276,7 +276,7 @@ $.AppContext.onload(function(){
 								<ec:button label="New" icon="plus" actionType="button" align="right" >
 									<ec:event type="click">
 										$.AppContext.utils.updateContentByID(
-											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit?type=form', 
+											'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit?type=simplified', 
 											'client_data_view'
 										);									
 									</ec:event>
