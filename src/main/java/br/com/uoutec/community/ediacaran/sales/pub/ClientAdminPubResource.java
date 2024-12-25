@@ -331,6 +331,10 @@ public class ClientAdminPubResource {
 	public Map<String,Object> save(
 			@Basic(bean="client")
 			ClientPubEntity clientPubEntity,
+			@Basic(bean = "client.billingAddress")
+			AddressPubEntity billingAddressPubEntity,
+			@Basic(bean = "client.shippingAddress")
+			AddressPubEntity shippingAddressPubEntity,
 			@Basic(bean="addresses", mappingType = MappingTypes.OBJECT)
 			List<AddressPubEntity> addressesPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -338,11 +342,12 @@ public class ClientAdminPubResource {
 		
 		Client client;
 		List<Address> addresses = new ArrayList<>();
+		List<Address> allAddresses = new ArrayList<>();
 		List<Address> removedAddresses = new ArrayList<>();
+		Address shippingAddress = null;
+		Address billingAddress = null;
 		
 		try{
-			client = (Client)clientPubEntity
-					.rebuild(clientPubEntity.getProtectedID() != null, true, true);
 			
 			if(addressesPubEntity != null) {
 				for(AddressPubEntity e: addressesPubEntity) {
@@ -354,6 +359,27 @@ public class ClientAdminPubResource {
 					}
 				}
 			}
+			
+			allAddresses.addAll(addresses);
+			
+			if("new".equals(clientPubEntity.getSelectedBillingAddress())){
+				clientPubEntity.setSelectedBillingAddress(null);
+				if(billingAddressPubEntity != null) {
+					billingAddress = billingAddressPubEntity.rebuild(false, true, true);
+					allAddresses.add(billingAddress);
+				}
+			}
+
+			if("new".equals(clientPubEntity.getSelectedShippingAddress())){
+				clientPubEntity.setSelectedShippingAddress(null);
+				if(shippingAddressPubEntity != null) {
+					shippingAddress = shippingAddressPubEntity.rebuild(false, true, true);
+					allAddresses.add(shippingAddress);
+				}
+			}
+			
+			client = (Client)clientPubEntity
+					.rebuild(clientPubEntity.getProtectedID() != null, true, true);
 			
 		}
 		catch(Throwable ex){
@@ -367,6 +393,18 @@ public class ClientAdminPubResource {
 		
 		try{
 			clientService.registerClient(client, addresses, removedAddresses);
+			
+			if(shippingAddress != null || billingAddress != null) {
+				if(billingAddress != null) {
+					client.setSelectedBillingAddress(billingAddress.getId());
+				}
+				if(shippingAddress != null) {
+					client.setSelectedShippingAddress(shippingAddress.getId());
+				}
+				
+				clientService.registerClient(client, null, null);
+			}
+			
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -379,7 +417,7 @@ public class ClientAdminPubResource {
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("client", client);
-		vars.put("addresses", addresses);
+		vars.put("addresses", allAddresses);
 		
 		return vars;
 	}

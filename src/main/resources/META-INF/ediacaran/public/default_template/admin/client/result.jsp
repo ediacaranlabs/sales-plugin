@@ -48,6 +48,7 @@
 				$addr.remove();
 			}
 		}
+		
 	});
 	</script>
 	<ec:alert style="success">
