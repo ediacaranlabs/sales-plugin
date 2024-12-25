@@ -20,9 +20,9 @@ public class ClientPubEntity extends SystemUserPubEntity{
 
 	private static final long serialVersionUID = 1391868122764939558L;
 
-	private String selectedBillingAddress;
+	private AddressPubEntity selectedBillingAddress;
 	
-	private String selectedShippingAddress;
+	private AddressPubEntity selectedShippingAddress;
 	
 	@Constructor
 	public ClientPubEntity(){
@@ -39,19 +39,19 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		super.setActivated(activated);
 	}
 	
-	public String getSelectedBillingAddress() {
+	public AddressPubEntity getSelectedBillingAddress() {
 		return selectedBillingAddress;
 	}
 
-	public void setSelectedBillingAddress(String selectedBillingAddress) {
+	public void setSelectedBillingAddress(AddressPubEntity selectedBillingAddress) {
 		this.selectedBillingAddress = selectedBillingAddress;
 	}
 
-	public String getSelectedShippingAddress() {
+	public AddressPubEntity getSelectedShippingAddress() {
 		return selectedShippingAddress;
 	}
 
-	public void setSelectedShippingAddress(String selectedShippingAddress) {
+	public void setSelectedShippingAddress(AddressPubEntity selectedShippingAddress) {
 		this.selectedShippingAddress = selectedShippingAddress;
 	}
 
@@ -110,7 +110,7 @@ public class ClientPubEntity extends SystemUserPubEntity{
 
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.BILLING_ADDRESS)) {
 			if(this.selectedBillingAddress != null) {
-				o.setSelectedBillingAddress(Integer.parseInt(SecretUtil.toID(this.selectedBillingAddress)));
+				o.setSelectedBillingAddress(Integer.parseInt(SecretUtil.toID(this.selectedBillingAddress.getProtectedID())));
 			}
 			else {
 				o.setSelectedBillingAddress(null);
@@ -119,7 +119,7 @@ public class ClientPubEntity extends SystemUserPubEntity{
 		
 		if(subject.isPermitted(SalesUserPermissions.CLIENT.FIELDS.SHIPPING_ADDRESSES)) {
 			if(this.selectedShippingAddress != null) {
-				o.setSelectedShippingAddress(Integer.parseInt(SecretUtil.toID(this.selectedShippingAddress)));
+				o.setSelectedShippingAddress(Integer.parseInt(SecretUtil.toID(this.selectedShippingAddress.getProtectedID())));
 			}
 			else {
 				o.setSelectedShippingAddress(null);

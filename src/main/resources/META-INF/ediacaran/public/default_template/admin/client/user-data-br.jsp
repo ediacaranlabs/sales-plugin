@@ -254,7 +254,7 @@
 				if($country){
 					$form.submit(
 						false, 
-						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit", 
+						"${vars.reloadAddress}", 
 						$group.getAttribute("id")
 					);
 				}

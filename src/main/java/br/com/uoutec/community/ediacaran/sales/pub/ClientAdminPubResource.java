@@ -43,6 +43,7 @@ import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserManagerPubResourceMessages;
+import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -65,6 +66,9 @@ public class ClientAdminPubResource {
 	
 	@Inject
 	private ClientService clientService;
+
+	@Inject
+	private VarParser varParser;
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/client/index")
@@ -171,9 +175,11 @@ public class ClientAdminPubResource {
 				resolvedView = false;
 			}
 			
-			vars.put("client",    client);
-			vars.put("countries", clientService.getCountries(locale));
-			vars.put("principal", subjectProvider.getSubject().getPrincipal());
+			vars.put("type",          "simplified");
+			vars.put("client",        client);
+			vars.put("countries",     clientService.getCountries(locale));
+			vars.put("principal",     subjectProvider.getSubject().getPrincipal());
+			vars.put("reloadAddress", varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit"));
 			
 		}
 		catch(Throwable ex){
@@ -242,7 +248,10 @@ public class ClientAdminPubResource {
 		return ra;
 	}
 
-	@Action({"/select-address/{client.protectedID}"})
+	@Action({
+		"/select-address/{client.protectedID}",
+		"/select-address/{client.protectedID}/{type}"
+	})
 	@View("${plugins.ediacaran.sales.template}/admin/client/address_selected")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
@@ -250,6 +259,8 @@ public class ClientAdminPubResource {
 	public Map<String,Object> selectedAddress(
 			@Basic(bean = "client")
 			ClientPubEntity systemUserPubEntity,
+			@Basic(bean = "type")
+			String type,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
@@ -258,6 +269,7 @@ public class ClientAdminPubResource {
 			Client client = (Client) systemUserPubEntity.rebuild(true, false, false);
 			Map<String,Object> vars = new HashMap<String, Object>();
 			
+			vars.put("type",   "simplified");
 			vars.put("client", client);
 			vars.put("addresses", clientService.getAddresses(client, null));
 			vars.put("principal", subjectProvider.getSubject().getPrincipal());
@@ -297,6 +309,7 @@ public class ClientAdminPubResource {
 			vars.put("client",    client);
 			vars.put("countries", clientService.getCountries(locale));
 			vars.put("principal", subjectProvider.getSubject().getPrincipal());
+			vars.put("reloadAddress", varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit"));
 
 			view = clientEntityTypes.getClientEntityView(client);
 			resolvedView = true;
@@ -331,10 +344,6 @@ public class ClientAdminPubResource {
 	public Map<String,Object> save(
 			@Basic(bean="client")
 			ClientPubEntity clientPubEntity,
-			@Basic(bean = "client.billingAddress")
-			AddressPubEntity billingAddressPubEntity,
-			@Basic(bean = "client.shippingAddress")
-			AddressPubEntity shippingAddressPubEntity,
 			@Basic(bean="addresses", mappingType = MappingTypes.OBJECT)
 			List<AddressPubEntity> addressesPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -342,10 +351,7 @@ public class ClientAdminPubResource {
 		
 		Client client;
 		List<Address> addresses = new ArrayList<>();
-		List<Address> allAddresses = new ArrayList<>();
 		List<Address> removedAddresses = new ArrayList<>();
-		Address shippingAddress = null;
-		Address billingAddress = null;
 		
 		try{
 			
@@ -357,24 +363,6 @@ public class ClientAdminPubResource {
 					else {
 						removedAddresses.add(e.rebuild(e.getProtectedID() != null, true, true));
 					}
-				}
-			}
-			
-			allAddresses.addAll(addresses);
-			
-			if("new".equals(clientPubEntity.getSelectedBillingAddress())){
-				clientPubEntity.setSelectedBillingAddress(null);
-				if(billingAddressPubEntity != null) {
-					billingAddress = billingAddressPubEntity.rebuild(false, true, true);
-					allAddresses.add(billingAddress);
-				}
-			}
-
-			if("new".equals(clientPubEntity.getSelectedShippingAddress())){
-				clientPubEntity.setSelectedShippingAddress(null);
-				if(shippingAddressPubEntity != null) {
-					shippingAddress = shippingAddressPubEntity.rebuild(false, true, true);
-					allAddresses.add(shippingAddress);
 				}
 			}
 			
@@ -393,18 +381,6 @@ public class ClientAdminPubResource {
 		
 		try{
 			clientService.registerClient(client, addresses, removedAddresses);
-			
-			if(shippingAddress != null || billingAddress != null) {
-				if(billingAddress != null) {
-					client.setSelectedBillingAddress(billingAddress.getId());
-				}
-				if(shippingAddress != null) {
-					client.setSelectedShippingAddress(shippingAddress.getId());
-				}
-				
-				clientService.registerClient(client, null, null);
-			}
-			
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -417,7 +393,7 @@ public class ClientAdminPubResource {
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("client", client);
-		vars.put("addresses", allAddresses);
+		vars.put("addresses", addresses);
 		
 		return vars;
 	}

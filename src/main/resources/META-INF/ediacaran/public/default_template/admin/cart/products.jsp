@@ -57,7 +57,7 @@
 			<ed:col size="12" id="product_content_cart_${productRequest.serial}">
 				<script type="text/javascript">
 					$.AppContext.utils.updateContentByID(
-							'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-cart/${productRequest.serial}', 
+							'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product/${productRequest.serial}', 
 							'product_content_cart_${productRequest.serial}'
 					);
 				</script>

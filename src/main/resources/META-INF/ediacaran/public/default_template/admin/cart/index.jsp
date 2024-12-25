@@ -63,7 +63,7 @@ $.AppContext.onload(function(){
 									</ec:tabs-item>
 									<ec:tabs-item id="search_products_tabs" title="Search">
 									
-										<ec:data-table id="productSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/search">
+										<ec:data-table id="productSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/products/search">
 											<ed:row>
 												<ed:col size="5">
 									    			<ec:textfield name="name" label="Name" placeholder="name" bundle="${messages}"/>
@@ -98,7 +98,7 @@ $.AppContext.onload(function(){
 																	<ed:col size="12" id="product_content_!{item.protectedID}">
 																		<script type="text/javascript">
 																			$.AppContext.utils.updateContentByID(
-																					'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/product-form/!{item.protectedID}', 
+																					'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/products/!{item.protectedID}', 
 																					'product_content_!{item.protectedID}'
 																			);
 																		</script>
@@ -151,7 +151,7 @@ $.AppContext.onload(function(){
 							<ed:col>
 								<ec:tabs id="client_tabs">
 									<ec:tabs-item id="selected_client_tabs" title="Client" active="true">
-										<ec:form id="form_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select-user" update="cart_result">
+										<ec:form id="form_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select/client" update="cart_result">
 										<span id="client_data_view" formgroup="client">
 											<ec:include uri="${vars.client_data_view}" resolved="true" />
 										</span>
@@ -160,30 +160,22 @@ $.AppContext.onload(function(){
 									<ec:tabs-item id="search_client_tabs" title="Search">
 									
 										<ec:data-table id="user_form_search" 
-											action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/search-users">
-											<ed:row>
-												<ed:col size="4">
-									    			<ec:textfield 
-									    				name="firstName" 
-									    				placeholder="first name"
-									    				bundle="${messages}"/>
-												</ed:col>
-												<ed:col size="4">
-									    			<ec:textfield 
-									    				name="lastName" 
-									    				placeholder="last name"
-									    				bundle="${messages}"/>
-												</ed:col>
-												<ed:col size="4">
-									    			<ec:textfield 
-									    				name="email" 
-									    				placeholder="email"
-									    				bundle="${messages}"/>
-												</ed:col>
-											</ed:row>
+											action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/clients/search">
 											<ed:row>
 												<ed:col size="3">
-									    			<ec:select name="country">
+									    			<ec:textfield
+									    				label="Name" 
+									    				name="fullName" 
+									    				bundle="${messages}"/>
+												</ed:col>
+												<ed:col size="3">
+									    			<ec:textfield 
+									    				label="Email"
+									    				name="email" 
+									    				bundle="${messages}"/>
+												</ed:col>
+												<ed:col size="3">
+									    			<ec:select label="Country" name="country">
 									    				<ec:option value=""></ec:option>
 									    				<c:forEach  items="${vars.countries}" var="country" >
 										    				<ec:option value="${country.isoAlpha3}">${country.name}</ec:option>
@@ -192,11 +184,9 @@ $.AppContext.onload(function(){
 												</ed:col>
 												<ed:col size="3">
 									    			<ec:textfield 
+									    				label="City"
 									    				name="city" 
-									    				placeholder="city"
 									    				bundle="${messages}"/>
-												</ed:col>
-												<ed:col size="6">
 												</ed:col>
 											</ed:row>
 											<ed:row>
@@ -208,16 +198,13 @@ $.AppContext.onload(function(){
 											<ec:table style="striped">
 												<ec:table-header>
 													<ec:table-col>
-														<b><fmt:message key="First name" bundle="${messages}"/></b>
+														<b>First name</b>
 													</ec:table-col>
 													<ec:table-col>
-														<b><fmt:message key="Last name" bundle="${messages}"/></b>
+														<b>Last name</b>
 													</ec:table-col>
 													<ec:table-col>
-														<b><fmt:message key="email" bundle="${messages}"/></b>
-													</ec:table-col>
-													<ec:table-col>
-														<b><fmt:message key="country" bundle="${messages}"/></b>
+														<b>Country</b>
 													</ec:table-col>
 													<ec:table-col>
 													</ec:table-col>
@@ -232,9 +219,6 @@ $.AppContext.onload(function(){
 														!{item.lastName}
 													</ec:table-col>
 													<ec:table-col>
-														!{item.email}
-													</ec:table-col>
-													<ec:table-col>
 														!{item.country.name}
 													</ec:table-col>
 													<ec:table-col>
@@ -242,7 +226,7 @@ $.AppContext.onload(function(){
 														<ec:event type="click">
 															
 															$.AppContext.utils.updateContentByID(
-																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/edit/!{item.protectedID}/simplified',
+																	'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/clients/!{item.protectedID}',
 																	'client_data_view'
 															);
 															
@@ -292,7 +276,7 @@ $.AppContext.onload(function(){
 						</ed:row>
 					</ec:accordion-item>
 					<ec:accordion-item id="cart_address" title="Address">
-						<ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/select-address" update="cart_result">
+						<ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/address/select" update="cart_result">
 							<span id="client_address_form">
 							</span>
 						</ec:form>
