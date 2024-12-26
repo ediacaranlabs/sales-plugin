@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
@@ -37,6 +39,12 @@ public class Cart implements Serializable{
 
 	@NotNull(groups = DataValidation.class)
 	private List<Tax> taxes;
+	
+	private Address billingAddress;
+	
+	private Address shippingAddress;
+	
+	private Client client;
 	
 	public Cart(){
 		this.id       = UUID.randomUUID().toString();
@@ -76,6 +84,30 @@ public class Cart implements Serializable{
 	
 	void setItens(ItensCollection itens) {
 		this.itens = itens;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public Address getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	public boolean isNoitems(){

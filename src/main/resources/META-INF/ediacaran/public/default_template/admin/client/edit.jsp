@@ -30,35 +30,29 @@
 			<span id="client_data_view" formgroup="client">
 				<ec:include uri="${vars.client_data_view}" resolved="true" />
 			</span>
-			<ec:tabs>
-				<ec:tabs-item title="#{tabs.addresses.title}" active="true" bundle="${messages}">
-					<ed:row>
-						<ed:col id="selected_address">
-							<jsp:include page="address_selected.jsp"/>
-						</ed:col>
-					</ed:row>
-				</ec:tabs-item>
-				<ec:tabs-item title="#{tabs.address_list.title}" bundle="${messages}">
-					<ed:row>
-						<ed:col id="addressList">
-							<c:forEach items="${vars.addresses}" var="address">
-								<c:set var="address" value="${address}" scope="request"/>
-								<jsp:include page="address_group.jsp"/>
-							</c:forEach>
-						</ed:col>
-					</ed:row>
-					<ed:row>
-						<ed:col>
-							<ec:button id="addshippingAddressButton" label="#{tabs.address_list.add_address.label}" align="right" bundle="${messages}" actionType="button">
-								<ec:event type="click">
-									$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address", "addressList");
-								</ec:event>
-							</ec:button>
-						</ed:col>
-					</ed:row>
-			
-				</ec:tabs-item>				
-			</ec:tabs>			
+			<ed:row>
+				<ed:col>
+					<fmt:message key="tabs.address_list.title" bundle="${messages}"/>
+					<hr>
+				</ed:col>
+			</ed:row>
+			<ed:row>
+				<ed:col id="addressList">
+					<c:forEach items="${vars.addresses}" var="address">
+						<c:set var="address" value="${address}" scope="request"/>
+						<jsp:include page="address_group.jsp"/>
+					</c:forEach>
+				</ed:col>
+			</ed:row>
+			<ed:row>
+				<ed:col>
+					<ec:button id="addshippingAddressButton" label="#{tabs.address_list.add_address.label}" align="right" bundle="${messages}" actionType="button">
+						<ec:event type="click">
+							$.AppContext.utils.appendContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address", "addressList");
+						</ec:event>
+					</ec:button>
+				</ed:col>
+			</ed:row>
 			<ed:row>
 				<ed:col id="client_update_result"></ed:col>
 			</ed:row>

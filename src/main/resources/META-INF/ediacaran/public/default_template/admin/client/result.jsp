@@ -12,10 +12,12 @@
 	<script type="text/javascript">
 	$.AppContext.onload(function(){			
 	
+		/*
 		$.AppContext.utils.updateContentByID(
 				'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/select-address/${vars.client.protectedID}/simplified', 
 				'selected_address'
 			);									
+		*/
 		
 		var $form = $.AppContext.utils.getById('client_form');
 		

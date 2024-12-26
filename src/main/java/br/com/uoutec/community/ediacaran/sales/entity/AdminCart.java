@@ -13,12 +13,6 @@ public class AdminCart implements Serializable{
 
 	private Cart cart;
 	
-	private Client client;
-	
-	private Address billingAddress;
-	
-	private Address shippingAddress;
-	
 	public AdminCart() {
 	}
 
@@ -31,27 +25,27 @@ public class AdminCart implements Serializable{
 	}
 
 	public Client getClient() {
-		return client;
+		return cart.getClient();
 	}
 
 	public void setClient(Client client) {
-		this.client = client;
+		cart.setClient(client);
 	}
 
 	public Address getBillingAddress() {
-		return billingAddress;
+		return cart.getBillingAddress();
 	}
 
 	public void setBillingAddress(Address billingAddress) {
-		this.billingAddress = billingAddress;
+		cart.setBillingAddress(billingAddress);
 	}
 
 	public Address getShippingAddress() {
-		return shippingAddress;
+		return cart.getShippingAddress();
 	}
 
 	public void setShippingAddress(Address shippingAddress) {
-		this.shippingAddress = shippingAddress;
+		cart.setShippingAddress(shippingAddress);
 	}
 	
 }
