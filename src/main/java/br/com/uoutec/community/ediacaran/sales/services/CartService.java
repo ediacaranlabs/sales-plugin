@@ -83,9 +83,9 @@ public class CartService {
 	}
 	
 	@Transactional
-	public Checkout checkout(Cart cart, Client systemUser, Payment payment, String message) throws
+	public Checkout checkout(Cart cart, Payment payment, String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
-		return cartRegistry.checkout(cart, systemUser,  payment, message);
+		return cartRegistry.checkout(cart, payment, message);
 	}
 	
 	public ProductSearchResult search(ProductSearch value) throws ProductRegistryException {

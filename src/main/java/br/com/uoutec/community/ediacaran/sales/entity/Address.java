@@ -51,9 +51,6 @@ public class Address implements Serializable{
 	@Pattern(regexp=CommonValidation.ZIP)
 	protected String zip;
 	
-	@NotNull(groups={DataValidation.class})
-	protected String type;
-	
 	public Address() {
 	}
 
@@ -91,14 +88,6 @@ public class Address implements Serializable{
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public Country getCountry() {

@@ -26,7 +26,7 @@ public class AddressEntity implements PublicType, Serializable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="cod_system_user_addr", length=11)
+	@Column(name="cod_address", length=11)
 	private Integer id;
 	
 	@Column(name="cod_system_user", length=11)
@@ -42,9 +42,6 @@ public class AddressEntity implements PublicType, Serializable{
 	@JoinColumn(name="cod_country")
 	private CountryHibernateEntity country;
 
-	@Column(name="set_type", length=32)
-	private String type;
-	
 	@Column(name="dsc_address_l1", length=128)
 	private String addressLine1;
 
@@ -66,7 +63,6 @@ public class AddressEntity implements PublicType, Serializable{
 	public AddressEntity(Address e){
 		this.firstName      = e.getFirstName();
 		this.lastName       = e.getLastName();
-		this.type           = e.getType();
 		this.systemUserID   = e.getOwner();
 		this.addressLine1   = e.getAddressLine1();
 		this.city           = e.getCity();
@@ -156,14 +152,6 @@ public class AddressEntity implements PublicType, Serializable{
 
 	public void setZip(String zip) {
 		this.zip = zip;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public Address toEntity(){

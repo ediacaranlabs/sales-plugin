@@ -43,6 +43,14 @@ public class Order implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	private OrderStatus status;
+
+	@Valid
+	@NotNull(groups = DataValidation.class)
+	private Address billingAddress;
+
+	@Valid
+	@NotNull(groups = DataValidation.class)
+	private Address shipingAddress;
 	
 	@Valid
 	@NotNull(groups = DataValidation.class)
@@ -148,6 +156,22 @@ public class Order implements Serializable{
 	}
     */
 	
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public Address getShipingAddress() {
+		return shipingAddress;
+	}
+
+	public void setShipingAddress(Address shipingAddress) {
+		this.shipingAddress = shipingAddress;
+	}
+
 	public String getCurrency() {
 		return currency;
 	}

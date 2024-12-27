@@ -354,7 +354,7 @@ public class CartPubResource {
 		/* checkout */
 		
 		try{
-			Checkout checkoutResult = cartService.checkout(cart, user, payment, "Pedido criado via website.");
+			Checkout checkoutResult = cartService.checkout(cart, payment, "Pedido criado via website.");
 			String paymentResource = checkoutResult.getPaymentGateway().redirectView(user, checkoutResult.getOrder());
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
 		}

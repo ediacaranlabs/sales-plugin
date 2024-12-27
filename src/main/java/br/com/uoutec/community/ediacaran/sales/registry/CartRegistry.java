@@ -8,8 +8,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.entity.registry.Registry;
@@ -52,16 +50,9 @@ public interface CartRegistry extends Registry, PublicBean{
 			Map<String, String> addData, int units) throws MaxItensException, 
 			ProductTypeRegistryException, ProductTypeHandlerException;
 	
-	Checkout checkout(Cart cart, SystemUserID userID, Payment payment, 
-			String message) throws
-			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException;
-	
 	Checkout checkout(Cart cart,Payment payment, 
 			String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException;
-	
-	Checkout checkout(Cart cart, SystemUser user, Payment payment, 
-			String message) throws OrderRegistryException, PaymentGatewayException;
 	
 	void calculateTotal(Cart cart);
 	

@@ -17,9 +17,8 @@
 	<script type="text/javascript">
 		$.AppContext.onload(
 			function (){
-				$.AppContext.openLink("${link}");
+				$.AppContext.utils.updateContent("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${checkout.order.id}");
 			}
 		);
-			
 	</script>
 </c:if>

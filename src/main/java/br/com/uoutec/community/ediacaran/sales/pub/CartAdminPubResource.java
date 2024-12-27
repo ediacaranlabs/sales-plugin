@@ -45,7 +45,6 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
-import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -318,9 +317,9 @@ public class CartAdminPubResource {
 	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/admin/cart/result_checkout")
-	@Result("link")
+	@Result(value="checkout", mappingType = MappingTypes.VALUE)
 	@ResponseErrors(rendered=false, name="exception")
-	public String checkout(
+	public Checkout checkout(
 			@Basic(bean="payment")
 			PaymentPubEntity paymentPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -341,16 +340,11 @@ public class CartAdminPubResource {
 		/* checkout */
 		
 		try{
-			Checkout checkoutResult = cartService.checkout(adminCart.getCart(), adminCart.getClient(), payment, "Pedido criado via website.");
-			String paymentResource = checkoutResult.getPaymentGateway().redirectView(adminCart.getClient(), checkoutResult.getOrder());
-			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
+			return cartService.checkout(adminCart.getCart(), payment, "Pedido criado via website.");
 		}
 		catch(EmptyOrderException ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "emptyCart", locale, ex);
 			throw new InvalidRequestException(error, ex);
-		}
-		catch(IncompleteClientRegistrationException ex){
-			return varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}");
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "checkout", locale, ex);

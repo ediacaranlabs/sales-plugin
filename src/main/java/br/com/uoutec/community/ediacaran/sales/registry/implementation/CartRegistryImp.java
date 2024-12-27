@@ -180,42 +180,14 @@ public class CartRegistryImp
 
 	@EnableFilters(CartRegistry.class)
 	public Checkout checkout(Cart cart, Payment payment, 
-			String message) throws OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckoutPermission());
-		
-		SystemUserID userID = getSystemUserID();
-		SystemUser user = getSystemUser(userID);
-		
-		return unsafeCheckout(cart, user, payment, message);
-	}
-	
-	@EnableFilters(CartRegistry.class)
-	public Checkout checkout(Cart cart, SystemUserID userID, Payment payment, 
-			String message) throws
-			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckoutPermission());
-		
-		SystemUser user = getSystemUser(userID);
-		
-		if(user == null) {
-			throw new SystemUserRegistryException(String.valueOf(userID));
-		}
-		
-		return unsafeCheckout(cart, user, payment, message);
-	}
-
-	@EnableFilters(CartRegistry.class)
-	public Checkout checkout(Cart cart, SystemUser user, Payment payment, 
 			String message) throws OrderRegistryException, PaymentGatewayException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CART.getCheckoutPermission());
 		
-		return unsafeCheckout(cart, user, payment, message);
+		return unsafeCheckout(cart, payment, message);
 	}
 
-	private Checkout unsafeCheckout(Cart cart, SystemUser user, Payment payment, 
+	private Checkout unsafeCheckout(Cart cart, Payment payment, 
 			String message) throws OrderRegistryException, PaymentGatewayException{
 		
 		PaymentGateway paymentGateway = 
@@ -234,7 +206,7 @@ public class CartRegistryImp
 		try{
 			activeLock = lock.lock(lockID);
 			 order = orderRegistry.createOrder(
-				cart, user, payment, message, paymentGateway);
+				cart, payment, message, paymentGateway);
 		}
 		catch(ExistOrderRegistryException e){
 			order = orderRegistry.findByCartID(cart.getId());

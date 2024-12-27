@@ -17,6 +17,8 @@ import javax.inject.Singleton;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -32,6 +34,8 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
@@ -148,6 +152,8 @@ public class OrderRegistryImp
 	@Inject
 	private SubjectProvider subjectProvider;
 
+	@Inject
+	private ClientRegistry clientRegistry;
 	
 	@Override
 	public void registerOrder(Order entity)	throws OrderRegistryException {
@@ -427,49 +433,22 @@ public class OrderRegistryImp
 	
 	@Override
 	public Order createOrder(Cart cart, Payment payment, 
-			String message, PaymentGateway paymentGateway) 
-					throws OrderRegistryException, UnavailableProductException, SystemUserRegistryException {
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getCreatePermission());
-		
-		SystemUserID userID = getSystemUserID();
-		SystemUser user = getSystemUser(userID);
-		
-		return unsafeCreateOrder(cart, user, payment, message, paymentGateway);
-	}
-	
-	public Order createOrder(Cart cart, SystemUserID userID, Payment payment, 
-			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException{
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getCreatePermission());
-		
-		SystemUser user = getSystemUser(userID);
-		
-		if(user == null) {
-			throw new SystemUserRegistryException(String.valueOf(userID));
-		}
-		
-		return unsafeCreateOrder(cart, user, payment, message, paymentGateway);
-	}
-		
-
-	public Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getCreatePermission());
 		
-		return unsafeCreateOrder(cart, systemUser, payment, message, paymentGateway);
+		return unsafeCreateOrder(cart, payment, message, paymentGateway);
 	}
 	
-	private Order unsafeCreateOrder(Cart cart, SystemUser systemUser, Payment payment, 
+	private Order unsafeCreateOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
 		try{
-			Order order = createOrder0(cart, systemUser, payment, message, paymentGateway);
+			Order order = createOrder0(cart, payment, message, paymentGateway);
 			cart.clear();
 			return order;
 		}
-		catch(RegistryException e){
+		catch(OrderRegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar o pedido", e);
 			throw e;
 		}
@@ -479,13 +458,25 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private Order createOrder0(Cart cart, SystemUser systemUser, Payment payment, 
+	private Order createOrder0(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) 
 					throws OrderRegistryException, UnavailableProductException, 
-					ExistOrderRegistryException, EmptyOrderException {
+					ExistOrderRegistryException, EmptyOrderException, 
+					SystemUserRegistryException, ClientRegistryException {
 
 		if(cart.isNoitems()){
 			throw new EmptyOrderException();
+		}
+
+		if(cart.getClient() != null) {
+			ContextSystemSecurityCheck
+				.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
+		}
+		else {
+			SystemUserID systemID = getSystemUserID();
+			SystemUser user = getSystemUser(systemID);
+			Client client = clientRegistry.findById(user.getId());
+			cart.setClient(client);
 		}
 		
 		if(cart.getId() == null || cart.getId().isEmpty()){
@@ -500,22 +491,13 @@ public class OrderRegistryImp
 			throw new OrderRegistryException("payment gateway not found");
 		}
 		
-		if(systemUser == null || systemUser.getId() <= 0) {
+		if(cart.getClient() == null || cart.getClient().getId() <= 0) {
 			throw new OrderRegistryException("owner not found");
 		}
 		
-		if(!systemUser.isComplete()) {
+		if(!cart.getClient().isComplete()) {
 			throw new IncompleteClientRegistrationException();
 		}
-		/*
-		if(cart.getOwner() == null) {
-			throw new OrderRegistryException("owner not found");
-		}
-
-		if(!cart.getOwner().equals(systemUser.getSystemID())) {
-			throw new OrderRegistryException("invalid owner: " + cart.getOwner() + " <> " + systemUser.getSystemID());
-		}
-		*/
 		
 		Order o = this.findByCartID(cart.getId());
 		
@@ -524,7 +506,7 @@ public class OrderRegistryImp
 		}
 		
 		try{
-			if(!isAvailability(cart, systemUser)){
+			if(!isAvailability(cart)){
 				throw new UnavailableProductException("Existem produtos que não estão mais disponíveis");
 			}
 		}
@@ -540,12 +522,80 @@ public class OrderRegistryImp
 		order.setCartID(cart.getId());
 		order.setStatus(OrderStatus.ON_HOLD);
 		order.setId(null);
-		order.setOwner(systemUser.getId());
+		order.setOwner(cart.getClient().getId());
 		//order.setInvoice(null);
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());
 		order.setCurrency(order.getItens().get(0).getCurrency());
+		
+		Address defaultAddress = new Address();
+		
+		defaultAddress.setAddressLine1(cart.getClient().getAddressLine1());
+		defaultAddress.setAddressLine2(cart.getClient().getAddressLine2());
+		defaultAddress.setCity(cart.getClient().getCity());
+		defaultAddress.setCountry(cart.getClient().getCountry());
+		defaultAddress.setFirstName(cart.getClient().getFirstName());
+		defaultAddress.setLastName(cart.getClient().getLastName());
+		//defaultAddress.setOwner(cart.getClient().getId());
+		defaultAddress.setRegion(cart.getClient().getRegion());
+		defaultAddress.setZip(cart.getClient().getZip());
+		
+		if(cart.getBillingAddress() == null) {
+			order.setBillingAddress(defaultAddress);
+		}
+		else {
+			Address address = new Address();
+			
+			address.setAddressLine1(cart.getBillingAddress().getAddressLine1());
+			address.setAddressLine2(cart.getBillingAddress().getAddressLine2());
+			address.setCity(cart.getBillingAddress().getCity());
+			address.setCountry(cart.getBillingAddress().getCountry());
+			address.setFirstName(cart.getBillingAddress().getFirstName());
+			address.setLastName(cart.getBillingAddress().getLastName());
+			//address.setOwner(cart.getClient().getId());
+			address.setRegion(cart.getBillingAddress().getRegion());
+			address.setZip(cart.getBillingAddress().getZip());
+			
+			order.setBillingAddress(address);
+		}
+		
+		if(cart.getShippingAddress() == null) {
+			order.setShipingAddress(defaultAddress);
+		}
+		else {
+			Address address = new Address();
+			
+			address.setAddressLine1(cart.getShippingAddress().getAddressLine1());
+			address.setAddressLine2(cart.getShippingAddress().getAddressLine2());
+			address.setCity(cart.getShippingAddress().getCity());
+			address.setCountry(cart.getShippingAddress().getCountry());
+			address.setFirstName(cart.getShippingAddress().getFirstName());
+			address.setLastName(cart.getShippingAddress().getLastName());
+			//address.setOwner(cart.getClient().getId());
+			address.setRegion(cart.getShippingAddress().getRegion());
+			address.setZip(cart.getShippingAddress().getZip());
+			
+			order.setShipingAddress(address);
+		}
+		
+		if(order.getBillingAddress() != null) {
+			try {
+				clientRegistry.registerAddress(order.getBillingAddress(), cart.getClient());
+			}
+			catch(Throwable e) {
+				throw new OrderRegistryException("falha ao processar os produtos", e);
+			}
+		}
+		
+		if(order.getShipingAddress() != null) {
+			try {
+				clientRegistry.registerAddress(order.getShipingAddress(), cart.getClient());
+			}
+			catch(Throwable e) {
+				throw new OrderRegistryException("falha ao processar os produtos", e);
+			}
+		}
 		
 		/*
 		 Validar moeda
@@ -573,7 +623,7 @@ public class OrderRegistryImp
 			for(ProductRequest pr: order.getItens()){
 				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.preRegisterOrder(systemUser, cart, pr);
+				productTypeHandler.preRegisterOrder(cart.getClient(), cart, pr);
 			}
 		}
 		catch(Throwable e){
@@ -611,7 +661,7 @@ public class OrderRegistryImp
 			for(ProductRequest pr: order.getItens()){
 				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.postRegisterOrder(systemUser, cart, pr);
+				productTypeHandler.postRegisterOrder(cart.getClient(), cart, pr);
 			}
 		}
 		catch(Throwable e){
@@ -621,11 +671,11 @@ public class OrderRegistryImp
 		return order;
 	}
 	
-	public boolean isAvailability(Cart cart, SystemUserID userID) 
+	public boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 
 			OrderRegistryException, SystemUserRegistryException{
 		
-		SystemUser user = getSystemUser(userID);
+		//SystemUser user = getSystemUser(userID);
 		
 		ItensCollection itens = cart.getItensCollection();
 		
@@ -634,7 +684,7 @@ public class OrderRegistryImp
 		for(ProductRequest p: itens.getItens()){
 			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
 			ProductTypeHandler productTypeHandler = productType.getHandler();
-			boolean availability = productTypeHandler.isAvailability(user, cart, itens, p);
+			boolean availability = productTypeHandler.isAvailability(cart.getClient(), cart, itens, p);
 			
 			result = result & availability;
 			p.setAvailability(availability);

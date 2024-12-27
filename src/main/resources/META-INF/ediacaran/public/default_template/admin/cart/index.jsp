@@ -294,21 +294,23 @@ $.AppContext.onload(function(){
 						</ed:row>
 					</ec:accordion-item>
 					<ec:accordion-item id="cart_payment" title="Payment method">
-						<span id="cart_payment_details">
-							<jsp:include page="payment-details.jsp"/>
-						</span>
-						<ed:row>
-							<ed:col>
-								<ec:button label="Checkout" icon="check-circle" actionType="button" align="right" />
-								<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
-									<ec:event type="click">
-										var $accordion = $.AppContext.utils.getById('cart_steps');
-										var $tab = $accordion.getItem("cart_address");
-										$tab.select();
-									</ec:event>
-								</ec:button>
-							</ed:col>
-						</ed:row>
+						<ec:form id="cart_checkout" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/checkout" update="cart_result">
+							<span id="cart_payment_details" formgroup="payment">
+								<jsp:include page="payment-details.jsp"/>
+							</span>
+							<ed:row>
+								<ed:col>
+									<ec:button label="Checkout" icon="check-circle" actionType="submit" align="right" />
+									<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
+										<ec:event type="click">
+											var $accordion = $.AppContext.utils.getById('cart_steps');
+											var $tab = $accordion.getItem("cart_address");
+											$tab.select();
+										</ec:event>
+									</ec:button>
+								</ed:col>
+							</ed:row>
+						</ec:form>
 					</ec:accordion-item>
 				</ec:accordion>
 	

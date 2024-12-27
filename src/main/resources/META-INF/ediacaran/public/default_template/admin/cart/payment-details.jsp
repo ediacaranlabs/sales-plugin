@@ -12,13 +12,14 @@
 			<c:forEach var="paymentGateway" items="${vars.payment_gateway_list}">
 				<ec:radio 
 					inline="true"
-					name="payment.paymentType" 
+					name="paymentType" 
 					value="${paymentGateway.id}" 
 					selected="${firstPaymentGateway.id == paymentGateway.id}" 
 					label="${paymentGateway.name}">
 					<ec:event type="change">
-						var $form = $.AppContext.utils.getById('payment_form');
-						var $paymentType = $form.getField('payment.paymentType');
+						var $source = $event.source;
+						var $form = $source.getForm();
+						var $paymentType = $form.getField($source.getAttribute("name"));
 						var $paymentTypeValue = $paymentType.getValue();
 						
 						$form.submit(
@@ -34,7 +35,7 @@
 </ed:row>
 </c:if>
 <c:if test="${vars.payment_gateway_list.size() == 1}">
-	<input type="hidden" name="payment.paymentType" value="${vars.payment_gateway_list.get(0).id}">
+	<input type="hidden" name="paymentType" value="${vars.payment_gateway_list.get(0).id}">
 </c:if>
 <ed:row>
 	<ed:col size="12" id="payment_form_area">

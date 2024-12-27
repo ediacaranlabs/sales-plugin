@@ -47,7 +47,6 @@ public class ClientServiceImp implements ClientService{
 		
 		if(addAddresses != null) {
 			for(Address e: addAddresses) {
-				e.setType(null);
 				clientRegistry.registerAddress(e, entity);
 			}
 		}

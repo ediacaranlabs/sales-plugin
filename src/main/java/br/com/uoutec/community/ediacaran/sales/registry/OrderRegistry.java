@@ -27,14 +27,8 @@ public interface OrderRegistry extends PublicBean {
 	void removeOrder(Order entity) throws OrderRegistryException;
 
 	Order createOrder(Cart cart, Payment payment, 
-			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException; 
-
-	Order createOrder(Cart cart, SystemUserID userID, Payment payment, 
-			String message, PaymentGateway paymentGateway) throws OrderRegistryException, SystemUserRegistryException; 
-	
-	Order createOrder(Cart cart, SystemUser systemUser, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
-	
+
 	void registerPayment(Order o, String currency, BigDecimal value
 			) throws OrderRegistryException, PaymentGatewayException;
 	
@@ -47,7 +41,7 @@ public interface OrderRegistry extends PublicBean {
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException;
 	
-	boolean isAvailability(Cart cart, SystemUserID userID) 
+	boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 
 			OrderRegistryException, SystemUserRegistryException;
 	

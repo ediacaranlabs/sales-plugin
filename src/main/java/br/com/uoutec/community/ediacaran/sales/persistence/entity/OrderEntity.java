@@ -53,6 +53,14 @@ public class OrderEntity implements Serializable{
 	@JoinColumn(name="cod_payment", referencedColumnName="cod_payment")
 	private PaymentEntity payment;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="cod_billing_addr", referencedColumnName="cod_address")
+	private AddressEntity billingAddress;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="cod_shipping_addr", referencedColumnName="cod_address")
+	private AddressEntity shippingAddress;
+	
 	@Column(name="set_payment_type", length=32)
 	private String paymentType;
 	
@@ -106,6 +114,8 @@ public class OrderEntity implements Serializable{
 		this.total = e.getTotal();
 		this.currency = e.getCurrency();
 		this.completeInvoice = e.getCompleteInvoice();
+		this.billingAddress = e.getBillingAddress() == null? null : new AddressEntity(e.getBillingAddress());
+		this.shippingAddress = e.getShipingAddress() == null? null : new AddressEntity(e.getShipingAddress());
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -265,6 +275,8 @@ public class OrderEntity implements Serializable{
 		e.setPaymentType(this.paymentType);
 		e.setCurrency(this.currency);
 		e.setCompleteInvoice(this.completeInvoice);
+		e.setBillingAddress(this.billingAddress == null? null : this.billingAddress.toEntity());
+		e.setShipingAddress(this.shippingAddress == null? null : this.shippingAddress.toEntity());
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();
