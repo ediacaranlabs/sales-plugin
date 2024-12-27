@@ -22,12 +22,12 @@ public interface ClientRegistry extends PublicBean{
 
 	void removeAddress(Address address, Client client) throws ClientRegistryException;
 
-	void removeAddress(Client value, String type) throws ClientRegistryException;
+	void removeAddress(Client value) throws ClientRegistryException;
 	
 	Address getAddressByID(int id) throws ClientRegistryException;
 	
-	Address getAddress(Client value, String type) throws ClientRegistryException;
-
-	List<Address> getAddresses(Client value, String type) throws ClientRegistryException;
+	Address getAddressByID(int id, Client client) throws ClientRegistryException;
+	
+	List<Address> getAddresses(Client value) throws ClientRegistryException;
 	
 }

@@ -39,6 +39,20 @@
 				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.order.owner}<br>
 				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
 			</ed:col>
+			<ed:col>
+				<b>Billing address</b><p>
+				${vars.order.billingAddress.firstName} ${vars.order.billingAddress.lastName}<br>
+				${vars.order.billingAddress.addressLine1}<br>
+				${vars.order.billingAddress.addressLine2}<br>
+				${vars.order.billingAddress.zip} ${vars.order.billingAddress.city} ${vars.order.billingAddress.region} ${vars.order.billingAddress.country.name}
+			</ed:col>
+			<ed:col>
+				<b>Shipping address</b><p>
+				${vars.order.shippingAddress.firstName} ${vars.order.shippingAddress.lastName}<br>
+				${vars.order.shippingAddress.addressLine1}<br>
+				${vars.order.shippingAddress.addressLine2}<br>
+				${vars.order.shippingAddress.zip} ${vars.order.shippingAddress.city} ${vars.order.shippingAddress.region} ${vars.order.shippingAddress.country.name}
+			</ed:col>
 		</ed:row>
 		<ed:row>
 			<ed:col>

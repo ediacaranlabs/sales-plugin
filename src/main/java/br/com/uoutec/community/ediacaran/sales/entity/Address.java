@@ -20,9 +20,6 @@ public class Address implements Serializable{
 	protected int id;
 	
 	@NotNull(groups={DataValidation.class})
-	private Integer owner;
-	
-	@NotNull(groups={DataValidation.class})
 	@Pattern(regexp=CommonValidation.NAME_FORMAT)
 	protected String firstName;
 
@@ -64,14 +61,6 @@ public class Address implements Serializable{
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public Integer getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Integer owner) {
-		this.owner = owner;
 	}
 
 	public String getFirstName() {

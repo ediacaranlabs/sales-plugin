@@ -52,6 +52,7 @@
 					<ec:option value="${address.protectedID}" selected="${vars.client.selectedShippingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.name} - ${address.zip}</ec:option>
 				</c:forEach>
 				<c:if test="${vars.type != 'simplified'}">
+				<ec:option value="billing">Billing address</ec:option>
 				<ec:option value="new">New address</ec:option>
 				<ec:event type="change">
 					var $form = $event.source.getForm();

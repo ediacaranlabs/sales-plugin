@@ -22,8 +22,6 @@ public interface ClientService {
 	
 	void removeClient(Client entity) throws ClientRegistryException;
 	
-	Address getAddress(Client value, String type) throws ClientRegistryException;
-
-	List<Address> getAddresses(Client value, String type) throws ClientRegistryException;
+	List<Address> getAddresses(Client value) throws ClientRegistryException;
 	
 }

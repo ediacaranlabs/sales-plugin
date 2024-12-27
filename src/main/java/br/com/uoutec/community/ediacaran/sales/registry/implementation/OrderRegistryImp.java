@@ -561,22 +561,27 @@ public class OrderRegistryImp
 		}
 		
 		if(cart.getShippingAddress() == null) {
-			order.setShipingAddress(defaultAddress);
+			order.setShippingAddress(defaultAddress);
 		}
 		else {
-			Address address = new Address();
-			
-			address.setAddressLine1(cart.getShippingAddress().getAddressLine1());
-			address.setAddressLine2(cart.getShippingAddress().getAddressLine2());
-			address.setCity(cart.getShippingAddress().getCity());
-			address.setCountry(cart.getShippingAddress().getCountry());
-			address.setFirstName(cart.getShippingAddress().getFirstName());
-			address.setLastName(cart.getShippingAddress().getLastName());
-			//address.setOwner(cart.getClient().getId());
-			address.setRegion(cart.getShippingAddress().getRegion());
-			address.setZip(cart.getShippingAddress().getZip());
-			
-			order.setShipingAddress(address);
+			if(cart.getShippingAddress() == cart.getBillingAddress()) {
+				order.setShippingAddress(order.getBillingAddress());
+			}
+			else {
+				Address address = new Address();
+				
+				address.setAddressLine1(cart.getShippingAddress().getAddressLine1());
+				address.setAddressLine2(cart.getShippingAddress().getAddressLine2());
+				address.setCity(cart.getShippingAddress().getCity());
+				address.setCountry(cart.getShippingAddress().getCountry());
+				address.setFirstName(cart.getShippingAddress().getFirstName());
+				address.setLastName(cart.getShippingAddress().getLastName());
+				//address.setOwner(cart.getClient().getId());
+				address.setRegion(cart.getShippingAddress().getRegion());
+				address.setZip(cart.getShippingAddress().getZip());
+				
+				order.setShippingAddress(address);
+			}
 		}
 		
 		if(order.getBillingAddress() != null) {
@@ -588,9 +593,9 @@ public class OrderRegistryImp
 			}
 		}
 		
-		if(order.getShipingAddress() != null) {
+		if(order.getShippingAddress() != null) {
 			try {
-				clientRegistry.registerAddress(order.getShipingAddress(), cart.getClient());
+				clientRegistry.registerAddress(order.getShippingAddress(), cart.getClient());
 			}
 			catch(Throwable e) {
 				throw new OrderRegistryException("falha ao processar os produtos", e);

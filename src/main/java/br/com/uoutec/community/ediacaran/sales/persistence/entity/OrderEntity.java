@@ -114,8 +114,8 @@ public class OrderEntity implements Serializable{
 		this.total = e.getTotal();
 		this.currency = e.getCurrency();
 		this.completeInvoice = e.getCompleteInvoice();
-		this.billingAddress = e.getBillingAddress() == null? null : new AddressEntity(e.getBillingAddress());
-		this.shippingAddress = e.getShipingAddress() == null? null : new AddressEntity(e.getShipingAddress());
+		this.billingAddress = e.getBillingAddress() == null? null : new AddressEntity(e.getBillingAddress(), null);
+		this.shippingAddress = e.getShippingAddress() == null? null : new AddressEntity(e.getShippingAddress(), null);
 		
 		if(e.getItens() != null){
 			this.itens = new ArrayList<ProductRequestEntity>();
@@ -276,7 +276,7 @@ public class OrderEntity implements Serializable{
 		e.setCurrency(this.currency);
 		e.setCompleteInvoice(this.completeInvoice);
 		e.setBillingAddress(this.billingAddress == null? null : this.billingAddress.toEntity());
-		e.setShipingAddress(this.shippingAddress == null? null : this.shippingAddress.toEntity());
+		e.setShippingAddress(this.shippingAddress == null? null : this.shippingAddress.toEntity());
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();

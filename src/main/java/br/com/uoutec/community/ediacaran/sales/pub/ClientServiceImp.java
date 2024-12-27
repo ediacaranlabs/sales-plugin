@@ -66,12 +66,8 @@ public class ClientServiceImp implements ClientService{
 		clientRegistry.registerClient(entity);
 	}
 	
-	public Address getAddress(Client value, String type) throws ClientRegistryException{
-		return clientRegistry.getAddress(value, type);
-	}
-
-	public List<Address> getAddresses(Client value, String type) throws ClientRegistryException{
-		return clientRegistry.getAddresses(value, type);
+	public List<Address> getAddresses(Client value) throws ClientRegistryException{
+		return clientRegistry.getAddresses(value);
 	}
 	
 }

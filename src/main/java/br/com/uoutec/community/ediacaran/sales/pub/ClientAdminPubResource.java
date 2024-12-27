@@ -169,7 +169,7 @@ public class ClientAdminPubResource {
 			}
 			else{
 				vars.put("client_data_view", clientEntityTypes.getClientEntityView(client));
-				vars.put("addresses",        clientService.getAddresses(client, null));
+				vars.put("addresses",        clientService.getAddresses(client));
 				
 				view         = "${plugins.ediacaran.sales.template}/admin/client/edit";
 				resolvedView = false;
@@ -271,7 +271,7 @@ public class ClientAdminPubResource {
 			
 			vars.put("type",   "simplified");
 			vars.put("client", client);
-			vars.put("addresses", clientService.getAddresses(client, null));
+			vars.put("addresses", clientService.getAddresses(client));
 			vars.put("principal", subjectProvider.getSubject().getPrincipal());
 			
 			return vars;

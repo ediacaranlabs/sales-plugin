@@ -50,7 +50,7 @@ public class Order implements Serializable{
 
 	@Valid
 	@NotNull(groups = DataValidation.class)
-	private Address shipingAddress;
+	private Address shippingAddress;
 	
 	@Valid
 	@NotNull(groups = DataValidation.class)
@@ -164,12 +164,12 @@ public class Order implements Serializable{
 		this.billingAddress = billingAddress;
 	}
 
-	public Address getShipingAddress() {
-		return shipingAddress;
+	public Address getShippingAddress() {
+		return shippingAddress;
 	}
 
-	public void setShipingAddress(Address shipingAddress) {
-		this.shipingAddress = shipingAddress;
+	public void setShippingAddress(Address shippingAddress) {
+		this.shippingAddress = shippingAddress;
 	}
 
 	public String getCurrency() {

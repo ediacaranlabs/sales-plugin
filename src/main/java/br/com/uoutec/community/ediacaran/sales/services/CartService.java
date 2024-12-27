@@ -45,18 +45,10 @@ public class CartService {
 	@Inject
 	private ClientRegistry clientRegistry;
 	
-	public Address getBillingAddress(Client client) throws ClientRegistryException {
-		return clientRegistry.getAddress(client, Client.BILLING); 
+	public List<Address> getAddresses(Client client) throws ClientRegistryException {
+		return clientRegistry.getAddresses(client); 
 	}
 
-	public List<Address> getShippingAddresses(Client client) throws ClientRegistryException {
-		return clientRegistry.getAddresses(client, Client.SHIPPING); 
-	}
-
-	public Address getShippingAddress(int id, Client client) throws ClientRegistryException {
-		return clientRegistry.getAddressByID(id); 
-	}
-	
 	public List<PaymentGateway> getPaymentGateways(Cart cart, Client user){
 		return paymentGatewayProvider.getPaymentGateways(cart, user);
 	}

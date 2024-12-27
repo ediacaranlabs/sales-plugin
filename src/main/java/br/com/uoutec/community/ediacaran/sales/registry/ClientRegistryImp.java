@@ -13,6 +13,7 @@ import br.com.uoutec.application.security.DoPrivilegedException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientAddress;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.AddressEntityAccess;
@@ -162,14 +163,10 @@ public class ClientRegistryImp
 		try {
 			if(address.getId() > 0) {
 				
-				Address tmp = addressEntityAccess.findById(address.getId());
+				Address tmp = addressEntityAccess.getAddress(address.getId(), client);
 				
 				if(tmp == null) {
 					throw new ClientRegistryException("address not found: " + address.getId());
-				}
-				
-				if(tmp.getOwner() != client.getId()) {
-					throw new ClientRegistryException("invalid client: " + client.getId());
 				}
 				
 			}
@@ -178,25 +175,12 @@ public class ClientRegistryImp
 			throw new ClientRegistryException(e.getMessage(), e);
 		}
 		
-		address.setOwner(client.getId());
-		
 		try{
-			/*
-			if(Client.BILLING.equals(address.getType()) && address.getId() <= 0){
-				List<Address> list = addressEntityAccess.getList(client, Client.BILLING);
-				
-				for(Address e: list) {
-					addressEntityAccess.delete(e);
-				}
-
-			}
-			*/
-			
 			if(address.getId() <= 0) {
-				addressEntityAccess.save(address);
+				addressEntityAccess.save(new ClientAddress(address, client));
 			}
 			else {
-				addressEntityAccess.update(address);
+				addressEntityAccess.update(new ClientAddress(address, client));
 			}
 			
 			addressEntityAccess.flush();
@@ -207,12 +191,12 @@ public class ClientRegistryImp
 	}
 
 	@Override
-	public void removeAddress(Client value, String type) throws ClientRegistryException {
+	public void removeAddress(Client value) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
 		
 		try {
-			List<Address> list = addressEntityAccess.getList(value, type);
+			List<Address> list = addressEntityAccess.getList(value);
 			
 			for(Address e: list) {
 				addressEntityAccess.delete(e);
@@ -233,14 +217,10 @@ public class ClientRegistryImp
 		try {
 			if(address.getId() <= 0) {
 				
-				Address tmp = addressEntityAccess.findById(address.getId());
+				Address tmp = addressEntityAccess.getAddress(address.getId(), client);
 				
 				if(tmp == null) {
 					throw new ClientRegistryException("address not found: " + address.getId());
-				}
-				
-				if(tmp.getOwner() != client.getId()) {
-					throw new ClientRegistryException("invalid client: " + client.getId());
 				}
 				
 			}
@@ -260,7 +240,7 @@ public class ClientRegistryImp
 	
 	@Override
 	public Address getAddressByID(int id) throws ClientRegistryException {
-
+		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getFindPermission());
 		
 		try{
@@ -270,28 +250,25 @@ public class ClientRegistryImp
     		throw new ClientRegistryException(e);
     	}
 	}
+	public Address getAddressByID(int id, Client client) throws ClientRegistryException {
 
-	@Override
-	public Address getAddress(Client value, String type) throws ClientRegistryException {
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getListPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getFindPermission());
 		
 		try{
-			List<Address> list = addressEntityAccess.getList(value, type);
-			return list == null || list.isEmpty()? null : list.get(0);
+			return addressEntityAccess.getAddress(id, client);
     	}
     	catch(Throwable e){
     		throw new ClientRegistryException(e);
     	}
 	}
-	
+
 	@Override
-	public List<Address> getAddresses(Client value, String type) throws ClientRegistryException {
+	public List<Address> getAddresses(Client value) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getListPermission());
 		
 		try{
-			return addressEntityAccess.getList(value, type);
+			return addressEntityAccess.getList(value);
     	}
     	catch(Throwable e){
     		throw new ClientRegistryException(e);

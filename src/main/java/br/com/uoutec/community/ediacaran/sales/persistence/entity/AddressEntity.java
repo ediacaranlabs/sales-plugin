@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.entity.CountryHibernateEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
@@ -60,10 +61,10 @@ public class AddressEntity implements PublicType, Serializable{
 	public AddressEntity(){
 	}
 	
-	public AddressEntity(Address e){
+	public AddressEntity(Address e, Client client){
 		this.firstName      = e.getFirstName();
 		this.lastName       = e.getLastName();
-		this.systemUserID   = e.getOwner();
+		this.systemUserID   = client == null? null : client.getId();
 		this.addressLine1   = e.getAddressLine1();
 		this.city           = e.getCity();
 		this.addressLine2   = e.getAddressLine2();
@@ -163,7 +164,10 @@ public class AddressEntity implements PublicType, Serializable{
 		try{
 			
 			if(e == null) {
-				e = new Address();
+				//Client c = new Client();
+				//c.setId(this.systemUserID);
+				//e = new ClientAddress(new Address(), c);
+				e =  new Address();
 			}
 			
 			e.setFirstName(this.firstName);
@@ -175,7 +179,6 @@ public class AddressEntity implements PublicType, Serializable{
 			e.setRegion(this.region);
 			e.setZip(this.zip);
 			e.setId(this.id);
-			e.setOwner(this.systemUserID);
 			return e;
 		}
 		catch(Throwable ex){

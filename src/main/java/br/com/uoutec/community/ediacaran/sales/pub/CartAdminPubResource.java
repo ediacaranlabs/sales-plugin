@@ -462,10 +462,15 @@ public class CartAdminPubResource {
 			}
 
 			if(selectedShippingAddress != null) {
-				shippingAddress =
-						"new".equals(selectedShippingAddress.getProtectedID())?
-							shippingAddressPubEntity.rebuild(false, true, true) :
-							selectedShippingAddress.rebuild(true, false, false);	
+				if("new".equals(selectedShippingAddress.getProtectedID())) {
+					shippingAddress = shippingAddressPubEntity.rebuild(false, true, true);
+				}
+				if("billing".equals(selectedShippingAddress.getProtectedID())) {
+					shippingAddress = billingAddress;
+				}
+				else {
+					selectedShippingAddress.rebuild(true, false, false);
+				}
 			}
 		}
 		catch(Throwable ex) {

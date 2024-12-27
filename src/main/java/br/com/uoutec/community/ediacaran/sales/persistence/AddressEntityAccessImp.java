@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ClientAddress;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.AddressEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -32,8 +33,29 @@ public class AddressEntityAccessImp
 		super(entityManager);
 	}
 	
-
-	public List<Address> getList(Client value, String type) throws EntityAccessException{
+	public Address getAddress(int id, Client value) throws EntityAccessException{
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<AddressEntity> criteria = builder.createQuery(AddressEntity.class);
+		    Root<AddressEntity> from = criteria.from(AddressEntity.class);
+		    
+			    criteria.where(
+		    		builder.and(
+						builder.equal(from.get("systemUserID"), value.getId()),
+						builder.equal(from.get("id"), id)
+				));
+		    
+		    TypedQuery<AddressEntity> typed = entityManager.createQuery(criteria);			
+	
+		    AddressEntity e = (AddressEntity)typed.getSingleResult();
+			return e == null? null : e.toEntity();
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}		
+	}
+	
+	public List<Address> getList(Client value) throws EntityAccessException{
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<AddressEntity> criteria = builder.createQuery(AddressEntity.class);
@@ -63,7 +85,14 @@ public class AddressEntityAccessImp
 	@Override
 	protected AddressEntity toPersistenceEntity(Address entity)
 			throws Throwable {
-		return new AddressEntity(entity);
+		if(entity instanceof ClientAddress) {
+			Client c = new Client();
+			c.setId(((ClientAddress)entity).getClient());
+			return new AddressEntity(entity, c);
+		}
+		else {
+			return new AddressEntity(entity, null);
+		}
 	}
 
 	@Override

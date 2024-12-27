@@ -89,7 +89,7 @@ public class AddressCartAdminPubResource {
 			Map<String,Object> vars = new HashMap<String, Object>();
 			
 			vars.put("client",		adminCart.getClient());
-			vars.put("addresses",	cartService.getShippingAddresses(adminCart.getClient()));
+			vars.put("addresses",	cartService.getAddresses(adminCart.getClient()));
 			vars.put("principal",	subjectProvider.getSubject().getPrincipal());
 			
 			return vars;

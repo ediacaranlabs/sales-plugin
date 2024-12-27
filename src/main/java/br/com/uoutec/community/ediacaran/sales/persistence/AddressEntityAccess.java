@@ -18,8 +18,9 @@ public interface AddressEntityAccess {
 	
 	Address findById(Serializable value) throws EntityAccessException ;
 	
+	Address getAddress(int id, Client value) throws EntityAccessException;
 	
-	List<Address> getList(Client value, String type) throws EntityAccessException;
+	List<Address> getList(Client value) throws EntityAccessException;
 
 	void flush();
 
