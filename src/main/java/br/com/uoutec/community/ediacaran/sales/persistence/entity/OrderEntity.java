@@ -179,6 +179,46 @@ public class OrderEntity implements Serializable{
 		this.payment = payment;
 	}
 
+	public AddressEntity getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(AddressEntity billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public AddressEntity getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(AddressEntity shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public LocalDateTime getCompleteInvoice() {
+		return completeInvoice;
+	}
+
+	public void setCompleteInvoice(LocalDateTime completeInvoice) {
+		this.completeInvoice = completeInvoice;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
 	public List<ProductRequestEntity> getItens() {
 		return itens;
 	}

@@ -465,11 +465,12 @@ public class CartAdminPubResource {
 				if("new".equals(selectedShippingAddress.getProtectedID())) {
 					shippingAddress = shippingAddressPubEntity.rebuild(false, true, true);
 				}
+				else
 				if("billing".equals(selectedShippingAddress.getProtectedID())) {
 					shippingAddress = billingAddress;
 				}
 				else {
-					selectedShippingAddress.rebuild(true, false, false);
+					shippingAddress = selectedShippingAddress.rebuild(true, false, false);
 				}
 			}
 		}

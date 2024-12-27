@@ -73,6 +73,16 @@ public class OrderEntityAccessImp
 				}
 			}
 			
+			if(pEntity.getBillingAddress() != null) {
+				entityManager.persist(pEntity.getBillingAddress());
+			}
+
+			if(pEntity.getShippingAddress() != null) {
+				entityManager.persist(pEntity.getShippingAddress());
+			}
+			
+			entityManager.flush();
+			
 			entityManager.persist(pEntity);
 			
 			List<ProductRequestEntity> list = 
@@ -105,7 +115,7 @@ public class OrderEntityAccessImp
 					entityManager.persist(k);
 				}
 			}
-
+			
 			pEntity.toEntity(value);
     	}
     	catch(Throwable e){
@@ -136,6 +146,24 @@ public class OrderEntityAccessImp
 				}
 				else{
 					entityManager.merge(pEntity.getPayment());
+				}
+			}
+			
+			if(pEntity.getBillingAddress() != null) {
+				if(pEntity.getBillingAddress().getId() == null) {
+					entityManager.persist(pEntity.getBillingAddress());
+				}
+				else {
+					entityManager.merge(pEntity.getBillingAddress());
+				}
+			}
+
+			if(pEntity.getShippingAddress() != null) {
+				if(pEntity.getShippingAddress().getId() == null) {
+					entityManager.persist(pEntity.getShippingAddress());
+				}
+				else {
+					entityManager.merge(pEntity.getShippingAddress());
 				}
 			}
 			
@@ -187,7 +215,7 @@ public class OrderEntityAccessImp
 					}
 				}
 			}
-
+			
 			pEntity.toEntity(value);
     	}
     	catch(Throwable e){

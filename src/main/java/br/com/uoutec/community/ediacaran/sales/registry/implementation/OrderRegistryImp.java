@@ -529,77 +529,38 @@ public class OrderRegistryImp
 		order.setPaymentType(paymentGateway.getId());
 		order.setCurrency(order.getItens().get(0).getCurrency());
 		
-		Address defaultAddress = new Address();
-		
-		defaultAddress.setAddressLine1(cart.getClient().getAddressLine1());
-		defaultAddress.setAddressLine2(cart.getClient().getAddressLine2());
-		defaultAddress.setCity(cart.getClient().getCity());
-		defaultAddress.setCountry(cart.getClient().getCountry());
-		defaultAddress.setFirstName(cart.getClient().getFirstName());
-		defaultAddress.setLastName(cart.getClient().getLastName());
-		//defaultAddress.setOwner(cart.getClient().getId());
-		defaultAddress.setRegion(cart.getClient().getRegion());
-		defaultAddress.setZip(cart.getClient().getZip());
+		Address defaultAddress = getDefaultAddress(cart.getClient());
 		
 		if(cart.getBillingAddress() == null) {
 			order.setBillingAddress(defaultAddress);
 		}
 		else {
-			Address address = new Address();
-			
-			address.setAddressLine1(cart.getBillingAddress().getAddressLine1());
-			address.setAddressLine2(cart.getBillingAddress().getAddressLine2());
-			address.setCity(cart.getBillingAddress().getCity());
-			address.setCountry(cart.getBillingAddress().getCountry());
-			address.setFirstName(cart.getBillingAddress().getFirstName());
-			address.setLastName(cart.getBillingAddress().getLastName());
-			//address.setOwner(cart.getClient().getId());
-			address.setRegion(cart.getBillingAddress().getRegion());
-			address.setZip(cart.getBillingAddress().getZip());
-			
-			order.setBillingAddress(address);
+			order.setBillingAddress(getAddress(cart.getBillingAddress()));
 		}
 		
 		if(cart.getShippingAddress() == null) {
 			order.setShippingAddress(defaultAddress);
 		}
+		else
+		if(cart.getShippingAddress() == cart.getBillingAddress()) {
+			order.setShippingAddress(order.getBillingAddress());
+		}
 		else {
-			if(cart.getShippingAddress() == cart.getBillingAddress()) {
-				order.setShippingAddress(order.getBillingAddress());
-			}
-			else {
-				Address address = new Address();
-				
-				address.setAddressLine1(cart.getShippingAddress().getAddressLine1());
-				address.setAddressLine2(cart.getShippingAddress().getAddressLine2());
-				address.setCity(cart.getShippingAddress().getCity());
-				address.setCountry(cart.getShippingAddress().getCountry());
-				address.setFirstName(cart.getShippingAddress().getFirstName());
-				address.setLastName(cart.getShippingAddress().getLastName());
-				//address.setOwner(cart.getClient().getId());
-				address.setRegion(cart.getShippingAddress().getRegion());
-				address.setZip(cart.getShippingAddress().getZip());
-				
-				order.setShippingAddress(address);
-			}
+			order.setShippingAddress(getAddress(cart.getShippingAddress()));
 		}
 		
-		if(order.getBillingAddress() != null) {
-			try {
-				clientRegistry.registerAddress(order.getBillingAddress(), cart.getClient());
+		try {
+			if(cart.getBillingAddress() != null) {
+				clientRegistry.registerAddress(cart.getBillingAddress(), cart.getClient());
 			}
-			catch(Throwable e) {
-				throw new OrderRegistryException("falha ao processar os produtos", e);
+			
+			if(cart.getShippingAddress() != null) {
+				clientRegistry.registerAddress(cart.getShippingAddress(), cart.getClient());
 			}
+			
 		}
-		
-		if(order.getShippingAddress() != null) {
-			try {
-				clientRegistry.registerAddress(order.getShippingAddress(), cart.getClient());
-			}
-			catch(Throwable e) {
-				throw new OrderRegistryException("falha ao processar os produtos", e);
-			}
+		catch(Throwable e) {
+			throw new OrderRegistryException("falha ao processar os produtos", e);
 		}
 		
 		/*
@@ -674,6 +635,36 @@ public class OrderRegistryImp
 		}
 		
 		return order;
+	}
+	
+	private Address getDefaultAddress(Client client) {
+		Address address = new Address();
+		
+		address.setAddressLine1(client.getAddressLine1());
+		address.setAddressLine2(client.getAddressLine2());
+		address.setCity(client.getCity());
+		address.setCountry(client.getCountry());
+		address.setFirstName(client.getFirstName());
+		address.setLastName(client.getLastName());
+		address.setRegion(client.getRegion());
+		address.setZip(client.getZip());
+		
+		return address;
+	}
+
+	private Address getAddress(Address value) {
+		Address address = new Address();
+		
+		address.setAddressLine1(value.getAddressLine1());
+		address.setAddressLine2(value.getAddressLine2());
+		address.setCity(value.getCity());
+		address.setCountry(value.getCountry());
+		address.setFirstName(value.getFirstName());
+		address.setLastName(value.getLastName());
+		address.setRegion(value.getRegion());
+		address.setZip(value.getZip());
+		
+		return address;
 	}
 	
 	public boolean isAvailability(Cart cart) 
