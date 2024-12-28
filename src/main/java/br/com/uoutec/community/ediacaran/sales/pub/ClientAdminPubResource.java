@@ -74,7 +74,7 @@ public class ClientAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/client/index")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
+	@RequiresPermissions(SalesUserPermissions.ORDER.SHOW)
 	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -340,7 +340,7 @@ public class ClientAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/client/result")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.CLIENT.SAVE)
+	@RequiresPermissions(SalesUserPermissions.ORDER.SAVE)
 	public Map<String,Object> save(
 			@Basic(bean="client")
 			ClientPubEntity clientPubEntity,
