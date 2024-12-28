@@ -20,16 +20,11 @@ import org.brandao.brutos.annotation.web.RequestMethodTypes;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.web.HttpStatus;
 
-import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
-import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
-import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -44,31 +39,11 @@ public class AddressCartAdminPubResource {
 	
 	@Transient
 	@Inject
-	private VarParser varParser;
-	
-	@Transient
-	@Inject
 	private AdminCart adminCart;
 	
 	@Transient
 	@Inject
 	private CartService cartService;
-
-	@Transient
-	@Inject
-	private ClientEntityTypes clientEntityTypes;
-
-	@Transient
-	@Inject
-	private CountryRegistry countryRegistry;
-
-	@Transient
-	@Inject
-	private SystemUserRegistry systemUserRegistry;
-	
-	@Transient
-	@Inject
-	private ProductTypeRegistry productTypeRegistry;
 
 	@Transient
 	@Inject

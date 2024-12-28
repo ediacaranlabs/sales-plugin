@@ -29,13 +29,9 @@ import org.brandao.brutos.web.HttpStatus;
 import br.com.uoutec.community.ediacaran.persistence.entity.Country;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
-import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
@@ -61,14 +57,6 @@ public class ClientsCartAdminPubResource {
 	
 	@Transient
 	@Inject
-	private AdminCart adminCart;
-	
-	@Transient
-	@Inject
-	private CartService cartService;
-
-	@Transient
-	@Inject
 	private ClientEntityTypes clientEntityTypes;
 
 	@Transient
@@ -79,10 +67,6 @@ public class ClientsCartAdminPubResource {
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
 	
-	@Transient
-	@Inject
-	private ProductTypeRegistry productTypeRegistry;
-
 	@Transient
 	@Inject
 	private SubjectProvider subjectProvider;
@@ -125,33 +109,39 @@ public class ClientsCartAdminPubResource {
 			Locale locale) throws InvalidRequestException {
 		
 
+		Client client 			= null;
+		List<Country> countries = null;
+		String view 			= null;
+		boolean resolvedView 	= false;
+		Throwable exception 	= null;
+		
 		try{
 			if(clientPubEntity == null) {
 				clientPubEntity = new ClientPubEntity();
 			}
 			
-			Map<String,Object> vars = new HashMap<String, Object>();
-			boolean isNew           = clientPubEntity.getProtectedID() == null;
-			Client client           = (Client)clientPubEntity.rebuild(!isNew, override, validate);
-			List<Country> countries = countryRegistry.getAll(locale);
-			String userDataView     = clientEntityTypes.getClientEntityView(client);
-			
-			vars.put("client",			client);
-			vars.put("countries",		countries);
-			vars.put("principal",		subjectProvider.getSubject().getPrincipal());
-			vars.put("reloadAddress",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/clients/"));
-			
-			//vars.put("user_data_view_updater",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/user"));
-
-			ResultAction ra = new ResultActionImp();
-			ra.setView(userDataView, true).add("vars", vars);
-			return ra;
-			
+			client 			= (Client)clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, override, validate);
+			countries		= countryRegistry.getAll(locale);
+			view			= clientEntityTypes.getClientEntityView(client);
+			resolvedView	= true;
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(ClientsCartAdminPubResource.class, "showUser", "view", locale, ex);
-			throw new InvalidRequestException(error, ex);
+			exception = new InvalidRequestException(error, ex);
 		}
+
+		Map<String,Object> vars = new HashMap<String, Object>();
+		vars.put("client",			client);
+		vars.put("countries",		countries);
+		vars.put("principal",		subjectProvider.getSubject().getPrincipal());
+		vars.put("reloadAddress",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/clients/"));
+		vars.put("exception", 		exception);
+		
+		ResultAction ra = new ResultActionImp();
+		ra.setView(view, resolvedView);
+		ra.add("vars", vars);
+		
+		return ra;
 	}
 
 	@Action("/search")
@@ -182,10 +172,6 @@ public class ClientsCartAdminPubResource {
 			String error = this.errorMappingProvider.getError(ClientsCartAdminPubResource.class, "searchUsers", "search", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
-	}
-	
-	public Cart getCart() {
-		return adminCart.getCart();
 	}
 	
 }
