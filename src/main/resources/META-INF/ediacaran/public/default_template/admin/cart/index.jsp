@@ -8,11 +8,13 @@
 $.AppContext.onload(function(){			
 
 	var $accordion = $.AppContext.utils.getById('cart_steps');
-	$accordion.select("cart_products");
-	$accordion.setEnabled("cart_products", false);
-	$accordion.setEnabled("cart_client", false);
-	$accordion.setEnabled("cart_address", false);
-	$accordion.setEnabled("cart_payment", false);
+	var $tabs = $accordion.getItens();
+	
+	for(let $tab of $tabs){
+		$tab.setEnabled(false);
+	}
+	
+	$tabs[0].select();
 		
 });
 </script>
@@ -26,6 +28,7 @@ $.AppContext.onload(function(){
 	display: block;
 }
 </style>
+
 <section class="inner-headline">
 	<ed:row>
 		<ed:col size="4">
