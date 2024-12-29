@@ -24,7 +24,7 @@
 			    			<ec:textfield name="#{tabs.search.form.name.label}" label="Name" bundle="${messages}"/>
 						</ed:col>
 						<ed:col size="3">
-							<ec:select label="#{tabs.search.form.product_type.label}" name="productType">
+							<ec:select label="#{tabs.search.form.product_type.label}" name="productType" bundle="${messages}">
 								<c:forEach items="${vars.productTypes}" var="productType">
 								<ec:option value="${productType.code}">${productType.name}</ec:option>
 								</c:forEach>

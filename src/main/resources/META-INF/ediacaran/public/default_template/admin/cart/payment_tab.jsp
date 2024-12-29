@@ -14,7 +14,7 @@
 	</span>
 	<ed:row>
 		<ed:col>
-			<ec:button label="#{checkout.label}" icon="check-circle" actionType="submit" align="right" bundle="${messages}"/>
+			<ec:button label="#{checkout.label}" icon="check-circle" actionType="submit" align="right" style="success" bundle="${messages}"/>
 			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
