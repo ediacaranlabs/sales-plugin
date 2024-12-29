@@ -40,14 +40,14 @@
 				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
 			</ed:col>
 			<ed:col>
-				<b>Billing address</b><p>
+				<b><fmt:message key="billing_address.title" bundle="${messages}"/></b><p>
 				${vars.order.billingAddress.firstName} ${vars.order.billingAddress.lastName}<br>
 				${vars.order.billingAddress.addressLine1}<br>
 				${vars.order.billingAddress.addressLine2}<br>
 				${vars.order.billingAddress.zip} ${vars.order.billingAddress.city} ${vars.order.billingAddress.region} ${vars.order.billingAddress.country.name}
 			</ed:col>
 			<ed:col>
-				<b>Shipping address</b><p>
+				<b><fmt:message key="shipping_address.title" bundle="${messages}"/></b><p>
 				${vars.order.shippingAddress.firstName} ${vars.order.shippingAddress.lastName}<br>
 				${vars.order.shippingAddress.addressLine1}<br>
 				${vars.order.shippingAddress.addressLine2}<br>
@@ -187,12 +187,12 @@
 	
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Search" align="right" actionType="button">
+		<ec:button label="#{search.label}" align="right" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders');
 			</ec:event>
 		</ec:button>
-		<ec:button label="Create invoice" align="right" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}">
+		<ec:button label="#{create_invoice.label}" align="right" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/new/${vars.order.id}');
 			</ec:event>

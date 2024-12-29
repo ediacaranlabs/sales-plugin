@@ -6,6 +6,7 @@
 
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
+
 <ed:row>
 	<ed:col>
 		<span formgroup="client.selectedBillingAddress">
@@ -15,7 +16,7 @@
 					<ec:option value="${address.protectedID}" selected="${vars.client.selectedBillingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.name} - ${address.zip}</ec:option>
 				</c:forEach>
 				<c:if test="${vars.type != 'simplified'}">
-				<ec:option value="new">New address</ec:option>
+				<ec:option value="new" bundle=""><fmt:message key="form.selected_billing_address.select_new" bundle="${messages}"/></ec:option>
 				<ec:event type="change">
 					var $form = $event.source.getForm();
 					
@@ -52,8 +53,8 @@
 					<ec:option value="${address.protectedID}" selected="${vars.client.selectedShippingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.name} - ${address.zip}</ec:option>
 				</c:forEach>
 				<c:if test="${vars.type != 'simplified'}">
-				<ec:option value="billing">Billing address</ec:option>
-				<ec:option value="new">New address</ec:option>
+				<ec:option value="billing"><fmt:message key="form.selected_shipping_address.select_billing_address" bundle="${messages}"/></ec:option>
+				<ec:option value="new"><fmt:message key="form.selected_shipping_address.select_new" bundle="${messages}"/></ec:option>
 				<ec:event type="change">
 					var $form = $event.source.getForm();
 				

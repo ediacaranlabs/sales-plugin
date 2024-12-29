@@ -23,18 +23,18 @@
 </section>
 
 <ec:box>
-	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
+	<ec:box-header><fmt:message key="title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
 		<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/search">
 			<ed:row>
 				<ed:col size="2">
-	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
+	    			<ec:textfield name="id" label="#{form.id.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:textfield name="ownerName" label="Owner" placeholder="owner" bundle="${messages}"/>
+	    			<ec:textfield name="ownerName" label="#{form.client.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-		    			<ec:datefield label="From" name="startDate">
+		    			<ec:datefield label="#{form.from.label}" name="startDate" bundle="${messages}">
 		    				<ec:event type="change">
 								var $form = $.AppContext.utils.getById('orderSearchForm');
 								var $startDate = $form.getField('startDate');
@@ -42,7 +42,7 @@
 								$endDate.setProperty('min', $startDate.getValue());
 		    				</ec:event>
 		    			</ec:datefield>
-		    			<ec:datefield label="To" name="endDate">
+		    			<ec:datefield label="#{form.to.label}" name="endDate" bundle="${messages}">
 		    				<ec:event type="change">
 								var $form = $.AppContext.utils.getById('orderSearchForm');
 								var $startDate = $form.getField('startDate');
@@ -52,26 +52,26 @@
 		    			</ec:datefield>
 				</ed:col>
 				<ed:col size="3">
-					<ec:select label="Status" name="status">
-						<ec:option value=""><fmt:message key="form.status.placeholder" bundle="${messages}"/></ec:option>
+					<ec:select label="#{form.status.label}" name="status" bundle="${messages}">
+						<ec:option value=""></ec:option>
 						<c:forEach items="${vars.statusList}" var="status">
 						<ec:option value="${status}">${status.getName(locale)}</ec:option>
 						</c:forEach>
 					</ec:select>
 				</ed:col>
 				<ed:col size="3">
-		    			<ec:textfield label="Mínimum (Total)" name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
-		    			<ec:textfield label="Maximum (Total)" name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
+		    			<ec:textfield label="#{form.mintotal.label}" name="minTotal" bundle="${messages}"/>
+		    			<ec:textfield label="#{form.maxtotal.label}" name="maxTotal" bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			<ed:row>
 				<ed:col>
-					<ec:button label="New" icon="plus"  actionType="button" align="right">
+					<ec:button label="#{form.new.label}" icon="plus"  actionType="button" align="right" bundle="${messages}">
 						<ec:event type="click">
 							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart');
 						</ec:event>
 					</ec:button>
-					<ec:button icon="search" label="Search"  actionType="submit" align="right"/>
+					<ec:button icon="search" label="#{form.search.label}"  actionType="submit" align="right" bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			
@@ -79,7 +79,7 @@
 				<ec:table>
 					<ec:table-header>
 						<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center>Owner</ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.client" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
