@@ -6,15 +6,6 @@
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 <input type="hidden" value="${address.protectedID}" name="protectedID">
-<script language="javascript">
-	$.AppContext.onload(function(){
-	
-		var $formObj = $.AppContext.utils.getById('client_form');
-		$formObj.updateFieldIndex();
-		$formObj.updateFieldNames();
-		
-	});
-</script>
 <ed:row>
 	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield 
@@ -112,6 +103,10 @@
 				var $accordion = $group.getFirstChild();
 				
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+				
+					$form.updateFieldIndex();
+					$form.updateFieldNames();
+				
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
 					var $addressLine1 = $form.getField($path + ".addressLine1");
@@ -161,6 +156,10 @@
 				var $accordion = $group.getFirstChild();
 				
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+				
+					$form.updateFieldIndex();
+					$form.updateFieldNames();
+					
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
 					var $addressLine1 = $form.getField($path + ".addressLine1");
@@ -208,6 +207,10 @@
 				var $accordion = $group.getFirstChild();
 				
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+				
+					$form.updateFieldIndex();
+					$form.updateFieldNames();
+				
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
 					var $addressLine1 = $form.getField($path + ".addressLine1");
@@ -261,6 +264,10 @@
 				var $accordion = $group.getFirstChild();
 				
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+				
+					$form.updateFieldIndex();
+					$form.updateFieldNames();
+				
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
 					var $addressLine1 = $form.getField($path + ".addressLine1");
@@ -306,6 +313,10 @@
 				var $accordion = $group.getFirstChild();
 				
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+				
+					$form.updateFieldIndex();
+					$form.updateFieldNames();
+				
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
 					var $addressLine1 = $form.getField($path + ".addressLine1");
@@ -355,6 +366,10 @@
 				var $accordion = $group.getFirstChild();
 				
 				if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+				
+					$form.updateFieldIndex();
+					$form.updateFieldNames();
+				
 					var $item = $accordion.getItens()[0];
 					var $path = $group.getPath();
 					var $addressLine1 = $form.getField($path + ".addressLine1");
