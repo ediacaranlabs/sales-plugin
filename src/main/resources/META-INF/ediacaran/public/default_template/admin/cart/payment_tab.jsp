@@ -4,15 +4,18 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
+
 <ec:setTemplatePackage name="admin"/>
+<ec:setBundle var="messages" locale="${locale}"/>
+
 <ec:form id="cart_checkout" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/checkout" update="cart_result">
 	<span id="cart_payment_details" formgroup="payment">
 		<jsp:include page="payment-details.jsp"/>
 	</span>
 	<ed:row>
 		<ed:col>
-			<ec:button label="Checkout" icon="check-circle" actionType="submit" align="right" />
-			<ec:button icon="chevron-left" label="Back" actionType="button" align="right" >
+			<ec:button label="#{checkout.label}" icon="check-circle" actionType="submit" align="right" bundle="${messages}"/>
+			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
 					var $tab = $accordion.getItem("cart_address");

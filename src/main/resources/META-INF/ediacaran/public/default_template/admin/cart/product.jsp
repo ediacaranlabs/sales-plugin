@@ -3,7 +3,10 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
+
+<ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
+
 <ec:box>
 	<ec:box-header>
 		<h3>${productRequest.name}</h3>
@@ -51,8 +54,8 @@
 												}
 											</ec:event>
 											<ec:field-validator>
-												<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
-												<ec:field-validator-rule name="between" message="Must be between 0 to ${empty productRequest.maxExtra || productRequest.maxExtra < 0? 1 : productRequest.maxExtra}">
+												<ec:field-validator-rule name="notEmpty" message="#{form.units.validation.notEmpty}" bundle="${messages}"/>
+												<ec:field-validator-rule name="between" message="#{form.between.validation.notEmpty}" bundle="${messages}">
 														<ec:field-validator-param name="min">0</ec:field-validator-param>
 														<ec:field-validator-param name="max">${empty productRequest.maxExtra || productRequest.maxExtra < 0? 1 : productRequest.maxExtra}</ec:field-validator-param>
 												</ec:field-validator-rule>

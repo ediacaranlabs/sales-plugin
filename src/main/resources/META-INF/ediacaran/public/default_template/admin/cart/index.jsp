@@ -55,22 +55,22 @@ $.AppContext.onload(function(){
 			<ed:col size="9">
 				
 				<ec:accordion id="cart_steps">
-					<ec:accordion-item id="cart_products" title="Products">
+					<ec:accordion-item id="cart_products" title="#{tabs.products.title}" bundle="${messages}">
 						<!-- products-tab -->
 						<jsp:include page="products_tab.jsp"/>
 						<!-- /products-tab -->
 					</ec:accordion-item>
-					<ec:accordion-item  id="cart_client" title="Client">
+					<ec:accordion-item  id="cart_client" title="#{tabs.client.title}" bundle="${messages}">
 						<!-- client-tab -->
 						<jsp:include page="client_tab.jsp"/>
 						<!-- /client-tab -->
 					</ec:accordion-item>
-					<ec:accordion-item id="cart_address" title="Address">
+					<ec:accordion-item id="cart_address" title="#{tabs.address.title}" bundle="${messages}">
 						<!-- address-tab -->
 						<jsp:include page="address_tab.jsp"/>
 						<!-- /address-tab -->
 					</ec:accordion-item>
-					<ec:accordion-item id="cart_payment" title="Payment method">
+					<ec:accordion-item id="cart_payment" title="#{tabs.payment.title}" bundle="${messages}">
 						<!-- payment-tab -->
 						<jsp:include page="payment_tab.jsp"/>
 						<!-- /payment-tab -->
