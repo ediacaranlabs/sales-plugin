@@ -3,7 +3,10 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
+
+<ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
+
 <c:forEach items="${Controller.widgets}" var="widget">
 	<ed:row style="cart_widget_title">
 		<ed:col>

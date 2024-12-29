@@ -3,6 +3,8 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
+
+<ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 
 <c:if test="${!empty productException}">
@@ -42,7 +44,7 @@
 </style>
 
 <c:if test="${Controller.cart.itens.size() == 0}">
-	<ec:center id="empty_cart"><ec:icon icon="shopping-cart" size="3"/> <h3>Empty cart</h3></ec:center>
+	<ec:center id="empty_cart"><ec:icon icon="shopping-cart" size="3"/> <h3><fmt:message key="empty_cart.label" bundle="${messages}"/></h3></ec:center>
 	<script type="text/javascript">
 	$.AppContext.onload(function(){			
 		var $nextButton = $.AppContext.utils.getById('products_next_button');
