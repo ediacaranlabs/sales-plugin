@@ -184,7 +184,10 @@
 				</ec:tabs>
 			</ed:col>
 		</ed:row>
-	
+		<ed:row>
+			<ed:col id="order_result">
+			</ed:col>
+		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
 		<ec:button label="#{search.label}" align="right" actionType="button" bundle="${messages}">
@@ -195,6 +198,11 @@
 		<ec:button label="#{create_invoice.label}" align="right" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/new/${vars.order.id}');
+			</ec:event>
+		</ec:button>
+		<ec:button label="#{submit_payment.label}" icon="credit-card" enabled="${vars.order.payment.receivedFrom == null}" style="success" align="right" actionType="button" bundle="${messages}">
+			<ec:event type="click">
+				$.AppContext.utils.updateContentByID('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/payment/${vars.order.id}', "order_result");
 			</ec:event>
 		</ec:button>
 	</ec:box-footer>

@@ -17,6 +17,8 @@ public final class SalesUserPermissions {
 		public static final String EDIT		= ALL + ":EDIT";
 
 		public static final String SAVE		= ALL + ":SAVE";
+
+		public static final String PAYMENT	= ALL + ":PAYMENT";
 		
 		public static final String DELETE	= ALL + ":DELETE";
 		

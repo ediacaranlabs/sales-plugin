@@ -39,5 +39,17 @@ public class OrderAdminPubResourceMessages {
 		}
 		
 	}
+
+	public final class payment {
+		
+		public final class error {
+			
+			public static final String fail_load = "payment.error.fail_load";
+			
+			public static final String fail_register = "payment.error.fail_register";
+			
+		}
+		
+	}
 	
 }
