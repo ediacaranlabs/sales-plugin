@@ -1,6 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.shipping;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public interface ShippingMethod {
 
@@ -18,6 +18,6 @@ public interface ShippingMethod {
 	
 	boolean isApplicable(ShippingRateRequest request);
 	
-	BigDecimal calculateRate(ShippingRateRequest request);
+	List<ShippingMethodOption> getOptions(ShippingRateRequest request);
 	
 }
