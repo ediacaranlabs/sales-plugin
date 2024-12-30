@@ -21,6 +21,20 @@ public final class SalesPluginPermissions {
 		
 	}
 
+	public static class SHIPPING_METHOD {
+		
+		public static final String basePermission = SalesPluginPermissions.basePermission + "shipping.";
+		
+		public static SecurityPermission getRegisterPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register");
+		}
+
+		public static SecurityPermission getRemovePermission() {
+			return new RuntimeSecurityPermission(basePermission + "remove");
+		}
+		
+	}
+	
 	public static class CART {
 		
 		public static final String basePermission = SalesPluginPermissions.basePermission + "cart.";
