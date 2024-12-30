@@ -51,6 +51,18 @@ public class Address implements Serializable{
 	public Address() {
 	}
 
+	public Address(Address address) {
+		this.addressLine1 = address.getAddressLine1();
+		this.addressLine2 = address.getAddressLine2();
+		this.city = address.getCity();
+		this.country = address.getCountry();
+		this.firstName = address.getFirstName();
+		this.id = address.getId();
+		this.lastName = address.getLastName();
+		this.region = address.getRegion();
+		this.zip = address.getZip();
+	}
+	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
 	}
