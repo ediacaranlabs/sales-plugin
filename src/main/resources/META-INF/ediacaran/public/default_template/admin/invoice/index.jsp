@@ -28,21 +28,21 @@
 		<ec:data-table id="invoiceSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/search">
 			<ed:row>
 				<ed:col size="1">
-	    			<ec:textfield name="id" label="#ID" placeholder="#{form.id.placeholder}" bundle="${messages}"/>
+	    			<ec:textfield name="id" label="#{form.id.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:textfield name="order" label="#Order" placeholder="#{form.order.placeholder}" bundle="${messages}"/>
+	    			<ec:textfield name="order" label="#{form.order.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="3">
-	    			<ec:textfield name="ownerName" label="Owner" placeholder="owner" bundle="${messages}"/>
+	    			<ec:textfield name="ownerName" label="#{form.client.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="1">
-					<ec:label>Canceled</ec:label>
-	    			<ec:radio label="yes" value="true" name="canceled"/>
-	    			<ec:radio label="no" value="false" name="canceled" selected="true"/>
+					<ec:label><fmt:message key="form.canceled.label" bundle="${messages}"/></ec:label>
+	    			<ec:radio label="#{form.canceled.yes}" value="true" name="canceled" bundle="${messages}"/>
+	    			<ec:radio label="#{form.canceled.no}" value="false" name="canceled" selected="true" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:datefield label="From" name="startDate">
+	    			<ec:datefield label="#{form.from.label}" name="startDate" bundle="${messages}">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
 							var $startDate = $form.getField('startDate');
@@ -50,7 +50,7 @@
 							$endDate.setProperty('min', $startDate.getValue());
 	    				</ec:event>
 	    			</ec:datefield>
-	    			<ec:datefield label="To" name="endDate">
+	    			<ec:datefield label="#{form.to.label}" name="endDate" bundle="${messages}">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
 							var $startDate = $form.getField('startDate');
@@ -60,8 +60,8 @@
 	    			</ec:datefield>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:textfield label="Mínimum (Total)" name="minTotal" placeholder="#{form.mintotal.placeholder}" bundle="${messages}"/>
-	    			<ec:textfield label="Maximum (Total)" name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
+	    			<ec:textfield label="#{form.mintotal.label}" name="minTotal" bundle="${messages}"/>
+	    			<ec:textfield label="#{form.maxtotal.label}" name="maxTotal" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="1">
 					<ec:button icon="search" style="info" actionType="submit" align="right"/>

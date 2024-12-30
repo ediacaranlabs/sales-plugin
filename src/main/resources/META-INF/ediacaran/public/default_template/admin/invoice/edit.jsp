@@ -14,7 +14,7 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2>Invoice</h2>
+				<h2><fmt:message key="title" bundle="${messages}"/></h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
@@ -169,12 +169,12 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Order" actionType="button" align="right">
+		<ec:button label="#{order.label}" actionType="button" align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="Save" align="right"/>
+		<ec:button actionType="submit" label="#{save.label}" align="right" bundle="${messages}"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>
