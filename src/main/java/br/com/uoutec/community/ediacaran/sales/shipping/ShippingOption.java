@@ -19,6 +19,18 @@ public class ShippingOption {
 	
 	private BigDecimal value;
 
+	public ShippingOption() {
+	}
+	
+	public ShippingOption(String id, String method, String title, String currency, BigDecimal cost, BigDecimal value) {
+		this.id = id;
+		this.method = method;
+		this.title = title;
+		this.currency = currency;
+		this.cost = cost;
+		this.value = value;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -70,7 +82,11 @@ public class ShippingOption {
 	public String toString(Locale locale) {
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
 		DecimalFormat df = new DecimalFormat("###,###,##0.00", dfs); 
-		return currency + " " + df.format(value) + " " + title + " (" + method + ")"; 
+		return currency + " " + df.format(value) + " " + this.toString(); 
+	}
+	
+	public String toString() {
+		return title + " (" + method + ")"; 
 	}
 	
 }

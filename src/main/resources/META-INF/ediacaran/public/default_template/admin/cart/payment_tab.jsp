@@ -18,7 +18,7 @@
 			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
-					var $tab = $accordion.getItem("cart_address");
+					var $tab = $accordion.getItem("cart_shipping");
 					$tab.select();
 				</ec:event>
 			</ec:button>

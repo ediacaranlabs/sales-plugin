@@ -180,7 +180,7 @@ public class OrderAdminPubResource {
 		}
 
 		try{
-			orderRegistry.registerPayment(order, order.getPayment().getCurrency(), order.getPayment().getTotal());
+			orderRegistry.registerPayment(order, null, null);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

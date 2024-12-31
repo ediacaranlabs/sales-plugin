@@ -418,7 +418,7 @@ public class CartAdminPubResource {
 		Client client = null;
 		try{
 			client = (Client)systemUserPubEntity.rebuild(systemUserPubEntity.getProtectedID() != null, true, true);
-			adminCart.setClient(client);
+			cartService.selectClient(client, adminCart.getCart());
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showUser", "view", locale, ex);
@@ -476,8 +476,7 @@ public class CartAdminPubResource {
 		}
 		
 		try{
-			adminCart.setBillingAddress(billingAddress);
-			adminCart.setShippingAddress(shippingAddress);
+			cartService.selectAddress(billingAddress, shippingAddress, adminCart.getCart());
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showAddress", "view", locale, ex);
@@ -486,6 +485,26 @@ public class CartAdminPubResource {
 		
 	}
 	
+	@Action("/shipping/select")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/select_shipping_result")
+	@RequestMethod(RequestMethodTypes.POST)
+	@Result("vars")
+	public void selectShipping(
+			@Basic(bean = "shipping_method")
+			String shippingMethod, 
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try{
+			cartService.selectShippingOption(shippingMethod, adminCart.getClient(), adminCart.getCart());
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showShipping", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+		
 	public Cart getCart() {
 		return adminCart.getCart();
 	}

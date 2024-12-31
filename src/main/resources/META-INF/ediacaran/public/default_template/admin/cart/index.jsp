@@ -70,6 +70,11 @@ $.AppContext.onload(function(){
 						<jsp:include page="address_tab.jsp"/>
 						<!-- /address-tab -->
 					</ec:accordion-item>
+					<ec:accordion-item id="cart_shipping" title="#{tabs.shipping.title}" bundle="${messages}">
+						<!-- address-tab -->
+						<jsp:include page="shipping_tab.jsp"/>
+						<!-- /address-tab -->
+					</ec:accordion-item>
 					<ec:accordion-item id="cart_payment" title="#{tabs.payment.title}" bundle="${messages}">
 						<!-- payment-tab -->
 						<jsp:include page="payment_tab.jsp"/>

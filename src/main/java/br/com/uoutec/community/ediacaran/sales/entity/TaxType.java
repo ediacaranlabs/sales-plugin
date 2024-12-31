@@ -12,35 +12,22 @@ public enum TaxType {
 
 	UNIT{
 		
-		public BigDecimal apply(BigDecimal value, BigDecimal discount){
-			
-			if(discount != null && discount.compareTo(BigDecimal.ZERO) > 0){
-				return 
-						discount.compareTo(value) >= 0?
-						BigDecimal.ZERO :
-						value.subtract(discount);
-			}
-			
-			return value;
+		public BigDecimal apply(BigDecimal value, BigDecimal tax){
+			return tax == null?
+					BigDecimal.ZERO : 
+					tax;
 		}
 		
 	},
 	
 	PERCENTAGE{
 		
-		public BigDecimal apply(BigDecimal value, BigDecimal discount){
-			if(discount != null && 
-					discount.compareTo(BigDecimal.ZERO) > 0 && 
-					discount.compareTo(PluginInstaller.ONE_HUMDRED) <= 0){
-				return 
-					value.subtract(
-						value.multiply(
-							discount.divide(PluginInstaller.ONE_HUMDRED, BigDecimal.ROUND_DOWN)
-						)
-					);
+		public BigDecimal apply(BigDecimal value, BigDecimal tax){
+			if(tax == null) {
+				return BigDecimal.ZERO;
 			}
-						
-			return value;
+			
+			return value.multiply(tax.divide(PluginInstaller.ONE_HUMDRED, BigDecimal.ROUND_DOWN));
 		}
 		
 	};
