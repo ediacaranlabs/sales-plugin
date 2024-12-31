@@ -128,11 +128,11 @@ public class OrderEntity implements Serializable{
 		this.removed = e.isRemoved();
 		this.status = e.getStatus();
 		
-		List<Tax> discounts = e.getTaxes();
+		List<Tax> list = e.getTaxes();
 		
-		if(discounts != null){
+		if(list != null){
 			this.taxes = new ArrayList<OrderTaxEntity>();
-			for(Tax tax: discounts){
+			for(Tax tax: list){
 				this.taxes.add(new OrderTaxEntity(this, tax));
 			}
 		}

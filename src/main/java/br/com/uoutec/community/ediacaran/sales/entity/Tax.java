@@ -39,6 +39,19 @@ public class Tax implements Serializable {
 	
 	private byte order;
 
+	public Tax() {
+	}
+	
+	public Tax(Tax tax) {
+		this.description = tax.getDescription();
+		this.discount = tax.isDiscount();
+		this.id = tax.getId();
+		this.name = tax.getName();
+		this.order = tax.getOrder();
+		this.type = tax.getType();
+		this.value = tax.getValue();
+	}
+	
 	public String getId() {
 		return id;
 	}

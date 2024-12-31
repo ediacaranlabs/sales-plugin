@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +47,8 @@ public class Invoice implements Serializable{
 	
 	@Valid
 	private List<ProductRequest> itens;
+	
+	private List<Tax> taxes;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.CURRENCY)
@@ -107,6 +110,14 @@ public class Invoice implements Serializable{
 		this.cancelJustification = cancelJustification;
 	}
 
+	public List<Tax> getTaxes() {
+		return taxes;
+	}
+
+	public void setTaxes(List<Tax> taxes) {
+		this.taxes = taxes;
+	}
+
 	public String toStringDate(Locale locale) {
 		if(date == null) {
 			return "";
@@ -140,24 +151,84 @@ public class Invoice implements Serializable{
 		for(ProductRequest pr: itens) {
 			value = value.add(pr.getDiscount());
 		}
-		return value;
 		
+		return value.add(getDiscountBySubtotal());
 	}
 
+	private BigDecimal getDiscountBySubtotal() {
+		
+		BigDecimal value = getSubtotal();
+		BigDecimal discount = BigDecimal.ZERO;
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+				if(t.isDiscount()) {
+					discount = discount.add(taxUnit);
+				}
+			}
+			
+		}
+		
+		return discount;
+	}
+	
 	public BigDecimal getTax() {
 		
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
 			value = value.add(pr.getTax());
 		}
-		return value;
+		return value.add(getTaxBySubtotal());
+	}
+
+	private BigDecimal getTaxBySubtotal() {
+		
+		BigDecimal value = getSubtotal();
+		BigDecimal tax = BigDecimal.ZERO;
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+				if(!t.isDiscount()) {
+					tax = tax.add(taxUnit);
+				}
+			}
+			
+		}
+		
+		return tax;
 	}
 	
 	public BigDecimal getTotal(){
-		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: itens) {
-			value = value.add(pr.getTotal());
+		
+		BigDecimal value = getSubtotal();
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+			}
+			
 		}
+		
 		return value;
 	}
 	

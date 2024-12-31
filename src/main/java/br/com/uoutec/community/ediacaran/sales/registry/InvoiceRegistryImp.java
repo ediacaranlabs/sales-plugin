@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -507,6 +508,16 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		i.setOrder(order.getId());
 		i.setItens(new ArrayList<ProductRequest>(transientItens.values()));
 		i.setCurrency(order.getCurrency());
+
+		if(order.getTaxes() != null) {
+			List<Tax> list = new ArrayList<>();
+			i.setTaxes(list);
+			for(Tax t: order.getTaxes()) {
+				Tax nt = new Tax(t);
+				nt.setId(null);
+				list.add(nt);
+			}
+		}
 		
 		return i;
 	}

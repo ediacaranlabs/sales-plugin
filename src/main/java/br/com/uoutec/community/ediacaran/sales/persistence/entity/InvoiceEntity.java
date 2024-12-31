@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 
 
@@ -68,6 +69,9 @@ public class InvoiceEntity implements Serializable{
 	
 	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
 	private List<ProductRequestEntity> itens;
+
+	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
+	private List<InvoiceTaxEntity> taxes;
 	
 	public InvoiceEntity(){
 	}
@@ -99,7 +103,13 @@ public class InvoiceEntity implements Serializable{
 				itens.add(new ProductRequestEntity(this, k));
 			}
 		}
-		
+
+		if(e.getTaxes() != null) {
+			this.taxes = new ArrayList<>();
+			for(Tax t: e.getTaxes()) {
+				this.taxes.add(new InvoiceTaxEntity(t, this));
+			}
+		}
 	}
 	
 	public String getId() {
@@ -174,6 +184,38 @@ public class InvoiceEntity implements Serializable{
 		this.itens = itens;
 	}
 
+	public LocalDateTime getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(LocalDateTime cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public String getCancelJustification() {
+		return cancelJustification;
+	}
+
+	public void setCancelJustification(String cancelJustification) {
+		this.cancelJustification = cancelJustification;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public List<InvoiceTaxEntity> getTaxes() {
+		return taxes;
+	}
+
+	public void setTaxes(List<InvoiceTaxEntity> taxes) {
+		this.taxes = taxes;
+	}
+
 	public Invoice toEntity(){
 		return this.toEntity(null);
 	}
@@ -201,6 +243,14 @@ public class InvoiceEntity implements Serializable{
 				l.add(k.toEntity());
 			}
 			e.setItens(l);
+		}
+		
+		if(this.taxes != null) {
+			List<Tax> list = new ArrayList<>();
+			e.setTaxes(list);
+			for(InvoiceTaxEntity t: this.taxes) {
+				list.add(t.toEntity());
+			}
 		}
 		
 		return e;

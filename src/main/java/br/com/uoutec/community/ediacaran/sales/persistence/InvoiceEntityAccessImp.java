@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
@@ -75,6 +76,16 @@ public class InvoiceEntityAccessImp
 				}
 			}
 			
+			List<InvoiceTaxEntity> taxes = pEntity.getTaxes();
+			
+			if(taxes != null) {
+				for(InvoiceTaxEntity t: taxes) {
+					t.setId(IDGenerator.getUniqueOrderID('T', (int)SystemProperties.currentTimeMillis()));
+					t.setInvoice(pEntity);
+					entityManager.persist(t);
+				}
+			}
+			
 			pEntity.toEntity(value);
     	}
     	catch(Throwable e){
@@ -115,6 +126,21 @@ public class InvoiceEntityAccessImp
 						}
 					}
 					
+				}
+			}
+			
+			List<InvoiceTaxEntity> taxes = pEntity.getTaxes();
+			
+			if(taxes != null) {
+				for(InvoiceTaxEntity t: taxes) {
+					if(t.getId() == null) {
+						t.setId(IDGenerator.getUniqueOrderID('T', (int)SystemProperties.currentTimeMillis()));
+						t.setInvoice(pEntity);
+						entityManager.persist(t);
+					}
+					else {
+						entityManager.merge(t);
+					}
 				}
 			}
 			
