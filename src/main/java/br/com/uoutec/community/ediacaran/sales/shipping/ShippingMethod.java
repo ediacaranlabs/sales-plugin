@@ -18,6 +18,6 @@ public interface ShippingMethod {
 	
 	boolean isApplicable(ShippingRateRequest request);
 	
-	List<ShippingMethodOption> getOptions(ShippingRateRequest request);
+	List<ShippingOption> getOptions(ShippingRateRequest request);
 	
 }

@@ -9,7 +9,8 @@ public class OrderResult implements Serializable {
 
 	private static final long serialVersionUID = 9166429937476180931L;
 
-	private static final DecimalFormat df = new DecimalFormat("###,###,##0.00"); 
+	private static final DecimalFormat df = new DecimalFormat("###,###,##0.00");
+	
 	private String id;
 	
 	private String owner;

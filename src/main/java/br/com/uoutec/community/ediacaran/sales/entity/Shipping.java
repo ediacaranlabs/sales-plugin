@@ -21,8 +21,14 @@ public class Shipping implements Serializable{
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
-	private ShippingType shippingType;
+	private String shippingType;
+
+	@NotNull(groups = DataValidation.class)
+	private String shippingCode;
 	
+	@NotNull(groups = DataValidation.class)
+	private BigDecimal cost;
+
 	@NotNull(groups = DataValidation.class)
 	private BigDecimal value;
 	
@@ -37,12 +43,20 @@ public class Shipping implements Serializable{
 		this.id = id;
 	}
 
-	public ShippingType getShippingType() {
+	public String getShippingType() {
 		return shippingType;
 	}
 
-	public void setShippingType(ShippingType shippingType) {
+	public void setShippingType(String shippingType) {
 		this.shippingType = shippingType;
+	}
+
+	public String getShippingCode() {
+		return shippingCode;
+	}
+
+	public void setShippingCode(String shippingCode) {
+		this.shippingCode = shippingCode;
 	}
 
 	public BigDecimal getValue() {
@@ -51,6 +65,14 @@ public class Shipping implements Serializable{
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public BigDecimal getCost() {
+		return cost;
+	}
+
+	public void setCost(BigDecimal cost) {
+		this.cost = cost;
 	}
 	
 }
