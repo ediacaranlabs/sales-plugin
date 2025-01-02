@@ -1,8 +1,10 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -23,11 +25,10 @@ public class Shipping implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	private String shippingType;
 
-	@NotNull(groups = DataValidation.class)
-	private BigDecimal cost;
-
-	@NotNull(groups = DataValidation.class)
-	private BigDecimal value;
+	protected Map<String, String> addData;
+	
+	@Valid
+	private List<ProductRequest> itens;
 	
 	public Shipping(){
 	}
@@ -46,22 +47,6 @@ public class Shipping implements Serializable{
 
 	public void setShippingType(String shippingType) {
 		this.shippingType = shippingType;
-	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
-	public BigDecimal getCost() {
-		return cost;
-	}
-
-	public void setCost(BigDecimal cost) {
-		this.cost = cost;
 	}
 	
 }

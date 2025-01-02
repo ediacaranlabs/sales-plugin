@@ -2,6 +2,8 @@ package br.com.uoutec.community.ediacaran.sales.shipping;
 
 import java.util.List;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+
 public interface ShippingMethod {
 
 	public static final String WEIGHT_PROPERTY	= "weight";
@@ -20,4 +22,9 @@ public interface ShippingMethod {
 	
 	List<ShippingOption> getOptions(ShippingRateRequest request);
 	
+	String getView(Shipping value);
+	
+	String getOwnerView(Shipping value);
+	
+	String getTrackAddress(Shipping value);
 }
