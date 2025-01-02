@@ -26,5 +26,6 @@ public interface ShippingMethod {
 	
 	String getOwnerView(Shipping value);
 	
-	String getTrackAddress(Shipping value);
+	String getTrackerAddress(Shipping value);
+	
 }

@@ -56,8 +56,8 @@ public class ProductRequestEntity implements Serializable{
 	private InvoiceEntity invoice;
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_shipping", referencedColumnName="cod_shipping")
-	private ShippingEntity shipping;
+	@JoinColumn(name="cod_product_package", referencedColumnName="cod_product_package")
+	private ProductPackageEntity productPackage;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_period_type", length=32)
@@ -97,17 +97,17 @@ public class ProductRequestEntity implements Serializable{
 	public ProductRequestEntity(InvoiceEntity invoice, ProductRequest e){
 		this(null, invoice, null, e);
 	}
-	public ProductRequestEntity(ShippingEntity shipping, ProductRequest e){
-		this(null, null, shipping, e);
+	public ProductRequestEntity(ProductPackageEntity productPackage, ProductRequest e){
+		this(null, null, productPackage, e);
 	}
 
-	public ProductRequestEntity(OrderEntity order, InvoiceEntity invoice, ShippingEntity shipping, ProductRequest e){
+	public ProductRequestEntity(OrderEntity order, InvoiceEntity invoice, ProductPackageEntity productPackage, ProductRequest e){
 		this.id               = e.getId();
 		this.name             = e.getName();
 		this.serial           = e.getSerial();
 		this.order            = order;
 		this.invoice          = invoice;
-		this.shipping         = shipping;
+		this.productPackage   = productPackage;
 		this.addData          = DataUtil.encode(e.getAddData());
 		this.cost             = e.getCost();
 		this.currency         = e.getCurrency();
@@ -177,12 +177,12 @@ public class ProductRequestEntity implements Serializable{
 		this.order = order;
 	}
 
-	public ShippingEntity getShipping() {
-		return shipping;
+	public ProductPackageEntity getProductPackage() {
+		return productPackage;
 	}
 
-	public void setShipping(ShippingEntity shipping) {
-		this.shipping = shipping;
+	public void setProductPackage(ProductPackageEntity productPackage) {
+		this.productPackage = productPackage;
 	}
 
 	public Integer getUnits() {

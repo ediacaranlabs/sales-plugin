@@ -10,6 +10,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -25,10 +26,16 @@ public class Shipping implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	private String shippingType;
 
-	protected Map<String, String> addData;
+	@Valid
+	private Address origin;
 	
 	@Valid
-	private List<ProductRequest> itens;
+	private Address dest;
+	
+	@Valid
+	private List<ProductPackage> itens;
+	
+	private Map<String, String> addData;
 	
 	public Shipping(){
 	}
@@ -48,5 +55,38 @@ public class Shipping implements Serializable{
 	public void setShippingType(String shippingType) {
 		this.shippingType = shippingType;
 	}
+
+	public Address getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(Address origin) {
+		this.origin = origin;
+	}
+
+	public Address getDest() {
+		return dest;
+	}
+
+	public void setDest(Address dest) {
+		this.dest = dest;
+	}
+
+	public List<ProductPackage> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<ProductPackage> itens) {
+		this.itens = itens;
+	}
+
+	public Map<String, String> getAddData() {
+		return addData;
+	}
+
+	public void setAddData(Map<String, String> addData) {
+		this.addData = addData;
+	}
+
 	
 }

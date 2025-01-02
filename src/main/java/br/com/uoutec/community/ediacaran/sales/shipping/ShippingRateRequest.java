@@ -11,14 +11,11 @@ public class ShippingRateRequest {
 	
 	private final Address dest;
 	
-	private final String currency;
-	
 	private final List<ProductPackage> itens;
 
-	public ShippingRateRequest(Address origin, Address dest, String currency, List<ProductPackage> itens) {
+	public ShippingRateRequest(Address origin, Address dest, List<ProductPackage> itens) {
 		this.origin = new Address(origin);
 		this.dest = new Address(dest);
-		this.currency = currency;
 		this.itens = Collections.unmodifiableList(itens);
 	}
 
@@ -28,10 +25,6 @@ public class ShippingRateRequest {
 
 	public Address getDest() {
 		return dest;
-	}
-
-	public String getCurrency() {
-		return currency;
 	}
 
 	public List<ProductPackage> getItens() {

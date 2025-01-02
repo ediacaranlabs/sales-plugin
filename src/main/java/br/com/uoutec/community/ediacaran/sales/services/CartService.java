@@ -205,7 +205,7 @@ public class CartService {
 			packages.add(pp);
 		}
 		
-		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, currency, packages);
+		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, packages);
 		List<ShippingOption> shippingOption = new ArrayList<>();
 		
 		List<ShippingMethod> shippingMethods = shippingMethodRegistry.getShippingMethods(shippingRateRequest);
