@@ -24,9 +24,6 @@ public class Shipping implements Serializable{
 	private String shippingType;
 
 	@NotNull(groups = DataValidation.class)
-	private String shippingCode;
-	
-	@NotNull(groups = DataValidation.class)
 	private BigDecimal cost;
 
 	@NotNull(groups = DataValidation.class)
@@ -49,14 +46,6 @@ public class Shipping implements Serializable{
 
 	public void setShippingType(String shippingType) {
 		this.shippingType = shippingType;
-	}
-
-	public String getShippingCode() {
-		return shippingCode;
-	}
-
-	public void setShippingCode(String shippingCode) {
-		this.shippingCode = shippingCode;
 	}
 
 	public BigDecimal getValue() {

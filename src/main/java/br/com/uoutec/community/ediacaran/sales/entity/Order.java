@@ -65,12 +65,6 @@ public class Order implements Serializable{
 	
 	private LocalDateTime completeInvoice;
 	
-	//@Valid
-	//private List<Invoice> invoices;
-	
-	@Valid
-	private Shipping shipping;
-	
 	@Valid
 	@Size(min = 1, groups = DataValidation.class)
 	private List<ProductRequest> itens;
@@ -202,14 +196,6 @@ public class Order implements Serializable{
 
 	public void setRemoved(boolean removed) {
 		this.removed = removed;
-	}
-
-	public Shipping getShipping() {
-		return shipping;
-	}
-
-	public void setShipping(Shipping shipping) {
-		this.shipping = shipping;
 	}
 
 	public List<Tax> getTaxes() {
