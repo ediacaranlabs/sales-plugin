@@ -25,7 +25,6 @@ public class ProductPackageEntity {
 	@Column(name="cod_product_package", length=32)
 	private String id;
 	
-	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_shipping", referencedColumnName="cod_shipping")
 	private ShippingEntity shipping;
@@ -108,6 +107,14 @@ public class ProductPackageEntity {
 		this.products = products;
 	}
 	
+	public ShippingEntity getShipping() {
+		return shipping;
+	}
+
+	public void setShipping(ShippingEntity shipping) {
+		this.shipping = shipping;
+	}
+
 	public ProductPackage toEntity(){
 		return this.toEntity(null);
 	}

@@ -1,6 +1,10 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.lang.reflect.InvocationTargetException;
+
+import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class Client extends SystemUser{
 
@@ -65,5 +69,21 @@ public class Client extends SystemUser{
 		this.selectedShippingAddress = selectedShippingAddress;
 	}
 
-
+	public static Client toClient(SystemUser user
+			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		EntityInheritanceManager entityInheritanceUtil = 
+				EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+		return toClient(user, entityInheritanceUtil);
+	}
+	
+	public static Client toClient(SystemUser user, EntityInheritanceManager entityInheritanceUtil
+			) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return entityInheritanceUtil
+				.getInstance(
+						Client.class, 
+						user.getCountry().getIsoAlpha3(), 
+						new Class<?>[] {SystemUser.class}, new Object[] {user}
+				);
+	}
+	
 }

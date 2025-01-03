@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
@@ -34,6 +34,13 @@ public class ShippingEntity implements PublicType, Serializable{
 	
 	@Column(name="cod_shipping")
 	private String shippingType;
+
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name = "cod_order", referencedColumnName = "cod_order" )
+	private OrderEntity order;
+
+	@Column(name="dat_created_date")
+	private LocalDateTime date;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "cod_origin_address", referencedColumnName = "cod_address" )
@@ -52,12 +59,19 @@ public class ShippingEntity implements PublicType, Serializable{
 	public ShippingEntity(){
 	}
 	
-	public ShippingEntity(Shipping e, Client client){
+	public ShippingEntity(Shipping e){
+		
+		if(e.getOrder() != null) {
+			this.order = new OrderEntity();
+			this.order.setId(e.getOrder());
+		}
+		
 		this.dest = e.getDest() == null? null : new AddressEntity(e.getDest(), null);
 		this.id = e.getId();
 		this.origin = e.getOrigin() == null? null : new AddressEntity(e.getOrigin(), null);
 		this.shippingType = e.getShippingType();
 		this.addData = DataUtil.encode(e.getAddData());
+		this.date = e.getDate();
 		
 		if(e.getItens() != null) {
 			this.itens = new ArrayList<>();
@@ -99,6 +113,22 @@ public class ShippingEntity implements PublicType, Serializable{
 		this.dest = dest;
 	}
 
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
+
+	public OrderEntity getOrder() {
+		return order;
+	}
+
+	public void setOrder(OrderEntity order) {
+		this.order = order;
+	}
+
 	public List<ProductPackageEntity> getItens() {
 		return itens;
 	}
@@ -132,7 +162,11 @@ public class ShippingEntity implements PublicType, Serializable{
 			e.setId(this.id);
 			e.setOrigin(this.origin == null? null : origin.toEntity());
 			e.setShippingType(this.shippingType);
-
+			
+			if(this.order != null) {
+				e.setOrder(this.order.getId());
+			}
+			
 			if(this.itens != null) {
 				ArrayList<ProductPackage> list = new ArrayList<>();
 				for(ProductPackageEntity p: this.itens) {

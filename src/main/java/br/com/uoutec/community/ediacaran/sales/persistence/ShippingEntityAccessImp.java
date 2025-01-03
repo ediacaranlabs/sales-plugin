@@ -16,26 +16,27 @@ import javax.persistence.criteria.Root;
 
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductPackageEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingEntity;
+import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
 public class ShippingEntityAccessImp 
 	extends AbstractEntityAccess<Shipping, ShippingEntity>
-	implements InvoiceEntityAccess{
+	implements ShippingEntityAccess{
 
 	public ShippingEntityAccessImp() {
 		super(null);
@@ -58,34 +59,35 @@ public class ShippingEntityAccessImp
 			
 			entityManager.persist(pEntity);
 			
-			List<ProductRequestEntity> list = pEntity.getItens();
+			List<ProductPackageEntity> itens = pEntity.getItens();
 			
-			if(list != null){
-				for(ProductRequestEntity e: list){
-					e.setInvoice(pEntity);
-					e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
-					entityManager.persist(e);
+			for(ProductPackageEntity ppe: itens) {
+				ppe.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
+				ppe.setShipping(pEntity);
+				entityManager.persist(ppe);
+				
+				List<ProductRequestEntity> list = ppe.getProducts();
+				
+				if(list != null){
 					
-					List<ProductRequestTaxEntity> prdel = e.getTaxes();
-					
-					if(prdel != null){
-						for(ProductRequestTaxEntity k: prdel){
-							k.setProductRequest(e);
-							k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
-							entityManager.persist(k);
+					for(ProductRequestEntity e: list){
+						e.setProductPackage(ppe);
+						e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
+						entityManager.persist(e);
+						
+						List<ProductRequestTaxEntity> prdel = e.getTaxes();
+						
+						if(prdel != null){
+							for(ProductRequestTaxEntity k: prdel){
+								k.setProductRequest(e);
+								k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
+								entityManager.persist(k);
+							}
 						}
 					}
+					
 				}
-			}
-			
-			List<InvoiceTaxEntity> taxes = pEntity.getTaxes();
-			
-			if(taxes != null) {
-				for(InvoiceTaxEntity t: taxes) {
-					t.setId(IDGenerator.getUniqueOrderID('T', (int)SystemProperties.currentTimeMillis()));
-					t.setInvoice(pEntity);
-					entityManager.persist(t);
-				}
+				
 			}
 			
 			pEntity.toEntity(value);
@@ -95,55 +97,53 @@ public class ShippingEntityAccessImp
     	}
 	}
 	
-	public void update(Invoice value) throws EntityAccessException {
+	public void update(Shipping value) throws EntityAccessException {
 		try{
-			InvoiceEntity pEntity = this.toPersistenceEntity(value);
-			pEntity = (InvoiceEntity)entityManager.merge(pEntity);
+			ShippingEntity pEntity = this.toPersistenceEntity(value);
+			pEntity = (ShippingEntity)entityManager.merge(pEntity);
 			
-			List<ProductRequestEntity> list = pEntity.getItens();
+			List<ProductPackageEntity> itens = pEntity.getItens();
 			
-			if(list != null){
-				for(ProductRequestEntity e: list){
-					if(e.getId() == null){
-						e.setInvoice(pEntity);
-						e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
-						entityManager.persist(e);
-					}
-					else{
-						entityManager.merge(e);
-					}
-					
-					List<ProductRequestTaxEntity> prdel = e.getTaxes();
-					
-					if(prdel != null){
-						for(ProductRequestTaxEntity k: prdel){
-							if(k.getId() == null){
-								k.setProductRequest(e);
-								k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
-								entityManager.persist(k);
-							}
-							else{
-								entityManager.merge(k);
+			for(ProductPackageEntity ppe: itens) {
+				if(ppe.getId() == null) {
+					ppe.setShipping(pEntity);
+					ppe.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
+					entityManager.persist(ppe);
+				}
+				else {
+					entityManager.merge(ppe);
+				}
+				
+				List<ProductRequestEntity> list = ppe.getProducts();
+				
+				if(list != null){
+					for(ProductRequestEntity e: list){
+						if(e.getId() == null){
+							e.setProductPackage(ppe);
+							e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
+							entityManager.persist(e);
+						}
+						else{
+							entityManager.merge(e);
+						}
+						
+						List<ProductRequestTaxEntity> prdel = e.getTaxes();
+						
+						if(prdel != null){
+							for(ProductRequestTaxEntity k: prdel){
+								if(k.getId() == null){
+									k.setProductRequest(e);
+									k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
+									entityManager.persist(k);
+								}
+								else{
+									entityManager.merge(k);
+								}
 							}
 						}
+						
 					}
-					
-				}
-			}
-			
-			List<InvoiceTaxEntity> taxes = pEntity.getTaxes();
-			
-			if(taxes != null) {
-				for(InvoiceTaxEntity t: taxes) {
-					if(t.getId() == null) {
-						t.setId(IDGenerator.getUniqueOrderID('T', (int)SystemProperties.currentTimeMillis()));
-						t.setInvoice(pEntity);
-						entityManager.persist(t);
-					}
-					else {
-						entityManager.merge(t);
-					}
-				}
+				}				
 			}
 			
 			pEntity.toEntity(value);
@@ -186,15 +186,15 @@ public class ShippingEntityAccessImp
 	}
 
 	@Override
-	public List<Invoice> findByOrder(String order, SystemUser user) throws EntityAccessException {
+	public List<Shipping> findByOrder(String order, Client user) throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<InvoiceEntity> criteria = 
-		    		builder.createQuery(InvoiceEntity.class);
-		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
-		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
-		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("owner");
+		    CriteriaQuery<ShippingEntity> criteria = 
+		    		builder.createQuery(ShippingEntity.class);
+		    Root<ShippingEntity> from = criteria.from(ShippingEntity.class);
+		    Join<ShippingEntity, OrderEntity> orderJoin = from.join("order");
+		    Join<OrderEntity, SystemUserEntity> userJoin = orderJoin.join("owner");
 		    
 		    criteria.select(from);
 
@@ -217,12 +217,12 @@ public class ShippingEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<InvoiceEntity> typed = entityManager.createQuery(criteria);
+		    TypedQuery<ShippingEntity> typed = entityManager.createQuery(criteria);
 
-		    List<InvoiceEntity> list = (List<InvoiceEntity>)typed.getResultList();
-		    List<Invoice> result = new ArrayList<Invoice>();
+		    List<ShippingEntity> list = (List<ShippingEntity>)typed.getResultList();
+		    List<Shipping> result = new ArrayList<Shipping>();
     
-		    for(InvoiceEntity e: list) {
+		    for(ShippingEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -235,15 +235,16 @@ public class ShippingEntityAccessImp
 	}
 	
 	@Override
-	public List<Invoice> getList(Integer first, Integer max, SystemUser user)
+	public List<Shipping> getList(Integer first, Integer max, Client user)
 			throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<InvoiceEntity> criteria = 
-		    		builder.createQuery(InvoiceEntity.class);
-		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
-		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("owner");
+		    CriteriaQuery<ShippingEntity> criteria = 
+		    		builder.createQuery(ShippingEntity.class);
+		    Root<ShippingEntity> from = criteria.from(ShippingEntity.class);
+		    Join<ShippingEntity, OrderEntity> orderJoin = from.join("order");
+		    Join<OrderEntity, SystemUserEntity> userJoin = orderJoin.join("owner");
 		    
 		    criteria.select(from);
 
@@ -265,7 +266,7 @@ public class ShippingEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<InvoiceEntity> typed = 
+		    TypedQuery<ShippingEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
@@ -277,10 +278,10 @@ public class ShippingEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<InvoiceEntity> list = (List<InvoiceEntity>)typed.getResultList();
-		    List<Invoice> result = new ArrayList<Invoice>();
+		    List<ShippingEntity> list = (List<ShippingEntity>)typed.getResultList();
+		    List<Shipping> result = new ArrayList<Shipping>();
     
-		    for(InvoiceEntity e: list) {
+		    for(ShippingEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
@@ -292,15 +293,15 @@ public class ShippingEntityAccessImp
 
 	}
 
-	public List<InvoiceResultSearch> search(InvoiceSearch value, Integer first, Integer max) throws EntityAccessException {
+	public List<ShippingResultSearch> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<InvoiceEntity> criteria = 
-		    		builder.createQuery(InvoiceEntity.class);
-		    Root<InvoiceEntity> from = 
-		    		criteria.from(InvoiceEntity.class);
-		    Join<InvoiceEntity, SystemUserEntity> systemUserJoin = from.join("owner");
-		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
+		    CriteriaQuery<ShippingEntity> criteria = 
+		    		builder.createQuery(ShippingEntity.class);
+		    Root<ShippingEntity> from = 
+		    		criteria.from(ShippingEntity.class);
+		    Join<ShippingEntity, OrderEntity> orderJoin = from.join("order");
+		    Join<OrderEntity, SystemUserEntity> userJoin = orderJoin.join("owner");
 		    
 		    criteria.select(from);
 		    
@@ -310,15 +311,6 @@ public class ShippingEntityAccessImp
 		    	and.add(builder.equal(from.get("id"), value.getId()));
 		    }
 
-		    if(value.getCanceled() != null) {
-		    	if(value.getCanceled()) {
-			    	and.add(builder.isNotNull(from.get("cancelDate")));
-		    	}
-		    	else {
-			    	and.add(builder.isNull(from.get("cancelDate")));
-		    	}
-		    }
-		    
 		    if(value.getOrder() != null) {
 		    	and.add(builder.equal(orderJoin.get("id"), value.getOrder()));
 		    }
@@ -339,28 +331,12 @@ public class ShippingEntityAccessImp
 		    	
 		    }
 
-		    if(value.getMinTotal() != null || value.getMaxTotal() != null) {
-		    	
-		    	if(value.getMinTotal() != null && value.getMaxTotal() != null) {
-				    and.add(builder.between(from.get("total"), value.getMinTotal(), value.getMaxTotal()));
-		    	}
-		    	else
-		    	if(value.getMinTotal() != null) {
-				    and.add(builder.greaterThanOrEqualTo(from.get("total"), value.getMinTotal()));
-		    	}
-		    	else
-		    	if(value.getMaxTotal() != null) {
-				    and.add(builder.lessThanOrEqualTo(from.get("total"), value.getMaxTotal()));
-		    	}
-		    	
-		    }
-		    
 		    if(value.getOwner() != null) {
-			    and.add(builder.equal(systemUserJoin.get("id"), value.getOwner()));
+			    and.add(builder.equal(userJoin.get("id"), value.getOwner()));
 		    }
 
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
-			    and.add(builder.like(systemUserJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+			    and.add(builder.like(userJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
 		    }
 		    
 		    if(!and.isEmpty()) {
@@ -375,7 +351,7 @@ public class ShippingEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<InvoiceEntity> typed = 
+		    TypedQuery<ShippingEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
 
@@ -387,11 +363,16 @@ public class ShippingEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<InvoiceEntity> list = (List<InvoiceEntity>)typed.getResultList();
-		    List<InvoiceResultSearch> result = new ArrayList<InvoiceResultSearch>();
-    
-		    for(InvoiceEntity e: list) {
-		    	result.add(new InvoiceResultSearch(e.toEntity(), e.getOwner().toEntity()));
+		    List<ShippingEntity> list = (List<ShippingEntity>)typed.getResultList();
+		    List<ShippingResultSearch> result = new ArrayList<ShippingResultSearch>();
+
+			EntityInheritanceManager entityInheritanceUtil = 
+					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+		    
+		    for(ShippingEntity e: list) {
+				SystemUser user = e.getOrder().getOwner().toEntity();
+				Client client = Client.toClient(user, entityInheritanceUtil);
+		    	result.add(new ShippingResultSearch(e.toEntity(), client));
 		    }
 		    
 			return result;
@@ -400,5 +381,10 @@ public class ShippingEntityAccessImp
 			throw new EntityAccessException(e);
 		}		
 	}
-	
+
+	@Override
+	public Shipping findById(String id) throws EntityAccessException {
+		return super.findById(id);
+	}
+
 }
