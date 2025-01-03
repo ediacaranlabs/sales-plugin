@@ -67,6 +67,53 @@ public class ShippingEntity implements PublicType, Serializable{
 		}
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getShippingType() {
+		return shippingType;
+	}
+
+	public void setShippingType(String shippingType) {
+		this.shippingType = shippingType;
+	}
+
+	public AddressEntity getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(AddressEntity origin) {
+		this.origin = origin;
+	}
+
+	public AddressEntity getDest() {
+		return dest;
+	}
+
+	public void setDest(AddressEntity dest) {
+		this.dest = dest;
+	}
+
+	public List<ProductPackageEntity> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<ProductPackageEntity> itens) {
+		this.itens = itens;
+	}
+
+	public String getAddData() {
+		return addData;
+	}
+
+	public void setAddData(String addData) {
+		this.addData = addData;
+	}
 
 	public Shipping toEntity(){
 		return this.toEntity(null);
