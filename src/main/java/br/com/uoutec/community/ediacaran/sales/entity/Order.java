@@ -64,6 +64,8 @@ public class Order implements Serializable{
 	private String currency;
 	
 	private LocalDateTime completeInvoice;
+
+	private LocalDateTime completeShipping;
 	
 	@Valid
 	@Size(min = 1, groups = DataValidation.class)
@@ -150,6 +152,14 @@ public class Order implements Serializable{
 	}
     */
 	
+	public LocalDateTime getCompleteShipping() {
+		return completeShipping;
+	}
+
+	public void setCompleteShipping(LocalDateTime completeShipping) {
+		this.completeShipping = completeShipping;
+	}
+
 	public Address getBillingAddress() {
 		return billingAddress;
 	}

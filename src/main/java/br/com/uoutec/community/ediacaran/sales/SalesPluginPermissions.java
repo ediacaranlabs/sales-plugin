@@ -197,6 +197,40 @@ public final class SalesPluginPermissions {
 		
 	}
 
+	public static class SHIPPING_REGISTRY {
+
+		public static final String basePermission = SalesPluginPermissions.basePermission + "shipping.";
+		
+		public static SecurityPermission getRegisterPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register");
+		}
+
+		public static SecurityPermission getListPermission() {
+			return new RuntimeSecurityPermission(basePermission + "list");
+		}
+		
+		public static SecurityPermission getRemovePermission() {
+			return new RuntimeSecurityPermission(basePermission + "remove");
+		}
+
+		public static SecurityPermission getGetPermission() {
+			return new RuntimeSecurityPermission(basePermission + "get");
+		}
+		
+		public static SecurityPermission getFindPermission() {
+			return new RuntimeSecurityPermission(basePermission + "find");
+		}
+
+		public static SecurityPermission getCancelPermission() {
+			return new RuntimeSecurityPermission(basePermission + "cancel");
+		}
+		
+		public static SecurityPermission getCreatePermission() {
+			return new RuntimeSecurityPermission(basePermission + "create");
+		}
+		
+	}
+	
 	public static class CLIENT_REGISTRY {
 
 		public static final String basePermission = SalesPluginPermissions.basePermission + "client.";
