@@ -130,7 +130,7 @@ public class ShippingRegistryUtil {
 		return entityAccess.findByOrder(order.getId(), client);		
 	}
 	
-	public static Client getActualClient(Order order, SystemUser user, SystemUserRegistry systemUserRegistry) throws OrderRegistryException, InvoiceRegistryException {
+	public static Client getActualClient(Order order, SystemUser user, SystemUserRegistry systemUserRegistry) throws OrderRegistryException, ShippingRegistryException {
 		SystemUser actualUser;
 		try{
 			actualUser = systemUserRegistry.findById(order.getOwner());
@@ -140,14 +140,14 @@ public class ShippingRegistryUtil {
 		}
 		
 		if(actualUser.getId() != user.getId()) {
-			throw new InvoiceRegistryException("invalid user: " + actualUser.getId()+ " != " + user.getId());
+			throw new ShippingRegistryException("invalid user: " + actualUser.getId()+ " != " + user.getId());
 		}
 		
 		return Client.toClient(actualUser);
 	}
 
 	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, ShippingRegistryException{
 		
 		if(isCompletedShipping(order, shippings)) {
 			order.setCompleteShipping(LocalDateTime.now());
@@ -160,7 +160,7 @@ public class ShippingRegistryUtil {
 			orderRegistry.registerOrder(order);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new ShippingRegistryException(ex);
 		}
 			
 	}

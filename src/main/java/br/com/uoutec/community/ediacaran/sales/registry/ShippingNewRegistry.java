@@ -3,12 +3,8 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -18,66 +14,51 @@ import br.com.uoutec.persistence.EntityAccessException;
 
 public class ShippingNewRegistry {
 
-	private ProductTypeRegistry productTypeRegistry;
-	
 	private SystemUserRegistry systemUserRegistry;
 	
 	private OrderRegistry orderRegistry;
 	
 	private ShippingEntityAccess entityAccess;
 	
-	public ShippingNewRegistry(ProductTypeRegistry productTypeRegistry, SystemUserRegistry systemUserRegistry,
+	public ShippingNewRegistry(SystemUserRegistry systemUserRegistry,
 			OrderRegistry orderRegistry, ShippingEntityAccess entityAccess) {
-		this.productTypeRegistry = productTypeRegistry;
 		this.systemUserRegistry = systemUserRegistry;
 		this.orderRegistry = orderRegistry;
 		this.entityAccess = entityAccess;
 	}
 
-	public Invoice create(Order order, Client client, Shipping invoice, String message) {
+	public Shipping create(Order order, Client client, Shipping shipping, String message
+			) throws OrderRegistryException, EntityAccessException, CompletedInvoiceRegistryException, ShippingRegistryException {
 
 		Order actualOrder = getActualOrder(order);
 		Client actualclient = getActualClient(actualOrder, client);		
 		List<Shipping> actualShipping = getActualShipping(actualOrder, actualclient);
 		
-		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, invoice);
-		registerProducts(invoice, actualUser, actualOrder);
-		save(invoice, actualOrder);
+		ShippingRegistryUtil.checkShipping(actualOrder, actualShipping, shipping);
+		save(shipping, actualOrder);
 		
-		List<Invoice> allInvoices = new ArrayList<>(actualInvoices);
-		allInvoices.add(invoice);
-		InvoiceRegistryUtil.markAsComplete(order, allInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		List<Shipping> allShippings = new ArrayList<>(actualShipping);
+		allShippings.add(shipping);
 		
-		registerEvent(invoice, actualOrder, message);
+		ShippingRegistryUtil.markAsComplete(order, allShippings, EntityContextPlugin.getEntity(OrderRegistry.class));
 		
-		return invoice;
+		registerEvent(shipping, actualOrder, message);
+		
+		return shipping;
 	}
 	
 	private void registerEvent(Shipping invoice, Order order, String message) throws OrderRegistryException {
 		orderRegistry.registryLog(order.getId(), message != null? message : "registrado o envio #" + invoice.getId() );
 	}
 	
-	private void save(Shipping invoice, Order order) throws InvoiceRegistryException {
+	private void save(Shipping invoice, Order order) throws ShippingRegistryException {
 		try {
 			entityAccess.save(invoice);
 			entityAccess.flush();
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(
+			throw new ShippingRegistryException(
 				"invoice error: " + order.getId(), e);
-		}
-	}
-	private void registerProducts(Invoice invoice, SystemUser user, Order order) throws InvoiceRegistryException {
-		for(ProductRequest productRequest: invoice.getItens()){
-			try{
-				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, order, productRequest);
-			}
-			catch(Throwable e){
-				throw new InvoiceRegistryException(
-					"falha ao processar o produto/serviço " + productRequest.getId(), e);
-			}
 		}
 	}
 	
@@ -89,7 +70,7 @@ public class ShippingNewRegistry {
 		return entityAccess.findByOrder(order.getId(), client);		
 	}
 	
-	private Client getActualClient(Order order, Client client) throws OrderRegistryException, InvoiceRegistryException {
+	private Client getActualClient(Order order, Client client) throws OrderRegistryException, ShippingRegistryException {
 		SystemUser actualUser;
 		try{
 			actualUser = this.systemUserRegistry.findById(order.getOwner());
@@ -99,7 +80,7 @@ public class ShippingNewRegistry {
 		}
 		
 		if(actualUser.getId() != client.getId()) {
-			throw new InvoiceRegistryException("invalid user: " + actualUser.getId()+ " != " + client.getId());
+			throw new ShippingRegistryException("invalid user: " + actualUser.getId()+ " != " + client.getId());
 		}
 		
 		return Client.toClient(actualUser);
