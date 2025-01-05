@@ -83,11 +83,11 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			}
 			
 			if(entity.getId() == null){
-				validateInvoice(entity, saveValidations);
+				validateShipping(entity, saveValidations);
 				this.registryNewShipping(entity, order);
 			}
 			else{
-				validateInvoice(entity, updateValidations);
+				validateShipping(entity, updateValidations);
 				this.updateShipping(entity, order);
 			}
 		}
@@ -103,57 +103,57 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
-	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
+	public void removeShipping(Shipping entity) throws ShippingRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRemovePermission());
 		
 		try {
 			entityAccess.delete(entity);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new ShippingRegistryException(ex);
 		}
 	}
 
 	@Override
-	public Invoice findById(String id) throws InvoiceRegistryException {
+	public Shipping findById(String id) throws ShippingRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 		
 		return unsafeFindById(id, null);
 	}
 
-	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException{
+	public Shipping findById(String id, SystemUserID userID) throws ShippingRegistryException{
 
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 
-		SystemUser systemUser = null;
+		Client client = null;
 		
 		try {
 			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
 				userID = getSystemUserID();
 			}
-			systemUser = getSystemUser(userID);
+			client = Client.toClient(getSystemUser(userID));
 		}
 		catch (SystemUserRegistryException e) {
 			throw new InvoiceRegistryException(e);
 		}
 		
-		return unsafeFindById(id, systemUser);
+		return unsafeFindById(id, client);
 		
 	}
 	
-	public Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException{
+	public Shipping findById(String id, Client systemUser) throws ShippingRegistryException{
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 		
 		return unsafeFindById(id, systemUser);
 	}
 	
-	private Invoice unsafeFindById(String id, SystemUser systemUser) throws InvoiceRegistryException {
+	private Shipping unsafeFindById(String id, Client systemUser) throws ShippingRegistryException {
 		
 		try{
-			Invoice e = entityAccess.findById(id);
+			Shipping e = entityAccess.findById(id);
 			
 			if(e != null) {
 				if(systemUser != null && e.getOwner() != systemUser.getId()) {
@@ -597,7 +597,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
-	private void validateInvoice(Shipping e, Class<?> ... groups) throws ValidationException{
+	private void validateShipping(Shipping e, Class<?> ... groups) throws ValidationException{
 		ValidatorBean.validate(e, groups);
 	}
 
