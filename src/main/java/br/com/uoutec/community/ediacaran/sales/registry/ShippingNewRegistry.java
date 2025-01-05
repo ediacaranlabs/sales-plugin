@@ -72,7 +72,7 @@ public class ShippingNewRegistry {
 	private Client getActualClient(Order order, Client client) throws OrderRegistryException, ShippingRegistryException {
 		SystemUser actualUser;
 		try{
-			actualUser = this.clientRegistry.findById(order.getOwner());
+			actualUser = this.clientRegistry.findClientById(order.getOwner());
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());

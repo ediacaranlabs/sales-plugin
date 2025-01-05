@@ -110,7 +110,7 @@ public class ClientBRPubEntity extends ClientPubEntity{
 	
 	protected SystemUser reloadEntity() throws Throwable {
 		ClientRegistry registry = EntityContextPlugin.getEntity(ClientRegistry.class);
-		Client user = registry.findById(super.getId());
+		Client user = registry.findClientById(super.getId());
 		
 		if(user != null && !(user instanceof ClientBR)) {
 			user = new ClientBR(user);

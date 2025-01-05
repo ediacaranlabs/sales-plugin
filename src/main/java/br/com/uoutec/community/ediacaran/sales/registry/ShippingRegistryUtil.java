@@ -136,7 +136,7 @@ public class ShippingRegistryUtil {
 	public static Client getActualClient(Order order, Client user, ClientRegistry systemUserRegistry) throws OrderRegistryException, ShippingRegistryException {
 		Client actuaClient;
 		try{
-			actuaClient = systemUserRegistry.findById(order.getOwner());
+			actuaClient = systemUserRegistry.findClientById(order.getOwner());
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());

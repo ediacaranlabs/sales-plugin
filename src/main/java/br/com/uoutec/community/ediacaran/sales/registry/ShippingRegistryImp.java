@@ -289,7 +289,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Override
 	public List<Shipping> findByOrder(String id) throws ShippingRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 		
 		try {
 			return entityAccess.findByOrder(id, null);
@@ -302,7 +302,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Override
 	public List<Shipping> findByOrder(String id, SystemUserID userID) throws ShippingRegistryException{
 
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 
 		Client client = null;
 		
@@ -364,7 +364,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 
 		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens());
 		
-		//create productrequest invoice
 		List<ProductRequest> productItens = new ArrayList<>();
 		
 		for(Entry<String,Integer> e: itens.entrySet()) {

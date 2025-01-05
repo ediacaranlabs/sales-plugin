@@ -475,7 +475,7 @@ public class OrderRegistryImp
 		else {
 			SystemUserID systemID = getSystemUserID();
 			SystemUser user = getSystemUser(systemID);
-			Client client = clientRegistry.findById(user.getId());
+			Client client = clientRegistry.findClientById(user.getId());
 			cart.setClient(client);
 		}
 		

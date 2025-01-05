@@ -130,7 +130,7 @@ public class ClientPubEntity extends SystemUserPubEntity{
 	
 	protected SystemUser reloadEntity() throws Throwable {
 		ClientRegistry registry = EntityContextPlugin.getEntity(ClientRegistry.class);
-		Client user = registry.findById(super.getId());
+		Client user = registry.findClientById(super.getId());
 		
 		/*
 		if(user != null && !user.getClass().isAssignableFrom(Client.class)) {
