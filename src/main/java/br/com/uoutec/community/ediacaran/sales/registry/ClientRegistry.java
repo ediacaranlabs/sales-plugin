@@ -14,8 +14,10 @@ public interface ClientRegistry extends PublicBean{
 	
 	void removeClient(Client entity) throws ClientRegistryException;
 	
-	Client findById(int id) throws ClientRegistryException;
+	Client findClientById(int id) throws ClientRegistryException;
 
+	Client getClientBySystemID(String value) throws ClientRegistryException;
+	
 	ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException;
 	
 	void registerAddress(Address address, Client client) throws ClientRegistryException;

@@ -12,16 +12,20 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
@@ -57,7 +61,10 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private EventRegistry throwSystemEventRegistry;
 	
 	@Inject
-	private SystemUserRegistry systemUserRegistry;
+	private ClientRegistry clientRegistry;
+
+	@Inject
+	private OrderRegistry orderregistry;
 	
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
@@ -133,10 +140,10 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
 				userID = getSystemUserID();
 			}
-			client = Client.toClient(getSystemUser(userID));
+			client = getSystemUser(userID);
 		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
+		catch (ClientRegistryException e) {
+			throw new ShippingRegistryException(e);
 		}
 		
 		return unsafeFindById(id, client);
@@ -150,48 +157,63 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		return unsafeFindById(id, systemUser);
 	}
 	
-	private Shipping unsafeFindById(String id, Client systemUser) throws ShippingRegistryException {
+	private Shipping unsafeFindById(String id, Client client) throws ShippingRegistryException {
 		
 		try{
 			Shipping e = entityAccess.findById(id);
 			
 			if(e != null) {
-				if(systemUser != null && e.getOwner() != systemUser.getId()) {
+				
+				if(e.getOrder() == null) {
 					return null;
 				}
+				
+				
+				if(client != null) {
+					Order order = orderregistry.findByCartID(e.getOrder());
+					if(order == null || order.getOwner() != client.getId()) {
+						return null;
+					}
+				}
 			}
+			
 			return e;
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(e);
+			throw new ShippingRegistryException(e);
 		}
 	}
 	
 	@Override
-	public List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException {
+	public ShippingsResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
 		
 		try{
-			return entityAccess.search(value, first, max);
+			int page = value.getPage() == null? 1 : value.getPage().intValue();
+			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<ShippingResultSearch> itens = entityAccess.search(value, firstResult, maxResults);
+			
+			return new ShippingsResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(e);
+			throw new ShippingRegistryException(e);
 		}
 	}
 
 	@Override
-	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
+	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
 		
 		SystemUserID userID = getSystemUserID();
 		SystemUser user = getSystemUser(userID);
 		
 		try {
-			return unsafeCreateInvoice(order, user, itens, message);
+			return unsafeCreateShipping(order, user, itens, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -199,48 +221,47 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		}
 		catch(Throwable e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw new OrderRegistryException(e);
+			throw new ShippingRegistryException(e);
 		}
 		
 	}
 
 	@Override
-	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
+	public Shipping createShipping(Order order, SystemUserID userID, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
 		
-		SystemUser user = getSystemUser(userID);
-		return createInvoice(order, user, itens, message);
+		Client client = getSystemUser(userID);
+		return createShipping(order, client, itens, message);
 	}
 	
 	@Override
-	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
+	public Shipping createShipping(Order order, Client client, Map<String, Integer> itens, String message) throws ShippingRegistryException {
 
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
 		
-		if(systemUser == null) {
+		if(client == null) {
 			throw new NullPointerException("systemUser");
 		}
 		
 		try {
-			return unsafeCreateInvoice(order, systemUser, itens, message);
+			return unsafeCreateShipping(order, client, itens, message);
 		}
-		catch(RegistryException e){
+		catch(ShippingRegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
 			throw e;
 		}
+		catch(RegistryException e){
+			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
+			throw new ShippingRegistryException(e);
+		}
 		catch(Throwable e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw new OrderRegistryException(e);
+			throw new ShippingRegistryException(e);
 		}
 		
 	}
 	
-	public Invoice toInvoice(Order order
-			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
-				InvalidUnitsOrderRegistryException {
+	public Shipping toShipping(Order order
+			) throws InvalidUnitsOrderRegistryException, CountryRegistryException {
 		
 		Order actualOrder = null;
 		
@@ -256,174 +277,23 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			throw new OrderNotFoundRegistryException(order.getId());
 		}
 
-		List<Invoice> actualInvoices;
-		SystemUser user;
+		List<Shipping> actualShippings;
+		Client user;
 		
 		try {
-			user = new SystemUser();
+			user = new Client();
 			user.setId(actualOrder.getOwner());
-			actualInvoices = entityAccess.findByOrder(actualOrder.getId(), user);
+			actualShippings = entityAccess.findByOrder(actualOrder.getId(), user);
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
 		}
 		
-		return createInvoice(actualOrder, actualInvoices);
+		return createShipping(actualOrder, actualShippings);
 	}
 	
 	@Override
-	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException {
-		cancelInvoice(invoice, null, justification);
-	}
-	
-	@Override
-	public void cancelInvoice(Invoice invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
-		
-		SystemUser systemUser;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
-		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
-		}
-		
-		cancelInvoice(invoice, systemUser, justification);
-	}
-	
-	@Override
-	public void cancelInvoice(Invoice invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException{
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
-		
-		List<Invoice> invoices;
-		
-		try {
-			Invoice actualInvoice = entityAccess.findById(invoice.getId());
-			invoices = Arrays.asList(actualInvoice);
-		}
-		catch (EntityAccessException e) {
-			throw new InvoiceRegistryException(e);
-		}
-
-		try {
-			unsafeCancelInvoices(invoices, justification, systemUser);
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
-		
-	}
-	
-	@Override
-	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException {
-		cancelInvoices(order, null, justification);
-	}
-	
-	@Override
-	public void cancelInvoices(Order invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
-		
-		SystemUser systemUser;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
-		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
-		}
-		
-		cancelInvoices(invoice, systemUser, justification);
-	}
-
-	
-	@Override
-	public void cancelInvoices(Order order, SystemUser systemUser, String justification) throws InvoiceRegistryException {
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
-		
-		List<Invoice> invoices;
-		
-		try {
-			SystemUser user = new SystemUser();
-			user.setId(order.getOwner());
-			invoices = entityAccess.findByOrder(order.getId(), user);
-		}
-		catch (EntityAccessException e) {
-			throw new InvoiceRegistryException(e);
-		}
-
-		try {
-			unsafeCancelInvoices(invoices, justification, null);
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
-	}
-
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification, SystemUser user
-			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, InvoiceRegistryException {
-
-		Map<String,List<Invoice>> map = new HashMap<>();
-		
-		for(Invoice i: invoices) {
-			
-			if(i.getCancelDate() != null) {
-				continue;
-			}
-			
-			List<Invoice> l = map.get(i.getOrder());
-			
-			if(l == null) {
-				l = new ArrayList<>();
-				map.put(i.getOrder(), l);
-			}
-			
-			l.add(i);
-		}
-		
-		if(map.isEmpty()) {
-			return;
-		}
-		
-		LocalDateTime cancelDate = LocalDateTime.now();
-		
-		for(List<Invoice> is: map.values()) {
-			for(Invoice i: is) {
-				i.setCancelDate(cancelDate);
-				i.setCancelJustification(justification);
-				entityAccess.update(i);
-			}
-		}
-
-		entityAccess.flush();
-
-		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-		
-		for(String orderID: map.keySet()) {
-			Order order = orderRegistry.findById(orderID);
-			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
-			InvoiceRegistryUtil.markAsComplete(order, actualInvoices, orderRegistry);
-		}
-		
-		for(String orderID: map.keySet()) {
-			Order order = orderRegistry.findById(orderID);
-			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
-			for(Invoice i: actualInvoices) {
-				orderRegistry.registryLog(order.getId(), "#" + i.getId() + ": " +  justification);
-			}
-			
-		}
-		
-	}
-	
-	@Override
-	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
+	public List<Shipping> findByOrder(String id) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 		
@@ -431,111 +301,77 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			return entityAccess.findByOrder(id, null);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new ShippingRegistryException(ex);
 		}
 	}
 
 	@Override
-	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException{
+	public List<Shipping> findByOrder(String id, SystemUserID userID) throws ShippingRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 
-		SystemUser systemUser = null;
+		Client client = null;
 		
 		try {
 			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
 				userID = getSystemUserID();
 			}
-			systemUser = getSystemUser(userID);
+			client = getSystemUser(userID);
 		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
+		catch (ClientRegistryException e) {
+			throw new ShippingRegistryException(e);
 		}
 		
 		try {
-			return entityAccess.findByOrder(id, systemUser);
+			return entityAccess.findByOrder(id, client);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new ShippingRegistryException(ex);
 		}
 		
 	}
 	
-	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException{
+	private Shipping unsafeCreateShipping(Order order, Client client, Map<String, Integer> itens, String message
+			) throws OrderRegistryException, CountryRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException, EntityAccessException {
 
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		Order actualOrder = orderRegistry.findById(order.getId());
 		
-		Invoice i = createInvoice(actualOrder, itens);
+		Shipping i = createShipping(actualOrder, itens);
 		
-		registryNewInvoice(i, actualOrder);
+		registryNewShipping(i, actualOrder);
 
 		return i;
 	}
 
-	private Invoice createInvoice(Order order, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+	private Shipping createShipping(Order order, List<Shipping> shippings) throws InvalidUnitsOrderRegistryException, CountryRegistryException {
 
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest(pr);
-			transientItens.put(pr.getSerial(), tpr);
-		}
-		
-		if(invoices != null) {
-			for(Invoice i: invoices) {
-				
-				if(i.getCancelDate() != null) {
-					continue;
-				}
-				
-				for(ProductRequest pr: i.getItens()) {
-					ProductRequest tpr = transientItens.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
-				}
-				
-			}
-		}
-		
-		Invoice i = new Invoice();
-		i.setId(null);
-		i.setOwner(order.getOwner());
+		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens());
+		ShippingRegistryUtil.loadShippingsToCalculateUnits(shippings, null, transientItens);
+
+		Shipping i = new Shipping();
+		i.setAddData(new HashMap<>());
 		i.setDate(LocalDateTime.now());
-		i.setOrder(order.getId());
-		i.setItens(new ArrayList<ProductRequest>(transientItens.values()));
-		i.setCurrency(order.getCurrency());
-
-		if(order.getTaxes() != null) {
-			List<Tax> list = new ArrayList<>();
-			i.setTaxes(list);
-			for(Tax t: order.getTaxes()) {
-				Tax nt = new Tax(t);
-				nt.setId(null);
-				list.add(nt);
-			}
-		}
+		i.setOrigin(ShippingRegistryUtil.getOrigin());
+		i.setDest(new Address(order.getShippingAddress()));
 		
+		ProductPackage productPackage = new ProductPackage();
+		productPackage.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
+		
+		i.setItens(Arrays.asList(productPackage));
+		i.setOrder(order.getId());
+		i.setShippingType(null);
+
 		return i;
 	}
 	
-	private Invoice createInvoice(Order order, Map<String, Integer> itens
-			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+	private Shipping createShipping(Order order, Map<String, Integer> itens
+			) throws ItemNotFoundOrderRegistryException, CountryRegistryException {
 
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest(pr);
-			transientItens.put(pr.getSerial(), tpr);
-		}
+		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens());
 		
 		//create productrequest invoice
-		List<ProductRequest> invoiceItens = new ArrayList<>();
+		List<ProductRequest> productItens = new ArrayList<>();
 		
 		for(Entry<String,Integer> e: itens.entrySet()) {
 			ProductRequest tpr = transientItens.get(e.getKey());
@@ -545,28 +381,32 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			}
 			
 			tpr.setUnits(e.getValue().intValue());
-			invoiceItens.add(tpr);
+			productItens.add(tpr);
 			transientItens.remove(e.getKey());
 		}
 		
-		Invoice i = new Invoice();
-		i.setId(null);
-		i.setOwner(order.getOwner());
+		Shipping i = new Shipping();
+		i.setAddData(new HashMap<>());
 		i.setDate(LocalDateTime.now());
+		i.setOrigin(ShippingRegistryUtil.getOrigin());
+		i.setDest(new Address(order.getShippingAddress()));
+		
+		ProductPackage productPackage = new ProductPackage();
+		productPackage.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
+		
+		i.setItens(Arrays.asList(productPackage));
 		i.setOrder(order.getId());
-		i.setItens(invoiceItens);
-		i.setCurrency(order.getCurrency());
+		i.setShippingType(null);
 		
 		return i;
 	}
 
 	private void registryNewShipping(Shipping entity, Order order
-			) {
+			) throws CompletedInvoiceRegistryException, OrderRegistryException, ShippingRegistryException, EntityAccessException {
 		
-		ShippingNewRegistry invoiceNewRegistry = 
+		ShippingNewRegistry shippingNewRegistry = 
 				new ShippingNewRegistry(
-						productTypeRegistry, 
-						systemUserRegistry, 
+						clientRegistry, 
 						EntityContextPlugin.getEntity(OrderRegistry.class), 
 						entityAccess
 				);
@@ -574,7 +414,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
-		invoiceNewRegistry.create(order, user, entity, null);
+		shippingNewRegistry.create(order, user, entity, null);
 	}
 
 	private void updateShipping(Shipping entity, Order order
@@ -583,7 +423,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
-		Client actualClient = ShippingRegistryUtil.getActualClient(order, user, systemUserRegistry);
+		Client actualClient = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
 		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		
 		ShippingRegistryUtil.checkShipping(order, actualShippings, entity);
@@ -601,21 +441,21 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ValidatorBean.validate(e, groups);
 	}
 
-	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
-		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID.getSystemID()));
+	private Client getSystemUser(SystemUserID userID) throws ClientRegistryException {
+		Client client = clientRegistry.getClientBySystemID(String.valueOf(userID.getSystemID()));
 		
-		if(user == null) {
-			throw new SystemUserRegistryException(String.valueOf(userID));
+		if(client == null) {
+			throw new ClientRegistryException(String.valueOf(userID));
 		}
 		
-		return user;
+		return client;
 	}
 
-	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
+	private SystemUserID getSystemUserID() throws ClientRegistryException {
 		Subject subject = subjectProvider.getSubject();
 		
 		if(!subject.isAuthenticated()) {
-			throw new SystemUserRegistryException();
+			throw new ClientRegistryException();
 		}
 		
 		Principal principal = subject.getPrincipal();
@@ -623,6 +463,5 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		return ()->jaaPrincipal.getName();
 	}
-	
 	
 }

@@ -213,6 +213,10 @@ public final class SalesPluginPermissions {
 			return new RuntimeSecurityPermission(basePermission + "remove");
 		}
 
+		public static SecurityPermission getSearchPermission() {
+			return new RuntimeSecurityPermission(basePermission + "search");
+		}
+		
 		public static SecurityPermission getGetPermission() {
 			return new RuntimeSecurityPermission(basePermission + "get");
 		}

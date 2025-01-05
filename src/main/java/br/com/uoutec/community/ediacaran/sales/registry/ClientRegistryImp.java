@@ -92,7 +92,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
-	public Client findById(int id) throws ClientRegistryException {
+	public Client findClientById(int id) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getFindPermission());
 		
@@ -118,6 +118,32 @@ public class ClientRegistryImp
 		}
 	}
 
+	@Override
+	public Client getClientBySystemID(String value) throws ClientRegistryException{
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getFindPermission());
+		
+		try {
+			SystemUser user =ContextSystemSecurityCheck.doPrivileged(()->{
+				return systemUserRegistry.getBySystemID(value);
+			});
+			
+			if(user == null) {
+				return null;
+			}
+			
+			EntityInheritanceManager entityInheritanceUtil = 
+					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+				
+			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
+		}
+		catch(DoPrivilegedException ex) {
+			throw new ClientRegistryException(ex.getCause());
+		}
+		catch(Throwable ex) {
+			throw new ClientRegistryException(ex.getCause());
+		}
+	}
+	
 	@Override
 	public ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException {
 		
