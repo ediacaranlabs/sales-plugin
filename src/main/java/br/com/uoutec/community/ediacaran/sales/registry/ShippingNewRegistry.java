@@ -8,21 +8,20 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public class ShippingNewRegistry {
 
-	private SystemUserRegistry systemUserRegistry;
+	private ClientRegistry clientRegistry;
 	
 	private OrderRegistry orderRegistry;
 	
 	private ShippingEntityAccess entityAccess;
 	
-	public ShippingNewRegistry(SystemUserRegistry systemUserRegistry,
+	public ShippingNewRegistry(ClientRegistry clientRegistry,
 			OrderRegistry orderRegistry, ShippingEntityAccess entityAccess) {
-		this.systemUserRegistry = systemUserRegistry;
+		this.clientRegistry = clientRegistry;
 		this.orderRegistry = orderRegistry;
 		this.entityAccess = entityAccess;
 	}
@@ -73,7 +72,7 @@ public class ShippingNewRegistry {
 	private Client getActualClient(Order order, Client client) throws OrderRegistryException, ShippingRegistryException {
 		SystemUser actualUser;
 		try{
-			actualUser = this.systemUserRegistry.findById(order.getOwner());
+			actualUser = this.clientRegistry.findById(order.getOwner());
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("usuário não encontrado: " + order.getOwner());

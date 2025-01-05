@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
@@ -20,7 +21,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
-import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
@@ -50,7 +51,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
 	
 	@Inject
-	private InvoiceEntityAccess entityAccess;
+	private ShippingEntityAccess entityAccess;
 
 	@Inject
 	private EventRegistry throwSystemEventRegistry;
@@ -70,7 +71,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRegisterPermission());
 		
 		if(entity.getOrder() == null) {
-			throw new InvoiceRegistryException("order is empty");
+			throw new ShippingRegistryException("order is empty");
 		}
 		
 		try{
@@ -83,21 +84,21 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			
 			if(entity.getId() == null){
 				validateInvoice(entity, saveValidations);
-				this.registryNewInvoice(entity, order);
+				this.registryNewShipping(entity, order);
 			}
 			else{
 				validateInvoice(entity, updateValidations);
-				this.updateInvoice(entity, order);
+				this.updateShipping(entity, order);
 			}
 		}
 		catch(ValidationException e){
-			throw new InvoiceRegistryException(e.getMessage());
+			throw new ShippingRegistryException(e.getMessage());
 		}
-		catch(InvoiceRegistryException e){
+		catch(ShippingRegistryException e){
 			throw e;
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(e);
+			throw new ShippingRegistryException(e);
 		}
 	}
 
@@ -559,40 +560,40 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		return i;
 	}
 
-	private void registryNewShipping(Invoice entity, Order order
+	private void registryNewShipping(Shipping entity, Order order
 			) {
 		
-		InvoiceNewRegistry invoiceNewRegistry = 
-				new InvoiceNewRegistry(
+		ShippingNewRegistry invoiceNewRegistry = 
+				new ShippingNewRegistry(
 						productTypeRegistry, 
 						systemUserRegistry, 
 						EntityContextPlugin.getEntity(OrderRegistry.class), 
 						entityAccess
 				);
 		
-		SystemUser user = new SystemUser();
-		user.setId(entity.getOwner());
+		Client user = new Client();
+		user.setId(order.getOwner());
 		
 		invoiceNewRegistry.create(order, user, entity, null);
 	}
 
-	private void updateInvoice(Invoice entity, Order order
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException {
+	private void updateShipping(Shipping entity, Order order
+			) throws CompletedInvoiceRegistryException, ShippingRegistryException, EntityAccessException, OrderRegistryException {
 		
-		SystemUser user = new SystemUser();
+		Client user = new Client();
 		user.setId(order.getOwner());
 		
-		SystemUser actualUser = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
-		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(order, actualUser, entityAccess);
+		Client actualClient = ShippingRegistryUtil.getActualClient(order, user, systemUserRegistry);
+		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		
-		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity);
+		ShippingRegistryUtil.checkShipping(order, actualShippings, entity);
 		
 		entityAccess.update(entity);
 		entityAccess.flush();
 		
-		List<Invoice> allInvoices = new ArrayList<>(actualInvoices);
-		allInvoices.add(entity);
-		InvoiceRegistryUtil.markAsComplete(order, allInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		List<Shipping> allShippings = new ArrayList<>(actualShippings);
+		allShippings.add(entity);
+		ShippingRegistryUtil.markAsComplete(order, allShippings, EntityContextPlugin.getEntity(OrderRegistry.class));
 		
 	}
 	
