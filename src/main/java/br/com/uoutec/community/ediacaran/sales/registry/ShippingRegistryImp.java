@@ -16,24 +16,20 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -66,9 +62,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Inject
 	private OrderRegistry orderregistry;
 	
-	@Inject
-	private ProductTypeRegistry productTypeRegistry;
-
 	@Inject
 	private SubjectProvider subjectProvider;
 	
@@ -205,17 +198,17 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
-	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) {
+	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
 		
 		SystemUserID userID = getSystemUserID();
-		SystemUser user = getSystemUser(userID);
+		Client client = getSystemUser(userID);
 		
 		try {
-			return unsafeCreateShipping(order, user, itens, message);
+			return unsafeCreateShipping(order, client, itens, message);
 		}
-		catch(RegistryException e){
+		catch(ShippingRegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
 			throw e;
 		}
@@ -260,8 +253,9 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
+	@Override
 	public Shipping toShipping(Order order
-			) throws InvalidUnitsOrderRegistryException, CountryRegistryException {
+			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException {
 		
 		Order actualOrder = null;
 		

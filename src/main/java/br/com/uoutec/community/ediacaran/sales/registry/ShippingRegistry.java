@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.util.List;
 import java.util.Map;
 
+import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -24,8 +25,7 @@ public interface ShippingRegistry extends PublicBean{
 	Shipping findById(String id, Client client) throws ShippingRegistryException;
 	
 	Shipping toShipping(Order order
-			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
-				InvalidUnitsOrderRegistryException;
+			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException;
 	
 	ShippingsResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
 	
