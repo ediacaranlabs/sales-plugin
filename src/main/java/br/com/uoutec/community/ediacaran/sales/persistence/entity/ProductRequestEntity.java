@@ -249,6 +249,14 @@ public class ProductRequestEntity implements Serializable{
 		this.invoice = invoice;
 	}
 
+	public ShippingEntity getShipping() {
+		return shipping;
+	}
+
+	public void setShipping(ShippingEntity shipping) {
+		this.shipping = shipping;
+	}
+
 	public ProductRequest toEntity(){
 		ProductRequest e = new ProductRequest();
 		e.setSerial(this.serial);

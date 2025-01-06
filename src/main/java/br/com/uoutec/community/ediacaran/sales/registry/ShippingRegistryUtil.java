@@ -14,7 +14,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -69,21 +68,16 @@ public class ShippingRegistryUtil {
 				if(actualShipping != null && i.getId().equals(actualShipping.getId())) {
 					continue;
 				}
-				
-				for(ProductPackage pp: i.getItens()) {
+
+				for(ProductRequest pr: i.getProducts()) {
+					ProductRequest tpr = productRequests.get(pr.getSerial());
 					
-					for(ProductRequest pr: pp.getProducts()) {
-						ProductRequest tpr = productRequests.get(pr.getSerial());
-						
-						tpr.setUnits(tpr.getUnits() - pr.getUnits());
-						
-						if(tpr.getUnits() < 0) {
-							throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-						}
+					tpr.setUnits(tpr.getUnits() - pr.getUnits());
+					
+					if(tpr.getUnits() < 0) {
+						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
 					}
-					
 				}
-				
 				
 			}
 		}
@@ -104,25 +98,21 @@ public class ShippingRegistryUtil {
 		Map<String, ProductRequest> map = toMap(order.getItens());
 		
 		loadShippingsToCalculateUnits(actualShippings, null, map);
-		
-		for(ProductPackage pp: shipping.getItens()) {
 
-			for(ProductRequest pr: pp.getProducts()) {
-				
-				ProductRequest tpr = map.get(pr.getSerial());
-				
-				if(tpr == null) {
-					throw new ItemNotFoundOrderRegistryException(pr.getSerial());
-				}
+		for(ProductRequest pr: shipping.getProducts()) {
+			
+			ProductRequest tpr = map.get(pr.getSerial());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
+			}
 
-				if(pr.getUnits() <= 0 || pr.getUnits() > tpr.getUnits()) {
-					throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-				}
-				
-				if(tpr.getUnits() - pr.getUnits() < 0) {
-					throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-				}
-				
+			if(pr.getUnits() <= 0 || pr.getUnits() > tpr.getUnits()) {
+				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			}
+			
+			if(tpr.getUnits() - pr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
 			}
 			
 		}

@@ -21,7 +21,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductPackageEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingEntity;
@@ -58,34 +57,25 @@ public class ShippingEntityAccessImp
 			pEntity.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
 			
 			entityManager.persist(pEntity);
+
+			List<ProductRequestEntity> list = pEntity.getProducts();
 			
-			List<ProductPackageEntity> itens = pEntity.getItens();
-			
-			for(ProductPackageEntity ppe: itens) {
-				ppe.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
-				ppe.setShipping(pEntity);
-				entityManager.persist(ppe);
+			if(list != null){
 				
-				List<ProductRequestEntity> list = ppe.getProducts();
-				
-				if(list != null){
+				for(ProductRequestEntity e: list){
+					e.setShipping(pEntity);
+					e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
+					entityManager.persist(e);
 					
-					for(ProductRequestEntity e: list){
-						e.setProductPackage(ppe);
-						e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
-						entityManager.persist(e);
-						
-						List<ProductRequestTaxEntity> prdel = e.getTaxes();
-						
-						if(prdel != null){
-							for(ProductRequestTaxEntity k: prdel){
-								k.setProductRequest(e);
-								k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
-								entityManager.persist(k);
-							}
+					List<ProductRequestTaxEntity> prdel = e.getTaxes();
+					
+					if(prdel != null){
+						for(ProductRequestTaxEntity k: prdel){
+							k.setProductRequest(e);
+							k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
+							entityManager.persist(k);
 						}
 					}
-					
 				}
 				
 			}
@@ -101,49 +91,37 @@ public class ShippingEntityAccessImp
 		try{
 			ShippingEntity pEntity = this.toPersistenceEntity(value);
 			pEntity = (ShippingEntity)entityManager.merge(pEntity);
+
+			List<ProductRequestEntity> list = pEntity.getProducts();
 			
-			List<ProductPackageEntity> itens = pEntity.getItens();
-			
-			for(ProductPackageEntity ppe: itens) {
-				if(ppe.getId() == null) {
-					ppe.setShipping(pEntity);
-					ppe.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
-					entityManager.persist(ppe);
-				}
-				else {
-					entityManager.merge(ppe);
-				}
-				
-				List<ProductRequestEntity> list = ppe.getProducts();
-				
-				if(list != null){
-					for(ProductRequestEntity e: list){
-						if(e.getId() == null){
-							e.setProductPackage(ppe);
-							e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
-							entityManager.persist(e);
-						}
-						else{
-							entityManager.merge(e);
-						}
-						
-						List<ProductRequestTaxEntity> prdel = e.getTaxes();
-						
-						if(prdel != null){
-							for(ProductRequestTaxEntity k: prdel){
-								if(k.getId() == null){
-									k.setProductRequest(e);
-									k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
-									entityManager.persist(k);
-								}
-								else{
-									entityManager.merge(k);
-								}
+			if(list != null){
+				for(ProductRequestEntity e: list){
+					if(e.getId() == null){
+						e.setShipping(pEntity);
+						e.setId(IDGenerator.getUniqueOrderID('R', (int)SystemProperties.currentTimeMillis()));
+						entityManager.persist(e);
+					}
+					else{
+						entityManager.merge(e);
+					}
+					
+					List<ProductRequestTaxEntity> prdel = e.getTaxes();
+					
+					if(prdel != null){
+						for(ProductRequestTaxEntity k: prdel){
+							if(k.getId() == null){
+								k.setProductRequest(e);
+								k.setId(IDGenerator.getUniqueOrderID('D', (int)SystemProperties.currentTimeMillis()));
+								entityManager.persist(k);
+							}
+							else{
+								entityManager.merge(k);
 							}
 						}
-						
 					}
-				}				
+					
+				}
+				
 			}
 			
 			pEntity.toEntity(value);

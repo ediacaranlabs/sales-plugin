@@ -155,6 +155,50 @@ public class ShippingEntity implements PublicType, Serializable{
 		this.addData = addData;
 	}
 
+	public Float getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Float weight) {
+		this.weight = weight;
+	}
+
+	public Float getHeight() {
+		return height;
+	}
+
+	public void setHeight(Float height) {
+		this.height = height;
+	}
+
+	public Float getWidth() {
+		return width;
+	}
+
+	public void setWidth(Float width) {
+		this.width = width;
+	}
+
+	public Float getDepth() {
+		return depth;
+	}
+
+	public void setDepth(Float depth) {
+		this.depth = depth;
+	}
+
+	public List<ProductRequestEntity> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<ProductRequestEntity> products) {
+		this.products = products;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	public Shipping toEntity(){
 		return this.toEntity(null);
 	}

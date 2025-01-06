@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
@@ -348,11 +346,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		i.setDate(LocalDateTime.now());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
+		i.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
 		
-		ProductPackage productPackage = new ProductPackage();
-		productPackage.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
-		
-		i.setItens(Arrays.asList(productPackage));
 		i.setOrder(order.getId());
 		i.setShippingType(null);
 
@@ -383,11 +378,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		i.setDate(LocalDateTime.now());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
-		
-		ProductPackage productPackage = new ProductPackage();
-		productPackage.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
-		
-		i.setItens(Arrays.asList(productPackage));
+		i.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
 		i.setOrder(order.getId());
 		i.setShippingType(null);
 		
