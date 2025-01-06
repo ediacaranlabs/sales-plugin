@@ -2,14 +2,15 @@ package br.com.uoutec.community.ediacaran.sales.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
-import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
@@ -33,14 +34,14 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethod;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethodRegistry;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOption;
+import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOptionGroup;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
-import br.com.uoutec.ediacaran.core.VarParser;
 
 @Singleton
 public class CartService {
@@ -56,12 +57,6 @@ public class CartService {
 	
 	@Inject
 	private ClientRegistry clientRegistry;
-
-	@Inject
-	private VarParser varParser;
-	
-	@Inject
-	private CountryRegistry countryRegistry;
 
 	@Inject
 	private ShippingMethodRegistry shippingMethodRegistry;
@@ -164,30 +159,13 @@ public class CartService {
 	
 	public List<ShippingOption> getShippingOptions(Client client, Address dest, String currency, Cart cart) throws CountryRegistryException {
 		
-		Address origin = new Address();
-		origin.setAddressLine1(varParser.getValue("${plugins.ediacaran.system.address_line1_property}"));
-		origin.setAddressLine2(varParser.getValue("${plugins.ediacaran.system.address_line2_property}"));
-		origin.setCity(varParser.getValue("${plugins.ediacaran.system.city_property}"));
-		
-		String isoAlpha3 = varParser.getValue("${plugins.ediacaran.system.country_property}");
-		origin.setCountry(countryRegistry.getCountryByIsoAlpha3(isoAlpha3));
-		
-		origin.setRegion(varParser.getValue("${plugins.ediacaran.system.region_property}"));
-		origin.setZip(varParser.getValue("${plugins.ediacaran.system.zip_property}"));
+		Address origin = ShippingRegistryUtil.getOrigin();
 		
 		if(dest == null) {
-			dest = new Address();
-			dest.setAddressLine1(client.getAddressLine1());
-			dest.setAddressLine2(client.getAddressLine2());
-			dest.setCity(client.getCity());
-			dest.setCountry(client.getCountry());
-			dest.setFirstName(client.getFirstName());
-			dest.setLastName(client.getLastName());
-			dest.setRegion(client.getRegion());
-			dest.setZip(client.getZip());
+			dest = ShippingRegistryUtil.getAddress(client);
 		}
 		
-		List<ProductPackage> packages = new ArrayList<>();
+		List<ShippingRateRequest> requests = new ArrayList<>();
 		
 		for(ProductRequest pr: cart.getItens()) {
 			Map<String, String> data = pr.getAddData();
@@ -201,20 +179,58 @@ public class CartService {
 			float width		= widthSTR == null? 0f : Float.parseFloat(widthSTR);
 			float depth 	= depthSTR == null? 0f : Float.parseFloat(depthSTR);
 			
-			ProductPackage pp = new ProductPackage(weight, height, width, depth, Arrays.asList(pr));
-			packages.add(pp);
+			ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, weight, height, width, depth, Arrays.asList(pr));
+			requests.add(shippingRateRequest);
 		}
 		
-		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, packages);
-		List<ShippingOption> shippingOption = new ArrayList<>();
+		Map<String, List<ShippingOption>> shippingOptions = new HashMap<>();
 		
-		List<ShippingMethod> shippingMethods = shippingMethodRegistry.getShippingMethods(shippingRateRequest);
-		
-		for(ShippingMethod sm: shippingMethods) {
-			shippingOption.addAll(sm.getOptions(shippingRateRequest));
+		for(ShippingRateRequest request: requests) {
+			
+			List<ShippingMethod> shippingMethods = shippingMethodRegistry.getShippingMethods(request);
+			
+			for(ShippingMethod sm: shippingMethods) {
+				
+				List<ShippingOption> options = sm.getOptions(request);
+				
+				for(ShippingOption opt: options) {
+					
+					List<ShippingOption> optionsGroup = shippingOptions.get(opt.getId() + "-" + opt.getMethod());
+					
+					if(optionsGroup == null) {
+						optionsGroup = new ArrayList<>();
+						shippingOptions.put(opt.getId() + "-" + opt.getMethod(), optionsGroup);
+					}
+					
+					optionsGroup.add(opt);
+				}
+			}
+			
 		}
 		
-		return shippingOption;
+		List<ShippingOption> result = new ArrayList<>();
+		
+		for(Entry<String,List<ShippingOption>> entry: shippingOptions.entrySet()) {
+			
+			if(entry.getValue().isEmpty()) {
+				continue;
+			}
+			
+			ShippingOption first = entry.getValue().get(0);
+			
+			ShippingOption opt = 
+					new ShippingOptionGroup(
+							first.getId(), 
+							first.getMethod(), 
+							first.getTitle(), 
+							first.getCurrency(), 
+							entry.getValue()
+					);
+			
+			result.add(opt);
+		}
+		
+		return result;
 	}
 	
 }

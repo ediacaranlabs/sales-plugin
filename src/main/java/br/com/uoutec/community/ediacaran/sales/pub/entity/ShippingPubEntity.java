@@ -47,16 +47,18 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 
 	@Valid
 	@NotNull(groups = DataValidation.class)
-	private Address origin;
+	private AddressPubEntity origin;
 	
 	@Valid
 	@NotNull(groups = DataValidation.class)
-	private Address dest;
+	private AddressPubEntity dest;
 	
 	@Valid
 	@NotNull(groups = DataValidation.class)
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductPackage> itens;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private Map<String, String> addData;
 
 	@Constructor
@@ -92,50 +94,15 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 	}
 
 	@Override
-	protected void copyTo(ShippingsResultSearch o, boolean reload, boolean override, boolean validate) throws Throwable {
-		o.setHasNextPage(this.hasNextPage == null? false: this.hasNextPage.booleanValue());
-		o.setMaxPages(this.maxPages == null? -1 : this.maxPages.intValue());
-		o.setPage(this.page == null? -1 : this.page.intValue());
+	protected void copyTo(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
+		o.setAddData(this.addData);
+		o.setDate(this.date);
+		o.setDest(this.dest == null? null : this.dest.rebuild(true, false, true));
+		o.setOrigin(this.origin == null? null : this.origin.rebuild(true, false, true));
+		o.setId(this.id);
+		o.setOrder(this.order);
+		o.setShippingType(this.shippingType);
 		
-		if(this.itens != null) {
-			List<Client> list = new ArrayList<>();
-			for(ClientPubEntity p: this.itens) {
-				list.add((Client)p.rebuild(reload, override, validate));
-			}
-			o.setItens(list);
-		}
-	}
-
-	public Boolean getHasNextPage() {
-		return hasNextPage;
-	}
-
-	public void setHasNextPage(Boolean hasNextPage) {
-		this.hasNextPage = hasNextPage;
-	}
-
-	public Integer getMaxPages() {
-		return maxPages;
-	}
-
-	public void setMaxPages(Integer maxPages) {
-		this.maxPages = maxPages;
-	}
-
-	public Integer getPage() {
-		return page;
-	}
-
-	public void setPage(Integer page) {
-		this.page = page;
-	}
-
-	public List<ClientPubEntity> getItens() {
-		return itens;
-	}
-
-	public void setItens(List<ClientPubEntity> itens) {
-		this.itens = itens;
 	}
 
 	

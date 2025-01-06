@@ -82,7 +82,7 @@ public class ShippingOption {
 	public String toString(Locale locale) {
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
 		DecimalFormat df = new DecimalFormat("###,###,##0.00", dfs); 
-		return currency + " " + df.format(value) + " " + this.toString(); 
+		return currency + " " + df.format(getValue()) + " " + this.toString(); 
 	}
 	
 	public String toString() {

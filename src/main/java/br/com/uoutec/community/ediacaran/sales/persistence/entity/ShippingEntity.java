@@ -16,8 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
@@ -50,8 +50,20 @@ public class ShippingEntity implements PublicType, Serializable{
 	@JoinColumn(name = "cod_dest_address", referencedColumnName = "cod_address" )
 	private AddressEntity dest;
 
-	@OneToMany(mappedBy = "shipping")
-	private List<ProductPackageEntity> itens;
+	@Column(name="vlr_weight")
+	private Float weight;
+	
+	@Column(name="vlr_height")
+	private Float height;
+	
+	@Column(name="vlr_width")
+	private Float width;
+	
+	@Column(name="vlr_depth")
+	private Float depth;
+	
+	@OneToMany(mappedBy = "productPackage")
+	private List<ProductRequestEntity> products;
 	
 	@Lob
 	private String addData;
@@ -73,10 +85,16 @@ public class ShippingEntity implements PublicType, Serializable{
 		this.addData = DataUtil.encode(e.getAddData());
 		this.date = e.getDate();
 		
-		if(e.getItens() != null) {
-			this.itens = new ArrayList<>();
-			for(ProductPackage p: e.getItens()) {
-				this.itens.add(new ProductPackageEntity(p));
+		this.depth = e.getDepth();
+		this.height = e.getHeight();
+		this.id = e.getId();
+		this.weight = e.getWeight();
+		this.width = e.getWidth();
+		
+		if(e.getProducts() != null) {
+			this.products = new ArrayList<>();
+			for(ProductRequest p: e.getProducts()) {
+				this.products.add(new ProductRequestEntity(this, p));
 			}
 		}
 	}
@@ -129,14 +147,6 @@ public class ShippingEntity implements PublicType, Serializable{
 		this.order = order;
 	}
 
-	public List<ProductPackageEntity> getItens() {
-		return itens;
-	}
-
-	public void setItens(List<ProductPackageEntity> itens) {
-		this.itens = itens;
-	}
-
 	public String getAddData() {
 		return addData;
 	}
@@ -167,12 +177,21 @@ public class ShippingEntity implements PublicType, Serializable{
 				e.setOrder(this.order.getId());
 			}
 			
-			if(this.itens != null) {
-				ArrayList<ProductPackage> list = new ArrayList<>();
-				for(ProductPackageEntity p: this.itens) {
+			e.setDepth(this.depth == null? 0f : this.depth.floatValue());
+			e.setHeight(this.height == null? 0f : this.height.floatValue());
+			e.setId(this.id);
+			
+			e.setWeight(this.weight == null? 0f : this.height.floatValue());
+			e.setWidth(this.width == null? 0f : this.width.floatValue());
+
+			if(this.products != null) {
+				List<ProductRequest> list = new ArrayList<>();
+				for(ProductRequestEntity p: this.products) {
 					list.add(p.toEntity());
 				}
+				e.setProducts(list);
 			}
+			
 			return e;
 		}
 		catch(Throwable ex){

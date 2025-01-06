@@ -186,4 +186,20 @@ public class ShippingRegistryUtil {
 		
 		return address;
 	}
+	
+	public static Address getAddress(Client client) throws CountryRegistryException {
+		
+		Address address = new Address();
+		address.setAddressLine1(client.getAddressLine1());
+		address.setAddressLine2(client.getAddressLine2());
+		address.setCity(client.getCity());
+		address.setCountry(client.getCountry());
+		address.setFirstName(client.getFirstName());
+		address.setLastName(client.getLastName());
+		address.setRegion(client.getRegion());
+		address.setZip(client.getZip());
+		
+		return address;
+	}
+	
 }

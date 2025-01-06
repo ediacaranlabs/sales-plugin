@@ -34,7 +34,7 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingsR
 	public ShippingsSearchResultPubEntity(ShippingsResultSearch e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
-		this.hasNextPage = e.isHasNextPage();
+		this.hasNextPage = e.getHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
 			for(Client p: e.getItens()) {
