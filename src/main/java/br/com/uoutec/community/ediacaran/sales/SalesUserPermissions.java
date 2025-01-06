@@ -72,6 +72,38 @@ public final class SalesUserPermissions {
 		
 	}
 
+	public static final class SHIPPING {
+
+		public static final String ALL 		= SalesUserPermissions.ALL + ":SHIPPING";
+		
+		public static final String CREATE	= ALL + ":CREATE";
+		
+		public static final String SHOW		= ALL + ":SHOW";
+
+		public static final String SEARCH	= ALL + ":SEARCH";
+
+		public static final String EDIT		= ALL + ":EDIT";
+
+		public static final String CANCEL	= ALL + ":CANCEL";
+
+		public static final String SAVE		= ALL + ":SAVE";
+
+		public static final String DELETE	= ALL + ":DELETE";
+		
+		public static final class FIELDS {
+
+			public static final String ALL 		= SalesUserPermissions.SHIPPING.ALL +  ":FIELDS";
+
+			public static final String ID 		= ALL +  ":ID";
+
+			public static final String ORDER	= ALL +  ":ORDER";
+			
+			public static final String ITENS	= ALL +  ":ITENS";
+			
+		}
+		
+	}
+	
 	public static final class CLIENT {
 
 		public static final String ALL 		= SalesUserPermissions.ALL + ":CLIENT";

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ShippingsResultSearch {
 
-	private boolean hasNextPage;
+	private Boolean hasNextPage;
 	
 	private int maxPages;
 	
@@ -20,20 +20,37 @@ public class ShippingsResultSearch {
 		this.hasNextPage = hasNextPage;
 	}
 
-	public boolean isHasNextPage() {
+	public Boolean getHasNextPage() {
 		return hasNextPage;
+	}
+
+	public void setHasNextPage(Boolean hasNextPage) {
+		this.hasNextPage = hasNextPage;
 	}
 
 	public int getMaxPages() {
 		return maxPages;
 	}
 
+	public void setMaxPages(int maxPages) {
+		this.maxPages = maxPages;
+	}
+
 	public int getPage() {
 		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
 	}
 
 	public List<ShippingResultSearch> getItens() {
 		return itens;
 	}
+
+	public void setItens(List<ShippingResultSearch> itens) {
+		this.itens = itens;
+	}
+
 	
 }
