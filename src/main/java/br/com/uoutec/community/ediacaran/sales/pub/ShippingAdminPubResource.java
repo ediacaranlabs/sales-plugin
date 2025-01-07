@@ -180,9 +180,11 @@ public class ShippingAdminPubResource {
 
 		Shipping shipping = null;
 		List<ShippingMethod> shippingMethods = null;
+		ShippingMethod selectedShippingMethod = null;
 		try{
 			shipping = shippingRegistry.toShipping(order);
 			shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
+			selectedShippingMethod = shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -198,6 +200,7 @@ public class ShippingAdminPubResource {
 		map.put("order", order);
 		map.put("shipping", shipping);
 		map.put("shippingMethods", shippingMethods);
+		map.put("selectedShippingMethod", selectedShippingMethod);
 		return map;
 	}
 
