@@ -23,7 +23,7 @@ import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
 @Table(name="rw_shipping")
-@EntityListeners(AddressEntityListener.class)
+@EntityListeners(ShippingEntityListener.class)
 public class ShippingEntity implements PublicType, Serializable{
 
 	private static transient final long serialVersionUID = -5167928569154696530L;
@@ -32,7 +32,7 @@ public class ShippingEntity implements PublicType, Serializable{
 	@Column(name="cod_shipping", length=32)
 	private String id;
 	
-	@Column(name="cod_shipping")
+	@Column(name="cod_shipping_type")
 	private String shippingType;
 
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -62,7 +62,7 @@ public class ShippingEntity implements PublicType, Serializable{
 	@Column(name="vlr_depth")
 	private Float depth;
 	
-	@OneToMany(mappedBy = "productPackage")
+	@OneToMany(mappedBy = "shipping")
 	private List<ProductRequestEntity> products;
 	
 	@Lob

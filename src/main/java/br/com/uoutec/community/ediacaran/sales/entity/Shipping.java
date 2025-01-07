@@ -2,9 +2,13 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -170,6 +174,34 @@ public class Shipping implements Serializable{
 	
 	public String get(String property) {
 		return addData == null? null : addData.get(property);
+	}
+	
+	public String toStringDate(Locale locale) {
+		if(date == null) {
+			return "";
+		}
+		//DateTimeFormatter.withLocale(locale).
+		
+		DateTimeFormatter dateTimeFormatter = 
+				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+		return date.format(dateTimeFormatter);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Shipping other = (Shipping) obj;
+		return Objects.equals(id, other.id);
 	}
 	
 }

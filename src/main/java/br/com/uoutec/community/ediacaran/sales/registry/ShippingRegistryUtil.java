@@ -164,6 +164,8 @@ public class ShippingRegistryUtil {
 		CountryRegistry countryRegistry = EntityContextPlugin.getEntity(CountryRegistry.class);
 		
 		Address address = new Address();
+		address.setFirstName(varParser.getValue("${plugins.ediacaran.system.company_name_property}"));
+		address.setLastName("");
 		address.setAddressLine1(varParser.getValue("${plugins.ediacaran.system.address_line1_property}"));
 		address.setAddressLine2(varParser.getValue("${plugins.ediacaran.system.address_line2_property}"));
 		address.setCity(varParser.getValue("${plugins.ediacaran.system.city_property}"));

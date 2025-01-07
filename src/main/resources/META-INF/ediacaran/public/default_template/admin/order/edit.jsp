@@ -190,6 +190,11 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
+		<ec:button label="Create shipping" align="right" actionType="button" bundle="${messages}">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/new/${vars.order.id}');
+			</ec:event>
+		</ec:button>
 		<ec:button label="#{search.label}" align="right" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders');
