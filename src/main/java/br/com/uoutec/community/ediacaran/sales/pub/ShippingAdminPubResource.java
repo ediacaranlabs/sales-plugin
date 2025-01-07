@@ -210,8 +210,8 @@ public class ShippingAdminPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.edit.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -228,8 +228,8 @@ public class ShippingAdminPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.save.error.register, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.save.error.register, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
