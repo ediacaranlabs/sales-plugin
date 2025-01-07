@@ -1,12 +1,12 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -15,12 +15,11 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.hibernate.validator.constraints.Length;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Address;
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
-import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
-import br.com.uoutec.community.ediacaran.sales.shipping.ProductPackage;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -45,18 +44,27 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 	@NotNull(groups = DataValidation.class)
 	private String shippingType;
 
-	@Valid
 	@NotNull(groups = DataValidation.class)
 	private AddressPubEntity origin;
 	
-	@Valid
 	@NotNull(groups = DataValidation.class)
 	private AddressPubEntity dest;
+
+	@Min(value=0, groups = DataValidation.class )
+	private Float weight;
 	
-	@Valid
+	@Min(value=0, groups = DataValidation.class )
+	private Float height;
+	
+	@Min(value=0, groups = DataValidation.class )
+	private Float width;
+	
+	@Min(value=0, groups = DataValidation.class )
+	private Float depth;
+	
 	@NotNull(groups = DataValidation.class)
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ProductPackage> itens;
+	private List<ProductRequestPubEntity> itens;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private Map<String, String> addData;
@@ -80,7 +88,8 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 
 	@Override
 	protected Shipping reloadEntity() throws Throwable {
-		return null;
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		return shippingRegistry.findById(id);
 	}
 
 	@Override
@@ -90,18 +99,49 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 
 	@Override
 	protected Shipping createNewInstance() throws Throwable {
-		return new Shipping();
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		Order order = new Order();
+		order.setId(this.order);
+		return shippingRegistry.toShipping(order);
 	}
 
 	@Override
 	protected void copyTo(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
 		o.setAddData(this.addData);
+		o.setDepth(this.depth);
+		o.setHeight(this.height);
+		o.setWeight(this.weight);
+		o.setWidth(this.width);
 		o.setDate(this.date);
 		o.setDest(this.dest == null? null : this.dest.rebuild(true, false, true));
 		o.setOrigin(this.origin == null? null : this.origin.rebuild(true, false, true));
 		o.setId(this.id);
 		o.setOrder(this.order);
 		o.setShippingType(this.shippingType);
+		
+		if(this.itens != null) {
+			
+			Map<String,Integer> units = new HashMap<>();
+			for(ProductRequestPubEntity e: this.itens) {
+				ProductRequest p = e.rebuild(true, false, true);
+				units.put(p.getSerial(), e.getUnits());
+			}
+			
+			if(o.getProducts() != null) {
+				for(ProductRequest p: o.getProducts()) {
+					Integer u = units.get(p.getSerial());
+					p.setUnits(u == null? 0 : u.intValue());
+				}
+			}
+			
+		}
+		else {
+			if(o.getProducts() != null) {
+				for(ProductRequest p: o.getProducts()) {
+					p.setUnits(0);
+				}
+			}
+		}
 		
 	}
 
