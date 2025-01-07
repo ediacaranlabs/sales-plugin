@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -64,7 +66,7 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 	
 	@NotNull(groups = DataValidation.class)
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ProductRequestPubEntity> itens;
+	private List<ProductRequestPubEntity> products;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private Map<String, String> addData;
@@ -74,8 +76,46 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 	}
 	
 	public ShippingPubEntity(Shipping e, Locale locale) {
+		this.addData = e.getAddData();
+		this.date = e.getDate();
+		this.depth = e.getDepth();
+		this.dest = e.getDest() == null? null : new AddressPubEntity(e.getDest(), locale);
+		this.height = e.getHeight();
+		this.id = e.getId() == null? null : SecretUtil.toProtectedID(e.getId());
+		
+		if(e.getProducts() != null) {
+			this.products = new ArrayList<>();
+			for(ProductRequest p: e.getProducts()) {
+				this.products.add(new ProductRequestPubEntity(p));
+			}
+		}
+		
+		this.order = e.getOrder();
+		this.order = e.getOrder() == null? null : SecretUtil.toProtectedID(e.getOrder());
+		this.origin = e.getOrigin() == null? null : new AddressPubEntity(e.getOrigin(), locale);
+		this.shippingType = e.getShippingType();
+		this.weight = e.getWeight();
+		this.width = e.getWidth();
 	}
 
+	@Override
+	protected void preRebuild(Shipping instance, boolean reload, boolean override, boolean validate) {
+		try {
+			this.id = this.id == null? null : SecretUtil.toID(this.id);
+		}
+		catch(Throwable ex){
+			this.id = null;
+		}
+		
+		try {
+			this.order = this.order == null? null : SecretUtil.toID(this.order);
+		}
+		catch(Throwable ex){
+			this.order = null;
+		}
+		
+	}
+	
 	@Override
 	protected boolean isEqualId(Shipping instance) throws Throwable {
 		return false;
@@ -119,10 +159,10 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 		o.setOrder(this.order);
 		o.setShippingType(this.shippingType);
 		
-		if(this.itens != null) {
+		if(this.products != null) {
 			
 			Map<String,Integer> units = new HashMap<>();
-			for(ProductRequestPubEntity e: this.itens) {
+			for(ProductRequestPubEntity e: this.products) {
 				ProductRequest p = e.rebuild(true, false, true);
 				units.put(p.getSerial(), e.getUnits());
 			}
@@ -145,5 +185,100 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 		
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
+	}
+
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
+
+	public String getShippingType() {
+		return shippingType;
+	}
+
+	public void setShippingType(String shippingType) {
+		this.shippingType = shippingType;
+	}
+
+	public AddressPubEntity getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(AddressPubEntity origin) {
+		this.origin = origin;
+	}
+
+	public AddressPubEntity getDest() {
+		return dest;
+	}
+
+	public void setDest(AddressPubEntity dest) {
+		this.dest = dest;
+	}
+
+	public Float getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Float weight) {
+		this.weight = weight;
+	}
+
+	public Float getHeight() {
+		return height;
+	}
+
+	public void setHeight(Float height) {
+		this.height = height;
+	}
+
+	public Float getWidth() {
+		return width;
+	}
+
+	public void setWidth(Float width) {
+		this.width = width;
+	}
+
+	public Float getDepth() {
+		return depth;
+	}
+
+	public void setDepth(Float depth) {
+		this.depth = depth;
+	}
+
+	public List<ProductRequestPubEntity> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<ProductRequestPubEntity> products) {
+		this.products = products;
+	}
+
+	public Map<String, String> getAddData() {
+		return addData;
+	}
+
+	public void setAddData(Map<String, String> addData) {
+		this.addData = addData;
+	}
 	
 }

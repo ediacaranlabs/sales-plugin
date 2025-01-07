@@ -8,8 +8,6 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
-import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -25,7 +23,7 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingsR
 	private Integer page;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ClientPubEntity> itens;
+	private List<ShippingPubEntity> itens;
 
 	@Constructor
 	public ShippingsSearchResultPubEntity() {
@@ -37,9 +35,8 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingsR
 		this.hasNextPage = e.getHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
-			for(Client p: e.getItens()) {
-				ClientPubEntity x = new ClientPubEntity(p, locale).getType();
-				x.setData(null);
+			for(ShippingResultSearch p: e.getItens()) {
+				ShippingPubEntity x = new ShippingResultPubEntity(p.getShipping(), locale);
 				itens.add(x);
 			}
 		}
@@ -67,22 +64,11 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingsR
 
 	@Override
 	protected ShippingsResultSearch createNewInstance() throws Throwable {
-		return new ClientSearchResult();
+		return null;
 	}
 
 	@Override
 	protected void copyTo(ShippingsResultSearch o, boolean reload, boolean override, boolean validate) throws Throwable {
-		o.setHasNextPage(this.hasNextPage == null? false: this.hasNextPage.booleanValue());
-		o.setMaxPages(this.maxPages == null? -1 : this.maxPages.intValue());
-		o.setPage(this.page == null? -1 : this.page.intValue());
-		
-		if(this.itens != null) {
-			List<Client> list = new ArrayList<>();
-			for(ClientPubEntity p: this.itens) {
-				list.add((Client)p.rebuild(reload, override, validate));
-			}
-			o.setItens(list);
-		}
 	}
 
 	public Boolean getHasNextPage() {
@@ -109,11 +95,11 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingsR
 		this.page = page;
 	}
 
-	public List<ClientPubEntity> getItens() {
+	public List<ShippingPubEntity> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<ClientPubEntity> itens) {
+	public void setItens(List<ShippingPubEntity> itens) {
 		this.itens = itens;
 	}
 
