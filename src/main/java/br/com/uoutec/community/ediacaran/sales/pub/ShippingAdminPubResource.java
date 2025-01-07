@@ -1,8 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
-import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,23 +24,20 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceRecalcPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingsSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -78,7 +73,8 @@ public class ShippingAdminPubResource {
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.INVOICE.SEARCH)
-	public Serializable search(
+	@Result(mappingType = MappingTypes.OBJECT)
+	public ShippingsSearchResultPubEntity search(
 			@DetachedName ShippingSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
@@ -91,8 +87,8 @@ public class ShippingAdminPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.search.error.fail_load_entity, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.search.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -101,17 +97,13 @@ public class ShippingAdminPubResource {
 		
 		try{
 			ShippingsResultSearch result = shippingRegistry.searchShipping(search);
-			
-			List<InvoiceEntitySearchResultPubEntity> result = values.stream()
-					.map((e)->new InvoiceEntitySearchResultPubEntity(e, locale, dtaFormt)).collect(Collectors.toList());
-			
-			return new InvoiceSearchResultPubEntity(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
+			return result == null? null : new ShippingsSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.search.error.fail_load_entity,
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.search.error.fail_load_entity,
 							
 							locale);
 			throw new InvalidRequestException(error, ex);
@@ -121,38 +113,38 @@ public class ShippingAdminPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/invoice/details")
+	@View("${plugins.ediacaran.sales.template}/admin/shipping/details")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.INVOICE.SHOW)
 	public Map<String,Object> invoiceDetail(
 			@DetachedName
-			InvoicePubEntity invoicePubEntity,
+			ShippingPubEntity shippingPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
-		Invoice invoice;
+		Shipping shipping;
 		try{
-			invoice = invoicePubEntity.rebuild(true, false, false);
+			shipping = shippingPubEntity.rebuild(true, false, false);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.details.error.fail_load_entity, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.details.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
 		}
 
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("invoice", invoice);
+		map.put("shipping", shipping);
 		return map;
 	}
 	
 	@Action("/new/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/invoice/edit")
+	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.INVOICE.CREATE)
@@ -171,22 +163,22 @@ public class ShippingAdminPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.new_invoice.error.fail_load_entity, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.new_invoice.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
 		}
 
-		Invoice invoice;
+		Shipping shipping;
 		try{
-			invoice = invoiceRegistry.toInvoice(order);
+			shipping = shippingRegistry.toShipping(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.new_invoice.error.create_invoice, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.new_invoice.error.create_invoice, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
@@ -194,57 +186,26 @@ public class ShippingAdminPubResource {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order", order);
-		map.put("invoice", invoice);
+		map.put("shipping", shipping);
 		return map;
 	}
 
-	@Action("/recalc_invoice")
-	@RequestMethod("POST")
-	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
-	@ResponseType(MediaTypes.APPLICATION_JSON)
-	@Result(mappingType = MappingTypes.OBJECT)
-	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.INVOICE.EDIT)
-	public InvoiceRecalcPubEntity recalc(
-			@DetachedName
-			InvoicePubEntity invoicePubEntity,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale
-	) throws InvalidRequestException{
-		
-		Invoice invoice;
-		try{
-			invoice = invoicePubEntity.rebuild(invoicePubEntity.getId() != null, true, true);
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
-							locale);
-			
-			throw new InvalidRequestException(error, ex);
-		}
-
-		return new InvoiceRecalcPubEntity(invoice);
-	}
-	
 	@Action("/save")
-	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
+	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.INVOICE.SAVE)
 	public Map<String,Object> save(
 			@DetachedName
-			InvoicePubEntity invoicePubEntity,
+			ShippingPubEntity shippingPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
-		Invoice invoice;
+		Shipping shipping;
 		try{
-			invoice = invoicePubEntity.rebuild(invoicePubEntity.getId() != null, true, true);
+			shipping = shippingPubEntity.rebuild(shippingPubEntity.getId() != null, true, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -257,12 +218,12 @@ public class ShippingAdminPubResource {
 		}
 
 		try{
-			invoice.setItens(
-				invoice.getItens().stream()
+			shipping.setProducts(
+				shipping.getProducts().stream()
 					.filter((e)->e.getUnits() > 0)
 					.collect(Collectors.toList())
 			);
-			invoiceRegistry.registerInvoice(invoice);
+			shippingRegistry.registerShipping(shipping);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -275,12 +236,12 @@ public class ShippingAdminPubResource {
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("invoice", invoice);
+		map.put("shipping", shipping);
 		return map;
 	}
 
-	@Action("/cancel")
-	@View("${plugins.ediacaran.sales.template}/admin/invoice/result")
+	@Action("/delete")
+	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequiresRole(BasicRoles.USER)
@@ -288,44 +249,42 @@ public class ShippingAdminPubResource {
 	public Map<String,Object> cancel(
 			@Basic(bean = "id")
 			String id,
-			@Basic(bean = "justification")
-			String justification,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
-		Invoice invoice;
+		Shipping shipping;
 		try{
-			invoice = invoiceRegistry.findById(id);
-			if(invoice == null) {
+			shipping = shippingRegistry.findById(id);
+			if(shipping == null) {
 				throw new NullPointerException(id);
 			}
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.cancel.error.fail_load_entity, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.cancel.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
 		}
 
 		try{
-			invoiceRegistry.cancelInvoice(invoice,  SystemUserRegistry.CURRENT_USER, justification);
+			shippingRegistry.removeShipping(shipping);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
-							InvoiceAdminPubResourceMessages.cancel.error.register, 
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.cancel.error.register, 
 							locale);
 			
 			throw new InvalidRequestException(error, ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("invoice", invoice);
+		map.put("shipping", shipping);
 		return map;
 	}
 	
