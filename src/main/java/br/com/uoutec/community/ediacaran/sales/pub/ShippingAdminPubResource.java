@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +35,9 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingsSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethod;
+import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethodRegistry;
+import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
@@ -56,6 +60,10 @@ public class ShippingAdminPubResource {
 	
 	@Transient
 	@Inject
+	private ShippingMethodRegistry shippingMethodRegistry;
+	
+	@Transient
+	@Inject
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
@@ -72,7 +80,7 @@ public class ShippingAdminPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.INVOICE.SEARCH)
+	@RequiresPermissions(SalesUserPermissions.SHIPPING.SEARCH)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public ShippingsSearchResultPubEntity search(
 			@DetachedName ShippingSearchPubEntity request,
@@ -147,7 +155,7 @@ public class ShippingAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.INVOICE.CREATE)
+	@RequiresPermissions(SalesUserPermissions.SHIPPING.CREATE)
 	public Map<String,Object> newInvoice(
 			@DetachedName
 			OrderPubEntity orderPubEntity,
@@ -170,9 +178,11 @@ public class ShippingAdminPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 
-		Shipping shipping;
+		Shipping shipping = null;
+		List<ShippingMethod> shippingMethods = null;
 		try{
 			shipping = shippingRegistry.toShipping(order);
+			shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -187,6 +197,7 @@ public class ShippingAdminPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order", order);
 		map.put("shipping", shipping);
+		map.put("shippingMethods", shippingMethods);
 		return map;
 	}
 
@@ -195,7 +206,7 @@ public class ShippingAdminPubResource {
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.INVOICE.SAVE)
+	@RequiresPermissions(SalesUserPermissions.SHIPPING.SAVE)
 	public Map<String,Object> save(
 			@DetachedName
 			ShippingPubEntity shippingPubEntity,
@@ -240,12 +251,12 @@ public class ShippingAdminPubResource {
 		return map;
 	}
 
-	@Action("/delete")
+	@Action("/cancel")
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequiresRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.INVOICE.CANCEL)
+	@RequiresPermissions(SalesUserPermissions.SHIPPING.CANCEL)
 	public Map<String,Object> cancel(
 			@Basic(bean = "id")
 			String id,

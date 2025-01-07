@@ -9,6 +9,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
@@ -40,6 +41,12 @@ public interface ShippingRegistry extends PublicBean{
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, ClientRegistryException, ShippingRegistryException;
 
+	void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException;
+	
+	void cancelShipping(Shipping shipping, SystemUserID userID, String justification) throws ShippingRegistryException;
+	
+	void cancelShipping(Shipping shipping, SystemUser systemUser, String justification) throws ShippingRegistryException;
+	
 	List<Shipping> findByOrder(String id) throws ShippingRegistryException;
 	
 	List<Shipping> findByOrder(String id, SystemUserID userID) throws ShippingRegistryException;

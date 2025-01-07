@@ -10,6 +10,7 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -64,6 +65,10 @@ public class ShippingRegistryUtil {
 		
 		if(shippingList != null) {
 			for(Shipping i: shippingList) {
+				
+				if(i.getCancelDate() != null) {
+					continue;
+				}
 				
 				if(actualShipping != null && i.getId().equals(actualShipping.getId())) {
 					continue;
@@ -192,6 +197,10 @@ public class ShippingRegistryUtil {
 		address.setZip(client.getZip());
 		
 		return address;
+	}
+	
+	public static boolean isCanceledShipping(Invoice invoice) {
+		return invoice.getCancelDate() != null;
 	}
 	
 }

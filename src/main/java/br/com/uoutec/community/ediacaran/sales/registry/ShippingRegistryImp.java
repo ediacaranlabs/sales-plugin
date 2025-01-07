@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -385,6 +387,106 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		return i;
 	}
 
+	public void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException {
+		cancelShipping(shipping, null, justification);
+	}
+	
+	public void cancelShipping(Shipping shipping, SystemUserID userID, String justification) throws ShippingRegistryException {
+		
+		SystemUser systemUser;
+		
+		try {
+			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+				userID = getSystemUserID();
+			}
+			systemUser = getSystemUser(userID);
+		}
+		catch (ClientRegistryException e) {
+			throw new ShippingRegistryException(e);
+		}
+		
+		cancelShipping(shipping, systemUser, justification);
+	}
+	
+	public void cancelShipping(Shipping shipping, SystemUser systemUser, String justification) throws ShippingRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
+		
+		List<Shipping> list;
+		
+		try {
+			Shipping actualInvoice = entityAccess.findById(shipping.getId());
+			list = Arrays.asList(actualInvoice);
+		}
+		catch (EntityAccessException e) {
+			throw new ShippingRegistryException(e);
+		}
+
+		try {
+			unsafeCancelShippings(list, justification, systemUser);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+	}
+	
+	private void unsafeCancelShippings(List<Shipping> list, String justification, SystemUser user
+			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException {
+
+		Map<String,List<Shipping>> map = new HashMap<>();
+		
+		for(Shipping i: list) {
+			
+			if(i.getCancelDate() != null) {
+				continue;
+			}
+			
+			List<Shipping> l = map.get(i.getOrder());
+			
+			if(l == null) {
+				l = new ArrayList<>();
+				map.put(i.getOrder(), l);
+			}
+			
+			l.add(i);
+		}
+		
+		if(map.isEmpty()) {
+			return;
+		}
+		
+		LocalDateTime cancelDate = LocalDateTime.now();
+		
+		for(List<Shipping> is: map.values()) {
+			for(Shipping i: is) {
+				i.setCancelDate(cancelDate);
+				i.setCancelJustification(justification);
+				entityAccess.update(i);
+			}
+		}
+
+		entityAccess.flush();
+
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		
+		for(String orderID: map.keySet()) {
+			Order order = orderRegistry.findById(orderID);
+			List<Shipping> actualInvoices = entityAccess.findByOrder(orderID, null);
+			ShippingRegistryUtil.markAsComplete(order, actualInvoices, orderRegistry);
+		}
+		
+		for(String orderID: map.keySet()) {
+			Order order = orderRegistry.findById(orderID);
+			List<Shipping> actualInvoices = entityAccess.findByOrder(orderID, null);
+			for(Shipping i: actualInvoices) {
+				orderRegistry.registryLog(order.getId(), "#" + i.getId() + ": " +  justification);
+			}
+			
+		}
+		
+	}
+	
 	private void registryNewShipping(Shipping entity, Order order
 			) throws CompletedInvoiceRegistryException, OrderRegistryException, ShippingRegistryException, EntityAccessException {
 		

@@ -39,8 +39,15 @@ public class ShippingEntity implements PublicType, Serializable{
 	@JoinColumn(name = "cod_order", referencedColumnName = "cod_order" )
 	private OrderEntity order;
 
-	@Column(name="dat_created_date")
+	@Column(name="dat_created")
 	private LocalDateTime date;
+
+	@Column(name="dat_cancellation")
+	private LocalDateTime cancelDate;
+	
+	@Lob
+	@Column(name="dsc_cancellation")
+	private String cancelJustification;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "cod_origin_address", referencedColumnName = "cod_address" )
@@ -84,6 +91,8 @@ public class ShippingEntity implements PublicType, Serializable{
 		this.shippingType = e.getShippingType();
 		this.addData = DataUtil.encode(e.getAddData());
 		this.date = e.getDate();
+		this.cancelDate = e.getCancelDate();
+		this.cancelJustification = e.getCancelJustification();
 		
 		this.depth = e.getDepth();
 		this.height = e.getHeight();
@@ -216,6 +225,8 @@ public class ShippingEntity implements PublicType, Serializable{
 			e.setId(this.id);
 			e.setOrigin(this.origin == null? null : origin.toEntity());
 			e.setShippingType(this.shippingType);
+			e.setCancelDate(this.cancelDate);
+			e.setCancelJustification(this.cancelJustification);
 			
 			if(this.order != null) {
 				e.setOrder(this.order.getId());

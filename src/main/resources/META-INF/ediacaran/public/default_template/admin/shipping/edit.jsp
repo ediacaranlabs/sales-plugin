@@ -75,7 +75,7 @@
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col classStyle="qty form-group has-feedback" >
 									<input type="hidden" name="id" value="${product.id}">
-									<ec:textfield maxlength="2" name="units" value="${product.units}">
+									<ec:textfield maxlength="2" name="units" value="${product.units}" enabled="${empty vars.shipping.id}">
 										<ec:field-validator>
 											<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
 											<ec:field-validator-rule name="between" message="Must be between 0 to ${product.units}">
@@ -95,6 +95,30 @@
 			</ed:col>
 		</ed:row>
 		<ed:row>
+			<ed:col size="5" classStyle="form-group has-feedback">
+				<ec:textarea label="Justification" name="justification" rows="5" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}">${vars.shipping.cancelJustification}</ec:textarea>
+				<ec:field-validator form="cancelForm" field="justification">
+					<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+					<ec:field-validator-rule name="stringLength" message="0 to 255">
+							<ec:field-validator-param name="min">0</ec:field-validator-param>
+							<ec:field-validator-param name="max">255</ec:field-validator-param>
+					</ec:field-validator-rule>
+				</ec:field-validator>
+			</ed:col>
+			<ed:col size="7">
+				<ed:row>
+					<ed:col>
+						<ec:select name="shippingType">
+							<c:forEach items="${vars.shippingMethods}" var="shippingMethod">
+								<ec:option value="${shippingMethod.id}" selected="${shippingMethod.id == vars.shipping.shippingType}">${shippingMethod.name}</ec:option>
+							</c:forEach>
+						</ec:select>
+						<span id="shippingTypeArea"></span>
+					</ed:col>
+				</ed:row>
+			</ed:col>
+		</ed:row>
+		<ed:row>
 			<ed:col id="shippingFormResult">
 			</ed:col>
 		</ed:row>
@@ -105,7 +129,8 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="Save" align="right" bundle="${messages}"/>
+		<ec:button actionType="submit" label="Save" align="right" bundle="${messages}" enabled="${empty vars.shipping.id}"/>
+		<ec:button actionType="submit" label="Cancel" align="right" bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

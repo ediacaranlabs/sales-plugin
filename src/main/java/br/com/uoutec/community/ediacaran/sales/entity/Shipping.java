@@ -36,6 +36,10 @@ public class Shipping implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
+
+	private LocalDateTime cancelDate;
+	
+	private String cancelJustification;
 	
 	@NotNull(groups = DataValidation.class)
 	private String shippingType;
@@ -165,6 +169,14 @@ public class Shipping implements Serializable{
 		this.addData = addData;
 	}
 
+	public String getCancelJustification() {
+		return cancelJustification;
+	}
+
+	public void setCancelJustification(String cancelJustification) {
+		this.cancelJustification = cancelJustification;
+	}
+
 	public void set(String property, String value) {
 		if(addData == null) {
 			addData = new HashMap<>();
@@ -185,6 +197,14 @@ public class Shipping implements Serializable{
 		DateTimeFormatter dateTimeFormatter = 
 				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
 		return date.format(dateTimeFormatter);
+	}
+
+	public LocalDateTime getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(LocalDateTime cancelDate) {
+		this.cancelDate = cancelDate;
 	}
 
 	@Override
