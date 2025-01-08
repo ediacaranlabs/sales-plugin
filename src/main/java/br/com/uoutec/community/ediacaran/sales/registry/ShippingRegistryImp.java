@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
@@ -66,6 +67,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private SubjectProvider subjectProvider;
 	
 	@Override
+	@Transactional
 	public void registerShipping(Shipping entity) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRegisterPermission());
@@ -103,6 +105,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
+	@Transactional
 	public void removeShipping(Shipping entity) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRemovePermission());
@@ -387,10 +390,14 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		return i;
 	}
 
+	@Transactional
+	@Override
 	public void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException {
 		cancelShipping(shipping, null, justification);
 	}
 	
+	@Transactional
+	@Override
 	public void cancelShipping(Shipping shipping, SystemUserID userID, String justification) throws ShippingRegistryException {
 		
 		SystemUser systemUser;
@@ -408,6 +415,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		cancelShipping(shipping, systemUser, justification);
 	}
 	
+	@Transactional
+	@Override
 	public void cancelShipping(Shipping shipping, SystemUser systemUser, String justification) throws ShippingRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
@@ -500,6 +509,9 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
+		entity.setCancelDate(null);
+		entity.setCancelJustification(null);
+		
 		shippingNewRegistry.create(order, user, entity, null);
 	}
 
@@ -513,6 +525,11 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		
 		ShippingRegistryUtil.checkShipping(order, actualShippings, entity);
+		
+		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(entity.getId(), entityAccess);
+		
+		entity.setCancelDate(actualShipping.getCancelDate());
+		entity.setCancelJustification(actualShipping.getCancelJustification());
 		
 		entityAccess.update(entity);
 		entityAccess.flush();

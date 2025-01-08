@@ -123,6 +123,10 @@ public class ShippingRegistryUtil {
 		}
 		
 	}
+
+	public static Shipping getActualShipping(String id, ShippingEntityAccess entityAccess) throws EntityAccessException{
+		return entityAccess.findById(id);		
+	}
 	
 	public static List<Shipping> getActualShippings(Order order, Client client, ShippingEntityAccess entityAccess) throws EntityAccessException{
 		return entityAccess.findByOrder(order.getId(), client);		

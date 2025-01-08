@@ -17,6 +17,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -37,8 +38,12 @@ public class Shipping implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
+	@NotNull(groups = ShippingCancelValidation.class)
 	private LocalDateTime cancelDate;
-	
+
+	@NotNull(groups = ShippingCancelValidation.class)
+	@Pattern(regexp=CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	@Length(min = 5, max = 1024, groups = DataValidation.class)
 	private String cancelJustification;
 	
 	@NotNull(groups = DataValidation.class)

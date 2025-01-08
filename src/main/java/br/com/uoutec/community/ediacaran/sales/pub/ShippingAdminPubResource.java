@@ -33,6 +33,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.CancelationShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchPubEntity;
@@ -275,7 +276,6 @@ public class ShippingAdminPubResource {
 		
 		Shipping shipping;
 		try{
-			shippingPubEntity.setFormat(shippingPubEntity.getId() == null? ShippingPubEntity.SAVE : ShippingPubEntity.UPDATE);
 			shipping = shippingPubEntity.rebuild(shippingPubEntity.getId() != null, true, true);
 		}
 		catch(Throwable ex){
@@ -319,21 +319,14 @@ public class ShippingAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.CANCEL)
 	public Map<String,Object> cancel(
 			@DetachedName
-			ShippingPubEntity shippingPubEntity,
+			CancelationShippingPubEntity shippingPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
 		Shipping shipping;
 		try{
-			shippingPubEntity.setFormat(ShippingPubEntity.CANCEL);
 			shipping = shippingPubEntity.rebuild(true, true, true);
-			/*
-			shipping = shippingRegistry.findById(id);
-			if(shipping == null) {
-				throw new NullPointerException(id);
-			}
-			*/
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -346,7 +339,7 @@ public class ShippingAdminPubResource {
 		}
 
 		try{
-			shippingRegistry.removeShipping(shipping);
+			shippingRegistry.cancelShipping(shipping, shippingPubEntity.getCancelJustification());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
