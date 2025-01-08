@@ -14,6 +14,7 @@ import javax.validation.constraints.Pattern;
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
+import org.brandao.brutos.annotation.Transient;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
@@ -30,6 +31,14 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
+	public static final String FULL = "full";
+	
+	public static final String SAVE = "save";
+	
+	public static final String CANCEL = "cancel";
+	
+	public static final String UPDATE = "update";
+	
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
 	@Length(min = 10, max = 38, groups = IdValidation.class)
@@ -52,6 +61,10 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 	@NotNull(groups = DataValidation.class)
 	private AddressPubEntity dest;
 
+	private LocalDateTime cancelDate;
+	
+	private String cancelJustification;
+	
 	@Min(value=0, groups = DataValidation.class )
 	private Float weight;
 	
@@ -71,6 +84,9 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private Map<String, String> addData;
 
+	@Transient
+	private String format;
+	
 	@Constructor
 	public ShippingPubEntity() {
 	}
@@ -82,6 +98,8 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		this.dest = e.getDest() == null? null : new AddressPubEntity(e.getDest(), locale);
 		this.height = e.getHeight();
 		this.id = e.getId() == null? null : SecretUtil.toProtectedID(e.getId());
+		this.cancelDate = e.getCancelDate();
+		this.cancelJustification = e.getCancelJustification();
 		
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
@@ -129,23 +147,81 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 
 	@Override
 	protected void copyTo(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
+		
+		if(format == null) {
+			return;
+		}
+		
+		switch (format) {
+		case FULL:
+			copyToAll(o, reload, override, validate);
+			break;
+		case SAVE:
+			copyToSave(o, reload, override, validate);
+			break;
+		case UPDATE:
+			copyToUpdate(o, reload, override, validate);
+			break;
+		case CANCEL:
+			copyToCancel(o, reload, override, validate);
+			break;
+		default:
+			break;
+		}
+		
+	}
+
+	protected void copyToAll(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
 		o.setAddData(this.addData);
 		o.setDepth(this.depth == null? 0f : this.depth.floatValue());
 		o.setHeight(this.height == null? 0f : this.height.floatValue());
 		o.setWeight(this.weight == null? 0f : this.weight.floatValue());
 		o.setWidth(this.width == null? 0f : this.width.floatValue());
-		//o.setDate(this.date);
-		//o.setDest(this.dest == null? null : this.dest.rebuild(true, false, true));
-		//o.setOrigin(this.origin == null? null : this.origin.rebuild(true, false, true));
+		
+		o.setDate(this.date);
+		o.setDest(this.dest == null? null : this.dest.rebuild(true, false, true));
+		o.setOrigin(this.origin == null? null : this.origin.rebuild(true, false, true));
 		o.setId(this.id);
+		o.setOrder(this.order);
+		o.setCancelDate(this.cancelDate);
+		o.setCancelJustification(this.cancelJustification);
+		o.setShippingType(this.shippingType);
 		
-		if(o.getOrder() == null) {
-			o.setOrder(this.order);
+		if(this.products != null) {
+			
+			Map<String,Integer> units = new HashMap<>();
+			for(ProductRequestPubEntity e: this.products) {
+				ProductRequest p = e.rebuild(true, false, true);
+				units.put(p.getSerial(), e.getUnits());
+			}
+			
+			if(o.getProducts() != null) {
+				for(ProductRequest p: o.getProducts()) {
+					Integer u = units.get(p.getSerial());
+					p.setUnits(u == null? 0 : u.intValue());
+				}
+			}
+			
+		}
+		else {
+			if(o.getProducts() != null) {
+				for(ProductRequest p: o.getProducts()) {
+					p.setUnits(0);
+				}
+			}
 		}
 		
-		if(o.getShippingType() == null) {
-			o.setShippingType(this.shippingType);
-		}
+	}
+	
+	protected void copyToSave(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
+		o.setAddData(this.addData);
+		o.setDepth(this.depth == null? 0f : this.depth.floatValue());
+		o.setHeight(this.height == null? 0f : this.height.floatValue());
+		o.setWeight(this.weight == null? 0f : this.weight.floatValue());
+		o.setWidth(this.width == null? 0f : this.width.floatValue());
+		
+		o.setOrder(this.order);
+		o.setShippingType(this.shippingType);
 		
 		if(this.products != null) {
 			
@@ -173,6 +249,14 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		
 	}
 
+	protected void copyToUpdate(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
+		o.setAddData(this.addData);
+	}
+
+	protected void copyToCancel(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
+		o.setCancelJustification(this.cancelJustification);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -269,6 +353,30 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		this.addData = addData;
 	}
 
+	public LocalDateTime getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(LocalDateTime cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public String getCancelJustification() {
+		return cancelJustification;
+	}
+
+	public void setCancelJustification(String cancelJustification) {
+		this.cancelJustification = cancelJustification;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
 	@Override
 	protected String getCodeType() {
 		return shippingType;
@@ -292,6 +400,9 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		this.shippingType = e.getShippingType();
 		this.weight = e.getWeight();
 		this.width = e.getWidth();
+		this.cancelDate = e.getCancelDate();
+		this.cancelJustification = e.getCancelJustification();
+		this.format = e.getFormat();
 	}
 	
 }

@@ -275,6 +275,7 @@ public class ShippingAdminPubResource {
 		
 		Shipping shipping;
 		try{
+			shippingPubEntity.setFormat(shippingPubEntity.getId() == null? ShippingPubEntity.SAVE : ShippingPubEntity.UPDATE);
 			shipping = shippingPubEntity.rebuild(shippingPubEntity.getId() != null, true, true);
 		}
 		catch(Throwable ex){
@@ -317,18 +318,22 @@ public class ShippingAdminPubResource {
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.CANCEL)
 	public Map<String,Object> cancel(
-			@Basic(bean = "id")
-			String id,
+			@DetachedName
+			ShippingPubEntity shippingPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
 		Shipping shipping;
 		try{
+			shippingPubEntity.setFormat(ShippingPubEntity.CANCEL);
+			shipping = shippingPubEntity.rebuild(true, true, true);
+			/*
 			shipping = shippingRegistry.findById(id);
 			if(shipping == null) {
 				throw new NullPointerException(id);
 			}
+			*/
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
