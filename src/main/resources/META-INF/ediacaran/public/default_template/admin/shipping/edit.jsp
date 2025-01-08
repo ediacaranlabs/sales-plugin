@@ -109,6 +109,7 @@
 				<ed:row>
 					<ed:col>
 						<ec:select name="shippingType">
+								<ec:option value=""></ec:option>
 							<c:forEach items="${vars.shippingMethods}" var="shippingMethod">
 								<ec:option value="${shippingMethod.id}" selected="${shippingMethod.id == selectedShippingMethod.id}">${shippingMethod.name}</ec:option>
 							</c:forEach>
@@ -118,9 +119,8 @@
 							
 								var $shippingTypeField = $form.getField($source.getAttribute('name'));
 								var $shippingType = $shippingTypeField.getValue();
-								var $group = $source.getFormGroup();
 								
-								if($country){
+								if($shippingType){
 									$form.submit(
 										false, 
 										"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/shippingtype/select", 

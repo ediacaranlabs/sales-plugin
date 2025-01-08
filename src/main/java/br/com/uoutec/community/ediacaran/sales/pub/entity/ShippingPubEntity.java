@@ -288,7 +288,7 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 
 	@Override
 	protected Class<?> getGenericType() {
-		return Shipping.class;
+		return ShippingPubEntity.class;
 	}
 
 	@Override

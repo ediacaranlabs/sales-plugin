@@ -193,8 +193,8 @@ public class ShippingAdminPubResource {
 		ShippingMethod selectedShippingMethod = null;
 		try{
 			shipping = shippingRegistry.toShipping(order);
-			shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
-			selectedShippingMethod = shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
+			shippingMethods = shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
+			selectedShippingMethod = shipping.getShippingType() == null? null : shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
