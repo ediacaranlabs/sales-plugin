@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.brandao.brutos.ResultAction;
+import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
@@ -22,6 +24,7 @@ import org.brandao.brutos.annotation.Transient;
 import org.brandao.brutos.annotation.View;
 import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
+import org.brandao.brutos.annotation.web.RequestMethodTypes;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
@@ -120,8 +123,8 @@ public class ShippingAdminPubResource {
 		
 	}
 	
-	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/shipping/details")
+	@Action("/edit/{id}")
+	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.INVOICE.SHOW)
@@ -133,8 +136,13 @@ public class ShippingAdminPubResource {
 	) throws InvalidRequestException{
 		
 		Shipping shipping;
+		List<ShippingMethod> shippingMethods = null;
+		ShippingMethod selectedShippingMethod = null;
+		
 		try{
 			shipping = shippingPubEntity.rebuild(true, false, false);
+			shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
+			selectedShippingMethod = shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -148,6 +156,8 @@ public class ShippingAdminPubResource {
 
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("shipping", shipping);
+		map.put("shippingMethods", shippingMethods);
+		map.put("selectedShippingMethod", selectedShippingMethod);
 		return map;
 	}
 	
@@ -204,6 +214,52 @@ public class ShippingAdminPubResource {
 		return map;
 	}
 
+	@Action("/shippingtype/select")
+	@RequestMethod(RequestMethodTypes.POST)
+	public ResultAction selectShippingType(
+			@DetachedName
+			ShippingPubEntity shippingPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException{
+		
+		String view 					= null;
+		boolean resolvedView 			= false;
+		ShippingMethod shippingMethod	= null;
+		Shipping shipping				= null;
+		Throwable exception 			= null;
+		
+		try{
+			shipping = shippingPubEntity.rebuild(shippingPubEntity.getId() != null, true, false);
+			shippingMethod	= shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
+			view 			= shippingMethod.getView(shipping);
+			resolvedView 	= true;
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.select_shipping_type.error.fail_load_entity, 
+							locale);
+			exception    = new InvalidRequestException(error, ex);
+		}
+		
+		ResultAction ra = new ResultActionImp();
+		
+		if(view != null){
+			ra.setView(view, resolvedView);
+		}
+		else{
+			ra.setContentType(String.class);
+			ra.setContent("");
+		}
+		
+		ra.add("exception",			exception);
+		ra.add("shipping",			shipping);
+		ra.add("shippingMethod",	shippingMethod);
+		
+		return ra;
+	}
+	
 	@Action("/save")
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
 	@Result("vars")

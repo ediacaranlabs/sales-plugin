@@ -60,6 +60,16 @@ public class ShippingAdminPubResourceMessages {
 		
 	}
 
+	public final class select_shipping_type{
+		
+		public final class error{
+			
+			public static final String fail_load_entity = "select_shipping_type.error.fail_load_entity";
+			
+		}
+		
+	}
+	
 	public final class save{
 		
 		public final class error{

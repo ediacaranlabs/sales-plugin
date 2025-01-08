@@ -3,7 +3,10 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +19,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.brandao.brutos.bean.BeanInstance;
+import org.brandao.brutos.bean.BeanProperty;
+
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
@@ -28,6 +36,19 @@ public class ShippingEntity implements PublicType, Serializable{
 
 	private static transient final long serialVersionUID = -5167928569154696530L;
 
+	private static transient final Set<String> excludeFields;
+	
+	static{
+		excludeFields = new HashSet<String>();
+		BeanInstance i = new BeanInstance(null, Shipping.class);
+		
+		List<BeanProperty> list = i.getProperties();
+		
+		for(BeanProperty p: list){
+			excludeFields.add(p.getName());
+		}
+	}
+	
 	@Id
 	@Column(name="cod_shipping", length=32)
 	private String id;
@@ -89,7 +110,7 @@ public class ShippingEntity implements PublicType, Serializable{
 		this.id = e.getId();
 		this.origin = e.getOrigin() == null? null : new AddressEntity(e.getOrigin(), null);
 		this.shippingType = e.getShippingType();
-		this.addData = DataUtil.encode(e.getAddData());
+		//this.addData = DataUtil.encode(e.getAddData());
 		this.date = e.getDate();
 		this.cancelDate = e.getCancelDate();
 		this.cancelJustification = e.getCancelJustification();
@@ -106,6 +127,18 @@ public class ShippingEntity implements PublicType, Serializable{
 				this.products.add(new ProductRequestEntity(this, p));
 			}
 		}
+		
+		Map<String,String> data = DataUtil.encode(e, excludeFields);
+
+		//if(actualData == null){
+		//	actualData = data;
+		//}
+		//else{
+		//	actualData.putAll(data);
+		//}
+		
+		this.addData = DataUtil.encode(data);
+		
 	}
 
 	public String getId() {
@@ -217,10 +250,28 @@ public class ShippingEntity implements PublicType, Serializable{
 		try{
 			
 			if(e == null) {
-				e =  new Shipping();
+				if(this.shippingType == null) {
+					e =  new Shipping();
+				}
+				else{
+					EntityInheritanceManager entityInheritanceUtil = 
+							EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+						
+					e = entityInheritanceUtil.getInstance(Shipping.class, this.shippingType);
+					
+					if(e == null){
+						e = new Shipping();
+					}
+				}
+				
 			}
 			
-			e.setAddData(this.addData == null? null : DataUtil.decode(this.addData));
+			if(this.addData != null){
+				Map<String,String> data = DataUtil.decode(this.addData);
+				DataUtil.decode(data, e);
+				e.setAddData(data);
+			}
+			
 			e.setDest(this.dest == null? null : this.dest.toEntity());
 			e.setId(this.id);
 			e.setOrigin(this.origin == null? null : origin.toEntity());

@@ -16,6 +16,7 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -24,9 +25,8 @@ import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
-import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
+public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
@@ -279,6 +279,31 @@ public class ShippingPubEntity extends AbstractPubEntity<Shipping> {
 
 	public void setAddData(Map<String, String> addData) {
 		this.addData = addData;
+	}
+
+	@Override
+	protected String getCodeType() {
+		return shippingType;
+	}
+
+	@Override
+	protected Class<?> getGenericType() {
+		return Shipping.class;
+	}
+
+	@Override
+	protected void loadProperties(GenericPubEntity<Shipping> entity) {
+		ShippingPubEntity e = (ShippingPubEntity)entity;
+		this.date = e.getDate();
+		this.depth = e.getDepth();
+		this.dest = e.getDest();
+		this.height = e.getHeight();
+		this.id = e.getId();
+		this.order = e.getOrder();
+		this.products = e.getProducts();
+		this.shippingType = e.getShippingType();
+		this.weight = e.getWeight();
+		this.width = e.getWidth();
 	}
 	
 }

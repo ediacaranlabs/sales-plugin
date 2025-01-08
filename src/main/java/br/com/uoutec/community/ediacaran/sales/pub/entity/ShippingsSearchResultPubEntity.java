@@ -36,7 +36,7 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingsR
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
 			for(ShippingResultSearch p: e.getItens()) {
-				ShippingPubEntity x = new ShippingResultPubEntity(p.getShipping(), locale);
+				ShippingPubEntity x = new ShippingResultPubEntity(p.getShipping(), locale).getType();
 				itens.add(x);
 			}
 		}
