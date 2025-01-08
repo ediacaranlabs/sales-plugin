@@ -97,24 +97,6 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		this.weight = e.getWeight();
 		this.width = e.getWidth();
 	}
-
-	@Override
-	protected void preRebuild(Shipping instance, boolean reload, boolean override, boolean validate) {
-		try {
-			this.id = this.id == null? null : SecretUtil.toID(this.id);
-		}
-		catch(Throwable ex){
-			this.id = null;
-		}
-		
-		try {
-			this.order = this.order == null? null : SecretUtil.toID(this.order);
-		}
-		catch(Throwable ex){
-			this.order = null;
-		}
-		
-	}
 	
 	@Override
 	protected boolean isEqualId(Shipping instance) throws Throwable {
@@ -148,16 +130,22 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 	@Override
 	protected void copyTo(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
 		o.setAddData(this.addData);
-		o.setDepth(this.depth);
-		o.setHeight(this.height);
-		o.setWeight(this.weight);
-		o.setWidth(this.width);
-		o.setDate(this.date);
-		o.setDest(this.dest == null? null : this.dest.rebuild(true, false, true));
-		o.setOrigin(this.origin == null? null : this.origin.rebuild(true, false, true));
+		o.setDepth(this.depth == null? 0f : this.depth.floatValue());
+		o.setHeight(this.height == null? 0f : this.height.floatValue());
+		o.setWeight(this.weight == null? 0f : this.weight.floatValue());
+		o.setWidth(this.width == null? 0f : this.width.floatValue());
+		//o.setDate(this.date);
+		//o.setDest(this.dest == null? null : this.dest.rebuild(true, false, true));
+		//o.setOrigin(this.origin == null? null : this.origin.rebuild(true, false, true));
 		o.setId(this.id);
-		o.setOrder(this.order);
-		o.setShippingType(this.shippingType);
+		
+		if(o.getOrder() == null) {
+			o.setOrder(this.order);
+		}
+		
+		if(o.getShippingType() == null) {
+			o.setShippingType(this.shippingType);
+		}
 		
 		if(this.products != null) {
 			
