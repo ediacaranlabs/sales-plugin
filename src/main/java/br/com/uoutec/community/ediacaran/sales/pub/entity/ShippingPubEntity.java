@@ -308,6 +308,7 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 	@Override
 	protected void loadProperties(GenericPubEntity<Shipping> entity) {
 		ShippingPubEntity e = (ShippingPubEntity)entity;
+		this.setData(e.getData());
 		this.date = e.getDate();
 		this.depth = e.getDepth();
 		this.dest = e.getDest();

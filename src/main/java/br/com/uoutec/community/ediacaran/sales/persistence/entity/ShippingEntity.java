@@ -278,6 +278,7 @@ public class ShippingEntity implements PublicType, Serializable{
 			e.setShippingType(this.shippingType);
 			e.setCancelDate(this.cancelDate);
 			e.setCancelJustification(this.cancelJustification);
+			e.setDate(this.date);
 			
 			if(this.order != null) {
 				e.setOrder(this.order.getId());

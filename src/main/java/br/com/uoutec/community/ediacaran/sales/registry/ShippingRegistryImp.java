@@ -510,6 +510,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
+		entity.setDate(LocalDateTime.now());
 		entity.setCancelDate(null);
 		entity.setCancelJustification(null);
 		
@@ -529,6 +530,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(entity.getId(), entityAccess);
 		
+		entity.setDate(actualShipping.getDate());
 		entity.setCancelDate(actualShipping.getCancelDate());
 		entity.setCancelJustification(actualShipping.getCancelJustification());
 		

@@ -86,13 +86,13 @@
 		</ed:row>
 
 		<ed:row>
-			<ed:col size="4">
+			<ed:col size="2">
 				<p>
 					<fmt:message key="payment_due" bundle="${messages}"/>
 					${vars.order.toStringDate(locale)}
 				</p>
 			</ed:col>
-			<ed:col size="8">
+			<ed:col size="10">
 				<ec:tabs>
 					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
 						<ec:description-list>
@@ -157,8 +157,9 @@
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_shipping.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_shipping.date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_shipping.cancel_date" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_shipping.type" bundle="${messages}"/></small></center></ec:table-col>
-								<ec:table-col><center><small><fmt:message key="table_shipping.dest" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><small><fmt:message key="table_shipping.dest" bundle="${messages}"/></small></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_shipping.actions" bundle="${messages}"/></small></center></ec:table-col>
 							</ec:table-header>
 							<ec:table-body>
@@ -166,6 +167,7 @@
 								<ec:table-row style="${shipping.cancelDate != null? 'danger' : ''}">
 									<ec:table-col><center><small>${shipping.id}</small></center></ec:table-col>
 									<ec:table-col><center><small>${shipping.toStringDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${shipping.toStringCancelDate(locale)}</small></center></ec:table-col>
 									<ec:table-col><center><small>${shipping.shippingType}</small></center></ec:table-col>
 									<ec:table-col>
 										<small>

@@ -141,7 +141,7 @@ public class ShippingAdminPubResource {
 		ShippingMethod selectedShippingMethod = null;
 		try{
 			shipping = shippingPubEntity.rebuild(true, false, false);
-			shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
+			shippingMethods = shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
 			selectedShippingMethod = shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
 		}
 		catch(Throwable ex){
