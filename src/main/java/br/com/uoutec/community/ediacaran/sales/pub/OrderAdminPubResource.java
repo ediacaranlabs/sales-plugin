@@ -36,12 +36,14 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
@@ -72,6 +74,10 @@ public class OrderAdminPubResource {
 	@Inject
 	private InvoiceRegistry invoiceRegistry;
 	
+	@Transient
+	@Inject
+	private ShippingRegistry shippingRegistry;
+
 	@Transient
 	@Inject
 	private PaymentGatewayRegistry paymentGatewayRegistry;
@@ -210,10 +216,12 @@ public class OrderAdminPubResource {
 		Order order;
 		List<Invoice> invoices;
 		SystemUser user;
+		List<Shipping> shippings;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
 			user = systemUserRegistry.findById(order.getOwner());
+			shippings = shippingRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -252,6 +260,7 @@ public class OrderAdminPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order",          order);
 		map.put("invoices",       invoices);
+		map.put("shippings",      shippings);
 		map.put("paymentGateway", paymentGateway);
 		map.put("payment_view",   view);
 		return map;

@@ -351,6 +351,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		i.setDate(LocalDateTime.now());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
+		i.getDest().setId(0);
 		i.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
 		
 		i.setOrder(order.getId());

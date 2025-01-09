@@ -28,6 +28,9 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 
 	@NotNull(groups = IdValidation.class)
 	private String orderId;
+
+	@NotNull(groups = DataValidation.class)
+	private String serial;
 	
 	@NotNull(groups = DataValidation.class)
 	private ProductPubEntity product;
@@ -57,6 +60,7 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 		this.id = e.getId();
 		this.product = e.getProduct() == null? null : new ProductPubEntity(e.getProduct());
 		this.units = e.getUnits();
+		this.serial = e.getSerial();
 		
 		this.taxes = new ArrayList<>();
 		
@@ -115,6 +119,22 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 		this.addData = addData;
 	}
 
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getSerial() {
+		return serial;
+	}
+
+	public void setSerial(String serial) {
+		this.serial = serial;
+	}
+
 	@Override
 	protected boolean isEqualId(ProductRequest instance) throws Throwable {
 		return instance.getId() == null? 
@@ -152,6 +172,7 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 		o.setId(this.id);
 		o.setProduct(this.product == null? null : this.product.rebuild(true, false, true));
 		o.setUnits(this.units == null? 0 : this.units);
+		o.setSerial(this.serial);
 	}
 	
 }

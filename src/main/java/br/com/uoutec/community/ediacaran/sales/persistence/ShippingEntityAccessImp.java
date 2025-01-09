@@ -54,6 +54,16 @@ public class ShippingEntityAccessImp
 				throw new EntityAccessException("id");
 			}
 			
+			if(pEntity.getOrigin() != null) {
+				entityManager.persist(pEntity.getOrigin());
+			}
+
+			if(pEntity.getDest() != null) {
+				entityManager.persist(pEntity.getDest());
+			}
+			
+			entityManager.flush();
+			
 			pEntity.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
 			
 			entityManager.persist(pEntity);
@@ -90,6 +100,27 @@ public class ShippingEntityAccessImp
 	public void update(Shipping value) throws EntityAccessException {
 		try{
 			ShippingEntity pEntity = this.toPersistenceEntity(value);
+			
+			if(pEntity.getOrigin() != null) {
+				if(pEntity.getOrigin().getId() == null){
+					entityManager.persist(pEntity.getOrigin());
+				}
+				else{
+					pEntity.setOrigin(entityManager.merge(pEntity.getOrigin()));
+				}
+			}
+
+			if(pEntity.getDest() != null) {
+				if(pEntity.getDest().getId() == null){
+					entityManager.persist(pEntity.getDest());
+				}
+				else{
+					pEntity.setDest(entityManager.merge(pEntity.getDest()));
+				}
+			}
+			
+			entityManager.flush();
+			
 			pEntity = (ShippingEntity)entityManager.merge(pEntity);
 
 			List<ProductRequestEntity> list = pEntity.getProducts();

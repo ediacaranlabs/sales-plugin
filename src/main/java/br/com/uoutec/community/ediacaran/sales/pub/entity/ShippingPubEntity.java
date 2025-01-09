@@ -159,8 +159,10 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 			
 			Map<String,Integer> units = new HashMap<>();
 			for(ProductRequestPubEntity e: this.products) {
-				ProductRequest p = e.rebuild(true, false, true);
-				units.put(p.getSerial(), e.getUnits());
+				ProductRequest p = e.rebuild(false, true, false);
+				if(p.getSerial() != null) {
+					units.put(p.getSerial(), e.getUnits());
+				}
 			}
 			
 			if(o.getProducts() != null) {

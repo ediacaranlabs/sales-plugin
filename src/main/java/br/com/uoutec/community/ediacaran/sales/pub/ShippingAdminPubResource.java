@@ -139,7 +139,6 @@ public class ShippingAdminPubResource {
 		Shipping shipping;
 		List<ShippingMethod> shippingMethods = null;
 		ShippingMethod selectedShippingMethod = null;
-		
 		try{
 			shipping = shippingPubEntity.rebuild(true, false, false);
 			shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
@@ -208,7 +207,7 @@ public class ShippingAdminPubResource {
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("order", order);
+		//map.put("order", order);
 		map.put("shipping", shipping);
 		map.put("shippingMethods", shippingMethods);
 		map.put("selectedShippingMethod", selectedShippingMethod);

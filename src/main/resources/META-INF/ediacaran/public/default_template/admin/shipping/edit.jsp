@@ -70,73 +70,85 @@
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.shipping.products}" var="product">
-							<span formgroup="products" formgrouptype="index">
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col classStyle="qty form-group has-feedback" >
-									<input type="hidden" name="id" value="${product.id}">
-									<ec:textfield maxlength="2" name="units" value="${product.units}" enabled="${empty vars.shipping.id}">
-										<ec:field-validator>
-											<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
-											<ec:field-validator-rule name="between" message="Must be between 0 to ${product.units}">
-													<ec:field-validator-param name="min">0</ec:field-validator-param>
-													<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
-											</ec:field-validator-rule>
-										</ec:field-validator>
-									</ec:textfield>
+									<span formgroup="products" formgrouptype="index">
+										<input type="hidden" name="serial" value="${product.serial}">
+										<ec:textfield maxlength="2" name="units" value="${product.units}" enabled="${empty vars.shipping.id}">
+											<ec:field-validator>
+												<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+												<ec:field-validator-rule name="between" message="Must be between 1 to ${product.units}">
+														<ec:field-validator-param name="min">1</ec:field-validator-param>
+														<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
+												</ec:field-validator-rule>
+											</ec:field-validator>
+										</ec:textfield>
+									</span>
 								</ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<ec:table-col><center>${product.product.description}</center></ec:table-col>
 							</ec:table-row>
-							</span>
 						</c:forEach>
 					</ec:table-body>
 				</ec:table>
 			</ed:col>
 		</ed:row>
 		<ed:row>
-			<ed:col size="5" classStyle="form-group has-feedback">
-				<ec:textarea label="Justification" name="justification" rows="5" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}">${vars.shipping.cancelJustification}</ec:textarea>
-				<ec:field-validator form="cancelForm" field="justification">
-					<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
-					<ec:field-validator-rule name="stringLength" message="0 to 255">
-							<ec:field-validator-param name="min">0</ec:field-validator-param>
-							<ec:field-validator-param name="max">255</ec:field-validator-param>
-					</ec:field-validator-rule>
-				</ec:field-validator>
+			<ed:col size="5">
 			</ed:col>
 			<ed:col size="7">
-				<ed:row>
-					<ed:col>
-						<ec:select name="shippingType">
-								<ec:option value=""></ec:option>
-							<c:forEach items="${vars.shippingMethods}" var="shippingMethod">
-								<ec:option value="${shippingMethod.id}" selected="${shippingMethod.id == selectedShippingMethod.id}">${shippingMethod.name}</ec:option>
-							</c:forEach>
-							<ec:event type="change">
-								var $source = $event.source;
-								var $form = $source.getForm();
-							
-								var $shippingTypeField = $form.getField($source.getAttribute('name'));
-								var $shippingType = $shippingTypeField.getValue();
-								
-								if($shippingType){
-									$form.submit(
-										false, 
-										"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/shippingtype/select", 
-										"shippingTypeArea"
-									);
-								}
-							
-							</ec:event>
-						</ec:select>
-						<span id="shippingTypeArea">
-							<c:if test="${!empty selectedShippingMethod.getView(vars.shipping)}">
-								<ec:include uri="${selectedShippingMethod.getView(vars.shipping)}" />
-							</c:if>
-						</span>
-					</ed:col>
-				</ed:row>
+				<ec:tabs>
+					<ec:tabs-item active="true" title="Details">
+						<ed:row>
+							<ed:col classStyle="form-group has-feedback">
+								<ec:select label="Shipping method" name="shippingType" enabled="${empty vars.shipping.id}">
+									<ec:field-validator>
+										<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+									</ec:field-validator>
+									<ec:option value=""></ec:option>
+									<c:forEach items="${vars.shippingMethods}" var="shippingMethod">
+										<ec:option value="${shippingMethod.id}" selected="${shippingMethod.id == selectedShippingMethod.id}">${shippingMethod.name}</ec:option>
+									</c:forEach>
+									<ec:event type="change">
+										var $source = $event.source;
+										var $form = $source.getForm();
+									
+										var $shippingTypeField = $form.getField($source.getAttribute('name'));
+										var $shippingType = $shippingTypeField.getValue();
+										
+										if($shippingType){
+											$form.submit(
+												false, 
+												"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/shippingtype/select", 
+												"shippingTypeArea"
+											);
+										}
+									</ec:event>
+								</ec:select>
+							</ed:col>
+						</ed:row>
+						<ed:row>
+							<ed:col id="shippingTypeArea">
+								<c:if test="${!empty selectedShippingMethod.getView(vars.shipping)}">
+									<ec:include uri="${selectedShippingMethod.getView(vars.shipping)}" />
+								</c:if>
+							</ed:col>
+						</ed:row>
+					</ec:tabs-item>
+					<ec:tabs-item title="Cancelation">
+						<ec:textarea id="justification_field" label="Justification" name="justification" rows="5" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}">${vars.shipping.cancelJustification}</ec:textarea>
+						<c:if test="${!empty vars.shipping.id && empty vars.shipping.cancelDate}">
+							<ec:field-validator field="justification_field">
+								<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+								<ec:field-validator-rule name="stringLength" message="0 to 255">
+										<ec:field-validator-param name="min">0</ec:field-validator-param>
+										<ec:field-validator-param name="max">255</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</c:if>
+					</ec:tabs-item>
+				</ec:tabs>
 			</ed:col>
 		</ed:row>
 		<ed:row>
@@ -150,8 +162,8 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="Save" align="right" bundle="${messages}" enabled="${empty vars.shipping.id}"/>
-		<ec:button actionType="submit" label="Cancel" align="right" bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}"/>
+		<ec:button actionType="submit" label="Save" align="right" bundle="${messages}" enabled="${empty vars.shipping.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/save" />
+		<ec:button actionType="submit" label="Cancel" align="right" bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/cancel"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>
