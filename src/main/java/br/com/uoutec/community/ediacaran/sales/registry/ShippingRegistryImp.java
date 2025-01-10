@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +14,6 @@ import javax.transaction.Transactional;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -109,6 +107,12 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	public void removeShipping(Shipping entity) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRemovePermission());
+		
+		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(entity, entityAccess);
+		
+		if(actualShipping == null) {
+			return;
+		}
 		
 		try {
 			entityAccess.delete(entity);
@@ -242,15 +246,15 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			return unsafeCreateShipping(order, client, itens, message);
 		}
 		catch(ShippingRegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
+			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar os dados de envio", e);
 			throw e;
 		}
 		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
+			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar os dados de envio", e);
 			throw new ShippingRegistryException(e);
 		}
 		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
+			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar os dados de envio", e);
 			throw new ShippingRegistryException(e);
 		}
 		
@@ -260,11 +264,10 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	public Shipping toShipping(Order order
 			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException {
 		
-		Order actualOrder = null;
+		Order actualOrder;
 		
 		try {
-			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-			actualOrder = orderRegistry.findById(order.getId());
+			actualOrder = ShippingRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
@@ -273,14 +276,14 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		if(actualOrder == null) {
 			throw new OrderNotFoundRegistryException(order.getId());
 		}
-
+		
 		List<Shipping> actualShippings;
 		Client user;
 		
 		try {
 			user = new Client();
 			user.setId(actualOrder.getOwner());
-			actualShippings = entityAccess.findByOrder(actualOrder.getId(), user);
+			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, user, entityAccess);
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
@@ -320,7 +323,9 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		}
 		
 		try {
-			return entityAccess.findByOrder(id, client);
+			Order order = new Order();
+			order.setId(id);
+			return ShippingRegistryUtil.getActualShippings(order, client, entityAccess);
 		}
 		catch(Throwable ex) {
 			throw new ShippingRegistryException(ex);
@@ -342,53 +347,16 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	private Shipping createShipping(Order order, List<Shipping> shippings) throws InvalidUnitsOrderRegistryException, CountryRegistryException {
-
 		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens());
 		ShippingRegistryUtil.loadShippingsToCalculateUnits(shippings, null, transientItens);
-
-		Shipping i = new Shipping();
-		i.setAddData(new HashMap<>());
-		i.setDate(LocalDateTime.now());
-		i.setOrigin(ShippingRegistryUtil.getOrigin());
-		i.setDest(new Address(order.getShippingAddress()));
-		i.getDest().setId(0);
-		i.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
-		
-		i.setOrder(order.getId());
-		i.setShippingType(null);
-
-		return i;
+		return ShippingRegistryUtil.toShipping(order, transientItens.values());
 	}
 	
 	private Shipping createShipping(Order order, Map<String, Integer> itens
 			) throws ItemNotFoundOrderRegistryException, CountryRegistryException {
-
 		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens());
-		
-		List<ProductRequest> productItens = new ArrayList<>();
-		
-		for(Entry<String,Integer> e: itens.entrySet()) {
-			ProductRequest tpr = transientItens.get(e.getKey());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(e.getKey());
-			}
-			
-			tpr.setUnits(e.getValue().intValue());
-			productItens.add(tpr);
-			transientItens.remove(e.getKey());
-		}
-		
-		Shipping i = new Shipping();
-		i.setAddData(new HashMap<>());
-		i.setDate(LocalDateTime.now());
-		i.setOrigin(ShippingRegistryUtil.getOrigin());
-		i.setDest(new Address(order.getShippingAddress()));
-		i.setProducts(new ArrayList<ProductRequest>(transientItens.values()));
-		i.setOrder(order.getId());
-		i.setShippingType(null);
-		
-		return i;
+		List<ProductRequest> invoiceItens          = ShippingRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
+		return ShippingRegistryUtil.toShipping(order, invoiceItens);
 	}
 
 	@Transactional
@@ -441,57 +409,26 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
-	private void unsafeCancelShippings(List<Shipping> list, String justification, SystemUser user
+	private void unsafeCancelShippings(List<Shipping> shippings, String justification, SystemUser user
 			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException {
 
-		Map<String,List<Shipping>> map = new HashMap<>();
-		
-		for(Shipping i: list) {
-			
-			if(i.getCancelDate() != null) {
-				continue;
-			}
-			
-			List<Shipping> l = map.get(i.getOrder());
-			
-			if(l == null) {
-				l = new ArrayList<>();
-				map.put(i.getOrder(), l);
-			}
-			
-			l.add(i);
-		}
+		Map<String,List<Shipping>> map = ShippingRegistryUtil.groupByOrder(shippings);
 		
 		if(map.isEmpty()) {
 			return;
 		}
 		
-		LocalDateTime cancelDate = LocalDateTime.now();
+		LocalDateTime cancelDate          = LocalDateTime.now();
+		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
-		for(List<Shipping> is: map.values()) {
-			for(Shipping i: is) {
-				i.setCancelDate(cancelDate);
-				i.setCancelJustification(justification);
-				entityAccess.update(i);
-			}
-		}
-
-		entityAccess.flush();
-
-		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-		
-		for(String orderID: map.keySet()) {
-			Order order = orderRegistry.findById(orderID);
-			List<Shipping> actualInvoices = entityAccess.findByOrder(orderID, null);
-			ShippingRegistryUtil.markAsComplete(order, actualInvoices, orderRegistry);
-		}
-		
-		for(String orderID: map.keySet()) {
-			Order order = orderRegistry.findById(orderID);
-			List<Shipping> actualInvoices = entityAccess.findByOrder(orderID, null);
-			for(Shipping i: actualInvoices) {
-				orderRegistry.registryLog(order.getId(), "#" + i.getId() + ": " +  justification);
-			}
+		for(Entry<String,List<Shipping>> entry: map.entrySet()) {
+			
+			Order order = new Order();
+			order.setId(entry.getKey());
+			
+			ShippingRegistryUtil.cancelInvoices(shippings, order, justification, 
+					cancelDate, orderRegistry, shippingRegistry, entityAccess);
 			
 		}
 		

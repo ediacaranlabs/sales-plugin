@@ -1,10 +1,12 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
@@ -149,7 +151,7 @@ public class ShippingRegistryUtil {
 	}
 
 	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, ShippingRegistryException{
+			) throws InvalidUnitsOrderRegistryException, ShippingRegistryException{
 		
 		if(isCompletedShipping(order, shippings)) {
 			order.setCompleteShipping(LocalDateTime.now());
@@ -205,6 +207,98 @@ public class ShippingRegistryUtil {
 	
 	public static boolean isCanceledShipping(Invoice invoice) {
 		return invoice.getCancelDate() != null;
+	}
+
+	public static Order getActualOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		return orderRegistry.findById(order.getId());		
+	}
+	
+	public static Map<String,List<Shipping>> groupByOrder(List<Shipping> list){
+		Map<String,List<Shipping>> map = new HashMap<>();
+		
+		for(Shipping i: list) {
+			
+			if(i.getCancelDate() != null) {
+				continue;
+			}
+			
+			List<Shipping> l = map.get(i.getOrder());
+			
+			if(l == null) {
+				l = new ArrayList<>();
+				map.put(i.getOrder(), l);
+			}
+			
+			l.add(i);
+		}
+		return map;
+	}
+
+	public static void cancelInvoices(List<Shipping> shippings, Order order, 
+			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
+			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess) throws OrderRegistryException, EntityAccessException, ShippingRegistryException {
+
+		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+			
+		for(Shipping i: shippings) {
+			
+			i.setCancelDate(cancelDate);
+			i.setCancelJustification(justification);
+			entityAccess.update(i);
+			
+			orderRegistry.registryLog(actualOrder.getId(), "canceled shipping #" + i.getId() + ": " +  justification);
+			
+		}
+
+		entityAccess.flush();
+			
+		List<Shipping> actualShippings = getActualShippings(actualOrder, null, entityAccess);
+		markAsComplete(actualOrder, actualShippings, orderRegistry);
+		
+	}	
+	
+	public static List<ProductRequest> setUnitsAndGetCollection(Map<String, ProductRequest> productRequestMap, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
+		
+		Map<String, ProductRequest> transientItens = new HashMap<>(productRequestMap);
+		List<ProductRequest> invoiceItens = new ArrayList<>();
+		
+		for(Entry<String,Integer> e: itens.entrySet()) {
+			ProductRequest tpr = transientItens.get(e.getKey());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(e.getKey());
+			}
+			
+			tpr.setUnits(e.getValue().intValue());
+			invoiceItens.add(tpr);
+			transientItens.remove(e.getKey());
+		}
+		
+		return invoiceItens;
+	}
+	
+	public static Shipping getActualShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException{
+		try {
+			return entityAccess.findById(shipping.getId());
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+	}
+	
+	public static Shipping toShipping(Order order, Collection<ProductRequest> itens) throws CountryRegistryException {
+		Shipping i = new Shipping();
+		i.setAddData(new HashMap<>());
+		i.setDate(LocalDateTime.now());
+		i.setOrigin(ShippingRegistryUtil.getOrigin());
+		i.setDest(new Address(order.getShippingAddress()));
+		i.getDest().setId(0);
+		i.setProducts(new ArrayList<ProductRequest>(itens));
+		
+		i.setOrder(order.getId());
+		i.setShippingType(null);
+
+		return i;
 	}
 	
 }

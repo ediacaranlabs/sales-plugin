@@ -392,5 +392,6 @@ public class InvoiceRegistryUtil {
 		List<Invoice> actualInvoices = entityAccess.findByOrder(actualOrder.getId(), null);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, actualInvoices, orderRegistry);
 		
-	}	
+	}
+	
 }

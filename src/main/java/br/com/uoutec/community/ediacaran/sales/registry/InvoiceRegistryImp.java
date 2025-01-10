@@ -73,7 +73,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		try{
 			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-			Order order = orderRegistry.findById(entity.getOrder());
+			
+			Order order = new Order();
+			order.setId(entity.getId());
+			order = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 			
 			if(order == null) {
 				throw new InvoiceRegistryException("order not found #" + entity.getOrder());
