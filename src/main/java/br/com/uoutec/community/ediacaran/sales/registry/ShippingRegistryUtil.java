@@ -150,6 +150,15 @@ public class ShippingRegistryUtil {
 		return actuaClient;
 	}
 
+	public static void markAsComplete(Order order, Shipping shipping, List<Shipping> shippings, 
+			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, ShippingRegistryException{
+		
+		List<Shipping> allShippings = new ArrayList<>(shippings);
+		allShippings.add(shipping);
+		
+		markAsComplete(order, allShippings, orderRegistry); 
+	}
+	
 	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry
 			) throws InvalidUnitsOrderRegistryException, ShippingRegistryException{
 		
@@ -299,6 +308,44 @@ public class ShippingRegistryUtil {
 		i.setShippingType(null);
 
 		return i;
+	}
+
+	public static void registerEvent(Shipping invoice, Order order, String message, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.registryLog(order.getId(), message != null? message : "registrado o envio #" + invoice.getId() );
+	}
+	
+	public static void save(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
+		try {
+			entityAccess.save(shipping);
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new ShippingRegistryException(
+				"shipping error: " + order.getId(), e);
+		}
+	}
+
+	public static void update(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
+		try {
+			entityAccess.update(shipping);
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new ShippingRegistryException(
+				"shipping error: " + order.getId(), e);
+		}
+	}
+	
+	public static void preventChangeShippingSensitiveData(Shipping shipping, Shipping actualShipping) {
+		shipping.setDate(actualShipping.getDate());
+		shipping.setCancelDate(actualShipping.getCancelDate());
+		shipping.setCancelJustification(actualShipping.getCancelJustification());
+	}
+
+	public static void preventChangeShippingSaveSensitiveData(Shipping shipping) {
+		shipping.setDate(LocalDateTime.now());
+		shipping.setCancelDate(null);
+		shipping.setCancelJustification(null);
 	}
 	
 }

@@ -493,6 +493,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.checkPayment(actualOrder);
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
 		InvoiceRegistryUtil.registerProducts(entity, actualUser, actualOrder, productTypeRegistry);
+		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
 		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		InvoiceRegistryUtil.registerEvent(entity, actualOrder, null, orderRegistry);

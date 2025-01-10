@@ -393,5 +393,11 @@ public class InvoiceRegistryUtil {
 		InvoiceRegistryUtil.markAsComplete(actualOrder, actualInvoices, orderRegistry);
 		
 	}
+
+	public static void preventChangeInvoiceSaveSensitiveData(Invoice invoice) {
+		invoice.setDate(LocalDateTime.now());
+		invoice.setCancelDate(null);
+		invoice.setCancelJustification(null);
+	}
 	
 }

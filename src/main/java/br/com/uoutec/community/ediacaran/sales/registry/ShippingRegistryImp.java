@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -434,27 +433,25 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
-	private void registryNewShipping(Shipping entity, Order order
+	private void registryNewShipping(Shipping shipping, Order order
 			) throws CompletedInvoiceRegistryException, OrderRegistryException, ShippingRegistryException, EntityAccessException {
 		
-		ShippingNewRegistry shippingNewRegistry = 
-				new ShippingNewRegistry(
-						clientRegistry, 
-						EntityContextPlugin.getEntity(OrderRegistry.class), 
-						entityAccess
-				);
+		Client client = new Client();
+		client.setId(order.getOwner());
+
+		OrderRegistry orderRegistry   = EntityContextPlugin.getEntity(OrderRegistry.class);
+		Order actualOrder             = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
+		Client actualclient           = ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);		
+		List<Shipping> actualShipping = ShippingRegistryUtil.getActualShippings(actualOrder, actualclient, entityAccess);
 		
-		Client user = new Client();
-		user.setId(order.getOwner());
-		
-		entity.setDate(LocalDateTime.now());
-		entity.setCancelDate(null);
-		entity.setCancelJustification(null);
-		
-		shippingNewRegistry.create(order, user, entity, null);
+		ShippingRegistryUtil.checkShipping(actualOrder, actualShipping, shipping);
+		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
+		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
+		ShippingRegistryUtil.markAsComplete(order, shipping, actualShipping, orderRegistry);
+		ShippingRegistryUtil.registerEvent(shipping, actualOrder, null, orderRegistry);
 	}
 
-	private void updateShipping(Shipping entity, Order order
+	private void updateShipping(Shipping shipping, Order order
 			) throws CompletedInvoiceRegistryException, ShippingRegistryException, EntityAccessException, OrderRegistryException {
 		
 		Client user = new Client();
@@ -462,21 +459,12 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		Client actualClient            = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
 		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
-		Shipping actualShipping        = ShippingRegistryUtil.getActualShipping(entity.getId(), entityAccess);
+		Shipping actualShipping        = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
-		ShippingRegistryUtil.checkShipping(order, actualShippings, entity);
-		
-		
-		entity.setDate(actualShipping.getDate());
-		entity.setCancelDate(actualShipping.getCancelDate());
-		entity.setCancelJustification(actualShipping.getCancelJustification());
-		
-		entityAccess.update(entity);
-		entityAccess.flush();
-		
-		List<Shipping> allShippings = new ArrayList<>(actualShippings);
-		allShippings.add(entity);
-		ShippingRegistryUtil.markAsComplete(order, allShippings, EntityContextPlugin.getEntity(OrderRegistry.class));
+		ShippingRegistryUtil.checkShipping(order, actualShippings, shipping);
+		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
+		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
+		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, EntityContextPlugin.getEntity(OrderRegistry.class));
 		
 	}
 	
