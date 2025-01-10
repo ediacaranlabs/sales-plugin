@@ -34,6 +34,7 @@ public class ShippingNewRegistry {
 		List<Shipping> actualShipping = getActualShipping(actualOrder, actualclient);
 		
 		ShippingRegistryUtil.checkShipping(actualOrder, actualShipping, shipping);
+		
 		save(shipping, actualOrder);
 		
 		List<Shipping> allShippings = new ArrayList<>(actualShipping);

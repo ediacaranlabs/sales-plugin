@@ -1,14 +1,17 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -30,7 +33,7 @@ public class InvoiceRegistryUtil {
 		boolean isInvoiceComplete = true;
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens());
-		 loadInvoicesToCalculateUnits(invoices, null,map);
+		 loadInvoicesToCalculateUnits(invoices, null, map);
 		 
 		for(ProductRequest tpr: map.values()) {
 
@@ -85,12 +88,31 @@ public class InvoiceRegistryUtil {
 		
 	}
 
-	public static void checkInvoice(Order order, List<Invoice> actualInvoices, Invoice invoice
-			) throws ItemNotFoundOrderRegistryException, 
-		InvalidUnitsOrderRegistryException, CompletedInvoiceRegistryException {
+	public static void checkInvoice(Order order, List<Invoice> actualInvoices, Invoice invoice,
+			Invoice actualInvoice) throws ItemNotFoundOrderRegistryException, 
+		InvalidUnitsOrderRegistryException, InvoiceRegistryException {
 
+		checkCanceledInvoice(invoice, actualInvoice);
 		checkIsCompletedInvoice(order, actualInvoices);
 		checkUnits(order, actualInvoices, invoice);		
+		
+	}
+
+	public static void checkCanceledInvoice(Invoice invoice, Invoice actualInvoice) throws InvoiceRegistryException {
+		
+		if(actualInvoice != null) {
+			
+			if(actualInvoice.getCancelDate() != null) {
+			
+				if(invoice.getCancelDate() == null || actualInvoice.getCancelDate().compareTo(invoice.getCancelDate()) != 0) {
+					throw new InvoiceRegistryException("invalid cancelation data");
+				}
+			}
+		}
+		else
+		if(invoice.getCancelDate() != null || invoice.getCancelJustification() != null) {
+			throw new InvoiceRegistryException("cancelation data not allowed");
+		}
 		
 	}
 	
@@ -123,6 +145,10 @@ public class InvoiceRegistryUtil {
 	public static List<Invoice> getActualInvoices(Order order, SystemUser user, InvoiceEntityAccess entityAccess) throws EntityAccessException{
 		return entityAccess.findByOrder(order.getId(), user);		
 	}
+
+	public static Invoice getActualInvoice(Invoice invoice, InvoiceEntityAccess entityAccess) throws EntityAccessException{
+		return entityAccess.findById(invoice.getId());		
+	}
 	
 	public static SystemUser getActualUser(Order order, SystemUser user, SystemUserRegistry systemUserRegistry) throws OrderRegistryException, InvoiceRegistryException {
 		SystemUser actualUser;
@@ -140,6 +166,19 @@ public class InvoiceRegistryUtil {
 		return actualUser;
 	}
 
+	public static void markAsComplete(Order order, Invoice invoice, List<Invoice> invoices, OrderRegistry orderRegistry
+			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+		
+		List<Invoice> allInvoices = new ArrayList<>(invoices);
+		allInvoices.add(invoice);
+		
+		markAsComplete(order, allInvoices, orderRegistry); 
+	}
+	
+	public static void registerEvent(Invoice invoice, Order order, String message, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.registryLog(order.getId(), message != null? message : "Criada a fatura #" + invoice.getId() );
+	}
+	
 	public static void markAsComplete(Order order, List<Invoice> invoices, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
 		
@@ -164,6 +203,7 @@ public class InvoiceRegistryUtil {
 			throw new InvoiceRegistryException("payment has not yet been made");
 		}
 	}
+	
 	public static void checkShipping(Order order, ShippingRegistry shippingRegistry
 			) throws InvoiceRegistryException {
 		
@@ -175,6 +215,11 @@ public class InvoiceRegistryUtil {
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
 		}
+		
+		checkShipping(shippings);
+	}
+
+	public static void checkShipping(List<Shipping> shippings) throws InvoiceRegistryException {
 		
 		for(Shipping shipping: shippings) {
 			if(shipping.getCancelDate() == null) {
@@ -191,6 +236,52 @@ public class InvoiceRegistryUtil {
 	
 	public static boolean isCanceledInvoice(Invoice invoice) {
 		return invoice.getCancelDate() != null;
+	}
+	
+	public static void registerProducts(Invoice invoice, SystemUser user, Order order, ProductTypeRegistry productTypeRegistry) throws InvoiceRegistryException {
+		for(ProductRequest productRequest: invoice.getItens()){
+			try{
+				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
+				ProductTypeHandler productTypeHandler = productType.getHandler();
+				productTypeHandler.registryItem(user, order, productRequest);
+			}
+			catch(Throwable e){
+				throw new InvoiceRegistryException(
+					"falha ao processar o produto/serviço " + productRequest.getId(), e);
+			}
+		}
+	}
+	
+	public static void save(Invoice invoice, Order order, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+		try {
+			entityAccess.save(invoice);
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new InvoiceRegistryException(
+				"invoice error: " + order.getId(), e);
+		}
+	}
+
+	public static void update(Invoice invoice, Order order, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+		try {
+			entityAccess.update(invoice);
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new InvoiceRegistryException(
+				"invoice error: " + order.getId(), e);
+		}
+	}
+	
+	public static Order getActualOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		return orderRegistry.findById(order.getId());		
+	}
+
+	public static void preventChangeInvoiceSensitiveData(Invoice invoice, Invoice actualInvoice) throws InvoiceRegistryException {
+		invoice.setDate(actualInvoice.getDate());
+		invoice.setCancelDate(actualInvoice.getCancelDate());
+		invoice.setCancelJustification(actualInvoice.getCancelJustification());
 	}
 	
 }

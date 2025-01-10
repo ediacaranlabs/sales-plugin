@@ -576,18 +576,20 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			) throws OrderStatusNotAllowedRegistryException, UnmodifiedOrderStatusRegistryException, 
 			OrderRegistryException, InvoiceRegistryException, EntityAccessException {
 		
-		InvoiceNewRegistry invoiceNewRegistry = 
-				new InvoiceNewRegistry(
-						productTypeRegistry, 
-						systemUserRegistry, 
-						EntityContextPlugin.getEntity(OrderRegistry.class), 
-						entityAccess
-				);
-		
 		SystemUser user = new SystemUser();
 		user.setId(entity.getOwner());
 		
-		invoiceNewRegistry.create(order, user, entity, null);
+		OrderRegistry orderRegistry  = EntityContextPlugin.getEntity(OrderRegistry.class);
+		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		SystemUser actualUser        = InvoiceRegistryUtil.getActualUser(actualOrder, user, systemUserRegistry);		
+		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualUser, entityAccess);
+		
+		InvoiceRegistryUtil.checkPayment(actualOrder);
+		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
+		InvoiceRegistryUtil.registerProducts(entity, actualUser, actualOrder, productTypeRegistry);
+		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
+		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.registerEvent(entity, actualOrder, null, orderRegistry);
 	}
 
 	private void updateInvoice(Invoice entity, Order order
@@ -596,18 +598,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		SystemUser user = new SystemUser();
 		user.setId(order.getOwner());
 		
-		SystemUser actualUser = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
+		SystemUser actualUser        = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
+		Invoice actualInvoice        = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
 		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(order, actualUser, entityAccess);
 		
-		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity);
-		
-		entityAccess.update(entity);
-		entityAccess.flush();
-		
-		List<Invoice> allInvoices = new ArrayList<>(actualInvoices);
-		allInvoices.add(entity);
-		InvoiceRegistryUtil.markAsComplete(order, allInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
-		
+		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
+		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
+		InvoiceRegistryUtil.update(entity, order, entityAccess);
+		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 	}
 	
 	private void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{

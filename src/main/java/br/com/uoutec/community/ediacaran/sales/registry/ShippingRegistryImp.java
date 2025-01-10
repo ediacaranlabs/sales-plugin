@@ -523,12 +523,12 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
-		Client actualClient = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
+		Client actualClient            = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
 		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
+		Shipping actualShipping        = ShippingRegistryUtil.getActualShipping(entity.getId(), entityAccess);
 		
 		ShippingRegistryUtil.checkShipping(order, actualShippings, entity);
 		
-		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(entity.getId(), entityAccess);
 		
 		entity.setDate(actualShipping.getDate());
 		entity.setCancelDate(actualShipping.getCancelDate());
