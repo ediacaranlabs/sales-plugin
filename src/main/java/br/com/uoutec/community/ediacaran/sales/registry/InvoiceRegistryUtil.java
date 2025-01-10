@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
@@ -13,6 +14,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -57,6 +59,26 @@ public class InvoiceRegistryUtil {
 		}
 		
 		return transientItens;
+	}
+
+	public static List<ProductRequest> setUnitsAndGetCollection(Map<String, ProductRequest> productRequestMap, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
+		
+		Map<String, ProductRequest> transientItens = new HashMap<>(productRequestMap);
+		List<ProductRequest> invoiceItens = new ArrayList<>();
+		
+		for(Entry<String,Integer> e: itens.entrySet()) {
+			ProductRequest tpr = transientItens.get(e.getKey());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(e.getKey());
+			}
+			
+			tpr.setUnits(e.getValue().intValue());
+			invoiceItens.add(tpr);
+			transientItens.remove(e.getKey());
+		}
+		
+		return invoiceItens;
 	}
 	
 	public static void loadInvoicesToCalculateUnits(Collection<Invoice> invoices, Invoice actualInvoice, 
@@ -282,6 +304,28 @@ public class InvoiceRegistryUtil {
 		invoice.setDate(actualInvoice.getDate());
 		invoice.setCancelDate(actualInvoice.getCancelDate());
 		invoice.setCancelJustification(actualInvoice.getCancelJustification());
+	}
+	
+	public static Invoice toInvoice(Order order, Collection<ProductRequest> itens) {
+		Invoice i = new Invoice();
+		i.setId(null);
+		i.setOwner(order.getOwner());
+		i.setDate(LocalDateTime.now());
+		i.setOrder(order.getId());
+		i.setItens(new ArrayList<ProductRequest>(itens));
+		i.setCurrency(order.getCurrency());
+
+		if(order.getTaxes() != null) {
+			List<Tax> list = new ArrayList<>();
+			i.setTaxes(list);
+			for(Tax t: order.getTaxes()) {
+				Tax nt = new Tax(t);
+				nt.setId(null);
+				list.add(nt);
+			}
+		}
+		
+		return i;
 	}
 	
 }

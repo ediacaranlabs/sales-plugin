@@ -19,7 +19,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -487,89 +486,16 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private Invoice createInvoice(Order order, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
-
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest(pr);
-			transientItens.put(pr.getSerial(), tpr);
-		}
-		
-		if(invoices != null) {
-			for(Invoice i: invoices) {
-				
-				if(i.getCancelDate() != null) {
-					continue;
-				}
-				
-				for(ProductRequest pr: i.getItens()) {
-					ProductRequest tpr = transientItens.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
-				}
-				
-			}
-		}
-		
-		Invoice i = new Invoice();
-		i.setId(null);
-		i.setOwner(order.getOwner());
-		i.setDate(LocalDateTime.now());
-		i.setOrder(order.getId());
-		i.setItens(new ArrayList<ProductRequest>(transientItens.values()));
-		i.setCurrency(order.getCurrency());
-
-		if(order.getTaxes() != null) {
-			List<Tax> list = new ArrayList<>();
-			i.setTaxes(list);
-			for(Tax t: order.getTaxes()) {
-				Tax nt = new Tax(t);
-				nt.setId(null);
-				list.add(nt);
-			}
-		}
-		
-		return i;
+		Map<String, ProductRequest> transientItens = InvoiceRegistryUtil.toMap(order.getItens());
+		InvoiceRegistryUtil.loadInvoicesToCalculateUnits(invoices, null, transientItens);
+		return InvoiceRegistryUtil.toInvoice(order, transientItens.values());
 	}
 	
 	private Invoice createInvoice(Order order, Map<String, Integer> itens
 			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
-
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: order.getItens()) {
-			ProductRequest tpr = new ProductRequest(pr);
-			transientItens.put(pr.getSerial(), tpr);
-		}
-		
-		//create productrequest invoice
-		List<ProductRequest> invoiceItens = new ArrayList<>();
-		
-		for(Entry<String,Integer> e: itens.entrySet()) {
-			ProductRequest tpr = transientItens.get(e.getKey());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(e.getKey());
-			}
-			
-			tpr.setUnits(e.getValue().intValue());
-			invoiceItens.add(tpr);
-			transientItens.remove(e.getKey());
-		}
-		
-		Invoice i = new Invoice();
-		i.setId(null);
-		i.setOwner(order.getOwner());
-		i.setDate(LocalDateTime.now());
-		i.setOrder(order.getId());
-		i.setItens(invoiceItens);
-		i.setCurrency(order.getCurrency());
-		
-		return i;
+		Map<String, ProductRequest> transientItens = InvoiceRegistryUtil.toMap(order.getItens());
+		List<ProductRequest> invoiceItens = InvoiceRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
+		return InvoiceRegistryUtil.toInvoice(order, invoiceItens);
 	}
 
 	private void registryNewInvoice(Invoice entity, Order order
