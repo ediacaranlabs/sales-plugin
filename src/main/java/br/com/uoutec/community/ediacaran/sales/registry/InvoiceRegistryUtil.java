@@ -61,6 +61,27 @@ public class InvoiceRegistryUtil {
 		return transientItens;
 	}
 
+	public static Map<String,List<Invoice>> groupByOrder(List<Invoice> list){
+		Map<String,List<Invoice>> map = new HashMap<>();
+		
+		for(Invoice i: list) {
+			
+			if(i.getCancelDate() != null) {
+				continue;
+			}
+			
+			List<Invoice> l = map.get(i.getOrder());
+			
+			if(l == null) {
+				l = new ArrayList<>();
+				map.put(i.getOrder(), l);
+			}
+			
+			l.add(i);
+		}
+		return map;
+	}
+	
 	public static List<ProductRequest> setUnitsAndGetCollection(Map<String, ProductRequest> productRequestMap, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
 		
 		Map<String, ProductRequest> transientItens = new HashMap<>(productRequestMap);
@@ -168,8 +189,13 @@ public class InvoiceRegistryUtil {
 		return entityAccess.findByOrder(order.getId(), user);		
 	}
 
-	public static Invoice getActualInvoice(Invoice invoice, InvoiceEntityAccess entityAccess) throws EntityAccessException{
-		return entityAccess.findById(invoice.getId());		
+	public static Invoice getActualInvoice(Invoice invoice, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException{
+		try {
+			return entityAccess.findById(invoice.getId());
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
 	}
 	
 	public static SystemUser getActualUser(Order order, SystemUser user, SystemUserRegistry systemUserRegistry) throws OrderRegistryException, InvoiceRegistryException {
@@ -223,6 +249,22 @@ public class InvoiceRegistryUtil {
 	public static void checkPayment(Order order) throws InvoiceRegistryException {
 		if(order.getPayment().getReceivedFrom() == null) {
 			throw new InvoiceRegistryException("payment has not yet been made");
+		}
+	}
+
+	public static void checkIfExistsShipping(Order order, ShippingRegistry shippingRegistry
+			) throws InvoiceRegistryException {
+		
+		List<Shipping> list;
+		try {
+			list = shippingRegistry.findByOrder(order.getId());
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
+		
+		if(!list.isEmpty()) {
+			throw new InvoiceRegistryException("found shipping for order #" + order.getId());
 		}
 	}
 	
@@ -327,5 +369,28 @@ public class InvoiceRegistryUtil {
 		
 		return i;
 	}
-	
+
+	public static void cancelInvoices(List<Invoice> invoices, Order order, 
+			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
+			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException {
+
+		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		InvoiceRegistryUtil.checkShipping(actualOrder, shippingRegistry);
+			
+		for(Invoice i: invoices) {
+			
+			i.setCancelDate(cancelDate);
+			i.setCancelJustification(justification);
+			entityAccess.update(i);
+			
+			orderRegistry.registryLog(actualOrder.getId(), "canceled invoice #" + i.getId() + ": " +  justification);
+			
+		}
+
+		entityAccess.flush();
+			
+		List<Invoice> actualInvoices = entityAccess.findByOrder(actualOrder.getId(), null);
+		InvoiceRegistryUtil.markAsComplete(actualOrder, actualInvoices, orderRegistry);
+		
+	}	
 }

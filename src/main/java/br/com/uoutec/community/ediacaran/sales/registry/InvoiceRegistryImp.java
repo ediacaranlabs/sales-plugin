@@ -1,9 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,6 +104,19 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
+		
+		Invoice actualInvoice = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
+		
+		if(actualInvoice == null) {
+			return;
+		}
+		
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		
+		Order order = new Order();
+		order.setId(actualInvoice.getOrder());
+		
+		InvoiceRegistryUtil.checkIfExistsShipping(order, shippingRegistry);
 		
 		try {
 			entityAccess.delete(entity);
@@ -373,58 +384,26 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 	}
 
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification, SystemUser user
-			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, InvoiceRegistryException {
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification, 
+			SystemUser user) throws EntityAccessException, OrderRegistryException, InvoiceRegistryException {
 
-		Map<String,List<Invoice>> map = new HashMap<>();
-		
-		for(Invoice i: invoices) {
-			
-			if(i.getCancelDate() != null) {
-				continue;
-			}
-			
-			List<Invoice> l = map.get(i.getOrder());
-			
-			if(l == null) {
-				l = new ArrayList<>();
-				map.put(i.getOrder(), l);
-			}
-			
-			l.add(i);
-		}
+		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);
 		
 		if(map.isEmpty()) {
 			return;
 		}
 		
-		LocalDateTime cancelDate = LocalDateTime.now();
-		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		LocalDateTime cancelDate          = LocalDateTime.now();
+		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
 		for(Entry<String,List<Invoice>> entry: map.entrySet()) {
-			Order order = orderRegistry.findById(entry.getKey());
 			
-			InvoiceRegistryUtil.checkShipping(order, shippingRegistry);
+			Order order = new Order();
+			order.setId(entry.getKey());
 			
-			for(Invoice i: entry.getValue()) {
-				i.setCancelDate(cancelDate);
-				i.setCancelJustification(justification);
-				entityAccess.update(i);
-			}
-
-			entityAccess.flush();
-			
-			List<Invoice> actualInvoices = entityAccess.findByOrder(entry.getKey(), null);
-			InvoiceRegistryUtil.markAsComplete(order, actualInvoices, orderRegistry);
-		}
-
-		for(String orderID: map.keySet()) {
-			Order order = orderRegistry.findById(orderID);
-			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
-			for(Invoice i: actualInvoices) {
-				orderRegistry.registryLog(order.getId(), "#" + i.getId() + ": " +  justification);
-			}
+			InvoiceRegistryUtil.cancelInvoices(invoices, order, justification, 
+					cancelDate, orderRegistry, shippingRegistry, entityAccess);
 			
 		}
 		
