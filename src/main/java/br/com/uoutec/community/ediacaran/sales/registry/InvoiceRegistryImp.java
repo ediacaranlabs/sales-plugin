@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
@@ -64,6 +65,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private SubjectProvider subjectProvider;
 	
 	@Override
+	@Transactional
 	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRegisterPermission());
@@ -101,6 +103,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
+	@Transactional
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
@@ -179,6 +182,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
+	@Transactional
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
@@ -203,6 +207,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
+	@Transactional
 	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
@@ -212,6 +217,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
+	@Transactional
 	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
@@ -270,11 +276,13 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
+	@Transactional
 	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException {
 		cancelInvoice(invoice, null, justification);
 	}
 	
 	@Override
+	@Transactional
 	public void cancelInvoice(Invoice invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
 		
 		SystemUser systemUser;
@@ -293,6 +301,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
+	@Transactional
 	public void cancelInvoice(Invoice invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
@@ -317,10 +326,12 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
+	@Transactional
 	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException {
 		cancelInvoices(order, null, justification);
 	}
 	
+	@Transactional
 	@Override
 	public void cancelInvoices(Order invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
 		
@@ -340,6 +351,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	
+	@Transactional
 	@Override
 	public void cancelInvoices(Order order, SystemUser systemUser, String justification) throws InvoiceRegistryException {
 
@@ -390,25 +402,26 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 		
 		LocalDateTime cancelDate = LocalDateTime.now();
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
-		for(List<Invoice> is: map.values()) {
-			for(Invoice i: is) {
+		for(Entry<String,List<Invoice>> entry: map.entrySet()) {
+			Order order = orderRegistry.findById(entry.getKey());
+			
+			InvoiceRegistryUtil.checkShipping(order, shippingRegistry);
+			
+			for(Invoice i: entry.getValue()) {
 				i.setCancelDate(cancelDate);
 				i.setCancelJustification(justification);
 				entityAccess.update(i);
 			}
-		}
 
-		entityAccess.flush();
-
-		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-		
-		for(String orderID: map.keySet()) {
-			Order order = orderRegistry.findById(orderID);
-			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
+			entityAccess.flush();
+			
+			List<Invoice> actualInvoices = entityAccess.findByOrder(entry.getKey(), null);
 			InvoiceRegistryUtil.markAsComplete(order, actualInvoices, orderRegistry);
 		}
-		
+
 		for(String orderID: map.keySet()) {
 			Order order = orderRegistry.findById(orderID);
 			List<Invoice> actualInvoices = entityAccess.findByOrder(orderID, null);
@@ -462,9 +475,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message
 			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException{
 
+		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		Order actualOrder = orderRegistry.findById(order.getId());
-		
+
 		Invoice i = createInvoice(actualOrder, itens);
 		
 		registryNewInvoice(i, actualOrder);

@@ -37,15 +37,20 @@ public class InvoiceNewRegistry {
 			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException, EntityAccessException {
 
 		Order actualOrder = getActualOrder(order);
+		
+		InvoiceRegistryUtil.checkPayment(actualOrder);
+		
 		SystemUser actualUser = getActualUser(actualOrder, systemUser);		
 		List<Invoice> actualInvoices = getActualInvoices(actualOrder, actualUser);
 		
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, invoice);
 		registerProducts(invoice, actualUser, actualOrder);
+		
 		save(invoice, actualOrder);
 		
 		List<Invoice> allInvoices = new ArrayList<>(actualInvoices);
 		allInvoices.add(invoice);
+		
 		InvoiceRegistryUtil.markAsComplete(order, allInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		
 		registerEvent(invoice, actualOrder, message);

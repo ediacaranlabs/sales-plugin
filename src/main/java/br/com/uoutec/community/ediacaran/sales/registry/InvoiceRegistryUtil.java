@@ -9,6 +9,7 @@ import java.util.Map;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -158,6 +159,30 @@ public class InvoiceRegistryUtil {
 			
 	}
 
+	public static void checkPayment(Order order) throws InvoiceRegistryException {
+		if(order.getPayment().getReceivedFrom() == null) {
+			throw new InvoiceRegistryException("payment has not yet been made");
+		}
+	}
+	public static void checkShipping(Order order, ShippingRegistry shippingRegistry
+			) throws InvoiceRegistryException {
+		
+		List<Shipping> shippings;
+		
+		try {
+			shippings = shippingRegistry.findByOrder(order.getId());
+		}
+		catch(Throwable ex) {
+			throw new InvoiceRegistryException(ex);
+		}
+		
+		for(Shipping shipping: shippings) {
+			if(shipping.getCancelDate() == null) {
+				throw new InvoiceRegistryException("exist shipping: #" + shipping.getId());
+			}
+		}
+	}
+	
 	public static void checkCanceledInvoice(Invoice invoice) throws CanceledInvoiceRegistryException {
 		if(isCanceledInvoice(invoice)) {
 			throw new CanceledInvoiceRegistryException(invoice.getId());

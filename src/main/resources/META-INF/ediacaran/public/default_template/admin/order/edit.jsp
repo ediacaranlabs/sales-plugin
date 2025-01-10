@@ -122,8 +122,22 @@
 							</ec:description>
 						</ec:description-list>
 					</ec:tabs-item>
+					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
+						<span id="payment_type_tab">
+					    <c:if test="${!empty vars['payment_view']}">
+							<script type="text/javascript">
+								$.AppContext.onload(function(){			
+									$.AppContext.utils
+										.updateContentByID(
+												"#!${vars['payment_view']}", 
+												"payment_type_tab"
+										);
+								});	
+							</script>
+					    </c:if>
+						</span>
+					</ec:tabs-item>
 					<ec:tabs-item title="#{tabs.invoices.title}" bundle="${messages}">
-					
 						<ec:table>
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_invoice.id" bundle="${messages}"/></small></center></ec:table-col>
@@ -185,21 +199,6 @@
 							</ec:table-body>
 						</ec:table>
 					</ec:tabs-item>
-					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
-						<span id="payment_type_tab">
-					    <c:if test="${!empty vars['payment_view']}">
-							<script type="text/javascript">
-								$.AppContext.onload(function(){			
-									$.AppContext.utils
-										.updateContentByID(
-												"#!${vars['payment_view']}", 
-												"payment_type_tab"
-										);
-								});	
-							</script>
-					    </c:if>
-						</span>
-					</ec:tabs-item>
 					<c:forEach items="${vars.widgets}" var="widget">
 						<ec:tabs-item title="${widget.title}" >
 							<span id="${widget.id}_tab">
@@ -224,14 +223,14 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Create shipping" align="right" actionType="button" bundle="${messages}">
-			<ec:event type="click">
-				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/new/${vars.order.id}');
-			</ec:event>
-		</ec:button>
 		<ec:button label="#{search.label}" align="right" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders');
+			</ec:event>
+		</ec:button>
+		<ec:button label="Create shipping" align="right" enabled="${vars.order.completeInvoice != null && vars.order.completeShipping == null}" actionType="button" bundle="${messages}">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/new/${vars.order.id}');
 			</ec:event>
 		</ec:button>
 		<ec:button label="#{create_invoice.label}" align="right" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}" bundle="${messages}">
