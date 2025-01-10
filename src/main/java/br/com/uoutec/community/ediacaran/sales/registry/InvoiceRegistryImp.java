@@ -245,11 +245,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
 				InvalidUnitsOrderRegistryException {
 		
-		Order actualOrder = null;
+		Order actualOrder;
 		
 		try {
-			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-			actualOrder = orderRegistry.findById(order.getId());
+			actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
@@ -260,12 +259,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 
 		List<Invoice> actualInvoices;
-		SystemUser user;
 		
 		try {
-			user = new SystemUser();
+			SystemUser user = new SystemUser();
 			user.setId(actualOrder.getOwner());
-			actualInvoices = entityAccess.findByOrder(actualOrder.getId(), user);
+			actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, user, entityAccess);
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
@@ -494,7 +492,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private Invoice createInvoice(Order order, Map<String, Integer> itens
 			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		Map<String, ProductRequest> transientItens = InvoiceRegistryUtil.toMap(order.getItens());
-		List<ProductRequest> invoiceItens = InvoiceRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
+		List<ProductRequest> invoiceItens          = InvoiceRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
 		return InvoiceRegistryUtil.toInvoice(order, invoiceItens);
 	}
 
