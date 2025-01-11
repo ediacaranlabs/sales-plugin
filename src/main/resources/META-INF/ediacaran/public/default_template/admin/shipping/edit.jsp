@@ -18,7 +18,7 @@
 			</div>
 		</ed:col>
 		<ed:col size="8">
-			<ec:breadcrumb title="Shipping" bundle="${messages}">
+			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
 				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings"  bundle="${messages}"/>
 				<ec:breadcrumb-path text="#${vars.shipping.order}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}"/>
