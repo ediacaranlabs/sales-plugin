@@ -73,8 +73,11 @@ public class OrderEntity implements Serializable{
 	@OneToMany(mappedBy="orderEntity", fetch=FetchType.LAZY)
 	private List<OrderTaxEntity> taxes;
 
-	@Column(name="dat_complete_invoice", length=3)
+	@Column(name="dat_complete_invoice")
 	private LocalDateTime completeInvoice;
+
+	@Column(name="dat_complete_shipping")
+	private LocalDateTime completeShipping;
 	
 	@Column(name="dsc_currency", length=3)
 	private String currency;
@@ -114,6 +117,7 @@ public class OrderEntity implements Serializable{
 		this.total = e.getTotal();
 		this.currency = e.getCurrency();
 		this.completeInvoice = e.getCompleteInvoice();
+		this.completeShipping = e.getCompleteShipping();
 		this.billingAddress = e.getBillingAddress() == null? null : new AddressEntity(e.getBillingAddress(), null);
 		this.shippingAddress = e.getShippingAddress() == null? null : new AddressEntity(e.getShippingAddress(), null);
 		
@@ -317,6 +321,7 @@ public class OrderEntity implements Serializable{
 		e.setCompleteInvoice(this.completeInvoice);
 		e.setBillingAddress(this.billingAddress == null? null : this.billingAddress.toEntity());
 		e.setShippingAddress(this.shippingAddress == null? null : this.shippingAddress.toEntity());
+		e.setCompleteShipping(this.completeShipping);
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();

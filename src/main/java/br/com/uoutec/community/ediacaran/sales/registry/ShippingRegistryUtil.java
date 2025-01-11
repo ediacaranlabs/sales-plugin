@@ -154,7 +154,10 @@ public class ShippingRegistryUtil {
 			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, ShippingRegistryException{
 		
 		List<Shipping> allShippings = new ArrayList<>(shippings);
-		allShippings.add(shipping);
+		
+		if(!allShippings.contains(shipping)) {
+			allShippings.add(shipping);
+		}
 		
 		markAsComplete(order, allShippings, orderRegistry); 
 	}
