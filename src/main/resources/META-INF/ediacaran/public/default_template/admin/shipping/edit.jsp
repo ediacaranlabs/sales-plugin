@@ -14,13 +14,13 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2>Shipping</h2>
+				<h2><fmt:message key="title" bundle="${messages}"/></h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
 			<ec:breadcrumb title="Shipping" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
-				<ec:breadcrumb-path text="Shippings" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings"  bundle="${messages}"/>
+				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings"  bundle="${messages}"/>
 				<ec:breadcrumb-path text="#${vars.shipping.order}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}"/>
 			</ec:breadcrumb>
 		</ed:col>
@@ -31,29 +31,29 @@
 	<input type="hidden" name="order" value="${vars.shipping.order}">
 	<input type="hidden" name="id" value="${vars.shipping.id}">
 <ec:box>
-	<ec:box-header><b>Shipping</b> #${vars.shipping.id}</ec:box-header>
+	<ec:box-header><b><fmt:message key="shipping_id" bundle="${messages}"/></b> #${vars.shipping.id}</ec:box-header>
 	<ec:box-body>
 	
 		<ed:row>
 			<ed:col>
-				<h3>Date: ${vars.shipping.toStringDate(locale)}</h3>
+				<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.shipping.toStringDate(locale)}</h3>
 			</ed:col>
 		</ed:row>
 		<ed:row>
 			<ed:col size="4">
-				<b>Shipping:</b> #${vars.shipping.id}<br>
-				<b>Created in:</b> ${vars.shipping.toStringDate(locale)}<br>
-				<b>Order:</b> #${vars.shipping.order}<br>
+				<b><fmt:message key="shipping_code" bundle="${messages}"/>:</b> #${vars.shipping.id}<br>
+				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringDate(locale)}<br>
+				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.shipping.order}<br>
 			</ed:col>
 			<ed:col size="4">
-				<b>Origin address</b><p>
+				<b><fmt:message key="origin_address.title" bundle="${messages}"/></b><p>
 				${vars.shipping.origin.firstName} ${vars.shipping.origin.lastName}<br>
 				${vars.shipping.origin.addressLine1}<br>
 				${vars.shipping.origin.addressLine2}<br>
 				${vars.shipping.origin.zip} ${vars.shipping.origin.city} ${vars.shipping.origin.region} ${vars.shipping.origin.country.name}
 			</ed:col>
 			<ed:col size="4">
-				<b>Destination address</b><p>
+				<b><fmt:message key="destination_address.title" bundle="${messages}"/></b><p>
 				${vars.shipping.dest.firstName} ${vars.shipping.dest.lastName}<br>
 				${vars.shipping.dest.addressLine1}<br>
 				${vars.shipping.dest.addressLine2}<br>
@@ -64,10 +64,10 @@
 			<ed:col>
 				<ec:table>
 					<ec:table-header>
-						<ec:table-col><center>ID</center></ec:table-col>
-						<ec:table-col><center>Qty</center></ec:table-col>
-						<ec:table-col><center>Product</center></ec:table-col>
-						<ec:table-col><center>description</center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.id" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.quantity" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.description" bundle="${messages}"/></center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.shipping.products}" var="product">
@@ -82,8 +82,8 @@
 										<input type="hidden" name="serial" value="${product.serial}">
 										<ec:textfield maxlength="2" name="units" value="${product.units}" enabled="${empty vars.shipping.id}">
 											<ec:field-validator>
-												<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
-												<ec:field-validator-rule name="between" message="Must be between 1 to ${product.units}">
+												<ec:field-validator-rule name="notEmpty" message="#{product_table.form.units.validation.notEmpty}" bundle="${messages}"/>
+												<ec:field-validator-rule name="between" message="#{product_table.form.units.validation.between}" bundle="${messages}">
 														<ec:field-validator-param name="min">1</ec:field-validator-param>
 														<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
 												</ec:field-validator-rule>
@@ -105,12 +105,12 @@
 			</ed:col>
 			<ed:col size="10">
 				<ec:tabs>
-					<ec:tabs-item active="true" title="Details">
+					<ec:tabs-item active="true" title="#{tabs.details.title}" bundle="${messages}">
 						<ed:row style="form">
 							<ed:col classStyle="form-group has-feedback">
-								<ec:select label="Shipping method" name="shippingType" enabled="${empty vars.shipping.id}">
+								<ec:select label="#{tabs.details.form.shipping_method.label}" name="shippingType" enabled="${empty vars.shipping.id}">
 									<ec:field-validator>
-										<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
+										<ec:field-validator-rule name="notEmpty" message="#{tabs.details.form.shipping_method.validation.notEmpty}" bundle="${messages}"/>
 									</ec:field-validator>
 									<ec:option value=""></ec:option>
 									<c:forEach items="${vars.shippingMethods}" var="shippingMethod">
@@ -142,15 +142,16 @@
 							</ed:col>
 						</ed:row>
 					</ec:tabs-item>
-					<ec:tabs-item title="Cancelation">
+					<ec:tabs-item title="#{tabs.cancelation.title}" bundle="${messages}">
 						<ed:row>
 							<ed:col classStyle="form-group has-feedback">
-								<ec:textarea id="justification_field" label="Justification" name="cancelJustification" rows="5" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}">${vars.shipping.cancelJustification}</ec:textarea>
+								<ec:textarea id="justification_field" label="#{tabs.cancelation.form.justification}" 
+									name="cancelJustification" rows="5" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}" bundle="${messages}">${vars.shipping.cancelJustification}</ec:textarea>
 								<c:if test="${!empty vars.shipping.id && empty vars.shipping.cancelDate}">
 									<ec:field-validator field="justification_field">
-										<ec:field-validator-rule name="notEmpty" message="Must be informed"/>
-										<ec:field-validator-rule name="stringLength" message="0 to 255">
-												<ec:field-validator-param name="min">0</ec:field-validator-param>
+										<ec:field-validator-rule name="notEmpty" message="#{tabs.cancelation.form.justification.validation.notEmpty}" bundle="${messages}"/>
+										<ec:field-validator-rule name="stringLength" message="#{tabs.cancelation.form.justification.validation.stringLength}" bundle="${messages}"	>
+												<ec:field-validator-param name="min">6</ec:field-validator-param>
 												<ec:field-validator-param name="max">255</ec:field-validator-param>
 										</ec:field-validator-rule>
 									</ec:field-validator>
@@ -167,13 +168,13 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Show order" actionType="button" align="right" bundle="${messages}">
+		<ec:button label="#{show_order.label}" actionType="button" align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="Save" align="right" bundle="${messages}" enabled="${empty vars.shipping.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/save" />
-		<ec:button actionType="submit" label="Cancel" align="right" bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/cancel"/>
+		<ec:button actionType="submit" label="#{save.label}" align="right" bundle="${messages}" enabled="${empty vars.shipping.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/save" />
+		<ec:button actionType="submit" label="#{cancel.label}" align="right" bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/cancel"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

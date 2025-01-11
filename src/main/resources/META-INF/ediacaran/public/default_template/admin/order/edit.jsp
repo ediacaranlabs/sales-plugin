@@ -228,7 +228,7 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders');
 			</ec:event>
 		</ec:button>
-		<ec:button label="Create shipping" align="right" enabled="${vars.order.completeInvoice != null && vars.order.completeShipping == null}" actionType="button" bundle="${messages}">
+		<ec:button label="#{shipping.label}" align="right" enabled="${vars.order.completeInvoice != null && vars.order.completeShipping == null}" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/new/${vars.order.id}');
 			</ec:event>
