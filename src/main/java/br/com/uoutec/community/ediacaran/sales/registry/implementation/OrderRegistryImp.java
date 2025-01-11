@@ -20,7 +20,6 @@ import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
-import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -70,7 +69,6 @@ import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
-@javax.enterprise.inject.Default
 public class OrderRegistryImp
 	extends AbstractRegistry
 	implements OrderRegistry{
@@ -81,7 +79,16 @@ public class OrderRegistryImp
 	
 	static{
 		nextState = new HashMap<OrderStatus, Set<OrderStatus>>();
+		
 		//Fluxo comum
+		nextState.put(OrderStatus.NEW, 
+				new HashSet<OrderStatus>(Arrays.asList(
+						OrderStatus.PENDING_PAYMENT,
+						OrderStatus.CANCELED,
+						OrderStatus.ON_HOLD))
+			);
+		
+		/*
 		nextState.put(OrderStatus.ON_HOLD, 
 			new HashSet<OrderStatus>(Arrays.asList(
 					OrderStatus.CLOSED,
@@ -89,42 +96,47 @@ public class OrderRegistryImp
 					OrderStatus.PENDING_PAYMENT,
 					OrderStatus.PAYMENT_RECEIVED))
 		);
+		*/
 		
 		nextState.put(OrderStatus.PENDING_PAYMENT, 
 				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.CLOSED,
 						OrderStatus.CANCELED,
 						OrderStatus.PAYMENT_RECEIVED))
 			);
 
 		nextState.put(OrderStatus.PAYMENT_RECEIVED, 
 				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.CLOSED,
 						OrderStatus.REFOUND,
-						OrderStatus.ORDER_SHIPPED))
-			); // criar fluxo para refound e order shipped
+						OrderStatus.ORDER_INVOICED))
+			);
 
-		//Fluxo comum + order shipped
+		nextState.put(OrderStatus.ORDER_INVOICED, 
+				new HashSet<OrderStatus>(Arrays.asList(
+						OrderStatus.ORDER_SHIPPED))
+			);
+
 		nextState.put(OrderStatus.ORDER_SHIPPED, 
 				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.CLOSED,
-						OrderStatus.REFOUND))
+						OrderStatus.COMPLETE))
 			);
 
 		nextState.put(OrderStatus.REFOUND, 
 				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.CLOSED,
-						OrderStatus.CANCELED_REFOUND))
-			);
-		
-		nextState.put(OrderStatus.CANCELED_REFOUND, 
-				new HashSet<OrderStatus>(Arrays.asList(
 						OrderStatus.CLOSED))
 			);
-
+		
 		nextState.put(OrderStatus.CLOSED, 
 				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.REFOUND))
+						OrderStatus.ARCHIVED))
+			);
+
+		nextState.put(OrderStatus.COMPLETE, 
+				new HashSet<OrderStatus>(Arrays.asList(
+						OrderStatus.ARCHIVED))
+			);
+		
+		nextState.put(OrderStatus.CANCELED, 
+				new HashSet<OrderStatus>(Arrays.asList())
 			);
 		
 	}
@@ -559,10 +571,9 @@ public class OrderRegistryImp
 		Order order = new Order();
 		order.setDate(LocalDateTime.now());
 		order.setCartID(cart.getId());
-		order.setStatus(OrderStatus.ON_HOLD);
+		order.setStatus(OrderStatus.NEW);
 		order.setId(null);
 		order.setOwner(cart.getClient().getId());
-		//order.setInvoice(null);
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());
@@ -622,7 +633,6 @@ public class OrderRegistryImp
 		payment.setValue(cart.getSubtotal());
 		payment.setTotal(cart.getTotal());
 		order.setPayment(payment);
-
 		
 		try{
 			for(ProductRequest pr: order.getItens()){
@@ -830,9 +840,11 @@ public class OrderRegistryImp
 	private void unsafeRevertRefound(String orderID, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
+
+		throw new UnsupportedOperationException();
 		
-		Order order = findById(orderID);
-		
+		//Order order = findById(orderID);
+		/*
 		if(order.getStatus() == OrderStatus.CANCELED_REFOUND){
 			throw new UnmodifiedOrderStatusRegistryException("Reembolso cancelado.");
 		}
@@ -843,7 +855,8 @@ public class OrderRegistryImp
 					"novo status não é permitido: " + 
 					order.getStatus() + " -> " + OrderStatus.CANCELED_REFOUND);
 		}
-
+		 */
+		
 		/*
 		SystemUser user;
 		
@@ -857,10 +870,12 @@ public class OrderRegistryImp
 		*/
 		
 		//atualiza o status do pedido
+		/*
 		order.setStatus(OrderStatus.CANCELED_REFOUND);
 		
 		Invoice invoice = invoiceRegistry.toInvoice(order);
 		invoiceRegistry.registerInvoice(invoice);
+		*/
 		
 		/*
 		//Processa os itens do pedido
@@ -877,11 +892,13 @@ public class OrderRegistryImp
 		}
 		*/
 		
+		/*
 		//Registra as alterações do pedido
 		this.registerOrder(order);
 		
 		//Registra o evento no log
 		this.registryLog(order.getId(), message != null? message : "O processo de Reemboldo foi finalizada.");
+		*/
 	}
 	
 	@Override

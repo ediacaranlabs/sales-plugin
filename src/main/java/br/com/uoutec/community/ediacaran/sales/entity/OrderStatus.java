@@ -8,13 +8,19 @@ import br.com.uoutec.i18n.MessageBundle;
 
 public enum OrderStatus {
 
+	NEW,
+	
 	ON_HOLD,
 	
 	PENDING_PAYMENT,
 	
 	PAYMENT_RECEIVED,
 	
+	ORDER_INVOICED,
+	
 	ORDER_SHIPPED,
+
+	COMPLETE,
 	
 	CLOSED,
 	
@@ -22,9 +28,7 @@ public enum OrderStatus {
 	
 	CANCELED,
 
-	REFOUND,
-
-	CANCELED_REFOUND;
+	REFOUND;
 	
 	public static final String RESOURCE_BUNDLE = 
 			MessageBundle.toPackageID(OrderStatus.class);

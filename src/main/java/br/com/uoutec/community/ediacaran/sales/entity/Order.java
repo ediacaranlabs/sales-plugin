@@ -75,6 +75,10 @@ public class Order implements Serializable{
 	
 	private boolean removed;
 	
+	public Order() {
+		this.status = OrderStatus.NEW;
+	}
+	
 	public String getId() {
 		return id;
 	}
