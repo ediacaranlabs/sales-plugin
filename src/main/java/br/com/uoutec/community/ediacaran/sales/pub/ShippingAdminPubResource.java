@@ -38,6 +38,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingsSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethod;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethodRegistry;
@@ -61,6 +62,10 @@ public class ShippingAdminPubResource {
 	@Transient
 	@Inject
 	private ShippingRegistry shippingRegistry;
+
+	@Transient
+	@Inject
+	private OrderRegistry orderRegistry;
 	
 	@Transient
 	@Inject
@@ -339,6 +344,9 @@ public class ShippingAdminPubResource {
 
 		try{
 			shippingRegistry.cancelShipping(shipping, shippingPubEntity.getCancelJustification());
+			Order order = new Order();
+			order.setId(shipping.getOrder());
+			orderRegistry.updateStatus(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

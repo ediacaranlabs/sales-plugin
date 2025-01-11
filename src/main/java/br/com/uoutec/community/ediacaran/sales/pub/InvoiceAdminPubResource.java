@@ -40,6 +40,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchPubEntity
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoiceSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
@@ -60,6 +61,10 @@ public class InvoiceAdminPubResource {
 	@Transient
 	@Inject
 	private InvoiceRegistry invoiceRegistry;
+	
+	@Transient
+	@Inject
+	private OrderRegistry orderRegistry;
 	
 	@Transient
 	@Inject
@@ -333,6 +338,9 @@ public class InvoiceAdminPubResource {
 
 		try{
 			invoiceRegistry.cancelInvoice(invoice,  SystemUserRegistry.CURRENT_USER, justification);
+			Order order = new Order();
+			order.setId(invoice.getOrder());
+			orderRegistry.updateStatus(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
