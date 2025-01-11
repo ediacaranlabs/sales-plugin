@@ -223,17 +223,17 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="#{search.label}" align="right" actionType="button" bundle="${messages}">
+		<ec:button label="#{search.label}" align="right" style="light" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders');
 			</ec:event>
 		</ec:button>
-		<ec:button label="#{shipping.label}" align="right" enabled="${vars.order.completeInvoice != null && vars.order.completeShipping == null}" actionType="button" bundle="${messages}">
+		<ec:button label="#{shipping.label}" align="right" style="light" enabled="${vars.order.completeInvoice != null && vars.order.completeShipping == null}" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/new/${vars.order.id}');
 			</ec:event>
 		</ec:button>
-		<ec:button label="#{create_invoice.label}" align="right" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}" bundle="${messages}">
+		<ec:button label="#{create_invoice.label}" align="right" style="light" enabled="${vars.order.payment.receivedFrom != null && vars.order.completeInvoice == null}" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/new/${vars.order.id}');
 			</ec:event>

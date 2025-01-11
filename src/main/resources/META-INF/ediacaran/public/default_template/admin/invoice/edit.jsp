@@ -169,12 +169,12 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="#{order.label}" actionType="button" align="right" bundle="${messages}">
+		<ec:button label="#{order.label}" actionType="button" style="light" align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="#{save.label}" align="right" bundle="${messages}"/>
+		<ec:button actionType="submit" label="#{save.label}" align="right" style="success" bundle="${messages}"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

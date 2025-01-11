@@ -112,12 +112,12 @@
 		</ed:row>	
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="#{cancel.label}" align="right" style="danger" enabled="${vars.invoice.cancelDate == null}" bundle="${messages}"/>
-		<ec:button label="#{order.label}" align="right" actionType="button" bundle="${messages}">
+		<ec:button label="#{order.label}" align="right" style="light" actionType="button" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.invoice.order}');			
 			</ec:event>
 		</ec:button>
+		<ec:button label="#{cancel.label}" align="right" style="danger" enabled="${vars.invoice.cancelDate == null}" bundle="${messages}"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

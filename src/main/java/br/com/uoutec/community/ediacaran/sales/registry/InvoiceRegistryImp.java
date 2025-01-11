@@ -75,7 +75,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 			
 			Order order = new Order();
-			order.setId(entity.getId());
+			order.setId(entity.getOrder());
 			order = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 			
 			if(order == null) {

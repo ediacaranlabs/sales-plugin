@@ -108,7 +108,7 @@
 					<ec:tabs-item active="true" title="#{tabs.details.title}" bundle="${messages}">
 						<ed:row style="form">
 							<ed:col classStyle="form-group has-feedback">
-								<ec:select label="#{tabs.details.form.shipping_method.label}" name="shippingType" enabled="${empty vars.shipping.id}">
+								<ec:select label="#{tabs.details.form.shipping_method.label}" name="shippingType" enabled="${empty vars.shipping.id}" bundle="${messages}">
 									<ec:field-validator>
 										<ec:field-validator-rule name="notEmpty" message="#{tabs.details.form.shipping_method.validation.notEmpty}" bundle="${messages}"/>
 									</ec:field-validator>
@@ -168,13 +168,16 @@
 		</ed:row>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="#{show_order.label}" actionType="button" align="right" bundle="${messages}">
+		<ec:button label="#{show_order.label}" actionType="button" style="light" 
+			align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="#{save.label}" align="right" bundle="${messages}" enabled="${empty vars.shipping.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/save" />
-		<ec:button actionType="submit" label="#{cancel.label}" align="right" bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/cancel"/>
+		<ec:button actionType="submit" label="#{cancel.label}" align="right" style="danger"
+			bundle="${messages}" enabled="${!empty vars.shipping.id && empty vars.shipping.cancelDate}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/cancel"/>
+		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
+			bundle="${messages}" enabled="${empty vars.shipping.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/save" />
 	</ec:box-footer>
 </ec:box>
 </ec:form>
