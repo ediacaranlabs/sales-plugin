@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
@@ -156,6 +157,7 @@ public class OrderRegistryImp
 	private ClientRegistry clientRegistry;
 	
 	@Override
+	@Transactional
 	public void registerOrder(Order entity)	throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
@@ -191,6 +193,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
+	@Transactional
 	public void removeOrder(Order entity) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRemovePermission());
@@ -356,6 +359,41 @@ public class OrderRegistryImp
 	}
 
 	@Override
+	@Transactional
+	public void updateStatus(Order o) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
+		
+		Order order;
+		try{
+			order = orderEntityAccess.findById(o.getId());
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(o.getId());
+		}
+
+		order.setStatus(OrderStatus.ON_HOLD);
+		
+		if(order.getPayment().getReceivedFrom() != null) {
+			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
+		}
+
+		if(order.getCompleteInvoice() != null && order.getCompleteShipping() != null) {
+			order.setStatus(OrderStatus.ORDER_SHIPPED);
+		}
+		
+		try {
+			updateOrder(order);
+		} catch (EntityAccessException e) {
+			throw new OrderRegistryException(e);
+		}
+		catch (ValidationException e) {
+			throw new OrderRegistryException(e);
+		}
+	}
+	
+	@Override
+	@Transactional
 	public void registerPayment(Order o, String currency, BigDecimal value) throws OrderRegistryException, PaymentGatewayException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
@@ -432,6 +470,7 @@ public class OrderRegistryImp
 	 */
 	
 	@Override
+	@Transactional
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
@@ -695,6 +734,7 @@ public class OrderRegistryImp
 	 * @throws RegistryException 
 	 */
 	@Override
+	@Transactional
 	public void createRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());
@@ -769,6 +809,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
+	@Transactional
 	public void revertRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.REFOUND.getRevertPermission());

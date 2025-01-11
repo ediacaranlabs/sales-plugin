@@ -125,8 +125,19 @@ public class Invoice implements Serializable{
 		//DateTimeFormatter.withLocale(locale).
 		
 		DateTimeFormatter dateTimeFormatter = 
-				DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+				DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
 		return date.format(dateTimeFormatter);
+	}
+	
+	public String toStringCancelDate(Locale locale) {
+		if(cancelDate == null) {
+			return "";
+		}
+		//DateTimeFormatter.withLocale(locale).
+		
+		DateTimeFormatter dateTimeFormatter = 
+				DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
+		return cancelDate.format(dateTimeFormatter);
 	}
 	
 	public List<ProductRequest> getItens() {

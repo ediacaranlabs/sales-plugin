@@ -214,6 +214,10 @@ public class InvoiceRegistryUtil {
 		return actualUser;
 	}
 
+	public static void updateStatus(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(order);
+	}
+	
 	public static void markAsComplete(Order order, Invoice invoice, List<Invoice> invoices, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
 		

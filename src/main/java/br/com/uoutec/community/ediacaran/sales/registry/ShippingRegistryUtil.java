@@ -328,6 +328,10 @@ public class ShippingRegistryUtil {
 		}
 	}
 
+	public static void updateStatus(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(order);
+	}
+	
 	public static void update(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
 		try {
 			entityAccess.update(shipping);

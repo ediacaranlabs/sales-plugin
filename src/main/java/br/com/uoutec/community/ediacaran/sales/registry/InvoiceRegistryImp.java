@@ -496,6 +496,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
 		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		InvoiceRegistryUtil.registerEvent(entity, actualOrder, null, orderRegistry);
 	}
 
@@ -505,6 +506,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		SystemUser user = new SystemUser();
 		user.setId(order.getOwner());
 		
+		OrderRegistry orderRegistry  = EntityContextPlugin.getEntity(OrderRegistry.class);
+		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		SystemUser actualUser        = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
 		Invoice actualInvoice        = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
 		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(order, actualUser, entityAccess);
@@ -513,6 +516,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, order, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 	}
 	
 	private void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{

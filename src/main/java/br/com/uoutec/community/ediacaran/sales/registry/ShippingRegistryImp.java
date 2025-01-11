@@ -448,6 +448,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShipping, orderRegistry);
+		ShippingRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerEvent(shipping, actualOrder, null, orderRegistry);
 	}
 
@@ -457,6 +458,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
+		OrderRegistry orderRegistry  = EntityContextPlugin.getEntity(OrderRegistry.class);
+		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient            = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
 		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		Shipping actualShipping        = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
@@ -465,6 +468,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, EntityContextPlugin.getEntity(OrderRegistry.class));
+		ShippingRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		
 	}
 	

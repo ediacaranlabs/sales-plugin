@@ -142,6 +142,7 @@
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_invoice.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_invoice.date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_invoice.cancel_date" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_invoice.subtotal" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_invoice.tax" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_invoice.discount" bundle="${messages}"/></small></center></ec:table-col>
@@ -152,7 +153,8 @@
 								<c:forEach items="${vars.invoices}" var="invoice">
 								<ec:table-row style="${invoice.cancelDate != null? 'danger' : ''}">
 									<ec:table-col><center><small>${invoice.id}</small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.toStringDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${invoice.toStringDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${invoice.toStringCancelDate(locale)}</small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.subtotal}"/></small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.tax}"/></small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.discount}"/></small></center></ec:table-col>
