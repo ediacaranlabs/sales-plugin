@@ -33,6 +33,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
@@ -384,14 +385,20 @@ public class OrderRegistryImp
 			throw new OrderNotFoundRegistryException(o.getId());
 		}
 
-		order.setStatus(OrderStatus.ON_HOLD);
-		
+		if(order.getCompleteInvoice() != null && order.getCompleteShipping() != null) {
+			order.setStatus(OrderStatus.COMPLETE);
+		}
+		else
+		if(order.getCompleteShipping() != null) {
+			order.setStatus(OrderStatus.ORDER_SHIPPED);
+		}
+		else
+		if(order.getCompleteInvoice() != null) {
+			order.setStatus(OrderStatus.ORDER_INVOICED);
+		}
+		else
 		if(order.getPayment().getReceivedFrom() != null) {
 			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
-		}
-
-		if(order.getCompleteInvoice() != null && order.getCompleteShipping() != null) {
-			order.setStatus(OrderStatus.ORDER_SHIPPED);
 		}
 		
 		try {
@@ -439,16 +446,17 @@ public class OrderRegistryImp
 				throw new OrderRegistryException("payment gateway not found");
 			}
 			
-			SystemUser user;
+			Client user;
 			
 			try {
 				user = getSystemUser(order.getOwner());
 			}
-			catch (SystemUserRegistryException e) {
+			catch (ClientRegistryException e) {
 				throw new OrderRegistryException("owner not found: " + order.getOwner());
 			}
 			
-			paymentGateway.payment(user, order, order.getPayment());
+			PaymentRequest paymentRequest = new PaymentRequest(user, order.getPayment());
+			paymentGateway.payment(paymentRequest);
 			
 		}
 		else {
@@ -986,11 +994,11 @@ public class OrderRegistryImp
 		return user;
 	}
 
-	private SystemUser getSystemUser(int id) throws SystemUserRegistryException {
-		SystemUser user = systemUserRegistry.findById(id);
+	private Client getSystemUser(int id) throws ClientRegistryException {
+		Client user = clientRegistry.findClientById(id);
 		
 		if(user == null) {
-			throw new SystemUserRegistryException(String.valueOf(id));
+			throw new ClientRegistryException(String.valueOf(id));
 		}
 		
 		return user;

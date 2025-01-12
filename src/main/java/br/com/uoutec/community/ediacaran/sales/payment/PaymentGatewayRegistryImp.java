@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 @Singleton
 public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
@@ -69,10 +69,11 @@ public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
 	}
 
 	@Override
-	public List<PaymentGateway> getPaymentGateways(Cart cart, SystemUser user) {
+	public List<PaymentGateway> getPaymentGateways(Cart cart, Client client) {
 		List<PaymentGateway> result = new ArrayList<>();
+		PaymentRequest paymenRequest = new PaymentRequest(client, cart);
 		map.values().stream().forEach((e)->{
-			if(e.isApplicable(cart, user)) {
+			if(e.isApplicable(paymenRequest)) {
 				result.add(e);
 			}
 		});

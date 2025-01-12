@@ -29,6 +29,7 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResult;
@@ -39,8 +40,10 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
@@ -48,7 +51,6 @@ import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -69,6 +71,10 @@ public class OrderAdminPubResource {
 	@Transient
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
+
+	@Transient
+	@Inject
+	private ClientRegistry clientRegistry;
 	
 	@Transient
 	@Inject
@@ -215,12 +221,12 @@ public class OrderAdminPubResource {
 		
 		Order order;
 		List<Invoice> invoices;
-		SystemUser user;
+		Client client;
 		List<Shipping> shippings;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
-			user = systemUserRegistry.findById(order.getOwner());
+			client = clientRegistry.findClientById(order.getOwner());
 			shippings = shippingRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){
@@ -243,7 +249,7 @@ public class OrderAdminPubResource {
 							order.getPaymentType());
 			
 			if(paymentGateway != null){
-				view = paymentGateway.getOwnerView(user, order);
+				view = paymentGateway.getOwnerView(new PaymentRequest(client, order.getPayment()));
 			}
 			
 		}

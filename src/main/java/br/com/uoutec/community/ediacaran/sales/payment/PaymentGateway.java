@@ -1,23 +1,14 @@
 package br.com.uoutec.community.ediacaran.sales.payment;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.Payment;
-import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-
 public interface PaymentGateway {
 
 	public static final String TYPE_NAME = "PAYMENT_GATEWAY";
 	
-	void payment(SystemUser user, Order order, Payment payment) throws PaymentGatewayException;
+	void payment(PaymentRequest paymentRequest) throws PaymentGatewayException;
 	
-	String redirectView(String orderID) throws PaymentGatewayException;
+	String redirectView(PaymentRequest paymentRequest) throws PaymentGatewayException;
 	
-	String redirectView(SystemUser user, Order order) throws PaymentGatewayException;
-	
-	String getOwnerView(Order order) throws PaymentGatewayException;
-	
-	String getOwnerView(SystemUser user, Order order) throws PaymentGatewayException;
+	String getOwnerView(PaymentRequest paymentRequest) throws PaymentGatewayException;
 	
 	String getView() throws PaymentGatewayException;
 
@@ -25,6 +16,6 @@ public interface PaymentGateway {
 	
 	String getName();
 	
-	boolean isApplicable(Cart cart, SystemUser user);
+	boolean isApplicable(PaymentRequest paymentRequest);
 	
 }

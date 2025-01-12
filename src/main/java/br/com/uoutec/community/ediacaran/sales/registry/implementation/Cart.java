@@ -135,6 +135,20 @@ public class Cart implements Serializable{
 		this.taxes = taxes;
 	}
 
+	public String getCurrency() {
+		if(itens.isNoitems()) {
+			return null;
+		}
+		
+		for(ProductRequest pr: itens.getItens()) {
+			if(pr.getCurrency() != null) {
+				return pr.getCurrency();
+			}
+		}
+		
+		return null;
+	}
+	
 	public BigDecimal getTax(){
 		return BigDecimal.ZERO;
 	}
