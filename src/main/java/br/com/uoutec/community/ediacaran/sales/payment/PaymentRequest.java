@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.payment;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public class PaymentRequest {
 	private BigDecimal total;
 	
 	private String currency;
+	
+	private LocalDateTime receivedDate;
 	
 	private Map<String,String> addData;
 	
@@ -60,6 +63,14 @@ public class PaymentRequest {
 		this.addData = new HashMap<>();
 	}
 	
+	public LocalDateTime getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(LocalDateTime receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
 	public BigDecimal getValue() {
 		return value;
 	}

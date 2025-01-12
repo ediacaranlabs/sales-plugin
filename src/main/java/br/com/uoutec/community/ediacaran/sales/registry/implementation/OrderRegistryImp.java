@@ -656,13 +656,14 @@ public class OrderRegistryImp
 		try{
 			this.registerOrder(order);
 			this.registryLog(order.getId(), message == null? "Pedido criado #" + order.getId() : message);
-			//paymentGateway.payment(systemUser, order, order.getPayment());
+			paymentGateway.payment(new PaymentRequest(cart.getClient(), payment));
 			//this.registerOrder(order);
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("falha ao registrar o pedido", e);
 		}
 
+		
 		if(payment.getTotal().compareTo(BigDecimal.ZERO) <= 0){
 			
 			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
