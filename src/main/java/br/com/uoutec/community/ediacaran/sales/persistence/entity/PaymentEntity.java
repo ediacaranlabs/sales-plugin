@@ -19,6 +19,7 @@ import org.brandao.brutos.bean.BeanInstance;
 import org.brandao.brutos.bean.BeanProperty;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
+import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -65,6 +66,9 @@ public class PaymentEntity implements Serializable{
 	@Column(name="dat_received_from")
 	private LocalDateTime receivedFrom;
 	
+	@Column(name="set_status")
+	private PaymentStatus status;
+	
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
@@ -88,6 +92,7 @@ public class PaymentEntity implements Serializable{
 		this.value              = e.getValue();
 		this.discount           = e.getDiscount();
 		this.total              = e.getTotal();
+		this.status             = e.getStatus();
 		
 		Map<String,String> actualData = e.getAddData();
 		Map<String,String> data = DataUtil.encode(e, excludeFields);
@@ -174,6 +179,14 @@ public class PaymentEntity implements Serializable{
 		this.extendData = extendData;
 	}
 	
+	public PaymentStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PaymentStatus status) {
+		this.status = status;
+	}
+
 	public LocalDateTime getReceivedFrom() {
 		return receivedFrom;
 	}
@@ -219,6 +232,7 @@ public class PaymentEntity implements Serializable{
 			e.setValue(this.value);
 			e.setDiscount(this.discount);
 			e.setTotal(this.total);
+			e.setStatus(this.status);;
 			
 			return e;
 		}

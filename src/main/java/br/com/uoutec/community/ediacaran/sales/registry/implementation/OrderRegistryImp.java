@@ -3,13 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,6 +21,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
+import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -40,7 +35,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
-import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -74,73 +68,7 @@ public class OrderRegistryImp
 	extends AbstractRegistry
 	implements OrderRegistry{
 
-	private static final Map<OrderStatus, Set<OrderStatus>> nextState;
-	
 	private static final String ORDER_EVENT_GROUP = "ORDER";
-	
-	static{
-		nextState = new HashMap<OrderStatus, Set<OrderStatus>>();
-		
-		//Fluxo comum
-		nextState.put(OrderStatus.NEW, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.PENDING_PAYMENT,
-						OrderStatus.CANCELED,
-						OrderStatus.ON_HOLD))
-			);
-		
-		/*
-		nextState.put(OrderStatus.ON_HOLD, 
-			new HashSet<OrderStatus>(Arrays.asList(
-					OrderStatus.CLOSED,
-					OrderStatus.CANCELED,
-					OrderStatus.PENDING_PAYMENT,
-					OrderStatus.PAYMENT_RECEIVED))
-		);
-		*/
-		
-		nextState.put(OrderStatus.PENDING_PAYMENT, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.CANCELED,
-						OrderStatus.PAYMENT_RECEIVED))
-			);
-
-		nextState.put(OrderStatus.PAYMENT_RECEIVED, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.REFOUND,
-						OrderStatus.ORDER_INVOICED))
-			);
-
-		nextState.put(OrderStatus.ORDER_INVOICED, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.ORDER_SHIPPED))
-			);
-
-		nextState.put(OrderStatus.ORDER_SHIPPED, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.COMPLETE))
-			);
-
-		nextState.put(OrderStatus.REFOUND, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.CLOSED))
-			);
-		
-		nextState.put(OrderStatus.CLOSED, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.ARCHIVED))
-			);
-
-		nextState.put(OrderStatus.COMPLETE, 
-				new HashSet<OrderStatus>(Arrays.asList(
-						OrderStatus.ARCHIVED))
-			);
-		
-		nextState.put(OrderStatus.CANCELED, 
-				new HashSet<OrderStatus>(Arrays.asList())
-			);
-		
-	}
 
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
@@ -160,9 +88,6 @@ public class OrderRegistryImp
 	@Inject
 	private OrderEntityAccess orderEntityAccess;
 
-	@Inject
-	private InvoiceRegistry invoiceRegistry;
-	
 	@Inject
 	private SubjectProvider subjectProvider;
 
@@ -430,7 +355,7 @@ public class OrderRegistryImp
 		}
 		
 		//Verifica se o status é o adequado
-		if(!this.isValid(order, OrderStatus.PAYMENT_RECEIVED)){
+		if(!order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)){
 			throw new OrderStatusNotAllowedRegistryException(
 					"invalid status: " + 
 					order.getStatus() + " -> " + OrderStatus.PAYMENT_RECEIVED);
@@ -472,9 +397,15 @@ public class OrderRegistryImp
 			
 		}
 
-		order.setStatus(OrderStatus.PAYMENT_RECEIVED);
+		updateOrderStatus(order, order.getPayment());
 		order.getPayment().setReceivedFrom(LocalDateTime.now());
-		this.registerOrder(order);
+		
+		try {
+			updateOrder(order);
+		}
+		catch (Throwable e) {
+			throw new OrderRegistryException(e);
+		}
 		
 	}
 	
@@ -634,6 +565,7 @@ public class OrderRegistryImp
 		*/
 		
 
+		payment.setStatus(PaymentStatus.NEW);
 		payment.setPaymentType(paymentGateway.getId());
 		payment.setTax(cart.getTotalTax());
 		payment.setDiscount(cart.getTotalDiscount());
@@ -656,15 +588,29 @@ public class OrderRegistryImp
 		try{
 			this.registerOrder(order);
 			this.registryLog(order.getId(), message == null? "Pedido criado #" + order.getId() : message);
+			
 			paymentGateway.payment(new PaymentRequest(cart.getClient(), payment));
-			//this.registerOrder(order);
+			
+			payment.setPaymentType(paymentGateway.getId());
+			payment.setTax(cart.getTotalTax());
+			payment.setDiscount(cart.getTotalDiscount());
+			payment.setCurrency(order.getItens().get(0).getCurrency());
+			payment.setValue(cart.getSubtotal());
+			payment.setTotal(cart.getTotal());
+			
+			updateOrderStatus(order, payment);
+			
+			updateOrder(order);
+		}
+		catch(OrderRegistryException e){
+			throw e;
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("falha ao registrar o pedido", e);
 		}
 
-		
-		if(payment.getTotal().compareTo(BigDecimal.ZERO) <= 0){
+		/*
+		if(PaymentStatus.PAYMENT_RECEIVED.equals(payment.getStatus()) && payment.getTotal().compareTo(cart.getTotal()) == 0){
 			
 			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
 			this.registerOrder(order);
@@ -680,6 +626,7 @@ public class OrderRegistryImp
 				throw new OrderRegistryException("falha ao processar os produtos", e);
 			}
 		}
+		*/
 		
 		try{
 			for(ProductRequest pr: order.getItens()){
@@ -693,6 +640,36 @@ public class OrderRegistryImp
 		}
 		
 		return order;
+	}
+	
+	private void updateOrderStatus(Order order, Payment payment) throws OrderRegistryException {
+		
+		switch (payment.getStatus()) {
+			case NEW:
+			case ON_HOLD:
+				if(order.getStatus().isValidNextStatus(OrderStatus.ON_HOLD)) {
+					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
+				}
+				order.setStatus(OrderStatus.ON_HOLD);
+				break;
+			case PAYMENT_RECEIVED:
+				if(order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)) {
+					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
+				}
+				order.setStatus(OrderStatus.PAYMENT_RECEIVED);
+				break;
+			case PAYMENT_REVIEW:
+			case PENDING_PAYMENT:
+			case PENDING_PAYMENT_CONFIRMATION:
+			case SUSPECTED_FRAUD:
+				if(order.getStatus().isValidNextStatus(OrderStatus.PENDING_PAYMENT)) {
+					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
+				}
+				order.setStatus(OrderStatus.PENDING_PAYMENT);
+				break;
+			default:
+				throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
+		}
 	}
 	
 	private Address getDefaultAddress(Client client) {
@@ -782,7 +759,7 @@ public class OrderRegistryImp
 		}
 		
 		//Verifica se o status é o adequado
-		if(!this.isValid(order, OrderStatus.REFOUND)){
+		if(!order.getStatus().isValidNextStatus(OrderStatus.REFOUND)){
 			throw new OrderStatusNotAllowedRegistryException(
 					"novo status não é permitido: " + 
 					order.getStatus() + " -> " + OrderStatus.REFOUND);
@@ -802,7 +779,7 @@ public class OrderRegistryImp
 		//atualiza o status do pedido
 		order.setStatus(OrderStatus.REFOUND);
 		
-		invoiceRegistry.cancelInvoices(order, message);
+		//invoiceRegistry.cancelInvoices(order, message);
 		
 		/*
 		//Processa os itens do pedido
@@ -922,13 +899,6 @@ public class OrderRegistryImp
 		ValidatorBean.validate(order, groups);
 	}
 
-	private boolean isValid(Order order, OrderStatus newStatus){
-		//verifica se o proximo status é permitido
-		OrderStatus currentStatus = order.getStatus();
-		Set<OrderStatus> nextStatus = OrderRegistryImp.nextState.get(currentStatus);
-		return nextStatus != null && nextStatus.contains(newStatus);
-	}
-	
 	/* log  */
 	
 	public void registryLog(String orderID, String message) throws OrderRegistryException{

@@ -32,6 +32,9 @@ public class Payment implements Serializable{
 	private BigDecimal value;
 	
 	@NotNull(groups = DataValidation.class)
+	private PaymentStatus status;
+	
+	@NotNull(groups = DataValidation.class)
 	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal tax;
 
@@ -89,6 +92,14 @@ public class Payment implements Serializable{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public PaymentStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PaymentStatus status) {
+		this.status = status;
 	}
 
 	public Map<String, String> getAddData() {

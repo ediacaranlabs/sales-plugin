@@ -34,7 +34,9 @@ public interface ProductTypeHandler {
 
 	boolean isAvailability(SystemUser user, Cart cart, ItensCollection itens, ProductRequest productRequest) throws
 		ProductTypeHandlerException;
-	
+
+	boolean isService(ProductRequest productRequest);
+
 	String getSerial(ProductRequest productRequest);
 	
 	String getShortDescription(ProductRequest productRequest) throws ProductTypeHandlerException;
@@ -48,6 +50,7 @@ public interface ProductTypeHandler {
 		ProductTypeHandlerException;
 
 	/* registry */
+	
 	
 	void registryItem(SystemUser user, Order order, ProductRequest productRequest)
 			throws ProductTypeHandlerException;
