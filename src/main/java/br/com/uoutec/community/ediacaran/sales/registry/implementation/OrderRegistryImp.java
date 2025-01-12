@@ -382,7 +382,6 @@ public class OrderRegistryImp
 			
 			PaymentRequest paymentRequest = new PaymentRequest(user, order.getPayment());
 			paymentGateway.payment(paymentRequest);
-			
 		}
 		else {
 			
@@ -402,6 +401,8 @@ public class OrderRegistryImp
 		
 		try {
 			updateOrder(order);
+			o.setStatus(order.getStatus());
+			o.setPayment(order.getPayment());
 		}
 		catch (Throwable e) {
 			throw new OrderRegistryException(e);
@@ -591,15 +592,8 @@ public class OrderRegistryImp
 			
 			paymentGateway.payment(new PaymentRequest(cart.getClient(), payment));
 			
-			payment.setPaymentType(paymentGateway.getId());
-			payment.setTax(cart.getTotalTax());
-			payment.setDiscount(cart.getTotalDiscount());
-			payment.setCurrency(order.getItens().get(0).getCurrency());
-			payment.setValue(cart.getSubtotal());
-			payment.setTotal(cart.getTotal());
-			
+			order.getPayment().setStatus(payment.getStatus());
 			updateOrderStatus(order, payment);
-			
 			updateOrder(order);
 		}
 		catch(OrderRegistryException e){
@@ -647,13 +641,13 @@ public class OrderRegistryImp
 		switch (payment.getStatus()) {
 			case NEW:
 			case ON_HOLD:
-				if(order.getStatus().isValidNextStatus(OrderStatus.ON_HOLD)) {
+				if(!order.getStatus().isValidNextStatus(OrderStatus.ON_HOLD)) {
 					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
 				}
 				order.setStatus(OrderStatus.ON_HOLD);
 				break;
 			case PAYMENT_RECEIVED:
-				if(order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)) {
+				if(!order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)) {
 					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
 				}
 				order.setStatus(OrderStatus.PAYMENT_RECEIVED);
@@ -662,7 +656,7 @@ public class OrderRegistryImp
 			case PENDING_PAYMENT:
 			case PENDING_PAYMENT_CONFIRMATION:
 			case SUSPECTED_FRAUD:
-				if(order.getStatus().isValidNextStatus(OrderStatus.PENDING_PAYMENT)) {
+				if(!order.getStatus().isValidNextStatus(OrderStatus.PENDING_PAYMENT)) {
 					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
 				}
 				order.setStatus(OrderStatus.PENDING_PAYMENT);

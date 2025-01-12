@@ -219,12 +219,14 @@ public class CartRegistryImp
 			
 			if(order.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT) {
 				orderRegistry.registerPayment(order, null, null);
+				order = orderRegistry.findById(order.getId());
 			}
 			
 			if(order.getStatus() == OrderStatus.PAYMENT_RECEIVED) {
 				InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 				Invoice invoice = invoiceRegistry.toInvoice(order);
 				invoiceRegistry.registerInvoice(invoice);
+				order = orderRegistry.findById(order.getId());
 			}
 			
 			if(order.getStatus() == OrderStatus.ORDER_INVOICED) {
@@ -245,6 +247,7 @@ public class CartRegistryImp
 					shippingRegistry.registerShipping(shipping);
 				}
 				
+				order = orderRegistry.findById(order.getId());
 			}
 			
 		}
