@@ -42,6 +42,7 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.filter.invoker.annotation.EnableFilters;
@@ -244,6 +245,9 @@ public class CartRegistryImp
 				}
 				
 				if(!actualProducts.isEmpty()) {
+					VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+					String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
+					shipping.setShippingType(serviceShippingName);
 					shippingRegistry.registerShipping(shipping);
 				}
 				
