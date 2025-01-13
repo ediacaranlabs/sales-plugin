@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
@@ -96,6 +97,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void registerOrder(Order entity)	throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
@@ -132,6 +134,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void removeOrder(Order entity) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRemovePermission());
@@ -150,6 +153,7 @@ public class OrderRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Order findById(String id) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
@@ -158,6 +162,7 @@ public class OrderRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Order findById(String id, SystemUserID userID) throws OrderRegistryException {
 
 		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
@@ -180,6 +185,7 @@ public class OrderRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Order findById(String id, SystemUser systemUser) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
@@ -205,6 +211,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public Order findByCartID(String id)
 			throws OrderRegistryException {
 		
@@ -218,6 +225,8 @@ public class OrderRegistryImp
 		}
 	}
 	
+	@Override
+	@ActivateRequestContext
 	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
@@ -230,11 +239,13 @@ public class OrderRegistryImp
 		}
 	}
 	
+	@ActivateRequestContext
 	public List<Order> getOrders(Integer first, Integer max)
 			throws OrderRegistryException, SystemUserRegistryException {
 		return getOrders((OrderStatus)null, first, max);
 	}
 	
+	@ActivateRequestContext
 	public List<Order> getOrders(OrderStatus status, Integer first, Integer max)
 			throws OrderRegistryException, SystemUserRegistryException {
 
@@ -250,6 +261,7 @@ public class OrderRegistryImp
 		
 	}
 	
+	@ActivateRequestContext
 	public List<Order> getOrders(SystemUserID userID, Integer first, Integer max)
 			throws OrderRegistryException, SystemUserRegistryException {
 		
@@ -266,6 +278,7 @@ public class OrderRegistryImp
 		}
 	}
 
+	@ActivateRequestContext
 	public List<Order> getOrders(SystemUserID userID, OrderStatus status,
 			Integer first, Integer max) throws OrderRegistryException, SystemUserRegistryException {
 
@@ -282,6 +295,7 @@ public class OrderRegistryImp
 		}
 	}
 
+	@ActivateRequestContext
 	public ProductRequest getProductRequest(String orderID,
 			String id) throws OrderRegistryException {
 		
@@ -298,6 +312,7 @@ public class OrderRegistryImp
 
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void updateStatus(Order o) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
@@ -338,6 +353,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void registerPayment(Order o, String currency, BigDecimal value) throws OrderRegistryException, PaymentGatewayException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
@@ -423,6 +439,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
@@ -696,6 +713,7 @@ public class OrderRegistryImp
 		return address;
 	}
 	
+	@ActivateRequestContext
 	public boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 
 			OrderRegistryException, SystemUserRegistryException{
@@ -725,6 +743,7 @@ public class OrderRegistryImp
 	 */
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void createRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());
@@ -800,6 +819,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void revertRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.REFOUND.getRevertPermission());
@@ -882,6 +902,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public Shipping createShipping(String orderID, 
 			boolean useAlternativeAdress, String shippingCode) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
@@ -895,6 +916,7 @@ public class OrderRegistryImp
 
 	/* log  */
 	
+	@ActivateRequestContext
 	public void registryLog(String orderID, String message) throws OrderRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.LOGS.getRegisterPermission());
@@ -929,6 +951,7 @@ public class OrderRegistryImp
 	}
 	*/
 	
+	@ActivateRequestContext
 	public List<OrderLog> getLogs(String orderID, Integer first, Integer max) throws OrderRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.LOGS.getListPermission());

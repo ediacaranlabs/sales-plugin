@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
@@ -65,6 +66,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void registerShipping(Shipping entity) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRegisterPermission());
@@ -103,6 +105,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void removeShipping(Shipping entity) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRemovePermission());
@@ -122,6 +125,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Shipping findById(String id) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
@@ -129,6 +133,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		return unsafeFindById(id, null);
 	}
 
+	@ActivateRequestContext
 	public Shipping findById(String id, SystemUserID userID) throws ShippingRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
@@ -149,6 +154,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
+	@ActivateRequestContext
 	public Shipping findById(String id, Client systemUser) throws ShippingRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
@@ -184,6 +190,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public ShippingsResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
@@ -204,6 +211,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
@@ -226,6 +234,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Shipping createShipping(Order order, SystemUserID userID, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
 		
 		Client client = getSystemUser(userID);
@@ -233,6 +242,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public Shipping createShipping(Order order, Client client, Map<String, Integer> itens, String message) throws ShippingRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
@@ -260,6 +270,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public Shipping toShipping(Order order
 			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException {
 		
@@ -292,6 +303,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public List<Shipping> findByOrder(String id) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
@@ -305,6 +317,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
+	@ActivateRequestContext
 	public List<Shipping> findByOrder(String id, SystemUserID userID) throws ShippingRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
@@ -360,12 +373,14 @@ public class ShippingRegistryImp implements ShippingRegistry{
 
 	@Transactional
 	@Override
+	@ActivateRequestContext
 	public void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException {
 		cancelShipping(shipping, null, justification);
 	}
 	
 	@Transactional
 	@Override
+	@ActivateRequestContext
 	public void cancelShipping(Shipping shipping, SystemUserID userID, String justification) throws ShippingRegistryException {
 		
 		SystemUser systemUser;
@@ -385,6 +400,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	
 	@Transactional
 	@Override
+	@ActivateRequestContext
 	public void cancelShipping(Shipping shipping, SystemUser systemUser, String justification) throws ShippingRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());

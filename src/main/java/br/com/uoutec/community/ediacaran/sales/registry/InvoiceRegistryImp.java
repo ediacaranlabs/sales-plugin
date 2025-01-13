@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
@@ -63,6 +64,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRegisterPermission());
@@ -104,6 +106,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
@@ -130,6 +133,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Invoice findById(String id) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -137,6 +141,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		return unsafeFindById(id, null);
 	}
 
+	@ActivateRequestContext
 	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -157,6 +162,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 	}
 	
+	@ActivateRequestContext
 	public Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -182,6 +188,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
@@ -196,6 +203,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
@@ -221,6 +229,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
@@ -231,6 +240,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
 			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
@@ -255,6 +265,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 	}
 	
+	@ActivateRequestContext
 	public Invoice toInvoice(Order order
 			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
 				InvalidUnitsOrderRegistryException {
@@ -288,12 +299,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException {
 		cancelInvoice(invoice, null, justification);
 	}
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void cancelInvoice(Invoice invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
 		
 		SystemUser systemUser;
@@ -313,6 +326,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void cancelInvoice(Invoice invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
@@ -338,12 +352,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@Transactional
+	@ActivateRequestContext
 	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException {
 		cancelInvoices(order, null, justification);
 	}
 	
-	@Transactional
 	@Override
+	@Transactional
+	@ActivateRequestContext
 	public void cancelInvoices(Order invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
 		
 		SystemUser systemUser;
@@ -362,8 +378,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	
-	@Transactional
 	@Override
+	@Transactional
+	@ActivateRequestContext
 	public void cancelInvoices(Order order, SystemUser systemUser, String justification) throws InvoiceRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
@@ -413,6 +430,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -426,6 +444,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
+	@ActivateRequestContext
 	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());

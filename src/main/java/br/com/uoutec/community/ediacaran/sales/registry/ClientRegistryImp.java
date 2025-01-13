@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -47,6 +48,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public void registerClient(Client entity) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getRegisterPermission());
@@ -92,6 +94,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Client findClientById(int id) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getFindPermission());
@@ -119,6 +122,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public Client getClientBySystemID(String value) throws ClientRegistryException{
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getFindPermission());
 		
@@ -145,6 +149,7 @@ public class ClientRegistryImp
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getSearchPermission());
@@ -175,6 +180,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public void registerAddress(Address address, Client client) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRegisterPermission());
@@ -217,6 +223,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public void removeAddress(Client value) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
@@ -236,6 +243,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public void removeAddress(Address address, Client client) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getRemovePermission());
@@ -265,6 +273,7 @@ public class ClientRegistryImp
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public Address getAddressByID(int id) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getFindPermission());
@@ -276,6 +285,8 @@ public class ClientRegistryImp
     		throw new ClientRegistryException(e);
     	}
 	}
+	
+	@ActivateRequestContext
 	public Address getAddressByID(int id, Client client) throws ClientRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getFindPermission());
@@ -289,6 +300,7 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public List<Address> getAddresses(Client value) throws ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.ADDRESS.getListPermission());
