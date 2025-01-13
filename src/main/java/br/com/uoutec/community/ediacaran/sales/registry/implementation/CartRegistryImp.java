@@ -218,6 +218,7 @@ public class CartRegistryImp
 			
 			order = orderRegistry.createOrder(cart, payment, message, paymentGateway);
 			
+			/*
 			if(order.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT) {
 				orderRegistry.registerPayment(order, null, null);
 				order = orderRegistry.findById(order.getId());
@@ -253,7 +254,7 @@ public class CartRegistryImp
 				
 				order = orderRegistry.findById(order.getId());
 			}
-			
+			*/
 		}
 		catch(ExistOrderRegistryException e){
 			order = orderRegistry.findByCartID(cart.getId());
