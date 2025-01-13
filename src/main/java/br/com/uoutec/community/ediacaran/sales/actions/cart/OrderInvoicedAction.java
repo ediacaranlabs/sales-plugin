@@ -3,6 +3,10 @@ package br.com.uoutec.community.ediacaran.sales.actions.cart;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.control.ActivateRequestContext;
+import javax.inject.Singleton;
+import javax.transaction.Transactional;
+
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
@@ -17,10 +21,14 @@ import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequest;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorResponse;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
-public class OrderInvoicedAction implements ActionExecutor{
+@Singleton
+public class OrderInvoicedAction implements ActionExecutor, PublicBean{
 
 	@Override
+	@Transactional
+	@ActivateRequestContext
 	public void execute(ActionExecutorRequest request, ActionExecutorResponse response) throws Throwable {
 		
 		String orderID = request.getParameter("order");
