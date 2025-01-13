@@ -43,6 +43,8 @@ public class PaymentReceivedAction implements ActionExecutor, PublicBean{
 			invoiceRegistry.registerInvoice(invoice);
 		}
 		
+		response.setParameter("order", orderID);
+		
 	}
 
 }

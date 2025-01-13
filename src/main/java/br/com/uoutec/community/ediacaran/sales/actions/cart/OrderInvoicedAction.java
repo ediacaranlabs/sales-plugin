@@ -68,6 +68,8 @@ public class OrderInvoicedAction implements ActionExecutor, PublicBean{
 			}
 			
 		}
+
+		response.setParameter("order", orderID);
 		
 	}
 

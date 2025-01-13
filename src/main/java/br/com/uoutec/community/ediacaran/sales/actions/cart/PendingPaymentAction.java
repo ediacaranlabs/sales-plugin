@@ -39,6 +39,7 @@ public class PendingPaymentAction implements ActionExecutor, PublicBean{
 			orderRegistry.registerPayment(order, null, null);
 		}
 		
+		response.setParameter("order", orderID);
 	}
 
 }

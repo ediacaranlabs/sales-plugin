@@ -2,6 +2,8 @@ package br.com.uoutec.community.ediacaran.sales;
 
 import java.time.temporal.ChronoUnit;
 
+import br.com.uoutec.community.ediacaran.sales.actions.cart.OrderInvoicedAction;
+import br.com.uoutec.community.ediacaran.sales.actions.cart.PaymentReceivedAction;
 import br.com.uoutec.community.ediacaran.sales.actions.cart.PendingPaymentAction;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
@@ -31,7 +33,7 @@ public class ActionsPluginInstaller {
 				3, 
 				10, 
 				ChronoUnit.SECONDS, 
-				EntityContextPlugin.getEntity(PendingPaymentAction.class)
+				EntityContextPlugin.getEntity(PaymentReceivedAction.class)
 		);
 		
 		actionRegistry.addNextAction(OrderStatus.PAYMENT_RECEIVED.name(), OrderStatus.ORDER_INVOICED.name());
@@ -41,7 +43,7 @@ public class ActionsPluginInstaller {
 				3, 
 				10, 
 				ChronoUnit.SECONDS, 
-				EntityContextPlugin.getEntity(PendingPaymentAction.class)
+				EntityContextPlugin.getEntity(OrderInvoicedAction.class)
 		);
 	}
 	
