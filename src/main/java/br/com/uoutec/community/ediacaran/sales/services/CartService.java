@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -33,6 +34,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -42,6 +44,7 @@ import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOption;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOptionGroup;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.VarParser;
 
 @Singleton
 public class CartService {
@@ -56,8 +59,14 @@ public class CartService {
 	private ProductRegistry productRegistry;
 	
 	@Inject
+	private ProductTypeRegistry productTypeRegistry;
+	
+	@Inject
 	private ClientRegistry clientRegistry;
 
+	@Inject
+	private VarParser varParser;
+	
 	@Inject
 	private ShippingMethodRegistry shippingMethodRegistry;
 	
@@ -109,7 +118,7 @@ public class CartService {
 		cart.setClient(client);
 	}
 	
-	public void selectShippingOption(String shippingID, Client client, Cart cart) throws CountryRegistryException {
+	public void selectShippingOption(String shippingID, Client client, Cart cart) throws CountryRegistryException, ProductTypeRegistryException {
 		
 		List<ShippingOption> list = getShippingOptions(client, cart.getBillingAddress(), null, cart);
 		
@@ -157,7 +166,7 @@ public class CartService {
 		
 	}
 	
-	public List<ShippingOption> getShippingOptions(Client client, Address dest, String currency, Cart cart) throws CountryRegistryException {
+	public List<ShippingOption> getShippingOptions(Client client, Address dest, String currency, Cart cart) throws CountryRegistryException, ProductTypeRegistryException {
 		
 		Address origin = ShippingRegistryUtil.getOrigin();
 		
@@ -165,9 +174,25 @@ public class CartService {
 			dest = ShippingRegistryUtil.getAddress(client);
 		}
 		
+		String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
+		ShippingMethod electronicShippingMethod = shippingMethodRegistry.getShippingMethod(serviceShippingName);
+		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, 0f, 0f, 0f, 0f, new ArrayList<>(cart.getItens()));
+		
+		if(electronicShippingMethod.isApplicable(shippingRateRequest)) {
+			return electronicShippingMethod.getOptions(shippingRateRequest);
+		}
+			
 		List<ShippingRateRequest> requests = new ArrayList<>();
 		
 		for(ProductRequest pr: cart.getItens()) {
+
+			ProductType productType = 
+					productTypeRegistry
+						.getProductType(pr.getProduct().getProductType());
+			
+			if(productType.getHandler().isService(pr)) {
+				continue;
+			}
 			
 			Map<String, String> data = pr.getAddData();
 			String weightSTR	= data.get(ShippingMethod.WEIGHT_PROPERTY);
@@ -180,7 +205,8 @@ public class CartService {
 			float width		= widthSTR == null? 0f : Float.parseFloat(widthSTR);
 			float depth 	= depthSTR == null? 0f : Float.parseFloat(depthSTR);
 			
-			ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, weight, height, width, depth, Arrays.asList(pr));
+			
+			shippingRateRequest = new ShippingRateRequest(origin, dest, weight, height, width, depth, Arrays.asList(pr));
 			requests.add(shippingRateRequest);
 		}
 		
