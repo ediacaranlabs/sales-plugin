@@ -168,6 +168,7 @@ public class CartService {
 		List<ShippingRateRequest> requests = new ArrayList<>();
 		
 		for(ProductRequest pr: cart.getItens()) {
+			
 			Map<String, String> data = pr.getAddData();
 			String weightSTR	= data.get(ShippingMethod.WEIGHT_PROPERTY);
 			String heightSTR	= data.get(ShippingMethod.HEIGHT_PROPERTY);
