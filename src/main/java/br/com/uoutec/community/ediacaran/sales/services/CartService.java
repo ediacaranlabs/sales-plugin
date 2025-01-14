@@ -176,7 +176,7 @@ public class CartService {
 		
 		String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
 		ShippingMethod electronicShippingMethod = shippingMethodRegistry.getShippingMethod(serviceShippingName);
-		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, 0f, 0f, 0f, 0f, new ArrayList<>(cart.getItens()));
+		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, new ArrayList<>(cart.getItens()));
 		
 		if(electronicShippingMethod.isApplicable(shippingRateRequest)) {
 			return electronicShippingMethod.getOptions(shippingRateRequest);
@@ -194,19 +194,7 @@ public class CartService {
 				continue;
 			}
 			
-			Map<String, String> data = pr.getAddData();
-			String weightSTR	= data.get(ShippingMethod.WEIGHT_PROPERTY);
-			String heightSTR	= data.get(ShippingMethod.HEIGHT_PROPERTY);
-			String widthSTR		= data.get(ShippingMethod.WIDTH_PROPERTY);
-			String depthSTR		= data.get(ShippingMethod.DEPTH_PROPERTY);
-
-			float weight	= weightSTR == null? 0f : Float.parseFloat(weightSTR);
-			float height	= heightSTR == null? 0f : Float.parseFloat(heightSTR);
-			float width		= widthSTR == null? 0f : Float.parseFloat(widthSTR);
-			float depth 	= depthSTR == null? 0f : Float.parseFloat(depthSTR);
-			
-			
-			shippingRateRequest = new ShippingRateRequest(origin, dest, weight, height, width, depth, Arrays.asList(pr));
+			shippingRateRequest = new ShippingRateRequest(origin, dest, Arrays.asList(pr));
 			requests.add(shippingRateRequest);
 		}
 		

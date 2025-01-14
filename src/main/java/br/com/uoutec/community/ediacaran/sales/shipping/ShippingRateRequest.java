@@ -13,25 +13,13 @@ public class ShippingRateRequest {
 	
 	private final Address dest;
 	
-	private final float weight;
-	
-	private final float height;
-	
-	private final float width;
-	
-	private final float depth;
-
 	private final List<ProductRequest> itens;
 
 	public ShippingRateRequest(Shipping shipping) {
-		this(shipping.getOrigin(), shipping.getDest(), shipping.getWeight(), shipping.getHeight(), shipping.getWidth(), shipping.getDepth(), shipping.getProducts());
+		this(shipping.getOrigin(), shipping.getDest(), shipping.getProducts());
 	}
 	
-	public ShippingRateRequest(Address origin, Address dest, float weight, float height, float width, float depth, List<ProductRequest> itens) {
-		this.weight = weight;
-		this.depth = depth;
-		this.height = height;
-		this.width = width;
+	public ShippingRateRequest(Address origin, Address dest, List<ProductRequest> itens) {
 		this.origin = new Address(origin);
 		this.dest = new Address(dest);
 		this.itens = Collections.unmodifiableList(itens);
@@ -47,22 +35,6 @@ public class ShippingRateRequest {
 
 	public List<ProductRequest> getItens() {
 		return itens;
-	}
-
-	public float getWeight() {
-		return weight;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public float getWidth() {
-		return width;
-	}
-
-	public float getDepth() {
-		return depth;
 	}
 	
 }
