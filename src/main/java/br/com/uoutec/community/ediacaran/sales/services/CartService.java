@@ -46,6 +46,7 @@ import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOption;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOptionGroup;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.VarParser;
 
 @Singleton
 public class CartService {
@@ -62,6 +63,9 @@ public class CartService {
 	@Inject
 	private ClientRegistry clientRegistry;
 
+	@Inject
+	private VarParser varParser;
+	
 	@Inject
 	private ShippingMethodRegistry shippingMethodRegistry;
 	
@@ -185,6 +189,14 @@ public class CartService {
 		
 		if(dest == null) {
 			dest = ShippingRegistryUtil.getAddress(client);
+		}
+		
+		String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
+		ShippingMethod electronicShippingMethod = shippingMethodRegistry.getShippingMethod(serviceShippingName);
+		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, new ArrayList<>(cart.getItens()));
+		
+		if(electronicShippingMethod.isApplicable(shippingRateRequest)) {
+			return electronicShippingMethod.getOptions(shippingRateRequest);
 		}
 		
 		Map<String, List<ProductRequest>> productTypeGroup = groupProductType(cart.getItens());

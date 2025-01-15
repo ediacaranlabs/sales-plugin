@@ -26,7 +26,7 @@ public interface ShippingRegistry extends PublicBean{
 	Shipping findById(String id, Client client) throws ShippingRegistryException;
 	
 	Shipping toShipping(Order order
-			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException;
+			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException;
 	
 	ShippingsResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
 	
