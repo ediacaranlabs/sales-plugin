@@ -1,11 +1,15 @@
 package br.com.uoutec.community.ediacaran.sales.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,7 +24,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -34,7 +37,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -44,7 +46,6 @@ import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOption;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOptionGroup;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
-import br.com.uoutec.ediacaran.core.VarParser;
 
 @Singleton
 public class CartService {
@@ -59,14 +60,8 @@ public class CartService {
 	private ProductRegistry productRegistry;
 	
 	@Inject
-	private ProductTypeRegistry productTypeRegistry;
-	
-	@Inject
 	private ClientRegistry clientRegistry;
 
-	@Inject
-	private VarParser varParser;
-	
 	@Inject
 	private ShippingMethodRegistry shippingMethodRegistry;
 	
@@ -174,6 +169,12 @@ public class CartService {
 			dest = ShippingRegistryUtil.getAddress(client);
 		}
 		
+		Map<String, List<ProductRequest>> productTypeGroup = groupProductType(cart.getItens());
+		Map<String, List<ShippingOption>> shippingOptionGroup = groupShippingOptions(productTypeGroup, origin, dest);
+		List<List<ShippingOption>> groupOptionsList = createShippingOptionsGroup(shippingOptionGroup.entrySet());
+		return createShippingOptionsGroup(groupOptionsList);
+		
+		/*
 		String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
 		ShippingMethod electronicShippingMethod = shippingMethodRegistry.getShippingMethod(serviceShippingName);
 		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, new ArrayList<>(cart.getItens()));
@@ -190,7 +191,7 @@ public class CartService {
 					productTypeRegistry
 						.getProductType(pr.getProduct().getProductType());
 			
-			if(!productType.getHandler().isSupportShipping(pr)) {
+			if(productType.getHandler().isService(pr)) {
 				continue;
 			}
 			
@@ -246,6 +247,108 @@ public class CartService {
 		}
 		
 		return result;
+		*/
 	}
 	
+	private Map<String, List<ProductRequest>> groupProductType(Collection<ProductRequest> itens){
+		Map<String,List<ProductRequest>> map = new HashMap<>();
+		for(ProductRequest pr: itens) {
+			List<ProductRequest> list = map.get(pr.getProduct().getProductType());
+			if(list == null) {
+				list = new ArrayList<>();
+				map.put(pr.getProduct().getProductType(), list);
+			}
+			list.add(pr);
+		}
+		return map;
+	}
+
+	private List<List<ShippingOption>> createShippingOptionsGroup(Set<Entry<String, List<ShippingOption>>> entrySet){
+		return createShippingOptionsGroup(new LinkedList<>(entrySet));
+	}
+	
+	private List<List<ShippingOption>> createShippingOptionsGroup(LinkedList<Entry<String, List<ShippingOption>>> entryList){
+
+		if(entryList.isEmpty()) {
+			return new ArrayList<>();
+		}
+		
+		Entry<String, List<ShippingOption>> entry = entryList.removeFirst();
+		List<List<ShippingOption>> result = new ArrayList<>();
+
+		List<List<ShippingOption>> lists = createShippingOptionsGroup(entryList);
+		
+		for(ShippingOption s: entry.getValue()) {
+			
+			
+			if(lists.isEmpty()) {
+				List<ShippingOption> group = new ArrayList<>();
+				group.add(s);
+				result.add(group);
+			}
+			else {
+				for(List<ShippingOption> parentGroup: lists) {
+					List<ShippingOption> group = new ArrayList<>();
+					group.add(s);
+					group.addAll(parentGroup);
+					result.add(group);
+				}
+			}
+
+		}
+		
+		return result;
+	}
+
+	public List<ShippingOption> createShippingOptionsGroup(List<List<ShippingOption>> list){
+		List<ShippingOption> result = new ArrayList<>();
+		
+		for(List<ShippingOption> group: list) {
+			StringBuilder title = new StringBuilder(); 
+			StringBuilder id = new StringBuilder(); 
+			BigDecimal value = BigDecimal.ZERO;
+			for(ShippingOption opt: group) {
+				if(!title.toString().isEmpty()) {
+					title.append(" + ");
+					id.append("-");
+				}
+				id.append(opt.getId());
+				title.append(opt.getTitle());
+				value = value.add(opt.getValue());
+			}
+			
+			ShippingOption opt = 
+					new ShippingOptionGroup(
+							id.toString(), 
+							"Multiple", 
+							title.toString(), 
+							group.get(0).getCurrency(), 
+							group
+					);
+			result.add(opt);
+		}
+		
+		Collections.sort(result, (a,b)->a.getValue().compareTo(b.getValue()));
+		
+		return result;
+	}
+
+	private Map<String, List<ShippingOption>> groupShippingOptions(Map<String, List<ProductRequest>> productTypeGroup, Address origin, Address dest) {
+		
+		Map<String, List<ShippingOption>> shippingOptionGroup = new HashMap<>(); 
+		
+		for(Entry<String,List<ProductRequest>> entry: productTypeGroup.entrySet()) {
+			ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, entry.getValue());
+			
+			List<ShippingMethod> shippingMethods = shippingMethodRegistry.getShippingMethods(shippingRateRequest);
+			
+			for(ShippingMethod sm: shippingMethods) {
+				List<ShippingOption> options = sm.getOptions(shippingRateRequest);
+				shippingOptionGroup.put(entry.getKey(), options);
+			}
+			
+		}
+		
+		return shippingOptionGroup;
+	}
 }

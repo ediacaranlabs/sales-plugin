@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.payment;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -50,7 +50,10 @@ public class ElectronicShippingMethod implements ShippingMethod{
 
 	@Override
 	public List<ShippingOption> getOptions(ShippingRateRequest request) {
-		return Arrays.asList(new ShippingOption("electronic", getId(), "Electronic delivery", request.getItens().get(0).getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO));
+		List<ShippingOption> result = new ArrayList<>();
+		result.add(new ShippingOption("electronic", getId(), "Electronic delivery", request.getItens().get(0).getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO));
+		result.add(new ShippingOption("email", getId(), "Email", request.getItens().get(0).getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO));
+		return result;
 	}
 
 	@Override
