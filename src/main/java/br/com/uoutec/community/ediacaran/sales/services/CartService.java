@@ -118,7 +118,7 @@ public class CartService {
 		List<ShippingOption> list = getShippingOptions(client, cart.getBillingAddress(), null, cart);
 		
 		ShippingOption selected = null;
-		Tax shippingTax = null;
+		//Tax shippingTax = null;
 		
 		for(ShippingOption so: list) {
 			if(shippingID.equals(so.getId())) {
@@ -133,30 +133,48 @@ public class CartService {
 			cart.setTaxes(taxes);
 		}
 		
+		List<Tax> taxList = new ArrayList<>();
+		
 		for(Tax tax: taxes) {
-			if("shipping".equals(tax.getId())){
-				shippingTax = tax;
-				break;
+			if(tax.getId().startsWith("shipping")){
+				taxList.add(tax);
 			}
 		}
 		
+		taxes.removeAll(taxList);
+		
 		if(selected != null) {
 			
-			if(shippingTax == null) {
-				shippingTax = new Tax();
+			taxList.clear();
+			
+			if(selected instanceof ShippingOptionGroup) {
+				ShippingOptionGroup sgo = (ShippingOptionGroup)selected;
+				List<ShippingOption> opts = sgo.getOptions();
+				
+				for(ShippingOption o: opts) {
+					Tax shippingTax = new Tax();
+					shippingTax.setDescription(o.getMethod());
+					shippingTax.setDiscount(false);
+					shippingTax.setId("shipping-"+o.getMethod());
+					shippingTax.setName(o.getTitle());
+					shippingTax.setType(TaxType.UNIT);
+					shippingTax.setValue(o.getValue());
+					taxes.add(shippingTax);
+				}
+			}
+			else {
+				Tax shippingTax = new Tax();
+				shippingTax.setDescription(selected.getMethod());
+				shippingTax.setDiscount(false);
+				shippingTax.setId("shipping");
+				shippingTax.setName(selected.getTitle());
+				shippingTax.setType(TaxType.UNIT);
+				shippingTax.setValue(selected.getValue());
 				taxes.add(shippingTax);
+				
 			}
 			
-			shippingTax.setDescription(selected.getMethod());
-			shippingTax.setDiscount(false);
-			shippingTax.setId("shipping");
-			shippingTax.setName(selected.toString());
-			shippingTax.setType(TaxType.UNIT);
-			shippingTax.setValue(selected.getValue());
-		}
-		else
-		if(shippingTax != null){
-			taxes.remove(shippingTax);
+			taxes.addAll(taxList);
 		}
 		
 	}
@@ -309,11 +327,11 @@ public class CartService {
 			BigDecimal value = BigDecimal.ZERO;
 			for(ShippingOption opt: group) {
 				if(!title.toString().isEmpty()) {
-					title.append(" / ");
+					title.append(" + ");
 					id.append("-");
 				}
 				id.append(opt.getId());
-				title.append(opt.getTitle() + " (" + opt.getMethod() + ")");
+				title.append(opt.getTitle());
 				value = value.add(opt.getValue());
 			}
 			

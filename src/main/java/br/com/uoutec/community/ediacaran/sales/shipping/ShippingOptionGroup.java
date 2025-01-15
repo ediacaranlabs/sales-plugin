@@ -15,6 +15,10 @@ public class ShippingOptionGroup extends ShippingOption{
 		this.options = options;
 	}
 	
+	public List<ShippingOption> getOptions() {
+		return options;
+	}
+
 	public void setCost(BigDecimal cost) {
 		throw new UnsupportedOperationException();
 	}

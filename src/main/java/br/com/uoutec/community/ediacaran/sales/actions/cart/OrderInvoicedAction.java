@@ -55,7 +55,7 @@ public class OrderInvoicedAction implements ActionExecutor, PublicBean{
 			for(ProductRequest pp: products) {
 				ProductType productType = productTypeRegistry.getProductType(pp.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				if(!productTypeHandler.isSupportShipping(pp)) {
+				if(productTypeHandler.isSupportShipping(pp)) {
 					actualProducts.remove(pp);
 				}
 			}

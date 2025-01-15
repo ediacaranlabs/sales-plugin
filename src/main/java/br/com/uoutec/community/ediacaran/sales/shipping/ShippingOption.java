@@ -86,7 +86,7 @@ public class ShippingOption {
 	}
 	
 	public String toString() {
-		return title + " (" + method + ")"; 
+		return title; 
 	}
 	
 }
