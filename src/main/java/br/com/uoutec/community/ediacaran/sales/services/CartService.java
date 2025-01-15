@@ -309,11 +309,11 @@ public class CartService {
 			BigDecimal value = BigDecimal.ZERO;
 			for(ShippingOption opt: group) {
 				if(!title.toString().isEmpty()) {
-					title.append(" + ");
+					title.append(" / ");
 					id.append("-");
 				}
 				id.append(opt.getId());
-				title.append(opt.getTitle());
+				title.append(opt.getTitle() + " (" + opt.getMethod() + ")");
 				value = value.add(opt.getValue());
 			}
 			
