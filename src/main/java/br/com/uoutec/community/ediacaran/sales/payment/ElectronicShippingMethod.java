@@ -34,7 +34,7 @@ public class ElectronicShippingMethod implements ShippingMethod{
 			for(ProductRequest pp: request.getItens()) {
 				
 				ProductType productType = productTypeRegistry.getProductType(pp.getProduct().getProductType());
-				if(!productType.getHandler().isService(pp)) {
+				if(productType.getHandler().isSupportShipping(pp)) {
 					return false;
 				}
 				

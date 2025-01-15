@@ -2,9 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -176,22 +174,6 @@ public class CartService {
 			dest = ShippingRegistryUtil.getAddress(client);
 		}
 		
-		Map<String, List<ProductRequest>> productTypeGroup = groupByProductType(cart.getItens());
-		Map<String, List<ShippingOption>> shippingOptionGroup = new HashMap<>(); 
-		
-		for(Entry<String,List<ProductRequest>> entry: productTypeGroup.entrySet()) {
-			ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, entry.getValue());
-			
-			List<ShippingMethod> shippingMethods = shippingMethodRegistry.getShippingMethods(shippingRateRequest);
-			
-			for(ShippingMethod sm: shippingMethods) {
-				List<ShippingOption> options = sm.getOptions(shippingRateRequest);
-				shippingOptionGroup.put(entry.getKey(), options);
-			}
-			
-		}
-
-		
 		String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
 		ShippingMethod electronicShippingMethod = shippingMethodRegistry.getShippingMethod(serviceShippingName);
 		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, new ArrayList<>(cart.getItens()));
@@ -208,7 +190,7 @@ public class CartService {
 					productTypeRegistry
 						.getProductType(pr.getProduct().getProductType());
 			
-			if(productType.getHandler().isService(pr)) {
+			if(!productType.getHandler().isSupportShipping(pr)) {
 				continue;
 			}
 			
@@ -261,52 +243,6 @@ public class CartService {
 					);
 			
 			result.add(opt);
-		}
-		
-		return result;
-	}
-	
-	private Map<String, List<ProductRequest>> groupByProductType(Collection<ProductRequest> itens){
-		Map<String,List<ProductRequest>> map = new HashMap<>();
-		for(ProductRequest pr: itens) {
-			List<ProductRequest> list = map.get(pr.getProduct().getProductType());
-			if(list == null) {
-				list = new ArrayList<>();
-				map.put(pr.getProduct().getProductType(), list);
-			}
-			list.add(pr);
-		}
-		return map;
-	}
-	
-	public List<List<ShippingOption>> createShippingOptionsGroup(LinkedList<Entry<String, List<ShippingOption>>> entryList){
-
-		if(entryList.isEmpty()) {
-			return new ArrayList<>();
-		}
-		
-		Entry<String, List<ShippingOption>> entry = entryList.removeFirst();
-		List<List<ShippingOption>> result = new ArrayList<>();
-
-		List<List<ShippingOption>> lists = createShippingOptionsGroup(entryList);
-		
-		for(ShippingOption s: entry.getValue()) {
-			
-			
-			if(lists.isEmpty()) {
-				List<ShippingOption> group = new ArrayList<>();
-				group.add(s);
-				result.add(group);
-			}
-			else {
-				for(List<ShippingOption> parentGroup: lists) {
-					List<ShippingOption> group = new ArrayList<>();
-					group.add(s);
-					group.addAll(parentGroup);
-					result.add(group);
-				}
-			}
-
 		}
 		
 		return result;
