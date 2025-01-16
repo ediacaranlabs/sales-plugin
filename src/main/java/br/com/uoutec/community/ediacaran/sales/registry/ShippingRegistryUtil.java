@@ -35,6 +35,11 @@ public class ShippingRegistryUtil {
 	
 	public static boolean isCompletedShipping(Order order, Collection<Shipping> shippingList,
 			ProductTypeRegistry productTypeRegistry) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+		
+		if(shippingList.isEmpty()) {
+			return false;
+		}
+		
 		boolean isInvoiceComplete = true;
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens(), productTypeRegistry);
@@ -106,8 +111,23 @@ public class ShippingRegistryUtil {
 	public static void checkShipping(Order order, List<Shipping> actualShippings, Shipping shipping, 
 			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ShippingRegistryException, ProductTypeRegistryException {
 
+		checkShippableProducts(shipping, productTypeRegistry);
 		checkIsCompletedShipping(order, actualShippings, productTypeRegistry);
 		checkUnits(order, actualShippings, shipping, productTypeRegistry);		
+		
+	}
+	
+	public static void checkShippableProducts(Shipping shipping, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, ShippingRegistryException {
+		for(ProductRequest pr: shipping.getProducts()) {
+			
+			ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			
+			if(!productTypeHandler.isSupportShipping(pr)) {
+				throw new ShippingRegistryException("product not supported: " + pr.getSerial());
+			}
+			
+		}
 		
 	}
 	
@@ -141,7 +161,7 @@ public class ShippingRegistryUtil {
 	public static Shipping getActualShipping(String id, ShippingEntityAccess entityAccess) throws EntityAccessException{
 		return entityAccess.findById(id);		
 	}
-	
+
 	public static List<Shipping> getActualShippings(Order order, Client client, ShippingEntityAccess entityAccess) throws EntityAccessException{
 		return entityAccess.findByOrder(order.getId(), client);		
 	}

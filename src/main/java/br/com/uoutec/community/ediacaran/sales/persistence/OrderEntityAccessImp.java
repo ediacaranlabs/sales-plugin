@@ -329,6 +329,8 @@ public class OrderEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
+	    	criteria.orderBy(orderList);
+	    	
 		    TypedQuery<OrderEntity> typed = 
 		    		entityManager.createQuery(criteria);
 
@@ -340,6 +342,7 @@ public class OrderEntityAccessImp
 		    if(max != null) {
 			    typed.setMaxResults(max);		    	
 		    }
+		    
 		    
 		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
 		    List<OrderResultSearch> result = new ArrayList<OrderResultSearch>();

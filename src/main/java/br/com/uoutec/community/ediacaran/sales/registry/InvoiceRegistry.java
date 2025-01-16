@@ -9,8 +9,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
+import br.com.uoutec.entity.registry.RegistryException;
 
 public interface InvoiceRegistry extends PublicBean{
 
@@ -42,17 +42,11 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	void cancelInvoices(Order invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException;
 	
-	Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException;
+	Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message)	throws RegistryException;
 
-	Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException;
+	Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws RegistryException;
 	
-	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException;
+	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException;
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
 	

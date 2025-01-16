@@ -29,9 +29,34 @@ public class InvoiceRegistryUtil {
 			throw new CompletedInvoiceRegistryException();
 		}
 	}
+
+	public static boolean isCompletedOrder(Order order, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException {
+		
+		if(order.getCompleteInvoice() == null ) {
+			return false;
+		}
+		
+		for(ProductRequest pr: order.getItens()) {
+
+			ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			
+			if(productTypeHandler.isSupportShipping(pr)) {
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
 	
 	public static boolean isCompletedInvoice(Order order, Collection<Invoice> invoices
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
+		
+		if(invoices.isEmpty()) {
+			return false;
+		}
+		
 		boolean isInvoiceComplete = true;
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens());
@@ -189,6 +214,10 @@ public class InvoiceRegistryUtil {
 		return entityAccess.findByOrder(order.getId(), user);		
 	}
 
+	public static List<Shipping> getActualShippings(Order order, SystemUser user, ShippingRegistry shippingRegistry) throws ShippingRegistryException{
+		return shippingRegistry.findByOrder(order.getId());		
+	}
+	
 	public static Invoice getActualInvoice(Invoice invoice, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException{
 		try {
 			return entityAccess.findById(invoice.getId());
@@ -222,7 +251,10 @@ public class InvoiceRegistryUtil {
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
 		
 		List<Invoice> allInvoices = new ArrayList<>(invoices);
-		allInvoices.add(invoice);
+		
+		if(!allInvoices.contains(invoice)) {
+			allInvoices.add(invoice);
+		}
 		
 		markAsComplete(order, allInvoices, orderRegistry); 
 	}
@@ -238,6 +270,7 @@ public class InvoiceRegistryUtil {
 			order.setCompleteInvoice(LocalDateTime.now());
 		}
 		else {
+			order.setCompleteShipping(null);
 			order.setCompleteInvoice(null);
 		}
 		
@@ -250,6 +283,48 @@ public class InvoiceRegistryUtil {
 			
 	}
 
+	public static void markAsCompleteOrder(Order order, Invoice invoice, List<Invoice> invoices, List<Shipping> shipping, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+			) throws ProductTypeRegistryException, InvoiceRegistryException, InvalidUnitsOrderRegistryException {
+		
+		List<Invoice> allInvoices = new ArrayList<>(invoices);
+		
+		if(!allInvoices.contains(invoice)) {
+			allInvoices.add(invoice);
+		}
+		
+		markAsCompleteOrder(order, allInvoices, shipping, orderRegistry, productTypeRegistry); 
+			
+	}
+	
+	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+			) throws ProductTypeRegistryException, InvoiceRegistryException, InvalidUnitsOrderRegistryException {
+
+		if(isCompletedInvoice(order, invoices) && !ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry)) {
+
+			if(isCompletedOrder(order, productTypeRegistry)) {
+
+				LocalDateTime now = LocalDateTime.now();
+				if(order.getCompleteInvoice() == null) {
+					order.setCompleteInvoice(now);
+				}
+				
+				if(order.getCompleteShipping() == null) {
+					order.setCompleteShipping(now);
+				}
+
+				try {
+					orderRegistry.registerOrder(order);
+				}
+				catch(Throwable ex) {
+					throw new InvoiceRegistryException(ex);
+				}
+				
+			}
+			
+		}
+			
+	}
+	
 	public static void checkPayment(Order order) throws InvoiceRegistryException {
 		if(order.getPayment().getReceivedFrom() == null) {
 			throw new InvoiceRegistryException("payment has not yet been made");

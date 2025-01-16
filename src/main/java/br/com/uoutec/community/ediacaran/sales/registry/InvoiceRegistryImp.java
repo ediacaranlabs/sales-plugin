@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -205,8 +206,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Transactional
 	@ActivateRequestContext
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
+		throws RegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
@@ -231,8 +231,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Transactional
 	@ActivateRequestContext
 	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException, SystemUserRegistryException, InvoiceRegistryException{
+			throws RegistryException{
 		
 		SystemUser user = getSystemUser(userID);
 		return createInvoice(order, user, itens, message);
@@ -242,8 +241,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Transactional
 	@ActivateRequestContext
 	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
+			throws RegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
@@ -471,7 +469,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException{
+			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException{
 
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -499,42 +497,48 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	private void registryNewInvoice(Invoice entity, Order order
 			) throws OrderStatusNotAllowedRegistryException, UnmodifiedOrderStatusRegistryException, 
-			OrderRegistryException, InvoiceRegistryException, EntityAccessException {
+			OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 		
 		SystemUser user = new SystemUser();
 		user.setId(entity.getOwner());
 		
-		OrderRegistry orderRegistry  = EntityContextPlugin.getEntity(OrderRegistry.class);
-		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-		SystemUser actualUser        = InvoiceRegistryUtil.getActualUser(actualOrder, user, systemUserRegistry);		
-		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualUser, entityAccess);
+		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
+		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		SystemUser actualUser              = InvoiceRegistryUtil.getActualUser(actualOrder, user, systemUserRegistry);		
+		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualUser, entityAccess);
+		List<Shipping> actualShippings     = InvoiceRegistryUtil.getActualShippings(actualOrder, actualUser, shippingRegistry);
 		
 		InvoiceRegistryUtil.checkPayment(actualOrder);
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
 		InvoiceRegistryUtil.registerProducts(entity, actualUser, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
 		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
-		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		InvoiceRegistryUtil.registerEvent(entity, actualOrder, null, orderRegistry);
 	}
 
 	private void updateInvoice(Invoice entity, Order order
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException {
+			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 		
 		SystemUser user = new SystemUser();
 		user.setId(order.getOwner());
 		
-		OrderRegistry orderRegistry  = EntityContextPlugin.getEntity(OrderRegistry.class);
-		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-		SystemUser actualUser        = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
-		Invoice actualInvoice        = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
-		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(order, actualUser, entityAccess);
+		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
+		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		SystemUser actualUser              = InvoiceRegistryUtil.getActualUser(order, user, systemUserRegistry);
+		Invoice actualInvoice              = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
+		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(order, actualUser, entityAccess);
+		List<Shipping> actualShippings     = InvoiceRegistryUtil.getActualShippings(actualOrder, actualUser, shippingRegistry);
 		
 		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, order, entityAccess);
-		InvoiceRegistryUtil.markAsComplete(order, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
+		InvoiceRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 	}
 	
