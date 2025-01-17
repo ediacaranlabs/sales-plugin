@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -243,12 +244,12 @@ public class InvoiceRegistryUtil {
 		return actualUser;
 	}
 
-	public static void updateStatus(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
-		orderRegistry.updateStatus(order);
+	public static void updateStatus(Order order, OrderStatus orderStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(order, orderStatus);
 	}
 	
 	public static void markAsComplete(Order order, Invoice invoice, List<Invoice> invoices, OrderRegistry orderRegistry
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		
 		List<Invoice> allInvoices = new ArrayList<>(invoices);
 		
@@ -264,12 +265,14 @@ public class InvoiceRegistryUtil {
 	}
 	
 	public static void markAsComplete(Order order, List<Invoice> invoices, OrderRegistry orderRegistry
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException, InvoiceRegistryException{
+			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		
 		if(isCompletedInvoice(order, invoices)) {
+			InvoiceRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
 			order.setCompleteInvoice(LocalDateTime.now());
 		}
 		else {
+			InvoiceRegistryUtil.updateStatus(order, OrderStatus.PAYMENT_RECEIVED, orderRegistry);
 			order.setCompleteShipping(null);
 			order.setCompleteInvoice(null);
 		}

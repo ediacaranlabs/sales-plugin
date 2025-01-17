@@ -15,6 +15,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -361,8 +362,8 @@ public class ShippingRegistryUtil {
 		}
 	}
 
-	public static void updateStatus(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
-		orderRegistry.updateStatus(order);
+	public static void updateStatus(Order order, OrderStatus orderStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(order, orderStatus);
 	}
 	
 	public static void update(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {

@@ -29,7 +29,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
@@ -307,10 +306,13 @@ public class OrderRegistryImp
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void updateStatus(Order o) throws OrderRegistryException {
+	public void updateStatus(Order o, OrderStatus status) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
 		
+		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		OrderRegistryUtil.checkNewOrderStatus(order, status);
+		/*
 		Order order;
 		try{
 			order = orderEntityAccess.findById(o.getId());
@@ -373,6 +375,7 @@ public class OrderRegistryImp
 		catch (ValidationException e) {
 			throw new OrderRegistryException(e);
 		}
+		*/
 	}
 	
 	/**

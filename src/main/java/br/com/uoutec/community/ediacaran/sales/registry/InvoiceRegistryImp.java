@@ -17,9 +17,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
@@ -509,6 +511,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualUser, entityAccess);
 		List<Shipping> actualShippings     = InvoiceRegistryUtil.getActualShippings(actualOrder, actualUser, shippingRegistry);
 		
+		OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
 		InvoiceRegistryUtil.checkPayment(actualOrder);
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
 		InvoiceRegistryUtil.registerProducts(entity, actualUser, actualOrder, productTypeRegistry);
@@ -516,7 +519,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		InvoiceRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
-		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		InvoiceRegistryUtil.registerEvent(entity, actualOrder, null, orderRegistry);
 	}
 
@@ -539,7 +541,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.update(entity, order, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		InvoiceRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
-		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 	}
 	
 	private void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{

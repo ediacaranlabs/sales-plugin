@@ -27,7 +27,7 @@ public interface OrderRegistry extends PublicBean {
 	
 	void removeOrder(Order entity) throws OrderRegistryException;
 
-	void updateStatus(Order o) throws OrderRegistryException;
+	void updateStatus(Order o, OrderStatus status) throws OrderRegistryException;
 	
 	/* create order */
 	
