@@ -132,6 +132,10 @@ public class OrderRegistryUtil {
 		}
 		
 	}
+
+	public static void registerEvent(String message, Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.registryLog(order.getId(), message);
+	}
 	
 	public static void registerEvent(String message, Order order, OrderEntityAccess entityAccess) throws OrderRegistryException {
 		try{

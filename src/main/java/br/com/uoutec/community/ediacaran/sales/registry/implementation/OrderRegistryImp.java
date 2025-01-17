@@ -35,6 +35,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedReg
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusRegistryException;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -483,10 +484,43 @@ public class OrderRegistryImp
 		}
 	}
 	
-	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws RegistryException{
+	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws OrderRegistryException{
 		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		try {
 			return invoiceRegistry.createInvoice(order, systemUser, itens, message);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+	}
+	
+	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException {
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		
+		try {
+			return shippingRegistry.createShipping(order, itens, message);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+	}
+
+	public Shipping createShipping(Order order, SystemUserID userID, Map<String, Integer> itens, String message) throws OrderRegistryException {
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		
+		try {
+			return shippingRegistry.createShipping(order, userID, itens, message);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+	}
+	
+	public Shipping createShipping(Order order, Client client, Map<String, Integer> itens, String message) throws OrderRegistryException {
+		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		
+		try {
+			return shippingRegistry.createShipping(order, client, itens, message);
 		}
 		catch(Throwable ex) {
 			throw new OrderRegistryException(ex);
@@ -695,15 +729,6 @@ public class OrderRegistryImp
 		//Registra o evento no log
 		this.registryLog(order.getId(), message != null? message : "O processo de Reemboldo foi finalizada.");
 		*/
-	}
-	
-	@Override
-	@ActivateRequestContext
-	public Shipping createShipping(String orderID, 
-			boolean useAlternativeAdress, String shippingCode) 
-			throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-			UnmodifiedOrderStatusRegistryException {
-		throw new OrderRegistryException("not implemented yet");
 	}
 	
 	private void validateOrder(Order order, Class<?> ... groups) throws ValidationException{

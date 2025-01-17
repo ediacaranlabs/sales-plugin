@@ -523,7 +523,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
-		InvoiceRegistryUtil.registerEvent(entity, actualOrder, null, orderRegistry);
+		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
 	}
 
 	private void updateInvoice(Invoice entity, Order order

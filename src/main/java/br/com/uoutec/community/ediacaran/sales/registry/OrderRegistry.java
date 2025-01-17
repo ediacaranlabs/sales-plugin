@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.util.List;
 import java.util.Map;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -45,6 +46,13 @@ public interface OrderRegistry extends PublicBean {
 	
 	Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws RegistryException;	
 	
+	/* register shipping */
+	
+	Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException;
+
+	Shipping createShipping(Order order, SystemUserID userID, Map<String, Integer> itens, String message) throws OrderRegistryException;
+	
+	Shipping createShipping(Order order, Client client, Map<String, Integer> itens, String message) throws OrderRegistryException;
 	
 	/* refound payment */
 	
@@ -52,11 +60,6 @@ public interface OrderRegistry extends PublicBean {
 			
 	void revertRefound(String order, String message) throws RegistryException;
 			
-	Shipping createShipping(String order, 
-			boolean useAlternativeAdress, String shippingCode) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException;
-	
 	boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 
 			OrderRegistryException, SystemUserRegistryException;

@@ -472,7 +472,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
-		ShippingRegistryUtil.registerEvent(shipping, actualOrder, null, orderRegistry);
+		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
+
 	}
 
 	private void updateShipping(Shipping shipping, Order order
@@ -494,7 +495,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, EntityContextPlugin.getEntity(OrderRegistry.class), productTypeRegistry);
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
-		ShippingRegistryUtil.registerEvent(shipping, actualOrder, null, orderRegistry);
 		
 	}
 	

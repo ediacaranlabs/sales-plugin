@@ -237,10 +237,6 @@ public class InvoiceRegistryUtil {
 		markAsComplete(order, allInvoices, orderRegistry); 
 	}
 	
-	public static void registerEvent(Invoice invoice, Order order, String message, OrderRegistry orderRegistry) throws OrderRegistryException {
-		orderRegistry.registryLog(order.getId(), message != null? message : "Criada a fatura #" + invoice.getId() );
-	}
-	
 	public static void markAsComplete(Order order, List<Invoice> invoices, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		

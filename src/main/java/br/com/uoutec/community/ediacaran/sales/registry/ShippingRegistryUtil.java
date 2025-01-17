@@ -353,10 +353,6 @@ public class ShippingRegistryUtil {
 		return i;
 	}
 
-	public static void registerEvent(Shipping invoice, Order order, String message, OrderRegistry orderRegistry) throws OrderRegistryException {
-		orderRegistry.registryLog(order.getId(), message != null? message : "registrado o envio #" + invoice.getId() );
-	}
-	
 	public static void save(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
 		try {
 			entityAccess.save(shipping);

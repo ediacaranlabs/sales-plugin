@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.control.ActivateRequestContext;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
@@ -27,6 +28,15 @@ import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 @Singleton
 public class OrderInvoicedAction implements ActionExecutor, PublicBean{
 
+	@Inject
+	private OrderRegistry orderRegistry;
+	
+	@Inject
+	private ShippingRegistry shippingRegistry;
+	
+	@Inject
+	private ProductTypeRegistry productTypeRegistry;
+	
 	@Override
 	@Transactional
 	@ActivateRequestContext
@@ -38,39 +48,31 @@ public class OrderInvoicedAction implements ActionExecutor, PublicBean{
 	}
 	
 	private void localExecute(ActionExecutorRequest request, ActionExecutorResponse response) throws Throwable {
-		
+		/*
 		String orderID = request.getParameter("order");
-		
-		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
-		ShippingRegistry shippingRegistry       = EntityContextPlugin.getEntity(ShippingRegistry.class);
-		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
-		
 		Order order = orderRegistry.findById(orderID);
 		
-		if(order.getStatus() == OrderStatus.ORDER_INVOICED) {
-			Shipping shipping = shippingRegistry.toShipping(order);
-			List<ProductRequest> actualProducts = shipping.getProducts();
-			List<ProductRequest> products = new ArrayList<>(shipping.getProducts());
-			
-			for(ProductRequest pp: products) {
-				ProductType productType = productTypeRegistry.getProductType(pp.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				if(productTypeHandler.isSupportShipping(pp)) {
-					actualProducts.remove(pp);
-				}
+		Shipping shipping = shippingRegistry.toShipping(order);
+		List<ProductRequest> actualProducts = shipping.getProducts();
+		List<ProductRequest> products = new ArrayList<>(shipping.getProducts());
+		
+		for(ProductRequest pp: products) {
+			ProductType productType = productTypeRegistry.getProductType(pp.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			if(productTypeHandler.isSupportShipping(pp)) {
+				actualProducts.remove(pp);
 			}
-			
-			if(!actualProducts.isEmpty()) {
-				VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-				String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
-				shipping.setShippingType(serviceShippingName);
-				shippingRegistry.registerShipping(shipping);
-			}
-			
+		}
+		
+		if(!actualProducts.isEmpty()) {
+			VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+			String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
+			shipping.setShippingType(serviceShippingName);
+			shippingRegistry.registerShipping(shipping);
 		}
 
 		response.setParameter("order", orderID);
-		
+		*/
 	}
 
 }
