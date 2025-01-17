@@ -1,8 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
@@ -28,11 +29,24 @@ public interface OrderRegistry extends PublicBean {
 
 	void updateStatus(Order o) throws OrderRegistryException;
 	
-	Order createOrder(Cart cart, Payment payment, 
-			String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
+	/* create order */
+	
+	Order createOrder(Cart cart, Payment payment, String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
 
-	void registerPayment(Order o, String currency, BigDecimal value
-			) throws OrderRegistryException, PaymentGatewayException;
+	/* register payment */
+	
+	void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException ;
+	
+	/* register invoice */
+	
+	Invoice createInvoice(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException;
+
+	Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message)	throws OrderRegistryException;
+	
+	Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws RegistryException;	
+	
+	
+	/* refound payment */
 	
 	void createRefound(String order, String message) throws RegistryException;
 			

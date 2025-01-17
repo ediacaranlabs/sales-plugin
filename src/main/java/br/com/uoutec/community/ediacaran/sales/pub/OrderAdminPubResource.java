@@ -192,7 +192,7 @@ public class OrderAdminPubResource {
 		}
 
 		try{
-			orderRegistry.registerPayment(order, null, null);
+			orderRegistry.registerPayment(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

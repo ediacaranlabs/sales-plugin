@@ -1,9 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
@@ -11,20 +9,16 @@ import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
-import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
-import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
@@ -33,9 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
-import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -44,7 +36,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedReg
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductException;
 import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusRegistryException;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -94,6 +85,9 @@ public class OrderRegistryImp
 
 	@Inject
 	private ClientRegistry clientRegistry;
+	
+	@Inject
+	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Override
 	@Transactional
@@ -381,98 +375,6 @@ public class OrderRegistryImp
 		}
 	}
 	
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public void registerPayment(Order o, String currency, BigDecimal value) throws OrderRegistryException, PaymentGatewayException {
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
-		
-		Order order;
-		try{
-			order = orderEntityAccess.findById(o.getId());
-		}
-		catch(Throwable e){
-			throw new OrderNotFoundRegistryException(o.getId());
-		}
-
-		if(order.getPayment().getReceivedFrom() != null) {
-			return;
-		}
-		
-		//Verifica se o status é o adequado
-		if(!order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)){
-			throw new OrderStatusNotAllowedRegistryException(
-					"invalid status: " + 
-					order.getStatus() + " -> " + OrderStatus.PAYMENT_RECEIVED);
-		}
-		
-		PaymentStatus currentStatus = order.getPayment().getStatus();
-		
-		if(value == null) {
-			
-			PaymentGatewayRegistry paymentGatewayRegistry = EntityContextPlugin.getEntity(PaymentGatewayRegistry.class);
-			
-			PaymentGateway paymentGateway = paymentGatewayRegistry.getPaymentGateway(order.getPaymentType());
-			
-			if(paymentGateway == null) {
-				throw new OrderRegistryException("payment gateway not found");
-			}
-			
-			Client user;
-			
-			try {
-				user = getSystemUser(order.getOwner());
-			}
-			catch (ClientRegistryException e) {
-				throw new OrderRegistryException("owner not found: " + order.getOwner());
-			}
-			
-			PaymentRequest paymentRequest = new PaymentRequest(user, order.getPayment());
-			paymentGateway.payment(paymentRequest);
-		}
-		else {
-			
-			if(!order.getPayment().getCurrency().equals(currency)) {
-				throw new OrderRegistryException(currency + " <> " + order.getPayment().getCurrency());
-			}
-
-			if(order.getPayment().getTotal().compareTo(value) != 0) {
-				throw new OrderRegistryException(order.getPayment().getTotal() + " <> " + value);
-			}
-			
-			order.getPayment().setStatus(PaymentStatus.PAYMENT_RECEIVED);
-		}
-
-		PaymentStatus newStatus = order.getPayment().getStatus();
-		
-		if(!currentStatus.isValidNextStatus(newStatus)) {
-			throw new OrderStatusNotAllowedRegistryException(
-					"invalid payment status: " + 
-							currentStatus + " -> " + newStatus);
-			
-		}
-		
-		updateOrderStatus(order, order.getPayment());
-		
-		if(newStatus == PaymentStatus.PAYMENT_RECEIVED) {
-			order.getPayment().setReceivedFrom(LocalDateTime.now());
-		}
-		else{
-			order.getPayment().setReceivedFrom(null);
-		}
-		
-		try {
-			updateOrder(order);
-			o.setStatus(order.getStatus());
-			o.setPayment(order.getPayment());
-		}
-		catch (Throwable e) {
-			throw new OrderRegistryException(e);
-		}
-		
-	}
-	
 	/**
 	 * Cria um novo pedido.
 	 * 
@@ -514,193 +416,81 @@ public class OrderRegistryImp
 	}
 	
 	private Order createOrder0(Cart cart, Payment payment, 
-			String message, PaymentGateway paymentGateway) 
-					throws OrderRegistryException, UnavailableProductException, 
-					ExistOrderRegistryException, EmptyOrderException, 
-					SystemUserRegistryException, ClientRegistryException {
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException, EntityAccessException, 
+			SystemUserRegistryException, ClientRegistryException {
 
-		if(cart.isNoitems()){
-			throw new EmptyOrderException();
-		}
-
-		if(cart.getClient() != null) {
-			ContextSystemSecurityCheck
-				.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
-		}
-		else {
-			SystemUserID systemID = getSystemUserID();
-			SystemUser user = getSystemUser(systemID);
-			Client client = clientRegistry.findClientById(user.getId());
-			cart.setClient(client);
-		}
+		OrderRegistryUtil.checkCartToRegistry(cart, payment, paymentGateway, productTypeRegistry, orderEntityAccess);
 		
-		if(cart.getId() == null || cart.getId().isEmpty()){
-			throw new OrderRegistryException("empty cart id");
-		}
+		Client actualClient   = OrderRegistryUtil.getActualClient(subjectProvider, systemUserRegistry, clientRegistry);
+		Order order           = OrderRegistryUtil.createOrder(cart, actualClient, paymentGateway);
+		Payment actualPayment = OrderRegistryUtil.getPayment(payment, order, paymentGateway, cart);
 		
-		if(payment == null) {
-			throw new OrderRegistryException("payment information not found");
-		}
-		
-		if(paymentGateway == null) {
-			throw new OrderRegistryException("payment gateway not found");
-		}
-		
-		if(cart.getClient() == null || cart.getClient().getId() <= 0) {
-			throw new OrderRegistryException("owner not found");
-		}
-		
-		if(!cart.getClient().isComplete()) {
-			throw new IncompleteClientRegistrationException();
-		}
-		
-		Order o = this.findByCartID(cart.getId());
-		
-		if(o != null){
-			throw new ExistOrderRegistryException();
-		}
-		
-		try{
-			if(!isAvailability(cart)){
-				throw new UnavailableProductException("Existem produtos que não estão mais disponíveis");
-			}
-		}
-		catch(UnavailableProductException e){
-			throw e;
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException("falha ao verificar a disponibilidades dos produtos", e);
-		}
-		
-		Order order = new Order();
-		order.setDate(LocalDateTime.now());
-		order.setCartID(cart.getId());
-		order.setStatus(OrderStatus.NEW);
-		order.setId(null);
-		order.setOwner(cart.getClient().getId());
-		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
-		order.setTaxes(cart.getTaxes());
-		order.setPaymentType(paymentGateway.getId());
-		order.setCurrency(order.getItens().get(0).getCurrency());
-		
-		Address defaultAddress = getDefaultAddress(cart.getClient());
-		
-		if(cart.getBillingAddress() == null) {
-			order.setBillingAddress(defaultAddress);
-		}
-		else {
-			order.setBillingAddress(getAddress(cart.getBillingAddress()));
-		}
-		
-		if(cart.getShippingAddress() == null) {
-			order.setShippingAddress(defaultAddress);
-		}
-		else
-		if(cart.getShippingAddress() == cart.getBillingAddress()) {
-			order.setShippingAddress(order.getBillingAddress());
-		}
-		else {
-			order.setShippingAddress(getAddress(cart.getShippingAddress()));
-		}
-		
-		try {
-			if(cart.getBillingAddress() != null) {
-				clientRegistry.registerAddress(cart.getBillingAddress(), cart.getClient());
-			}
-			
-			if(cart.getShippingAddress() != null) {
-				clientRegistry.registerAddress(cart.getShippingAddress(), cart.getClient());
-			}
-			
-		}
-		catch(Throwable e) {
-			throw new OrderRegistryException("falha ao processar os produtos", e);
-		}
-		
-		/*
-		 Validar moeda
-		for(ProductRequest pr: order.getItens()){
-			subTotal = subTotal.add(pr.getSubtotal());
-			
-			if(!currency.equals(pr.getCurrency())){
-				throw new OrderRegistryException("moeda divergente: " + 
-					currency + " <> " + pr.getCurrency());
-			}
-		}
-		*/
-		
-
-		payment.setStatus(PaymentStatus.NEW);
-		payment.setOrderId(order.getId());
-		payment.setPaymentType(paymentGateway.getId());
-		payment.setTax(cart.getTotalTax());
-		payment.setDiscount(cart.getTotalDiscount());
-		payment.setCurrency(order.getItens().get(0).getCurrency());
-		payment.setValue(cart.getSubtotal());
-		payment.setTotal(cart.getTotal());
-		order.setPayment(payment);
-		
-		try{
-			for(ProductRequest pr: order.getItens()){
-				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.preRegisterOrder(cart.getClient(), cart, pr);
-			}
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException("falha ao processar os produtos", e);
-		}
-
-		try{
-			this.registerOrder(order);
-			this.registryLog(order.getId(), message == null? "Pedido criado #" + order.getId() : message);
-			
-			paymentGateway.payment(new PaymentRequest(cart.getClient(), payment));
-			
-			order.getPayment().setStatus(payment.getStatus());
-			updateOrderStatus(order, payment);
-			updateOrder(order);
-		}
-		catch(OrderRegistryException e){
-			throw e;
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException("falha ao registrar o pedido", e);
-		}
-
-		/*
-		if(PaymentStatus.PAYMENT_RECEIVED.equals(payment.getStatus()) && payment.getTotal().compareTo(cart.getTotal()) == 0){
-			
-			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
-			this.registerOrder(order);
-			
-			Map<String, Integer> itens = 
-					order.getItens().stream()
-					.collect(Collectors.toMap(ProductRequest::getSerial, ProductRequest::getUnits));
-
-			try{
-				invoiceRegistry.createInvoice(order, itens, null);
-			}
-			catch(Throwable e){
-				throw new OrderRegistryException("falha ao processar os produtos", e);
-			}
-		}
-		*/
-		
-		try{
-			for(ProductRequest pr: order.getItens()){
-				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.postRegisterOrder(cart.getClient(), cart, pr);
-			}
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException("falha ao processar os produtos", e);
-		}
+		OrderRegistryUtil.checkCurrency(order, order.getCurrency());
+		OrderRegistryUtil.preOrder(order, cart, productTypeRegistry);
+		OrderRegistryUtil.registerNewOrder(order, actualClient, actualPayment, message, paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.postOrder(order, cart, productTypeRegistry);
+		OrderRegistryUtil.registerEvent(message == null? "Pedido criado #" + order.getId() : message, order, orderEntityAccess);
 		
 		return order;
 	}
 	
+	@Override
+	@Transactional
+	@ActivateRequestContext
+	public void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
+		
+		Order order                   = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
+		Client actualUser             = OrderRegistryUtil.getActualClient(order.getOwner(), clientRegistry);
+		
+		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
+		paymentGateway.payment(new PaymentRequest(actualUser, order.getPayment()));
+		OrderRegistryUtil.markPaymentAsReceived(order.getPayment(), order);
+		
+		try {
+			updateOrder(order);
+			o.setStatus(order.getStatus());
+			o.setPayment(order.getPayment());
+		}
+		catch (Throwable e) {
+			throw new OrderRegistryException(e);
+		}
+		
+	}
+	
+	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException{
+		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		try {
+			return invoiceRegistry.createInvoice(order, itens, message);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+	}
+
+	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message)	throws OrderRegistryException{
+		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		try {
+			return invoiceRegistry.createInvoice(order, userID, itens, message);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+	}
+	
+	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws RegistryException{
+		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		try {
+			return invoiceRegistry.createInvoice(order, systemUser, itens, message);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+	}
+	
+	/*
 	private void updateOrderStatus(Order order, Payment payment) throws OrderRegistryException {
 		
 		switch (payment.getStatus()) {
@@ -730,58 +520,13 @@ public class OrderRegistryImp
 				throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
 		}
 	}
-	
-	private Address getDefaultAddress(Client client) {
-		Address address = new Address();
-		
-		address.setAddressLine1(client.getAddressLine1());
-		address.setAddressLine2(client.getAddressLine2());
-		address.setCity(client.getCity());
-		address.setCountry(client.getCountry());
-		address.setFirstName(client.getFirstName());
-		address.setLastName(client.getLastName());
-		address.setRegion(client.getRegion());
-		address.setZip(client.getZip());
-		
-		return address;
-	}
-
-	private Address getAddress(Address value) {
-		Address address = new Address();
-		
-		address.setAddressLine1(value.getAddressLine1());
-		address.setAddressLine2(value.getAddressLine2());
-		address.setCity(value.getCity());
-		address.setCountry(value.getCountry());
-		address.setFirstName(value.getFirstName());
-		address.setLastName(value.getLastName());
-		address.setRegion(value.getRegion());
-		address.setZip(value.getZip());
-		
-		return address;
-	}
+	*/
 	
 	@ActivateRequestContext
 	public boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 
 			OrderRegistryException, SystemUserRegistryException{
-		
-		//SystemUser user = getSystemUser(userID);
-		
-		ItensCollection itens = cart.getItensCollection();
-		
-		boolean result = true;
-		
-		for(ProductRequest p: itens.getItens()){
-			ProductType productType = productTypeRegistry.getProductType(p.getProduct().getProductType());
-			ProductTypeHandler productTypeHandler = productType.getHandler();
-			boolean availability = productTypeHandler.isAvailability(cart.getClient(), cart, itens, p);
-			
-			result = result & availability;
-			p.setAvailability(availability);
-		}
-		
-		return result;
+		return OrderRegistryUtil.isAvailability(cart, productTypeRegistry);
 	}
 	
 	/**
@@ -969,14 +714,10 @@ public class OrderRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.LOGS.getRegisterPermission());
 		
-		try{
-			Order order = new Order();
-			order.setId(orderID);
-			orderEntityAccess.registryLog(order, message);
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(e);
-		}
+		Order order = new Order();
+		order.setId(orderID);
+		
+		OrderRegistryUtil.registerEvent(message, null, orderEntityAccess);
 	}
 
 	/*
@@ -1030,16 +771,6 @@ public class OrderRegistryImp
 		return user;
 	}
 
-	private Client getSystemUser(int id) throws ClientRegistryException {
-		Client user = clientRegistry.findClientById(id);
-		
-		if(user == null) {
-			throw new ClientRegistryException(String.valueOf(id));
-		}
-		
-		return user;
-	}
-	
 	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
 		Subject subject = subjectProvider.getSubject();
 		
