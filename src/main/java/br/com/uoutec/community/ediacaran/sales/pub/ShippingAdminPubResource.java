@@ -344,9 +344,6 @@ public class ShippingAdminPubResource {
 
 		try{
 			shippingRegistry.cancelShipping(shipping, shippingPubEntity.getCancelJustification());
-			Order order = new Order();
-			order.setId(shipping.getOrder());
-			orderRegistry.updateStatus(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

@@ -338,9 +338,6 @@ public class InvoiceAdminPubResource {
 
 		try{
 			invoiceRegistry.cancelInvoice(invoice,  SystemUserRegistry.CURRENT_USER, justification);
-			Order order = new Order();
-			order.setId(invoice.getOrder());
-			orderRegistry.updateStatus(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

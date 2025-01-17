@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -163,6 +164,10 @@ public class ShippingRegistryUtil {
 		return entityAccess.findById(id);		
 	}
 
+	public static List<Shipping> getActualShippings(Order order, Client client, ShippingRegistry registry) throws ShippingRegistryException{
+		return registry.findByOrder(order.getId());
+	}
+	
 	public static List<Shipping> getActualShippings(Order order, Client client, ShippingEntityAccess entityAccess) throws EntityAccessException{
 		return entityAccess.findByOrder(order.getId(), client);		
 	}
@@ -184,7 +189,7 @@ public class ShippingRegistryUtil {
 	}
 
 	public static void markAsComplete(Order order, Shipping shipping, List<Shipping> shippings, 
-			OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry) throws InvalidUnitsOrderRegistryException, ShippingRegistryException, ProductTypeRegistryException{
+			OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
 		List<Shipping> allShippings = new ArrayList<>(shippings);
 		
@@ -196,9 +201,10 @@ public class ShippingRegistryUtil {
 	}
 	
 	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry,
-			ProductTypeRegistry productTypeRegistry) throws InvalidUnitsOrderRegistryException, ShippingRegistryException, ProductTypeRegistryException{
+			ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
 		if(isCompletedShipping(order, shippings, productTypeRegistry)) {
+			OrderRegistryUtil.updateStatus(order, OrderStatus.COMPLETE, orderRegistry);
 			order.setCompleteShipping(LocalDateTime.now());
 		}
 		else {
@@ -362,10 +368,6 @@ public class ShippingRegistryUtil {
 		}
 	}
 
-	public static void updateStatus(Order order, OrderStatus orderStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
-		orderRegistry.updateStatus(order, orderStatus);
-	}
-	
 	public static void update(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
 		try {
 			entityAccess.update(shipping);

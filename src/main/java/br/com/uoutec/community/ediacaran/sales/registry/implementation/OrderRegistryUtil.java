@@ -2,12 +2,14 @@ package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
@@ -15,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -25,12 +28,17 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvalidUnitsOrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductException;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -426,4 +434,103 @@ public class OrderRegistryUtil {
 			throw new OrderNotFoundRegistryException(order.getId());
 		}
 	}
+	
+	public static boolean isCompletedOrder(Order order, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException {
+		
+		if(order.getCompleteInvoice() == null ) {
+			return false;
+		}
+		
+		for(ProductRequest pr: order.getItens()) {
+
+			ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			
+			if(productTypeHandler.isSupportShipping(pr)) {
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
+
+	public static void updateStatus(Order order, OrderStatus orderStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(order, orderStatus);
+	}
+	
+	public static void markAsCompleteOrder(Order order, Invoice invoice, List<Invoice> invoices, List<Shipping> shipping, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+			) throws ProductTypeRegistryException, InvoiceRegistryException, InvalidUnitsOrderRegistryException {
+		
+		List<Invoice> allInvoices = new ArrayList<>(invoices);
+		
+		if(!allInvoices.contains(invoice)) {
+			allInvoices.add(invoice);
+		}
+		
+		
+		markAsCompleteOrder(order, allInvoices, shipping, orderRegistry, productTypeRegistry); 
+			
+	}
+
+	public static void checkPayment(Order order) throws InvoiceRegistryException {
+		if(order.getPayment().getReceivedFrom() == null) {
+			throw new InvoiceRegistryException("payment has not yet been made");
+		}
+	}
+	
+	public static void markAsCompleteOrder(Order order, Invoice invoice, Shipping shipping, List<Invoice> invoices, List<Shipping> shippings, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+			) throws ProductTypeRegistryException, InvoiceRegistryException, InvalidUnitsOrderRegistryException {
+
+		List<Invoice> allInvoices = new ArrayList<>(invoices);
+		
+		if(!allInvoices.contains(invoice)) {
+			allInvoices.add(invoice);
+		}
+		
+		List<Shipping> allShippings = new ArrayList<>(shippings);
+		
+		if(!allShippings.contains(shipping)) {
+			allShippings.add(shipping);
+		}
+		
+		markAsCompleteOrder(order, allInvoices, allShippings, orderRegistry, productTypeRegistry);
+	}
+			
+	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+			) throws ProductTypeRegistryException, InvoiceRegistryException, InvalidUnitsOrderRegistryException {
+
+		if(InvoiceRegistryUtil.isCompletedInvoice(order, invoices) && !ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry)) {
+
+			if(isCompletedOrder(order, productTypeRegistry)) {
+
+				try {
+					orderRegistry.updateStatus(order, OrderStatus.COMPLETE);
+				}
+				catch(Throwable ex) {
+					throw new InvoiceRegistryException(ex);
+				}
+				
+				LocalDateTime now = LocalDateTime.now();
+				if(order.getCompleteInvoice() == null) {
+					order.setCompleteInvoice(now);
+				}
+				
+				if(order.getCompleteShipping() == null) {
+					order.setCompleteShipping(now);
+				}
+				
+				try {
+					orderRegistry.registerOrder(order);
+				}
+				catch(Throwable ex) {
+					throw new InvoiceRegistryException(ex);
+				}
+				
+			}
+			
+		}
+			
+	}
+	
 }

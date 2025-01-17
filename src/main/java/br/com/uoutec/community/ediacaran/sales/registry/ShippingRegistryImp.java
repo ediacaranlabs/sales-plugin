@@ -15,6 +15,7 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -22,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
@@ -349,7 +351,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	private Shipping unsafeCreateShipping(Order order, Client client, Map<String, Integer> itens, String message
-			) throws OrderRegistryException, CountryRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException {
+			) throws OrderRegistryException, CountryRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
 
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		Order actualOrder = orderRegistry.findById(order.getId());
@@ -453,41 +455,46 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	private void registryNewShipping(Shipping shipping, Order order
-			) throws CompletedInvoiceRegistryException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException {
+			) throws OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
 		
 		Client client = new Client();
 		client.setId(order.getOwner());
 
 		OrderRegistry orderRegistry   = EntityContextPlugin.getEntity(OrderRegistry.class);
+		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		Order actualOrder             = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualclient           = ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);		
-		List<Shipping> actualShipping = ShippingRegistryUtil.getActualShippings(actualOrder, actualclient, entityAccess);
+		Client actualClient           = ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);		
+		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
+		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
 		
-		ShippingRegistryUtil.checkShipping(actualOrder, actualShipping, shipping, productTypeRegistry);
+		ShippingRegistryUtil.checkShipping(actualOrder, actualShippings, shipping, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
-		ShippingRegistryUtil.markAsComplete(order, shipping, actualShipping, orderRegistry, productTypeRegistry);
-		ShippingRegistryUtil.updateStatus(actualOrder, orderRegistry);
+		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		ShippingRegistryUtil.registerEvent(shipping, actualOrder, null, orderRegistry);
 	}
 
 	private void updateShipping(Shipping shipping, Order order
-			) throws CompletedInvoiceRegistryException, ShippingRegistryException, EntityAccessException, OrderRegistryException, ProductTypeRegistryException {
+			) throws ShippingRegistryException, EntityAccessException, OrderRegistryException, ProductTypeRegistryException, InvoiceRegistryException {
 		
 		Client user = new Client();
 		user.setId(order.getOwner());
 		
-		OrderRegistry orderRegistry  = EntityContextPlugin.getEntity(OrderRegistry.class);
-		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient            = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
-		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
-		Shipping actualShipping        = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
+		OrderRegistry orderRegistry      = EntityContextPlugin.getEntity(OrderRegistry.class);
+		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		Order actualOrder                = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		Client actualClient              = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
+		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
+		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
+		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
 		ShippingRegistryUtil.checkShipping(order, actualShippings, shipping, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, EntityContextPlugin.getEntity(OrderRegistry.class), productTypeRegistry);
-		ShippingRegistryUtil.updateStatus(actualOrder, orderRegistry);
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
+		ShippingRegistryUtil.registerEvent(shipping, actualOrder, null, orderRegistry);
 		
 	}
 	
