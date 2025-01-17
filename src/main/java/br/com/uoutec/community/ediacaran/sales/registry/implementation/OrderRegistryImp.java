@@ -325,20 +325,50 @@ public class OrderRegistryImp
 			throw new OrderNotFoundRegistryException(o.getId());
 		}
 
+		OrderStatus newStatus = OrderStatus.ON_HOLD;
+		Payment payment = order.getPayment();
+		
+		switch (payment.getStatus()) {
+		case NEW:
+		case ON_HOLD:
+			newStatus = OrderStatus.ON_HOLD;
+			break;
+		case PENDING_PAYMENT:
+		case PENDING_PAYMENT_CONFIRMATION:
+		case PAYMENT_REVIEW:
+			newStatus = OrderStatus.PENDING_PAYMENT;
+			break;
+		case PAYMENT_RECEIVED:
+			newStatus = OrderStatus.PAYMENT_RECEIVED;
+			break;
+		case SUSPECTED_FRAUD:
+			newStatus = OrderStatus.PENDING_PAYMENT;
+			break;
+		case REFOUND:
+			newStatus = OrderStatus.REFOUND;
+			break;
+		default:
+			break;
+		}
+		
+		if(newStatus == OrderStatus.PAYMENT_RECEIVED) {
+			
+		}
+		
 		if(order.getCompleteInvoice() != null && order.getCompleteShipping() != null) {
-			order.setStatus(OrderStatus.COMPLETE);
+			newStatus = OrderStatus.COMPLETE;
 		}
 		else
 		if(order.getCompleteShipping() != null) {
-			order.setStatus(OrderStatus.ORDER_SHIPPED);
+			newStatus = OrderStatus.ORDER_SHIPPED;
 		}
 		else
 		if(order.getCompleteInvoice() != null) {
-			order.setStatus(OrderStatus.ORDER_INVOICED);
+			newStatus = OrderStatus.ORDER_INVOICED;
 		}
 		else
 		if(order.getPayment().getReceivedFrom() != null) {
-			order.setStatus(OrderStatus.PAYMENT_RECEIVED);
+			newStatus = OrderStatus.PAYMENT_RECEIVED;
 		}
 		
 		try {
@@ -377,6 +407,8 @@ public class OrderRegistryImp
 					order.getStatus() + " -> " + OrderStatus.PAYMENT_RECEIVED);
 		}
 		
+		PaymentStatus currentStatus = order.getPayment().getStatus();
+		
 		if(value == null) {
 			
 			PaymentGatewayRegistry paymentGatewayRegistry = EntityContextPlugin.getEntity(PaymentGatewayRegistry.class);
@@ -409,11 +441,26 @@ public class OrderRegistryImp
 				throw new OrderRegistryException(order.getPayment().getTotal() + " <> " + value);
 			}
 			
-			
+			order.getPayment().setStatus(PaymentStatus.PAYMENT_RECEIVED);
 		}
 
+		PaymentStatus newStatus = order.getPayment().getStatus();
+		
+		if(!currentStatus.isValidNextStatus(newStatus)) {
+			throw new OrderStatusNotAllowedRegistryException(
+					"invalid payment status: " + 
+							currentStatus + " -> " + newStatus);
+			
+		}
+		
 		updateOrderStatus(order, order.getPayment());
-		order.getPayment().setReceivedFrom(LocalDateTime.now());
+		
+		if(newStatus == PaymentStatus.PAYMENT_RECEIVED) {
+			order.getPayment().setReceivedFrom(LocalDateTime.now());
+		}
+		else{
+			order.getPayment().setReceivedFrom(null);
+		}
 		
 		try {
 			updateOrder(order);
@@ -584,6 +631,7 @@ public class OrderRegistryImp
 		
 
 		payment.setStatus(PaymentStatus.NEW);
+		payment.setOrderId(order.getId());
 		payment.setPaymentType(paymentGateway.getId());
 		payment.setTax(cart.getTotalTax());
 		payment.setDiscount(cart.getTotalDiscount());

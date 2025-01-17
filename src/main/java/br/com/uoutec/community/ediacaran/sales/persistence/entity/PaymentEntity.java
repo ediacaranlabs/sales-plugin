@@ -50,6 +50,9 @@ public class PaymentEntity implements Serializable{
 
 	@Column(name="set_payment_type", length=32)
 	private String paymentType;
+
+	@Column(name="cod_order", length=32)
+	private String order;
 	
 	@Column(name="vlr_value", scale=3, precision=12)
 	private BigDecimal value;
@@ -84,6 +87,7 @@ public class PaymentEntity implements Serializable{
 	
 	public PaymentEntity(Payment e){
 		this.typeName           = e.getClass().getName();
+		this.order              = e.getOrderId();
 		this.currency           = e.getCurrency();
 		this.tax                = e.getTax();
 		this.id                 = e.getId();
@@ -224,6 +228,7 @@ public class PaymentEntity implements Serializable{
 				e.setAddData(data);
 			}
 			
+			e.setOrderId(this.order);
 			e.setReceivedFrom(this.receivedFrom);
 			e.setTax(this.tax);
 			e.setCurrency(this.currency);
