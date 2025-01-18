@@ -90,7 +90,6 @@ public enum OrderStatus {
 
 			nextState.put(OrderStatus.ORDER_SHIPPED, 
 					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.ORDER_INVOICED, //back
 							OrderStatus.COMPLETE))
 				);
 

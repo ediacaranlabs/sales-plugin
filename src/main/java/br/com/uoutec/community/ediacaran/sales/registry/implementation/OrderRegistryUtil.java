@@ -80,8 +80,9 @@ public class OrderRegistryUtil {
 		order.setShippingAddress(getShippingAddress(cart.getShippingAddress(), order.getBillingAddress(), defaultAddress, cart.getBillingAddress() == cart.getShippingAddress()));
 
 		return order;
-		
-		/*
+	}
+	
+	public static void saveAddressIfNecessary(Cart cart, ClientRegistry clientRegistry) throws OrderRegistryException {
 		try {
 			if(cart.getBillingAddress() != null) {
 				clientRegistry.registerAddress(cart.getBillingAddress(), cart.getClient());
@@ -93,9 +94,8 @@ public class OrderRegistryUtil {
 			
 		}
 		catch(Throwable e) {
-			throw new OrderRegistryException("falha ao processar os produtos", e);
+			throw new OrderRegistryException("falha ao processar os endereços", e);
 		}
-		*/
 	}
 	
 	public static void preOrder(Order order, Cart cart, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException {

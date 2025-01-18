@@ -432,6 +432,7 @@ public class OrderRegistryImp
 		
 		OrderRegistryUtil.checkCurrency(order, order.getCurrency());
 		OrderRegistryUtil.preOrder(order, cart, productTypeRegistry);
+		OrderRegistryUtil.saveAddressIfNecessary(cart, clientRegistry);
 		OrderRegistryUtil.registerNewOrder(order, actualClient, actualPayment, message, paymentGateway, orderEntityAccess);
 		OrderRegistryUtil.postOrder(order, cart, productTypeRegistry);
 		OrderRegistryUtil.registerEvent(message == null? "Pedido criado #" + order.getId() : message, order, orderEntityAccess);

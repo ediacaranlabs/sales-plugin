@@ -6,6 +6,7 @@ import br.com.uoutec.community.ediacaran.sales.actions.cart.OrderInvoicedAction;
 import br.com.uoutec.community.ediacaran.sales.actions.cart.PaymentReceivedAction;
 import br.com.uoutec.community.ediacaran.sales.actions.cart.PendingPaymentAction;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.registry.EmptyInvoiceException;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
@@ -36,6 +37,7 @@ public class ActionsPluginInstaller {
 				EntityContextPlugin.getEntity(PaymentReceivedAction.class)
 		);
 		
+		actionRegistry.addExceptionAction(OrderStatus.PAYMENT_RECEIVED.name(), EmptyInvoiceException.class, null);
 		actionRegistry.addNextAction(OrderStatus.PAYMENT_RECEIVED.name(), OrderStatus.ORDER_INVOICED.name());
 		
 		actionRegistry.registerAction(

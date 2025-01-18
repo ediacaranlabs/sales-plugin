@@ -219,44 +219,7 @@ public class CartRegistryImp
 						.addParameter("order", order.getId())
 					.build()
 			);
-			
-			/*
-			if(order.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT) {
-				orderRegistry.registerPayment(order, null, null);
-				order = orderRegistry.findById(order.getId());
-			}
-			
-			if(order.getStatus() == OrderStatus.PAYMENT_RECEIVED) {
-				InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-				Invoice invoice = invoiceRegistry.toInvoice(order);
-				invoiceRegistry.registerInvoice(invoice);
-				order = orderRegistry.findById(order.getId());
-			}
-			
-			if(order.getStatus() == OrderStatus.ORDER_INVOICED) {
-				ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-				Shipping shipping = shippingRegistry.toShipping(order);
-				List<ProductRequest> actualProducts = shipping.getProducts();
-				List<ProductRequest> products = new ArrayList<>(shipping.getProducts());
-				
-				for(ProductRequest pp: products) {
-					ProductType productType = productTypeRegistry.getProductType(pp.getProduct().getProductType());
-					ProductTypeHandler productTypeHandler = productType.getHandler();
-					if(!productTypeHandler.isService(pp)) {
-						actualProducts.remove(pp);
-					}
-				}
-				
-				if(!actualProducts.isEmpty()) {
-					VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-					String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
-					shipping.setShippingType(serviceShippingName);
-					shippingRegistry.registerShipping(shipping);
-				}
-				
-				order = orderRegistry.findById(order.getId());
-			}
-			*/
+
 		}
 		catch(ExistOrderRegistryException e){
 			order = orderRegistry.findByCartID(cart.getId());

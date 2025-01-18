@@ -387,6 +387,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			}
 		}
 		
+		if(itens.isEmpty()) {
+			throw new EmptyInvoiceException();
+		}
+		
 		Invoice i = createInvoice(actualOrder, itens);
 		
 		registryNewInvoice(i, actualOrder);
