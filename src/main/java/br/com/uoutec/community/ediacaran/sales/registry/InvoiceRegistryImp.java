@@ -27,7 +27,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegi
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
-import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -44,8 +43,6 @@ import br.com.uoutec.persistence.EntityAccessException;
 @Singleton
 public class InvoiceRegistryImp implements InvoiceRegistry{
 
-	private static final String ORDER_EVENT_GROUP = "ORDER";
-
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
 
@@ -55,9 +52,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Inject
 	private InvoiceEntityAccess entityAccess;
 
-	@Inject
-	private EventRegistry throwSystemEventRegistry;
-	
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
 	
@@ -220,30 +214,16 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		try {
 			return unsafeCreateInvoice(order, itens, message);
 		}
-		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw e;
-		}
-		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw new OrderRegistryException(e);
+		catch(EntityAccessException e){
+			throw new PersistenceOrderRegistryException(e);
 		}
 		
 	}
 	
 	@ActivateRequestContext
-	public Invoice toInvoice(Order order
-			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
-				InvalidUnitsOrderRegistryException {
+	public Invoice toInvoice(Order order) throws OrderRegistryException, PersistenceInvoiceRegistryException {
 		
-		Order actualOrder;
-		
-		try {
-			actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
-		}
-		catch(Throwable e) {
-			throw new OrderNotFoundRegistryException(e);
-		}
+		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
 		
 		if(actualOrder == null) {
 			throw new OrderNotFoundRegistryException(order.getId());
@@ -251,14 +231,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 		List<Invoice> actualInvoices;
 		
-		try {
-			Client client = new Client();
-			client.setId(actualOrder.getOwner());
-			actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, client, entityAccess);
-		}
-		catch(Throwable e) {
-			throw new OrderNotFoundRegistryException(e);
-		}
+		Client client = new Client();
+		client.setId(actualOrder.getOwner());
+		actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, client, entityAccess);
 		
 		return createInvoice(actualOrder, actualInvoices);
 	}
@@ -371,7 +346,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	private Invoice unsafeCreateInvoice(Order order, Map<String, Integer> itens, String message
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException{
+			) throws RegistryException, EntityAccessException{
 
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -412,8 +387,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private void registryNewInvoice(Invoice entity, Order order
-			) throws OrderStatusNotAllowedRegistryException, UnmodifiedOrderStatusRegistryException, 
-			OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
+			) throws RegistryException, EntityAccessException {
 		
 		Client client = new Client();
 		client.setId(entity.getOwner());

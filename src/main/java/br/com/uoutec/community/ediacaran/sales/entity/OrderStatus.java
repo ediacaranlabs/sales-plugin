@@ -84,6 +84,7 @@ public enum OrderStatus {
 
 			nextState.put(OrderStatus.ORDER_INVOICED, 
 					new HashSet<OrderStatus>(Arrays.asList(
+							OrderStatus.PAYMENT_RECEIVED,
 							OrderStatus.ORDER_SHIPPED,
 							OrderStatus.COMPLETE))
 				);
@@ -115,6 +116,9 @@ public enum OrderStatus {
 		}
 		
 		public static boolean isValid(OrderStatus currentStatus, OrderStatus newStatus){
+			if(currentStatus.equals(newStatus)) {
+				return true;
+			}
 			Set<OrderStatus> nextStatus = nextState.get(currentStatus);
 			return nextStatus != null && nextStatus.contains(newStatus);
 		}

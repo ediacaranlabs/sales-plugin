@@ -196,8 +196,13 @@ public class InvoiceRegistryUtil {
 		return registry.findByOrder(order.getId());
 	}
 	
-	public static List<Invoice> getActualInvoices(Order order, Client client, InvoiceEntityAccess entityAccess) throws EntityAccessException{
-		return entityAccess.findByOrder(order.getId(), client);		
+	public static List<Invoice> getActualInvoices(Order order, Client client, InvoiceEntityAccess entityAccess) throws PersistenceInvoiceRegistryException{
+		try {
+			return entityAccess.findByOrder(order.getId(), client);
+		}
+		catch(EntityAccessException e) {
+			throw new PersistenceInvoiceRegistryException(e);
+		}
 	}
 
 	public static Invoice getActualInvoice(Invoice invoice, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException{

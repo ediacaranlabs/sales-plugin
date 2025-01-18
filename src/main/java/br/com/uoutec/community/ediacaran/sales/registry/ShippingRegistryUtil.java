@@ -285,7 +285,7 @@ public class ShippingRegistryUtil {
 		return map;
 	}
 
-	public static void cancelInvoices(List<Shipping> shippings, Order order, 
+	public static void cancelShippings(List<Shipping> shippings, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, 
 			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {

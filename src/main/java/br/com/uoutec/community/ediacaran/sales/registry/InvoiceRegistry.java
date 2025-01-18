@@ -24,9 +24,7 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException;
 	
-	Invoice toInvoice(Order order
-			) throws OrderNotFoundRegistryException, ItemNotFoundOrderRegistryException, 
-				InvalidUnitsOrderRegistryException;
+	Invoice toInvoice(Order order)  throws OrderRegistryException, PersistenceInvoiceRegistryException;
 	
 	List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException;
 	

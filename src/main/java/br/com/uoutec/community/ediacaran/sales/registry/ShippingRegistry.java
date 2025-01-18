@@ -33,7 +33,8 @@ public interface ShippingRegistry extends PublicBean{
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
 		UnmodifiedOrderStatusRegistryException, ClientRegistryException, ShippingRegistryException;
 
-	void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException;
+	void cancelShipping(Shipping shipping, String justification
+			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException;
 	
 	List<Shipping> findByOrder(String id) throws ShippingRegistryException;
 	

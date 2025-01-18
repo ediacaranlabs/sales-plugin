@@ -338,7 +338,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Transactional
 	@Override
 	@ActivateRequestContext
-	public void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException {
+	public void cancelShipping(Shipping shipping, String justification
+			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
 		List<Shipping> list;
@@ -354,8 +355,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		try {
 			unsafeCancelShippings(list, justification);
 		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
+		catch(EntityAccessException ex) {
+			throw new PersistenceShippingRegistryException();
 		}
 	}
 	
@@ -377,7 +378,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			Order order = new Order();
 			order.setId(entry.getKey());
 			
-			ShippingRegistryUtil.cancelInvoices(shippings, order, justification, 
+			ShippingRegistryUtil.cancelShippings(shippings, order, justification, 
 					cancelDate, orderRegistry, shippingRegistry, entityAccess, productTypeRegistry);
 			
 		}
