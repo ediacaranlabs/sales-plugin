@@ -84,11 +84,13 @@ public enum OrderStatus {
 
 			nextState.put(OrderStatus.ORDER_INVOICED, 
 					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.ORDER_SHIPPED))
+							OrderStatus.ORDER_SHIPPED,
+							OrderStatus.COMPLETE))
 				);
 
 			nextState.put(OrderStatus.ORDER_SHIPPED, 
 					new HashSet<OrderStatus>(Arrays.asList(
+							OrderStatus.ORDER_INVOICED, //back
 							OrderStatus.COMPLETE))
 				);
 

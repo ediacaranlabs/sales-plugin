@@ -313,6 +313,7 @@ public class OrderRegistryImp
 		
 		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 		OrderRegistryUtil.checkNewOrderStatus(order, status);
+		o.setStatus(status);
 		/*
 		Order order;
 		try{
@@ -474,53 +475,11 @@ public class OrderRegistryImp
 		}
 	}
 
-	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message)	throws OrderRegistryException{
-		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-		try {
-			return invoiceRegistry.createInvoice(order, userID, itens, message);
-		}
-		catch(Throwable ex) {
-			throw new OrderRegistryException(ex);
-		}
-	}
-	
-	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) throws OrderRegistryException{
-		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-		try {
-			return invoiceRegistry.createInvoice(order, systemUser, itens, message);
-		}
-		catch(Throwable ex) {
-			throw new OrderRegistryException(ex);
-		}
-	}
-	
 	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException {
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
 		try {
 			return shippingRegistry.createShipping(order, itens, message);
-		}
-		catch(Throwable ex) {
-			throw new OrderRegistryException(ex);
-		}
-	}
-
-	public Shipping createShipping(Order order, SystemUserID userID, Map<String, Integer> itens, String message) throws OrderRegistryException {
-		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-		
-		try {
-			return shippingRegistry.createShipping(order, userID, itens, message);
-		}
-		catch(Throwable ex) {
-			throw new OrderRegistryException(ex);
-		}
-	}
-	
-	public Shipping createShipping(Order order, Client client, Map<String, Integer> itens, String message) throws OrderRegistryException {
-		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-		
-		try {
-			return shippingRegistry.createShipping(order, client, itens, message);
 		}
 		catch(Throwable ex) {
 			throw new OrderRegistryException(ex);
@@ -745,7 +704,7 @@ public class OrderRegistryImp
 		Order order = new Order();
 		order.setId(orderID);
 		
-		OrderRegistryUtil.registerEvent(message, null, orderEntityAccess);
+		OrderRegistryUtil.registerEvent(message, order, orderEntityAccess);
 	}
 
 	/*

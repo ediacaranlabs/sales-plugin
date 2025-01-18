@@ -292,6 +292,8 @@ public class ShippingRegistryUtil {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 			
+		OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
+		
 		for(Shipping i: shippings) {
 			
 			i.setCancelDate(cancelDate);

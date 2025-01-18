@@ -69,6 +69,7 @@ public class OrderEntityAccessImp
 			if(pEntity.getPayment() != null){
 				if(pEntity.getPayment().getId() == null){
 					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getOwner()));
+					pEntity.getPayment().setOrder(pEntity.getId());
 					entityManager.persist(pEntity.getPayment());
 				}
 			}
@@ -142,6 +143,7 @@ public class OrderEntityAccessImp
 			if(pEntity.getPayment() != null){
 				if(pEntity.getPayment().getId() == null){
 					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getOwner()));
+					pEntity.getPayment().setOrder(pEntity.getId());
 					entityManager.persist(pEntity.getPayment());
 				}
 				else{

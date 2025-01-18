@@ -382,6 +382,8 @@ public class InvoiceRegistryUtil {
 			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		
+		OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.PAYMENT_RECEIVED);
 		InvoiceRegistryUtil.checkShipping(actualOrder, shippingRegistry);
 			
 		for(Invoice i: invoices) {

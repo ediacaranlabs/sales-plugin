@@ -28,11 +28,6 @@ public class Payment implements Serializable{
 	private String paymentType;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(max = 38, min = 10, groups = DataValidation.class)
-	private String orderId;
-	
-	@NotNull(groups = DataValidation.class)
 	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal value;
 	
@@ -73,14 +68,6 @@ public class Payment implements Serializable{
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
 	}
 
 	public LocalDateTime getReceivedFrom() {

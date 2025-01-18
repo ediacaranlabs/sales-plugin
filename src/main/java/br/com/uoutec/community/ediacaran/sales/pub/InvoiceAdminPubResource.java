@@ -45,7 +45,6 @@ import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -337,7 +336,7 @@ public class InvoiceAdminPubResource {
 		}
 
 		try{
-			invoiceRegistry.cancelInvoice(invoice,  SystemUserRegistry.CURRENT_USER, justification);
+			invoiceRegistry.cancelInvoice(invoice, justification);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

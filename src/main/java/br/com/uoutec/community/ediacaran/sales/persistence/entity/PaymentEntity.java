@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import org.brandao.brutos.bean.BeanInstance;
 import org.brandao.brutos.bean.BeanProperty;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
@@ -51,7 +52,7 @@ public class PaymentEntity implements Serializable{
 	@Column(name="set_payment_type", length=32)
 	private String paymentType;
 
-	@Column(name="cod_order", length=32)
+	@Column(name="cod_order", updatable = false, length=32)
 	private String order;
 	
 	@Column(name="vlr_value", scale=3, precision=12)
@@ -85,9 +86,9 @@ public class PaymentEntity implements Serializable{
 	public PaymentEntity(){
 	}
 	
-	public PaymentEntity(Payment e){
+	public PaymentEntity(Payment e, Order order){
 		this.typeName           = e.getClass().getName();
-		this.order              = e.getOrderId();
+		this.order              = order.getId();
 		this.currency           = e.getCurrency();
 		this.tax                = e.getTax();
 		this.id                 = e.getId();
@@ -199,6 +200,14 @@ public class PaymentEntity implements Serializable{
 		this.receivedFrom = receivedFrom;
 	}
 
+	public String getOrder() {
+		return order;
+	}
+
+	public void setOrder(String order) {
+		this.order = order;
+	}
+
 	public Payment toEntity() {
 		return this.toEntity(null);
 	}
@@ -228,7 +237,6 @@ public class PaymentEntity implements Serializable{
 				e.setAddData(data);
 			}
 			
-			e.setOrderId(this.order);
 			e.setReceivedFrom(this.receivedFrom);
 			e.setTax(this.tax);
 			e.setCurrency(this.currency);

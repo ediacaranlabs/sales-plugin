@@ -28,14 +28,12 @@ import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
-import br.com.uoutec.entity.registry.RegistryException;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -221,11 +219,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
 		
-		SystemUserID userID = getSystemUserID();
-		Client client = getSystemUser(userID);
-		
 		try {
-			return unsafeCreateShipping(order, client, itens, message);
+			return unsafeCreateShipping(order, itens, message);
 		}
 		catch(ShippingRegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -238,42 +233,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 
-	@Override
-	@ActivateRequestContext
-	public Shipping createShipping(Order order, SystemUserID userID, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
-		
-		Client client = getSystemUser(userID);
-		return createShipping(order, client, itens, message);
-	}
-	
-	@Override
-	@ActivateRequestContext
-	public Shipping createShipping(Order order, Client client, Map<String, Integer> itens, String message) throws ShippingRegistryException {
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
-		
-		if(client == null) {
-			throw new NullPointerException("systemUser");
-		}
-		
-		try {
-			return unsafeCreateShipping(order, client, itens, message);
-		}
-		catch(ShippingRegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar os dados de envio", e);
-			throw e;
-		}
-		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar os dados de envio", e);
-			throw new ShippingRegistryException(e);
-		}
-		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar os dados de envio", e);
-			throw new ShippingRegistryException(e);
-		}
-		
-	}
-	
 	@Override
 	@ActivateRequestContext
 	public Shipping toShipping(Order order
@@ -350,7 +309,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
-	private Shipping unsafeCreateShipping(Order order, Client client, Map<String, Integer> itens, String message
+	private Shipping unsafeCreateShipping(Order order, Map<String, Integer> itens, String message
 			) throws OrderRegistryException, CountryRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
 
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -380,34 +339,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Override
 	@ActivateRequestContext
 	public void cancelShipping(Shipping shipping, String justification) throws ShippingRegistryException {
-		cancelShipping(shipping, null, justification);
-	}
-	
-	@Transactional
-	@Override
-	@ActivateRequestContext
-	public void cancelShipping(Shipping shipping, SystemUserID userID, String justification) throws ShippingRegistryException {
-		
-		SystemUser systemUser;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
-		}
-		catch (ClientRegistryException e) {
-			throw new ShippingRegistryException(e);
-		}
-		
-		cancelShipping(shipping, systemUser, justification);
-	}
-	
-	@Transactional
-	@Override
-	@ActivateRequestContext
-	public void cancelShipping(Shipping shipping, SystemUser systemUser, String justification) throws ShippingRegistryException {
-
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
 		List<Shipping> list;
@@ -421,15 +352,14 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		}
 
 		try {
-			unsafeCancelShippings(list, justification, systemUser);
+			unsafeCancelShippings(list, justification);
 		}
 		catch(Throwable ex) {
 			throw new ShippingRegistryException(ex);
 		}
-		
 	}
 	
-	private void unsafeCancelShippings(List<Shipping> shippings, String justification, SystemUser user
+	private void unsafeCancelShippings(List<Shipping> shippings, String justification
 			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException, ProductTypeRegistryException {
 
 		Map<String,List<Shipping>> map = ShippingRegistryUtil.groupByOrder(shippings);

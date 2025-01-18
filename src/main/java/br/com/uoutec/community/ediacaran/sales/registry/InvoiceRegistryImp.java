@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -216,47 +217,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
-		SystemUserID userID = getSystemUserID();
-		SystemUser user = getSystemUser(userID);
-		
 		try {
-			return unsafeCreateInvoice(order, user, itens, message);
-		}
-		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw e;
-		}
-		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
-			throw new OrderRegistryException(e);
-		}
-		
-	}
-
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public Invoice createInvoice(Order order, SystemUserID userID, Map<String, Integer> itens, String message) 
-			throws RegistryException{
-		
-		SystemUser user = getSystemUser(userID);
-		return createInvoice(order, user, itens, message);
-	}
-	
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public Invoice createInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message) 
-			throws RegistryException{
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
-		
-		if(systemUser == null) {
-			throw new NullPointerException("systemUser");
-		}
-		
-		try {
-			return unsafeCreateInvoice(order, systemUser, itens, message);
+			return unsafeCreateInvoice(order, itens, message);
 		}
 		catch(RegistryException e){
 			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
@@ -305,48 +267,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Transactional
 	@ActivateRequestContext
 	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException {
-		cancelInvoice(invoice, null, justification);
-	}
-	
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public void cancelInvoice(Invoice invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
 		
-		SystemUser systemUser;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
-		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
-		}
-		
-		cancelInvoice(invoice, systemUser, justification);
-	}
-	
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public void cancelInvoice(Invoice invoice, SystemUser systemUser, String justification) throws InvoiceRegistryException{
-
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
-		List<Invoice> invoices;
-		
 		try {
-			Invoice actualInvoice = entityAccess.findById(invoice.getId());
-			invoices = Arrays.asList(actualInvoice);
-		}
-		catch (EntityAccessException e) {
-			throw new InvoiceRegistryException(e);
-		}
-
-		try {
-			unsafeCancelInvoices(invoices, justification, systemUser);
+			unsafeCancelInvoices(Arrays.asList(invoice), justification);
 		}
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
@@ -358,34 +283,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Transactional
 	@ActivateRequestContext
 	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException {
-		cancelInvoices(order, null, justification);
-	}
-	
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public void cancelInvoices(Order invoice, SystemUserID userID, String justification) throws InvoiceRegistryException{
-		
-		SystemUser systemUser;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
-		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
-		}
-		
-		cancelInvoices(invoice, systemUser, justification);
-	}
-
-	
-	@Override
-	@Transactional
-	@ActivateRequestContext
-	public void cancelInvoices(Order order, SystemUser systemUser, String justification) throws InvoiceRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
@@ -401,15 +298,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 
 		try {
-			unsafeCancelInvoices(invoices, justification, null);
+			unsafeCancelInvoices(invoices, justification);
 		}
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
 		}
 	}
 
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification, 
-			SystemUser user) throws EntityAccessException, OrderRegistryException, InvoiceRegistryException {
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws EntityAccessException, OrderRegistryException, InvoiceRegistryException {
 
 		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);
 		
@@ -474,13 +370,23 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 	}
 	
-	private Invoice unsafeCreateInvoice(Order order, SystemUser systemUser, Map<String, Integer> itens, String message
+	private Invoice unsafeCreateInvoice(Order order, Map<String, Integer> itens, String message
 			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException{
 
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		Order actualOrder = orderRegistry.findById(order.getId());
 
+		if(itens == null) {
+			Invoice newInvoice = toInvoice(actualOrder);
+			itens = new HashMap<>();
+			for(ProductRequest pr: newInvoice.getItens()) {
+				if(pr.getUnits() > 0) {
+					itens.put(pr.getSerial(), pr.getUnits());
+				}
+			}
+		}
+		
 		Invoice i = createInvoice(actualOrder, itens);
 		
 		registryNewInvoice(i, actualOrder);

@@ -38,11 +38,11 @@ public class InvoiceEntity implements Serializable{
 	private LocalDateTime date;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_owner", referencedColumnName="cod_system_user")
+	@JoinColumn(name="cod_owner",  updatable = false, referencedColumnName="cod_system_user")
 	private SystemUserEntity owner;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_order", referencedColumnName="cod_order")
+	@JoinColumn(name="cod_order",  updatable = false, referencedColumnName="cod_order")
 	private OrderEntity order;
 
 	@Column(name="dat_cancellation")

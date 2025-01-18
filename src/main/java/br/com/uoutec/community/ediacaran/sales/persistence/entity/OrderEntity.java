@@ -36,7 +36,7 @@ public class OrderEntity implements Serializable{
 	private String id;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_owner", referencedColumnName="cod_system_user")
+	@JoinColumn(name="cod_owner", updatable = false, referencedColumnName="cod_system_user")
 	private SystemUserEntity owner;
 
 	@Column(name="dsc_cartid", length=128)
@@ -50,7 +50,7 @@ public class OrderEntity implements Serializable{
 	private OrderStatus status;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_payment", referencedColumnName="cod_payment")
+	@JoinColumn(name="cod_payment", updatable = false, referencedColumnName="cod_payment")
 	private PaymentEntity payment;
 
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -128,7 +128,7 @@ public class OrderEntity implements Serializable{
 			}
 		}
 		
-		this.payment = e.getPayment() == null? null : new PaymentEntity(e.getPayment());
+		this.payment = e.getPayment() == null? null : new PaymentEntity(e.getPayment(), e);
 		this.removed = e.isRemoved();
 		this.status = e.getStatus();
 		

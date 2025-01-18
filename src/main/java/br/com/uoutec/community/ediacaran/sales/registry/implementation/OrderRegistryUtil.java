@@ -115,11 +115,14 @@ public class OrderRegistryUtil {
 	public static void registerNewOrder(Order order, Client client, Payment payment, String message, 
 			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException {
 		try{
+			order.setPayment(payment);
+			
 			save(order, entityAccess);
 			
 			paymentGateway.payment(new PaymentRequest(client, payment));
-			order.getPayment().setStatus(payment.getStatus());
 			
+			checkPayment(payment, order);
+			order.getPayment().setStatus(payment.getStatus());
 			checkAndUpdateNewOrderStatus(order, toOrderStatus(order.getPayment().getStatus()));
 			
 			update(order, entityAccess);
@@ -183,13 +186,15 @@ public class OrderRegistryUtil {
 	
 	public static Payment getPayment(Payment payment, Order order, PaymentGateway paymentGateway, Cart cart) {
 		payment.setStatus(PaymentStatus.NEW);
-		payment.setOrderId(order.getId());
 		payment.setPaymentType(paymentGateway.getId());
 		payment.setTax(cart.getTotalTax());
 		payment.setDiscount(cart.getTotalDiscount());
 		payment.setCurrency(order.getItens().get(0).getCurrency());
 		payment.setValue(cart.getSubtotal());
 		payment.setTotal(cart.getTotal());
+		
+		order.setPayment(payment);
+		
 		return payment;
 	}
 	
@@ -378,7 +383,7 @@ public class OrderRegistryUtil {
 	}
 
 	public static void checkAndUpdateNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
-		checkAndUpdateNewOrderStatus(order, newStatus);
+		checkNewOrderStatus(order, newStatus);
 		order.setStatus(newStatus);		
 	}
 
@@ -413,7 +418,7 @@ public class OrderRegistryUtil {
 	
 	public static void checkNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		
-		if(!order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)){
+		if(!order.getStatus().isValidNextStatus(newStatus)){
 			throw new OrderStatusNotAllowedRegistryException(
 					"invalid status #" + order.getId() + ": " + 
 					order.getStatus() + " -> " + OrderStatus.PAYMENT_RECEIVED);
@@ -488,13 +493,13 @@ public class OrderRegistryUtil {
 
 		List<Invoice> allInvoices = new ArrayList<>(invoices);
 		
-		if(!allInvoices.contains(invoice)) {
+		if(invoice != null && !allInvoices.contains(invoice)) {
 			allInvoices.add(invoice);
 		}
 		
 		List<Shipping> allShippings = new ArrayList<>(shippings);
 		
-		if(!allShippings.contains(shipping)) {
+		if(shipping != null && !allShippings.contains(shipping)) {
 			allShippings.add(shipping);
 		}
 		
