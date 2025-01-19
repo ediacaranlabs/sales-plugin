@@ -364,7 +364,7 @@ public class InvoiceRegistryUtil {
 
 	public static void cancelInvoices(List<Invoice> invoices, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException {
+			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		
@@ -375,7 +375,8 @@ public class InvoiceRegistryUtil {
 			
 			i.setCancelDate(cancelDate);
 			i.setCancelJustification(justification);
-			entityAccess.update(i);
+			
+			update(i, actualOrder, entityAccess);
 			
 			orderRegistry.registryLog(actualOrder.getId(), "canceled invoice #" + i.getId() + ": " +  justification);
 			
@@ -383,7 +384,15 @@ public class InvoiceRegistryUtil {
 
 		entityAccess.flush();
 			
-		List<Invoice> actualInvoices = entityAccess.findByOrder(actualOrder.getId(), null);
+		List<Invoice> actualInvoices;
+		
+		try {
+			actualInvoices = entityAccess.findByOrder(actualOrder.getId(), null);
+		}
+		catch(Throwable ex) {
+			throw new PersistenceInvoiceRegistryException(ex);
+		}
+		
 		InvoiceRegistryUtil.markAsComplete(actualOrder, actualInvoices, orderRegistry);
 		
 	}

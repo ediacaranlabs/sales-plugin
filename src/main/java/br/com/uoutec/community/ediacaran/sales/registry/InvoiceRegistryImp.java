@@ -67,7 +67,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void registerInvoice(Invoice entity) throws InvoiceRegistryException {
+	public void registerInvoice(Invoice entity) throws ValidationException, RegistryException, EntityAccessException, ProductTypeHandlerException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRegisterPermission());
 		
@@ -75,34 +75,23 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			throw new InvoiceRegistryException("order is empty");
 		}
 		
-		try{
-			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-			
-			Order order = new Order();
-			order.setId(entity.getOrder());
-			order = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-			
-			if(order == null) {
-				throw new InvoiceRegistryException("order not found #" + entity.getOrder());
-			}
-			
-			if(entity.getId() == null){
-				validateInvoice(entity, saveValidations);
-				this.registryNewInvoice(entity, order);
-			}
-			else{
-				validateInvoice(entity, updateValidations);
-				this.updateInvoice(entity, order);
-			}
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		
+		Order order = new Order();
+		order.setId(entity.getOrder());
+		order = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		
+		if(order == null) {
+			throw new InvoiceRegistryException("order not found #" + entity.getOrder());
 		}
-		catch(ValidationException e){
-			throw new InvoiceRegistryException(e.getMessage());
+		
+		if(entity.getId() == null){
+			validateInvoice(entity, saveValidations);
+			registryNewInvoice(entity, order);
 		}
-		catch(InvoiceRegistryException e){
-			throw e;
-		}
-		catch(Throwable e){
-			throw new InvoiceRegistryException(e);
+		else{
+			validateInvoice(entity, updateValidations);
+			updateInvoice(entity, order);
 		}
 	}
 
@@ -130,7 +119,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			entityAccess.delete(entity);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new PersistenceInvoiceRegistryException(ex);
 		}
 	}
 
@@ -144,21 +133,16 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@ActivateRequestContext
-	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException{
+	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 
 		SystemUser systemUser = null;
 		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
+		if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+			userID = getSystemUserID();
 		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
-		}
+		systemUser = getSystemUser(userID);
 		
 		return unsafeFindById(id, systemUser);
 		
@@ -185,7 +169,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			return e;
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(e);
+			throw new PersistenceInvoiceRegistryException(e);
 		}
 	}
 	
@@ -199,7 +183,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			return entityAccess.search(value, first, max);
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(e);
+			throw new PersistenceInvoiceRegistryException(e);
 		}
 	}
 
@@ -241,23 +225,18 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException {
+	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
-		try {
-			unsafeCancelInvoices(Arrays.asList(invoice), justification);
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
+		unsafeCancelInvoices(Arrays.asList(invoice), justification);
 		
 	}
 	
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException {
+	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
@@ -272,15 +251,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			throw new InvoiceRegistryException(e);
 		}
 
-		try {
-			unsafeCancelInvoices(invoices, justification);
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
+		unsafeCancelInvoices(invoices, justification);
 	}
 
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws EntityAccessException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);
 		
@@ -314,33 +288,28 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			return entityAccess.findByOrder(id, null);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new PersistenceInvoiceRegistryException(ex);
 		}
 	}
 
 	@Override
 	@ActivateRequestContext
-	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException{
+	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 
 		SystemUser systemUser = null;
 		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
+		if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
+			userID = getSystemUserID();
 		}
-		catch (SystemUserRegistryException e) {
-			throw new InvoiceRegistryException(e);
-		}
+		systemUser = getSystemUser(userID);
 		
 		try {
 			return entityAccess.findByOrder(id, systemUser);
 		}
 		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
+			throw new PersistenceInvoiceRegistryException(ex);
 		}
 		
 	}
