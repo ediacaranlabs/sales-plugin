@@ -12,10 +12,12 @@
 			"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/address", 
 			'client_address_form'
 		);									
-		
+
 		var $accordion = $.AppContext.utils.getById('cart_steps');
-		var $cartPayment = $accordion.getItem('cart_address');
-		$cartPayment.select();
+		var $item = $accordion.getItem('cart_client');
+		var $nextItem = $item.getNext();
+		
+		$nextItem.select();
 		
 	</script>
 </c:if>

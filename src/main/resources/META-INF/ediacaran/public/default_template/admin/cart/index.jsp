@@ -4,20 +4,6 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
-<script type="text/javascript">
-$.AppContext.onload(function(){			
-
-	var $accordion = $.AppContext.utils.getById('cart_steps');
-	var $tabs = $accordion.getItens();
-	
-	for(let $tab of $tabs){
-		$tab.setEnabled(false);
-	}
-	
-	$tabs[0].select();
-		
-});
-</script>
 
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
@@ -52,36 +38,10 @@ $.AppContext.onload(function(){
 		</ed:row>
 		<ed:row>
 			<!-- products-table -->
-			<ed:col size="9">
-				
-				<ec:accordion id="cart_steps">
-					<ec:accordion-item id="cart_products" title="#{tabs.products.title}" bundle="${messages}">
-						<!-- products-tab -->
-						<jsp:include page="products_tab.jsp"/>
-						<!-- /products-tab -->
-					</ec:accordion-item>
-					<ec:accordion-item  id="cart_client" title="#{tabs.client.title}" bundle="${messages}">
-						<!-- client-tab -->
-						<jsp:include page="client_tab.jsp"/>
-						<!-- /client-tab -->
-					</ec:accordion-item>
-					<ec:accordion-item id="cart_address" title="#{tabs.address.title}" bundle="${messages}">
-						<!-- address-tab -->
-						<jsp:include page="address_tab.jsp"/>
-						<!-- /address-tab -->
-					</ec:accordion-item>
-					<ec:accordion-item id="cart_shipping" title="#{tabs.shipping.title}" bundle="${messages}">
-						<!-- address-tab -->
-						<jsp:include page="shipping_tab.jsp"/>
-						<!-- /address-tab -->
-					</ec:accordion-item>
-					<ec:accordion-item id="cart_payment" title="#{tabs.payment.title}" bundle="${messages}">
-						<!-- payment-tab -->
-						<jsp:include page="payment_tab.jsp"/>
-						<!-- /payment-tab -->
-					</ec:accordion-item>
-				</ec:accordion>
-	
+			<ed:col size="9" id="cart">
+				<!-- products-tab -->
+				<jsp:include page="products_tab.jsp"/>
+				<!-- /products-tab -->
 			</ed:col>
 			<!-- /products-table -->
 			<ed:col size="3" id="cart_widgets">

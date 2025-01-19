@@ -18,8 +18,10 @@
 			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" bundle="${messages}" align="right" >
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
-					var $tab = $accordion.getItem("cart_address");
-					$tab.select();
+					var $item = $accordion.getItem('cart_shipping');
+					var $previousItem = $item.getPrevious();
+					
+					$previousItem.select();
 				</ec:event>
 			</ec:button>
 		</ed:col>

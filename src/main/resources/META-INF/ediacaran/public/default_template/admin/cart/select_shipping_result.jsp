@@ -12,8 +12,10 @@
 		$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
 	
 		var $accordion = $.AppContext.utils.getById('cart_steps');
-		var $cartPayment = $accordion.getItem('cart_payment');
-		$cartPayment.select();
+		var $item = $accordion.getItem('cart_shipping');
+		var $nextItem = $item.getNext();
+		
+		$nextItem.select();
 		
 	</script>
 </c:if>

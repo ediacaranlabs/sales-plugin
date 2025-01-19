@@ -149,6 +149,21 @@ public class CartRegistryImp
 		
 	}
 
+	public boolean isSupportShipping(Cart cart) throws ProductTypeRegistryException {
+
+		for(ProductRequest i: cart.getItensCollection().getItens()) {
+
+			ProductType productType = productTypeRegistry.getProductType(i.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			
+			if(productTypeHandler.isSupportShipping(i)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	@EnableFilters(CartRegistry.class)
 	public ProductRequest add(Cart cart, Product product, 
 			Map<String, String> addData, int units) throws MaxItensException, 

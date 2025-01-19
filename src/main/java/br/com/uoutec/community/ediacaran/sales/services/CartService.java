@@ -104,6 +104,10 @@ public class CartService {
 		return cartRegistry.checkout(cart, payment, message);
 	}
 	
+	public boolean isSupportShipping(Cart cart) throws ProductTypeRegistryException{
+		return cartRegistry.isSupportShipping(cart);
+	}
+	
 	public ProductSearchResult search(ProductSearch value) throws ProductRegistryException {
 		return productRegistry.search(value);
 	}

@@ -109,13 +109,6 @@
 <ed:row>
 	<ed:col>
 		<ec:button label="#{next.label}" icon2="chevron-right" actionType="submit"  align="right" form="form_user" bundle="${messages}"/>
-		<ec:button icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
-			<ec:event type="click">
-				var $accordion = $.AppContext.utils.getById('cart_steps');
-				var $accordionItens = $accordion.getItens();
-				$accordionItens[0].select();
-			</ec:event>
-		</ec:button>
 		<ec:button label="#{new.label}" icon="plus" actionType="button" align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContentByID(

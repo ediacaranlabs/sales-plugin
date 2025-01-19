@@ -315,10 +315,41 @@ public class CartAdminPubResource {
 	}
 
 	@Action("/checkout")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/checkout")
+	@Result("vars")
+	@ResponseErrors(rendered=false, name="exception")
+	@RequiresRole(BasicRoles.USER)
+	public Map<String, Object> checkout(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException{
+		
+		
+		try {
+			Map<String,Object> result = new HashMap<String, Object>();
+			
+			result.put("supportShipping",			cartService.isSupportShipping(adminCart.getCart()));
+			result.put("client",					adminCart.getClient());
+			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getClient()));
+			result.put("productTypes",				productTypeRegistry.getProductTypes());
+			result.put("client_data_view",			clientEntityTypes.getClientEntityView(adminCart.getClient()));
+			result.put("countries",					countryRegistry.getAll(locale));
+			result.put("principal",					subjectProvider.getSubject().getPrincipal());
+			
+			return result;
+		}
+		catch(Throwable ex) {
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+	
+	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/admin/cart/result_checkout")
 	@Result(value="checkout", mappingType = MappingTypes.VALUE)
 	@ResponseErrors(rendered=false, name="exception")
+	@RequiresRole(BasicRoles.USER)
 	public Checkout checkout(
 			@Basic(bean="payment")
 			PaymentPubEntity paymentPubEntity,

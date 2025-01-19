@@ -47,8 +47,8 @@
 	<ec:center id="empty_cart"><ec:icon icon="shopping-cart" size="3"/> <h3><fmt:message key="empty_cart.label" bundle="${messages}"/></h3></ec:center>
 	<script type="text/javascript">
 	$.AppContext.onload(function(){			
-		var $nextButton = $.AppContext.utils.getById('products_next_button');
-		$nextButton.setEnabled(false);
+		var $checkoutPageButton = $.AppContext.utils.getById('checkout_page_button');
+		$checkoutPageButton.setEnabled(false);
 	});
 	</script>
 </c:if>
@@ -68,7 +68,7 @@
 	</c:forEach>
 	<script type="text/javascript">
 	$.AppContext.onload(function(){			
-		var $nextButton = $.AppContext.utils.getById('products_next_button');
+		var $nextButton = $.AppContext.utils.getById('checkout_page_button');
 		$nextButton.setEnabled(true);
 	});
 	</script>
@@ -76,6 +76,6 @@
 <script type="text/javascript">
 $.AppContext.onload(function(){
 	$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
-	$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
+	//$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
 });
 </script>

@@ -39,6 +39,8 @@ public interface CartRegistry extends Registry, PublicBean{
 	boolean isAvailability(Cart cart) 
 			throws ProductTypeRegistryException, ProductTypeHandlerException, SystemUserRegistryException;
 			
+	boolean isSupportShipping(Cart cart) throws ProductTypeRegistryException;
+	
 	void remove(Cart cart, String serial) 
 			throws ProductTypeRegistryException, ProductTypeHandlerException;
 	

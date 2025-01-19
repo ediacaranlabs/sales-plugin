@@ -78,11 +78,9 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<ec:button id="products_next_button" label="#{next.label}" icon2="chevron-right" actionType="button" align="right" bundle="${messages}">
+		<ec:button id="checkout_page_button" label="#{checkout.label}" style="success" icon="check-circle" actionType="button" align="right" bundle="${messages}">
 			<ec:event type="click">
-				var $accordion = $.AppContext.utils.getById('cart_steps');
-				var $accordionItens = $accordion.getItens();
-				$accordionItens[1].select();
+				$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/checkout', 'cart');
 			</ec:event>
 		</ec:button>
 		<ec:button label="#{search.label}" icon="search" actionType="button" align="right" bundle="${messages}">
