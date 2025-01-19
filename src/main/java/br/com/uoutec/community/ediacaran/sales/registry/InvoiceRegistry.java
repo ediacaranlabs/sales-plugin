@@ -16,7 +16,7 @@ public interface InvoiceRegistry extends PublicBean{
 
 	void registerInvoice(Invoice entity) throws InvoiceRegistryException;
 	
-	void removeInvoice(Invoice entity) throws InvoiceRegistryException;
+	void removeInvoice(Invoice entity) throws InvoiceRegistryException, ShippingRegistryException;
 	
 	Invoice findById(String id) throws InvoiceRegistryException;
 
@@ -32,7 +32,7 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	void cancelInvoices(Order order, String justification) throws InvoiceRegistryException;
 
-	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException;
+	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException, ProductTypeHandlerException;
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
 	

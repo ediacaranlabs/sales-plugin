@@ -413,8 +413,8 @@ public class OrderRegistryImp
 	}
 	
 	private Order createOrder0(Cart cart, Payment payment, 
-			String message, PaymentGateway paymentGateway) throws OrderRegistryException, EntityAccessException, 
-			SystemUserRegistryException, ClientRegistryException {
+			String message, PaymentGateway paymentGateway) throws OrderRegistryException,
+			SystemUserRegistryException, ClientRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, PaymentGatewayException, ValidationException {
 
 		OrderRegistryUtil.checkCartToRegistry(cart, payment, paymentGateway, productTypeRegistry, orderEntityAccess);
 		

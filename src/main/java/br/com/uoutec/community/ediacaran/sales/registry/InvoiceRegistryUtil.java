@@ -265,15 +265,9 @@ public class InvoiceRegistryUtil {
 	}
 
 	public static void checkIfExistsShipping(Order order, ShippingRegistry shippingRegistry
-			) throws InvoiceRegistryException {
+			) throws InvoiceRegistryException, ShippingRegistryException {
 		
-		List<Shipping> list;
-		try {
-			list = shippingRegistry.findByOrder(order.getId());
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
+		List<Shipping> list = shippingRegistry.findByOrder(order.getId());
 		
 		if(!list.isEmpty()) {
 			throw new InvoiceRegistryException("found shipping for order #" + order.getId());
@@ -281,17 +275,9 @@ public class InvoiceRegistryUtil {
 	}
 	
 	public static void checkShipping(Order order, ShippingRegistry shippingRegistry
-			) throws InvoiceRegistryException {
+			) throws InvoiceRegistryException, ShippingRegistryException {
 		
-		List<Shipping> shippings;
-		
-		try {
-			shippings = shippingRegistry.findByOrder(order.getId());
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
-		
+		List<Shipping> shippings = shippingRegistry.findByOrder(order.getId());
 		checkShipping(shippings);
 	}
 
@@ -314,17 +300,11 @@ public class InvoiceRegistryUtil {
 		return invoice.getCancelDate() != null;
 	}
 	
-	public static void registerProducts(Invoice invoice, SystemUser user, Order order, ProductTypeRegistry productTypeRegistry) throws InvoiceRegistryException {
+	public static void registerProducts(Invoice invoice, SystemUser user, Order order, ProductTypeRegistry productTypeRegistry) throws InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException {
 		for(ProductRequest productRequest: invoice.getItens()){
-			try{
-				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, order, productRequest);
-			}
-			catch(Throwable e){
-				throw new InvoiceRegistryException(
-					"falha ao processar o produto/serviço " + productRequest.getId(), e);
-			}
+			ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
+			ProductTypeHandler productTypeHandler = productType.getHandler();
+			productTypeHandler.registryItem(user, order, productRequest);
 		}
 	}
 	
@@ -334,7 +314,7 @@ public class InvoiceRegistryUtil {
 			entityAccess.flush();
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(
+			throw new PersistenceInvoiceRegistryException(
 				"invoice error: " + order.getId(), e);
 		}
 	}
@@ -345,7 +325,7 @@ public class InvoiceRegistryUtil {
 			entityAccess.flush();
 		}
 		catch(Throwable e){
-			throw new InvoiceRegistryException(
+			throw new PersistenceInvoiceRegistryException(
 				"invoice error: " + order.getId(), e);
 		}
 	}
@@ -384,7 +364,7 @@ public class InvoiceRegistryUtil {
 
 	public static void cancelInvoices(List<Invoice> invoices, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException {
+			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		

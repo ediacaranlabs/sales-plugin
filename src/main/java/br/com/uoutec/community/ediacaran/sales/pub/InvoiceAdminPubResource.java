@@ -88,7 +88,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
 							InvoiceAdminPubResourceMessages.index.error.fail_load, 
 							locale);
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.search.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		
@@ -138,7 +138,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.search.error.fail_load_entity,
 							
 							locale);
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		
@@ -167,7 +167,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.details.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -199,7 +199,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.new_invoice.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		Invoice invoice;
@@ -213,7 +213,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.new_invoice.error.create_invoice, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -247,7 +247,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		return new InvoiceRecalcPubEntity(invoice);
@@ -277,7 +277,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		try{
@@ -295,7 +295,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.save.error.register, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -332,7 +332,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.cancel.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		try{
@@ -345,7 +345,7 @@ public class InvoiceAdminPubResource {
 							InvoiceAdminPubResourceMessages.cancel.error.register, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();

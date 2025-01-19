@@ -108,7 +108,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.search.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		
@@ -123,7 +123,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.search.error.fail_load_entity,
 							
 							locale);
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		
@@ -156,7 +156,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.details.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -171,7 +171,7 @@ public class ShippingAdminPubResource {
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.CREATE)
-	public Map<String,Object> newInvoice(
+	public Map<String,Object> newShipping(
 			@DetachedName
 			OrderPubEntity orderPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -187,10 +187,10 @@ public class ShippingAdminPubResource {
 			String error = i18nRegistry
 					.getString(
 							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.new_invoice.error.fail_load_entity, 
+							ShippingAdminPubResourceMessages.new_shipping.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		Shipping shipping = null;
@@ -205,10 +205,10 @@ public class ShippingAdminPubResource {
 			String error = i18nRegistry
 					.getString(
 							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.new_invoice.error.create_invoice, 
+							ShippingAdminPubResourceMessages.new_shipping.error.create_shipping, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -245,7 +245,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
 							ShippingAdminPubResourceMessages.select_shipping_type.error.fail_load_entity, 
 							locale);
-			exception    = new InvalidRequestException(error, ex);
+			exception    = new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		ResultAction ra = new ResultActionImp();
@@ -289,7 +289,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.edit.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		try{
@@ -307,7 +307,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.save.error.register, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -339,7 +339,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.cancel.error.fail_load_entity, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		try{
@@ -352,7 +352,7 @@ public class ShippingAdminPubResource {
 							ShippingAdminPubResourceMessages.cancel.error.register, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();

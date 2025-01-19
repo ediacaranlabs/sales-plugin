@@ -109,7 +109,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void removeInvoice(Invoice entity) throws InvoiceRegistryException {
+	public void removeInvoice(Invoice entity) throws InvoiceRegistryException, ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
 		
@@ -207,7 +207,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Transactional
 	@ActivateRequestContext
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
-		throws RegistryException{
+		throws RegistryException, ProductTypeHandlerException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
@@ -280,7 +280,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 	}
 
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws EntityAccessException, OrderRegistryException, InvoiceRegistryException {
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws EntityAccessException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);
 		
@@ -346,7 +346,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	private Invoice unsafeCreateInvoice(Order order, Map<String, Integer> itens, String message
-			) throws RegistryException, EntityAccessException{
+			) throws RegistryException, EntityAccessException, ProductTypeHandlerException{
 
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -387,7 +387,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private void registryNewInvoice(Invoice entity, Order order
-			) throws RegistryException, EntityAccessException {
+			) throws RegistryException, EntityAccessException, ProductTypeHandlerException {
 		
 		Client client = new Client();
 		client.setId(entity.getOwner());
