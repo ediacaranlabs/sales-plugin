@@ -40,7 +40,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusReg
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
-import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -60,8 +59,6 @@ public class OrderRegistryImp
 	extends AbstractRegistry
 	implements OrderRegistry{
 
-	private static final String ORDER_EVENT_GROUP = "ORDER";
-
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
 
@@ -73,9 +70,6 @@ public class OrderRegistryImp
 	
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
-	
-	@Inject
-	private EventRegistry throwSystemEventRegistry;
 	
 	@Inject
 	private OrderEntityAccess orderEntityAccess;
@@ -411,11 +405,9 @@ public class OrderRegistryImp
 			return order;
 		}
 		catch(OrderRegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar o pedido", e);
 			throw e;
 		}
 		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar o pedido", e);
 			throw new OrderRegistryException(e);
 		}
 	}
@@ -542,11 +534,9 @@ public class OrderRegistryImp
 			this.unsafeCreateRefound(orderID, message);
 		}
 		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao fazer o reembolso", e);
 			throw e;
 		}
 		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao fazer o reembolso", e);
 			throw new OrderRegistryException(e);
 		}
 	}
@@ -618,11 +608,9 @@ public class OrderRegistryImp
 			this.unsafeRevertRefound(orderID, message);
 		}
 		catch(RegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao reserver o reembolso", e);
 			throw e;
 		}
 		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao reserver o reembolso", e);
 			throw new OrderRegistryException(e);
 		}
 	}
