@@ -218,7 +218,7 @@ public class ClientAdminPubResource {
 		
 		try{
 			if("simplified".equals(type)) {
-				view = "${plugins.ediacaran.sales.template}/admin/client/address.jsp";
+				view = "${plugins.ediacaran.sales.template}/front/panel/client/address.jsp";
 				resolvedView = true;
 			}
 			else {
@@ -252,7 +252,7 @@ public class ClientAdminPubResource {
 		"/select-address/{client.protectedID}",
 		"/select-address/{client.protectedID}/{type}"
 	})
-	@View("${plugins.ediacaran.sales.template}/admin/client/address_selected")
+	@View("${plugins.ediacaran.sales.template}/front/panel/client/address_selected")
 	@Result("vars")
 	@RequiresRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
@@ -321,7 +321,7 @@ public class ClientAdminPubResource {
 							ClientAdminPubResourceMessages.edit.error.fail_load, 
 							locale);
 			
-			view = "${plugins.ediacaran.sales.template}/admin/client/user_data.jsp";
+			view = "${plugins.ediacaran.sales.template}/front/panel/client/user_data.jsp";
 			resolvedView = true;
 			exception = new InvalidRequestException(error, ex);
 		}

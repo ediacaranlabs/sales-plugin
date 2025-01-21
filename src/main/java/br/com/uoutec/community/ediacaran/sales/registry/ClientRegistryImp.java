@@ -122,6 +122,27 @@ public class ClientRegistryImp
 	}
 
 	@Override
+	public Client toClient(SystemUser user) throws ClientRegistryException {
+		
+		try {
+			if(user == null) {
+				return null;
+			}
+			
+			EntityInheritanceManager entityInheritanceUtil = 
+					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+				
+			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
+		}
+		catch(DoPrivilegedException ex) {
+			throw new ClientRegistryException(ex.getCause());
+		}
+		catch(Throwable ex) {
+			throw new ClientRegistryException(ex.getCause());
+		}
+	}
+	
+	@Override
 	@ActivateRequestContext
 	public Client getClientBySystemID(String value) throws ClientRegistryException{
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.CLIENT_REGISTRY.getFindPermission());

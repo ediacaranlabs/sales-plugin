@@ -23,15 +23,16 @@ import org.brandao.brutos.web.HttpStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
-import br.com.uoutec.community.ediacaran.security.SubjectProvider;
+import br.com.uoutec.community.ediacaran.security.BasicRoles;
+import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
-@Controller(value="${plugins.ediacaran.front.admin_context}/cart/address", defaultActionName="/")
+@Controller(value="/cart/shipping", defaultActionName="/")
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
-public class AddressCartAdminPubResource {
+public class ShippingCartPubResource {
 
 	@Transient
 	@Inject
@@ -40,44 +41,58 @@ public class AddressCartAdminPubResource {
 	@Transient
 	@Inject
 	private AdminCart adminCart;
+
+	@Transient
+	@Inject
+	private Cart cart;
 	
 	@Transient
 	@Inject
 	private CartService cartService;
 
-	@Transient
-	@Inject
-	private SubjectProvider subjectProvider;
-	
-	public AddressCartAdminPubResource(){
+	public ShippingCartPubResource(){
 	}
 	
 	@Action("/")
-	@View("${plugins.ediacaran.sales.template}/admin/client/address_selected")
+	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
-	public Map<String,Object> showAddress(
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT})
+	public Map<String,Object> showAddressCart(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 
 		try{
 			Map<String,Object> vars = new HashMap<String, Object>();
-			
-			vars.put("client",		adminCart.getClient());
-			vars.put("addresses",	cartService.getAddresses(adminCart.getClient()));
-			vars.put("principal",	subjectProvider.getSubject().getPrincipal());
-			
+			vars.put("shippingOptions", cartService.getShippingOptions(cart.getClient(), cart.getShippingAddress(), null, cart));
 			return vars;
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(AddressCartAdminPubResource.class, "showAddress", "view", locale, ex);
+			String error = this.errorMappingProvider.getError(ShippingCartPubResource.class, "showshipping", "view", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
 	}
 
-	public Cart getCart() {
-		return adminCart.getCart();
+	@Action("/admin")
+	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
+	@RequestMethod(RequestMethodTypes.GET)
+	@Result("vars")
+	@RequiresRole(BasicRoles.USER)
+	public Map<String,Object> showAddressAdminCart(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try{
+			Map<String,Object> vars = new HashMap<String, Object>();
+			vars.put("shippingOptions", cartService.getShippingOptions(adminCart.getClient(), adminCart.getShippingAddress(), null, adminCart.getCart()));
+			return vars;
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(ShippingCartPubResource.class, "showshipping", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
 	}
 	
 }

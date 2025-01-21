@@ -6,6 +6,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ClientSearchResult;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 public interface ClientRegistry extends PublicBean{
@@ -19,6 +20,8 @@ public interface ClientRegistry extends PublicBean{
 	Client getClientBySystemID(String value) throws ClientRegistryException;
 	
 	ClientSearchResult searchClient(ClientSearch value) throws ClientRegistryException;
+	
+	Client toClient(SystemUser user) throws ClientRegistryException;
 	
 	void registerAddress(Address address, Client client) throws ClientRegistryException;
 

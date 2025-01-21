@@ -67,31 +67,16 @@
 			</ed:row>
 			<!-- /products-table -->
 
-			<!-- payment-area -->
-			<ec:form id="payment_form" method="post" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="result-checkout">
-				<c:if test="${!empty pageContext.request.userPrincipal}">
-				<ed:row>
-					<ed:col size="12">
-							<h3><fmt:message key="cart_review.payment.title" bundle="${messages}" /></h3>
-							<hr>
-					</ed:col>
-				</ed:row>
-				<ed:row>
-					<ed:col id="cart_payment_details" size="12">
-						<jsp:include page="payment-details.jsp"/>
-					</ed:col>
-				</ed:row>
-				</c:if>
-				
-				<ed:row>
-					<ed:col size="12">
-						<div id="result-checkout" class="result-check"></div>
-						<ec:button align="right" actionType="submit" label="#{cart_review.checkout.submit}" bundle="${messages}"/>
-					</ed:col>
-				</ed:row>
-
-			</ec:form>
-			<!-- /payment-area -->
+			<ed:row>
+				<ed:col>
+					<div id="result-checkout" class="result-check"></div>
+					<ec:button align="right" actionType="button" label="#{cart_review.checkout.submit}" bundle="${messages}">
+						<ec:event type="click">
+							href.local = '${plugins.ediacaran.sales.web_path}/cart/checkout';
+						</ec:event>
+					</ec:button>
+				</ed:col>
+			</ed:row>
 			
 		</ed:container>
 	</section>

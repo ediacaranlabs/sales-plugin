@@ -13,7 +13,7 @@
 			value="${address.firstName}"
 			label="#{form.first_name}"
 			placeholder="#{form.first_name.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:FIRST_NAME'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
@@ -42,7 +42,7 @@
 			value="${address.lastName}"
 			label="#{form.last_name}"
 			placeholder="#{form.last_name.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:LAST_NAME'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
@@ -73,7 +73,7 @@
 			value="${address.zip}"
 			label="#{form.zip}"
 			placeholder="#{form.zip.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ZIP'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
@@ -126,7 +126,7 @@
 			value="${address.addressLine1}"
 			label="#{form.address_line1}"
 			placeholder="#{form.address_line1.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE1'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
@@ -181,7 +181,7 @@
 			value="${address.addressLine2}"
 			label="#{form.address_line2}"
 			placeholder="#{form.address_line2.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:ADDRESS_LINE2'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
@@ -229,7 +229,7 @@
 			name="country.isoAlpha3"
 			value="${address.country.isoAlpha3}"
 			label="#{form.country}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:COUNTRY'])}"
 			bundle="${messages}">
 			<ec:option 
 				label="#{form.country.placeholder}" 
@@ -287,7 +287,7 @@
 			value="${address.region}"
 			label="#{form.region}"
 			placeholder="#{form.region.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:REGION'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
@@ -336,7 +336,7 @@
 			value="${address.city}"
 			label="#{form.city}"
 			placeholder="#{form.city.placeholder}"
-			readonly="${!vars.principal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
+			readonly="${empty vars.principal? false : !vars.principal.isGranted(['SALES:CLIENT:FIELDS:CITY'])}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 

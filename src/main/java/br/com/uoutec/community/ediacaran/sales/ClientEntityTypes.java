@@ -65,9 +65,15 @@ public class ClientEntityTypes implements PublicBean{
 	}
 
 	private String getAdminPublicPath() {
+		/*
 		return varParser.getValue(
 				"${plugins.ediacaran.sales.template}${plugins.ediacaran.front.admin_context}/client"
 		);
+		*/
+		return varParser.getValue(
+				"${plugins.ediacaran.sales.template}/front/panel/client"
+		);
+		
 	}
 
 	private String getRealPath(String path) {

@@ -28,14 +28,19 @@ import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebFlowController;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
+import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
+import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
+import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
@@ -43,8 +48,11 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
+import br.com.uoutec.community.ediacaran.security.BasicRoles;
+import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
 import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -71,8 +79,20 @@ public class CartPubResource {
 	
 	@Transient
 	@Inject
+	private ClientEntityTypes clientEntityTypes;
+	
+	@Transient
+	@Inject
+	private CountryRegistry countryRegistry;
+	
+	@Transient
+	@Inject
 	private CartService cartService;
 
+	@Transient
+	@Inject
+	private ClientRegistry clientRegistry;
+	
 	@Transient
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
@@ -90,48 +110,26 @@ public class CartPubResource {
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		Client user;
-		
-		try {
-			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-			user = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
-			result.put("user", user);
-		}
-		catch(Throwable ex) {
-			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}
-
-		try {
-			if(user != null) {
-				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
-				result.put("payment_gateway_list", paymentGatewayList);
-			}
-		}
-		catch(Throwable ex) {
-			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
-			throw new InvalidRequestException(error, ex);
-		}
-		
-		
 		return result;
 	}
 	
 	@Action(value="/payment-details")
 	@View("${plugins.ediacaran.sales.template}/front/cart/payment-details")
 	@Result("vars")
+	@RequiresRole(BasicRoles.CLIENT)
 	public Map<String, Object> paymentDetails(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
 		Map<String,Object> result = new HashMap<String, Object>();
 		
-		Client user;
+		Client client;
+		List<PaymentGateway> paymentGatewayList;
 		
 		try {
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
-			user = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
-			result.put("user", user);
+			SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			client = clientRegistry.findClientById(user.getId());
 		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "paymentDetails", "load", locale, ex);
@@ -139,17 +137,16 @@ public class CartPubResource {
 		}
 		
 		try{
-			if(user != null) {
-				List<PaymentGateway> paymentGatewayList = cartService.getPaymentGateways(cart, user);
-				result.put("payment_gateway_list", paymentGatewayList);
-			}
-			
+			paymentGatewayList = cartService.getPaymentGateways(cart, client);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "paymentDetails", "load", locale,  ex);
 			throw new InvalidRequestException(error, ex);
 		}
 
+		result.put("user", client);
+		result.put("payment_gateway_list", paymentGatewayList);
+		
 		return result;
 		
 	}
@@ -157,6 +154,7 @@ public class CartPubResource {
 	@Action("/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
+	@RequiresRole(BasicRoles.CLIENT)
 	public ResultAction paymentType(
 			@Basic(bean="code")String code,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -301,6 +299,40 @@ public class CartPubResource {
 	}
 
 	@Action("/checkout")
+	@View("${plugins.ediacaran.sales.template}/front/cart/checkout")
+	@Result("vars")
+	@ResponseErrors(rendered=false, name="exception")
+	@RequiresRole(BasicRoles.USER)
+	public Map<String, Object> checkout(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException{
+		
+		
+		try {
+			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
+			SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			Client client = clientRegistry.findClientById(user.getId());
+			
+			Map<String,Object> result = new HashMap<String, Object>();
+			
+			result.put("completedRegister",			user.isComplete());
+			result.put("supportShipping",			cartService.isSupportShipping(cart));
+			result.put("client",					client);
+			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, client));
+			result.put("productTypes",				productTypeRegistry.getProductTypes());
+			result.put("client_data_view",			clientEntityTypes.getClientEntityView(client));
+			result.put("countries",					countryRegistry.getAll(locale));
+			result.put("principal",					null);
+			
+			return result;
+		}
+		catch(Throwable ex) {
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}	
+	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/front/cart/result_checkout")
 	@Result("link")
@@ -373,6 +405,139 @@ public class CartPubResource {
 		
 	}
 
+	/*
+	@Action("/address")
+	@View("${plugins.ediacaran.sales.template}/admin/client/address_selected")
+	@RequestMethod(RequestMethodTypes.GET)
+	@Result("vars")
+	public Map<String,Object> showAddress(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try{
+			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
+			SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			Client client = clientRegistry.findClientById(user.getId());
+			
+			Map<String,Object> vars = new HashMap<String, Object>();
+			
+			vars.put("client",		client);
+			vars.put("addresses",	cartService.getAddresses(client));
+			
+			return vars;
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(AddressCartAdminPubResource.class, "showAddress", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+	*/
+	
+	@Action("/select/client")
+	@RequestMethod(RequestMethodTypes.POST)
+	@View("${plugins.ediacaran.sales.template}/front/cart/select_user_result")
+	@Result("vars")
+	public Map<String,Object> selectUser(
+			@Basic(bean="client")
+			AuthenticatedSystemUserPubEntity systemUserPubEntity,			
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		Client client = null;
+		try{
+			SystemUser user = systemUserPubEntity.rebuild(systemUserPubEntity.getProtectedID() != null, true, true);
+			client = clientRegistry.toClient(user);
+			cartService.selectClient(client, cart);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showUser", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		Map<String,Object> vars = new HashMap<String, Object>();
+		vars.put("client", client);
+		return vars;
+	}
+	
+	@Action("/address/select")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/select_address_result")
+	@RequestMethod(RequestMethodTypes.POST)
+	@Result("vars")
+	public void selectAddress(
+			@Basic(bean = "client.selectedBillingAddress")
+			AddressPubEntity selectedBillingAddress, 
+			@Basic(bean = "billingAddress")
+			AddressPubEntity billingAddressPubEntity,
+			@Basic(bean = "client.selectedShippingAddress")
+			AddressPubEntity selectedShippingAddress, 
+			@Basic(bean = "shippingAddress")
+			AddressPubEntity shippingAddressPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		Address shippingAddress = null;
+		Address billingAddress = null;
+		
+		try {
+			if(selectedBillingAddress != null) {
+				billingAddress =
+						"new".equals(selectedBillingAddress.getProtectedID())?
+							billingAddressPubEntity.rebuild(false, true, true) :
+							selectedBillingAddress.rebuild(true, false, false);	
+			}
+
+			if(selectedShippingAddress != null) {
+				if("new".equals(selectedShippingAddress.getProtectedID())) {
+					shippingAddress = shippingAddressPubEntity.rebuild(false, true, true);
+				}
+				else
+				if("billing".equals(selectedShippingAddress.getProtectedID())) {
+					shippingAddress = billingAddress;
+				}
+				else {
+					shippingAddress = selectedShippingAddress.rebuild(true, false, false);
+				}
+			}
+		}
+		catch(Throwable ex) {
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "selectAddress", "load", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		try{
+			cartService.selectAddress(billingAddress, shippingAddress, cart);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showAddress", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+	
+	@Action("/shipping/select")
+	@View("${plugins.ediacaran.sales.template}/admin/cart/select_shipping_result")
+	@RequestMethod(RequestMethodTypes.POST)
+	@Result("vars")
+	public void selectShipping(
+			@Basic(bean = "shipping_method")
+			String shippingMethod, 
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try{
+			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
+			SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			Client client = clientRegistry.findClientById(user.getId());
+			
+			cartService.selectShippingOption(shippingMethod, client, cart);
+		}
+		catch(Throwable ex){
+			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showShipping", "view", locale, ex);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}	
 	public String getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
 			return productTypeRegistry.getProductType(code).getHandler().getProductCartView();

@@ -15,7 +15,6 @@
 				<c:forEach items="${vars.addresses}" var="address">
 					<ec:option value="${address.protectedID}" selected="${vars.client.selectedBillingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.name} - ${address.zip}</ec:option>
 				</c:forEach>
-				<c:if test="${vars.type != 'simplified'}">
 				<ec:option value="new" bundle=""><fmt:message key="form.selected_billing_address.select_new" bundle="${messages}"/></ec:option>
 				<ec:event type="change">
 					var $form = $event.source.getForm();
@@ -26,24 +25,21 @@
 					var $selectedBillingAddress = $form.getField('client.selectedBillingAddress.protectedID');
 					
 					if($selectedBillingAddress.getValue() === 'new'){
-						$.AppContext.utils.updateContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/simplified", "new_billing_address");
+						$.AppContext.utils.updateContentByID("${vars.address_form}", "new_billing_address");
 					}
 					else{
 						$.AppContext.utils.content.update("new_billing_address", "");
 					}
 				</ec:event>
-				</c:if>
 			</ec:select>
 		</span>			
 	</ed:col>
 </ed:row>
-<c:if test="${vars.type != 'simplified'}">
-	<ed:row>
-		<ed:col>
-			<span id="new_billing_address" formgroup="billingAddress"></span>
-		</ed:col>
-	</ed:row>
-</c:if>
+<ed:row>
+	<ed:col>
+		<span id="new_billing_address" formgroup="billingAddress"></span>
+	</ed:col>
+</ed:row>
 <ed:row>
 	<ed:col>
 		<span formgroup="client.selectedShippingAddress">
@@ -52,7 +48,6 @@
 				<c:forEach items="${vars.addresses}" var="address">
 					<ec:option value="${address.protectedID}" selected="${vars.client.selectedShippingAddress == address.id}">${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.name} - ${address.zip}</ec:option>
 				</c:forEach>
-				<c:if test="${vars.type != 'simplified'}">
 				<ec:option value="billing"><fmt:message key="form.selected_shipping_address.select_billing_address" bundle="${messages}"/></ec:option>
 				<ec:option value="new"><fmt:message key="form.selected_shipping_address.select_new" bundle="${messages}"/></ec:option>
 				<ec:event type="change">
@@ -64,21 +59,18 @@
 					var $selectedBillingAddress = $form.getField('client.selectedShippingAddress.protectedID');
 					
 					if($selectedBillingAddress.getValue() === 'new'){
-						$.AppContext.utils.updateContentByID("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients/address/simplified", "new_shipping_address");
+						$.AppContext.utils.updateContentByID("${vars.address_form}", "new_shipping_address");
 					}
 					else{
 						$.AppContext.utils.content.update("new_shipping_address", "");
 					}
 				</ec:event>
-				</c:if>				
 			</ec:select>
 		</span>			
 	</ed:col>
 </ed:row>
-<c:if test="${vars.type != 'simplified'}">
-	<ed:row>
-		<ed:col>
-			<span id="new_shipping_address" formgroup="shippingAddress"></span>
-		</ed:col>
-	</ed:row>
-</c:if>
+<ed:row>
+	<ed:col>
+		<span id="new_shipping_address" formgroup="shippingAddress"></span>
+	</ed:col>
+</ed:row>

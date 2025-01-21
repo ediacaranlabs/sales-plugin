@@ -32,7 +32,6 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
@@ -41,7 +40,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
@@ -461,6 +459,7 @@ public class CartAdminPubResource {
 		return vars;
 	}
 
+	/*
 	@Action("/address/select")
 	@View("${plugins.ediacaran.sales.template}/admin/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
@@ -515,6 +514,7 @@ public class CartAdminPubResource {
 		}
 		
 	}
+	*/
 	
 	@Action("/shipping/select")
 	@View("${plugins.ediacaran.sales.template}/admin/cart/select_shipping_result")
