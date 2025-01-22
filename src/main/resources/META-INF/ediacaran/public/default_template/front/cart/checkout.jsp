@@ -63,13 +63,13 @@ $.AppContext.onload(function(){
 					</ed:col>
 				</ed:row>
 					<ec:accordion id="cart_steps">
-						<%--<c:if test="${!vars.completedRegister}">--%>
+						<c:if test="${!vars.completedRegister}">
 							<ec:accordion-item  id="cart_client" title="#{tabs.client.title}" bundle="${messages}">
 								<!-- client-tab -->
 								<jsp:include page="client_tab.jsp"/>
 								<!-- /client-tab -->
 							</ec:accordion-item>
-						<%--</c:if>--%>						
+						</c:if>						
 						<c:if test="${vars.supportShipping}">
 							<ec:accordion-item id="cart_address" title="#{tabs.address.title}" bundle="${messages}">
 								<!-- address-tab -->
@@ -89,62 +89,8 @@ $.AppContext.onload(function(){
 						</ec:accordion-item>
 					</ec:accordion>	
 				</ed:col>
-				<ed:col size="3">
-					<c:forEach items="${Controller.widgets}" var="widget">
-						<ed:row style="cart_widget_title">
-							<ed:col>
-								<h3>${widget.title}</h3>
-								<hr>
-							</ed:col>
-						</ed:row>
-						<ed:row style="cart_widget">
-							<ed:col>
-								<ec:include uri="${widget.resource}"/>
-							</ed:col>
-						</ed:row>
-					</c:forEach>
-						<ed:row style="cart_widget_title">
-							<ed:col>
-								<h3><fmt:message key="cart_review.table.summary" bundle="${messages}" /></h3>
-								<hr>
-							</ed:col>
-						</ed:row>
-						<ed:row style="cart_widget">
-							<ed:col>
-								<ed:row>
-									<ed:col>
-										<fmt:message key="cart_review.checkout.sub_total" bundle="${messages}"/>:
-									</ed:col>
-									<ed:col id="cart_subtotal">
-										<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.subtotal}"/>
-									</ed:col>
-								</ed:row>
-								<ed:row>
-									<ed:col>
-										<fmt:message key="cart_review.checkout.discount" bundle="${messages}"/>:
-									</ed:col>
-									<ed:col id="cart_discounts">
-										<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.totalDiscount}"/>
-									</ed:col>
-								</ed:row>
-								<ed:row>
-									<ed:col>
-										<fmt:message key="cart_review.checkout.tax" bundle="${messages}"/>:
-									</ed:col>
-									<ed:col id="cart_taxes">
-										<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.totalTax}"/>
-									</ed:col>
-								</ed:row>
-								<ed:row>
-									<ed:col>
-										<fmt:message key="cart_review.checkout.total" bundle="${messages}"/>:
-									</ed:col>
-									<ed:col>
-										<fmt:formatNumber pattern="###,###,##0.00" value="${Controller.cart.total}"/>
-									</ed:col>
-								</ed:row>
-							</ed:col>
-						</ed:row>
+				<ed:col size="3" id="cart_widgets">
+					<jsp:include page="widgets.jsp"/>
 				</ed:col>
 			</ed:row>		
 		</ed:container>

@@ -13,6 +13,7 @@ import javax.validation.constraints.Pattern;
 import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.Action;
+import org.brandao.brutos.annotation.Actions;
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Controller;
 import org.brandao.brutos.annotation.DetachedName;
@@ -59,7 +60,10 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
 @Controller(value="/cart", defaultActionName="/")
-@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/front/cart/products"))
+@Actions({
+	@Action(value="/products", view=@View("${plugins.ediacaran.sales.template}/front/cart/products")),
+	@Action(value="/widgets", view=@View("${plugins.ediacaran.sales.template}/front/cart/widgets"))
+})
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartPubResource {
 
@@ -352,7 +356,7 @@ public class CartPubResource {
 		Client user = null;
 		
 		try{
-			user = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			user = cart.getClient() == null? (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false) : cart.getClient();
 		}
 		catch(InvalidRequestException ex){
 			

@@ -12,7 +12,7 @@
 			<c:forEach var="paymentGateway" items="${vars.payment_gateway_list}">
 				<ec:radio 
 					inline="true"
-					name="payment.paymentType" 
+					name="paymentType" 
 					value="${paymentGateway.id}" 
 					selected="${firstPaymentGateway.id == paymentGateway.id}" 
 					label="${paymentGateway.name}">
@@ -34,7 +34,7 @@
 </ed:row>
 </c:if>
 <c:if test="${vars.payment_gateway_list.size() == 1}">
-	<input type="hidden" name="payment.paymentType" value="${vars.payment_gateway_list.get(0).id}">
+	<input type="hidden" name="paymentType" value="${vars.payment_gateway_list.get(0).id}">
 </c:if>
 <ed:row>
 	<ed:col size="12" id="payment_form_area">
@@ -48,7 +48,6 @@
 					);
 			});	
 		</script>
-			<jsp:include page="${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}"/>
 		</c:if>
 	</ed:col>
 </ed:row>
