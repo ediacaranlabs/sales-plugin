@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 
 		$.AppContext.utils.updateContentByID(
-			"${plugins.ediacaran.sales.web_path}/cart/address/select", 
+			"${vars.select_address_uri}", 
 			'client_address_form'
 		);									
 

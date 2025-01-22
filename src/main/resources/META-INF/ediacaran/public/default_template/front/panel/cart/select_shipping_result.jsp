@@ -8,8 +8,8 @@
 </c:if>
 <c:if test="${empty exception}">
 	<script type="text/javascript">
-		$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 'cart_widgets');
-		$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 'cart_payment_details');
+		$.AppContext.utils.updateContentByID('${vars.cart_widgets_address}', 'cart_widgets');
+		$.AppContext.utils.updateContentByID('${vars.cart_payment_details}', 'cart_payment_details');
 	
 		var $accordion = $.AppContext.utils.getById('cart_steps');
 		var $item = $accordion.getItem('cart_shipping');

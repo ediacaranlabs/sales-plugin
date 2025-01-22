@@ -6,7 +6,7 @@
 <%@page trimDirectiveWhitespaces="true" %>
 <ec:setBundle var="messages" locale="${locale}"/>
 
-<ec:form id="cart_shipping_form" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/shipping/select" update="cart_result">
+<ec:form id="cart_shipping_form" method="POST" action="${plugins.ediacaran.sales.web_path}/cart/shipping/select" update="cart_result">
 	<ed:row>
 		<ed:col id="cart_shipping_details"  classStyle="form-group has-feedback">
 			<jsp:include page="shipping.jsp"/>

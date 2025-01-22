@@ -201,7 +201,7 @@ public class CartAddressPubResource {
 		
 	}
 
-	@Action("/address/select")
+	@Action("/cart/address/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
@@ -222,11 +222,11 @@ public class CartAddressPubResource {
 		setAddress(selectedBillingAddress, billingAddressPubEntity, selectedShippingAddress, shippingAddressPubEntity, locale, cart);
 		
 		Map<String,Object> result = new HashMap<>();
-		result.put("shipping_address", varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/shipping"));
+		result.put("shipping_address", varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/shipping"));
 		return result;
 	}
 
-	@Action("${plugins.ediacaran.front.admin_context}/address/select")
+	@Action("${plugins.ediacaran.front.admin_context}/cart/address/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")

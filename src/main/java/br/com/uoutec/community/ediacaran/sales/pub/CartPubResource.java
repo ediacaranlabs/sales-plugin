@@ -30,14 +30,12 @@ import org.brandao.brutos.web.WebFlowController;
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
-import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
@@ -109,7 +107,6 @@ public class CartPubResource {
 			Locale locale) throws InvalidRequestException{
 		
 		Map<String,Object> result = new HashMap<String, Object>();
-		
 		return result;
 	}
 	
@@ -316,6 +313,7 @@ public class CartPubResource {
 			Map<String,Object> result = new HashMap<String, Object>();
 			
 			result.put("completedRegister",			user.isComplete());
+			result.put("reloadAddress",				varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/client"));
 			result.put("supportShipping",			cartService.isSupportShipping(cart));
 			result.put("client",					client);
 			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, client));
@@ -434,6 +432,7 @@ public class CartPubResource {
 	}
 	*/
 	
+	/*
 	@Action("/select/client")
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/front/cart/select_user_result")
@@ -459,7 +458,9 @@ public class CartPubResource {
 		vars.put("client", client);
 		return vars;
 	}
+	*/
 	
+	/*
 	@Action("/address/select")
 	@View("${plugins.ediacaran.sales.template}/admin/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
@@ -514,7 +515,9 @@ public class CartPubResource {
 		}
 		
 	}
+	*/
 	
+	/*
 	@Action("/shipping/select")
 	@View("${plugins.ediacaran.sales.template}/admin/cart/select_shipping_result")
 	@RequestMethod(RequestMethodTypes.POST)
@@ -537,7 +540,9 @@ public class CartPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 		
-	}	
+	}
+	*/
+	
 	public String getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
 			return productTypeRegistry.getProductType(code).getHandler().getProductCartView();
