@@ -8,10 +8,13 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}/cart/address/select" update="cart_result">
 	<span id="client_address_form">
+		<jsp:include page="/default_template/front/panel/cart/select_address.jsp"/>
+	
 	</span>
 	<ed:row>
 		<ed:col>
 			<ec:button label="#{next_button.title}" icon2="chevron-right" actionType="submit" bundle="${messages}"  align="right" />
+			<c:if test="${!vars.completedRegister}">
 			<ec:button icon="chevron-left" label="#{back_button.title}" actionType="button" bundle="${messages}" align="right" >
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
@@ -21,6 +24,7 @@
 					$previousItem.select();
 				</ec:event>
 			</ec:button>
+			</c:if>
 		</ed:col>
 	</ed:row>
 </ec:form>

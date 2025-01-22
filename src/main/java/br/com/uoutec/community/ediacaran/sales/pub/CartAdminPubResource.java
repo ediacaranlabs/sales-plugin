@@ -39,7 +39,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
@@ -128,6 +127,7 @@ public class CartAdminPubResource {
 		
 	}
 	
+	/*
 	@Action(value="/payment-details")
 	@View("${plugins.ediacaran.sales.template}/admin/cart/payment-details")
 	@Result("vars")
@@ -150,7 +150,9 @@ public class CartAdminPubResource {
 		}
 		
 	}
+	*/
 	
+	/*
 	@Action("/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
@@ -192,6 +194,7 @@ public class CartAdminPubResource {
 		
 		return ra;
 	}
+	*/
 	
 	@Action("/units/{product:[A-Za-z0-9\\-]{1,128}}/{qty:\\d{1,3}}")
 	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})

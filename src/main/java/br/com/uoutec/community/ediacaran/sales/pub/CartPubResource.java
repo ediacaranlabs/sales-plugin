@@ -10,8 +10,6 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.brandao.brutos.ResultAction;
-import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Actions;
 import org.brandao.brutos.annotation.Basic;
@@ -35,7 +33,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
@@ -114,8 +111,9 @@ public class CartPubResource {
 		return result;
 	}
 	
+	/*
 	@Action(value="/payment-details")
-	@View("${plugins.ediacaran.sales.template}/front/cart/payment-details")
+	@View("${plugins.ediacaran.sales.template}/front/cart/payment_details")
 	@Result("vars")
 	@RequiresRole(BasicRoles.CLIENT)
 	public Map<String, Object> paymentDetails(
@@ -151,7 +149,9 @@ public class CartPubResource {
 		return result;
 		
 	}
+	*/
 	
+	/*
 	@Action("/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
@@ -193,6 +193,7 @@ public class CartPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 	}
+	*/
 	
 	@Action("/units/{product:[A-Za-z0-9\\-]{1,128}}/{qty:\\d{1,3}}")
 	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
@@ -324,6 +325,7 @@ public class CartPubResource {
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
 			result.put("client_data_view",			clientEntityTypes.getClientEntityView(client));
 			result.put("countries",					countryRegistry.getAll(locale));
+			result.put("address_form", 				varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/address"));
 			result.put("principal",					null);
 			
 			return result;
@@ -353,10 +355,14 @@ public class CartPubResource {
 		
 		/* user */
 		
-		Client user = null;
+		Client client = cart.getClient();
 		
 		try{
-			user = cart.getClient() == null? (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false) : cart.getClient();
+			if(client == null) {
+				SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+				client = clientRegistry.toClient(user);
+				cart.setClient(client);
+			}
 		}
 		catch(InvalidRequestException ex){
 			
@@ -390,8 +396,8 @@ public class CartPubResource {
 		
 		try{
 			Checkout checkoutResult = cartService.checkout(cart, payment, "Pedido criado via website.");
-			String paymentResource = checkoutResult.getPaymentGateway().redirectView(new PaymentRequest(user, cart));
-			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.landing_page}");			
+			String paymentResource = checkoutResult.getPaymentGateway().redirectView(new PaymentRequest(client, cart));
+			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/" + checkoutResult.getOrder().getId());			
 		}
 		catch(EmptyOrderException ex){
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "emptyCart", locale, ex);

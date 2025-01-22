@@ -72,7 +72,7 @@
 					<div id="result-checkout" class="result-check"></div>
 					<ec:button align="right" actionType="button" label="#{cart_review.checkout.submit}" bundle="${messages}">
 						<ec:event type="click">
-							href.local = '${plugins.ediacaran.sales.web_path}/cart/checkout';
+							location.href = '${plugins.ediacaran.sales.web_path}/cart/checkout';
 						</ec:event>
 					</ec:button>
 				</ed:col>

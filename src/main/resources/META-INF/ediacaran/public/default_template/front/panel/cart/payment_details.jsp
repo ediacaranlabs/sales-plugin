@@ -2,8 +2,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
-<%@page trimDirectiveWhitespaces="true" %>
-<%--<ec:setBundle var="messages" locale="${locale}"/>--%>
 
 <c:if test="${vars.payment_gateway_list.size() > 1}">
 <ed:row>
@@ -23,7 +21,7 @@
 						
 						$form.submit(
 							false, 
-							"${plugins.ediacaran.sales.web_path}/cart/payment-type/" + $paymentTypeValue, 
+							"${vars.payment_gateway_uri_base}" +  "/" + $paymentTypeValue, 
 							"payment_form_area"
 						);
 						
@@ -43,7 +41,7 @@
 			$.AppContext.onload(function(){			
 				$.AppContext.utils
 					.updateContentByID(
-							"#!${plugins.ediacaran.sales.web_path}/cart/payment-type/${vars.payment_gateway_list.get(0).id}", 
+							"#!${vars.payment_gateway_uri_base}" + "/${vars.payment_gateway_list.get(0).id}", 
 							"payment_form_area"
 					);
 			});	

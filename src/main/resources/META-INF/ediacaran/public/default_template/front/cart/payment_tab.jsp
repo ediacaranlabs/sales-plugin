@@ -10,11 +10,12 @@
 
 <ec:form id="cart_checkout" method="POST" action="${plugins.ediacaran.sales.web_path}/cart/checkout" update="cart_result">
 	<span id="cart_payment_details" formgroup="payment">
-		<jsp:include page="payment-details.jsp"/>
+		<jsp:include page="/default_template/front/panel/cart/payment_details.jsp"/>
 	</span>
 	<ed:row>
 		<ed:col>
 			<ec:button label="#{checkout.label}" icon="check-circle" actionType="submit" align="right" style="success" bundle="${messages}"/>
+			<c:if test="${vars.supportShipping}">
 			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
@@ -24,6 +25,7 @@
 					$previousItem.select();
 				</ec:event>
 			</ec:button>
+			</c:if>
 		</ed:col>
 	</ed:row>
 </ec:form>

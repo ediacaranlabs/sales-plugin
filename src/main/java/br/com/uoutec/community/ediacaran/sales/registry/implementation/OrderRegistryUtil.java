@@ -178,7 +178,7 @@ public class OrderRegistryUtil {
 		
 		return payment;
 	}
-	
+
 	public static void checkCurrency(Order order, String currency) throws OrderRegistryException {
 		for(ProductRequest pr: order.getItens()){
 			
@@ -209,10 +209,8 @@ public class OrderRegistryUtil {
 	public static void checkCartToRegistry(Cart cart, Payment payment, PaymentGateway paymentGateway, ProductTypeRegistry productTypeRegistry, 
 			OrderEntityAccess entityAccess) throws OrderRegistryException {
 		
-		if(cart.getClient() != null) {
-			ContextSystemSecurityCheck
-				.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
-		}
+		ContextSystemSecurityCheck
+			.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
 		
 		if(cart.isNoitems()){
 			throw new EmptyOrderException();
@@ -281,7 +279,11 @@ public class OrderRegistryUtil {
 		
 	}
 	
-	public static Client getActualClient(SubjectProvider subjectProvider, SystemUserRegistry systemUserRegistry, 
+	public static Client getActualClient(Client client,	ClientRegistry clientRegistry) throws SystemUserRegistryException, ClientRegistryException {
+		return getActualClient(client.getId(), clientRegistry);
+	}
+
+	public static Client getAuthenticatedClient(SubjectProvider subjectProvider, SystemUserRegistry systemUserRegistry, 
 			ClientRegistry clientRegistry) throws SystemUserRegistryException, ClientRegistryException {
 		SystemUserID systemID = getSystemUserID(subjectProvider);
 		SystemUser user = getActualUser(systemID, systemUserRegistry);
