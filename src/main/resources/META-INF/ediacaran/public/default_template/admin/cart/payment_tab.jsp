@@ -10,7 +10,7 @@
 
 <ec:form id="cart_checkout" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/checkout" update="cart_result">
 	<span id="cart_payment_details" formgroup="payment">
-		<jsp:include page="payment-details.jsp"/>
+		<jsp:include page="/default_template/front/panel/cart/payment_details.jsp"/>
 	</span>
 	<ed:row>
 		<ed:col>

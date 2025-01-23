@@ -9,7 +9,7 @@
 <ec:form id="cart_shipping_form" method="POST" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/shipping/select" update="cart_result">
 	<ed:row>
 		<ed:col id="cart_shipping_details"  classStyle="form-group has-feedback">
-			<jsp:include page="shipping.jsp"/>
+			<jsp:include page="/default_template/front/panel/cart/shipping.jsp"/>
 		</ed:col>
 	</ed:row>
 	<ed:row>

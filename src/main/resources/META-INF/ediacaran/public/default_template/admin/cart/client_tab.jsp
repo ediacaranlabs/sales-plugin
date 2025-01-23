@@ -19,7 +19,7 @@
 			<ec:tabs-item id="search_client_tabs" title="#{tabs.search.title}" bundle="${messages}">
 			
 				<ec:data-table id="user_form_search" 
-					action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/clients/search">
+					action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/search">
 					<ed:row>
 						<ed:col size="3">
 			    			<ec:textfield
@@ -85,7 +85,7 @@
 								<ec:event type="click">
 									
 									$.AppContext.utils.updateContentByID(
-											'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/clients/!{item.protectedID}',
+											'#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client/!{item.protectedID}',
 											'client_data_view'
 									);
 									

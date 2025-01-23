@@ -166,7 +166,7 @@ public class CartPaymentPubResource {
 		return paymentType(code, cart, locale);
 	}
 	
-	@Action("${plugins.ediacaran.front.admin_context}/payment-type/{code}")
+	@Action("${plugins.ediacaran.front.admin_context}/cart/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
 	public ResultAction paymentType(

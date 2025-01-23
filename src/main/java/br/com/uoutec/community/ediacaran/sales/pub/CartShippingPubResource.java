@@ -175,7 +175,7 @@ public class CartShippingPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 
-		setShipping(shippingMethod, cart.getClient(), cart, locale);
+		setShipping(shippingMethod, adminCart.getClient(), adminCart.getCart(), locale);
 		
 		Map<String,Object> result = new HashMap<>();
 		result.put("cart_widgets_address", varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets"));
