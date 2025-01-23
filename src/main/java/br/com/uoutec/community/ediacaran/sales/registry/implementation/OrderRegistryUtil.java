@@ -179,6 +179,10 @@ public class OrderRegistryUtil {
 		return payment;
 	}
 
+	public static void updateClient(Client client, ClientRegistry clientRegistry) throws ClientRegistryException {
+		clientRegistry.registerClient(client);
+	}
+	
 	public static void checkCurrency(Order order, String currency) throws OrderRegistryException {
 		for(ProductRequest pr: order.getItens()){
 			

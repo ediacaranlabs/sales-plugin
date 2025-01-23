@@ -416,9 +416,7 @@ public class OrderRegistryImp
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException,
 			SystemUserRegistryException, ClientRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, PaymentGatewayException, ValidationException {
 
-		if(cart.getClient().getId() == null) {
-			clientRegistry.registerClient(cart.getClient());
-		}
+		OrderRegistryUtil.updateClient(cart.getClient(), clientRegistry);
 		
 		OrderRegistryUtil.checkCartToRegistry(cart, payment, paymentGateway, productTypeRegistry, orderEntityAccess);
 		

@@ -241,7 +241,7 @@ public class CartClientPubResource {
 			if(authenticatedSystemUserPubEntity == null) {
 				authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
 			}
-			client = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			client = (Client)authenticatedSystemUserPubEntity.rebuild(true, true, false);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartClientPubResource.class, "showUser", "view", locale, ex);
@@ -274,7 +274,7 @@ public class CartClientPubResource {
 			if(clientPubEntity == null) {
 				clientPubEntity = new ClientPubEntity();
 			}
-			client = (Client)clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, false, true);
+			client = (Client)clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, true, false);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartClientPubResource.class, "showUser", "view", locale, ex);
@@ -316,7 +316,7 @@ public class CartClientPubResource {
 		Map<String,Object> vars = new HashMap<String, Object>();
 		vars.put("client",			client);
 		vars.put("countries",		countries);
-		vars.put("principal",		subjectProvider.getSubject().getPrincipal());
+		vars.put("principal",		principal);
 		vars.put("reloadAddress",	varParser.getValue(reloadAddress));
 		vars.put("exception", 		exception);
 		

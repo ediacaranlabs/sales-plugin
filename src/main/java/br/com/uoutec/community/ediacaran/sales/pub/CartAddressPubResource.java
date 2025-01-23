@@ -245,7 +245,7 @@ public class CartAddressPubResource {
 		setAddress(selectedBillingAddress, billingAddressPubEntity, selectedShippingAddress, shippingAddressPubEntity, locale, adminCart.getCart());
 		
 		Map<String,Object> result = new HashMap<>();
-		result.put("shipping_address", varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/shipping"));
+		result.put("shipping_address", varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/shipping"));
 		return result;
 		
 	}
