@@ -14,14 +14,32 @@
 	</ed:row>
 	<ed:row>
 		<ed:col>
-			<ec:button label="#{next.label}" icon2="chevron-right" bundle="${messages}"  align="right" />
-			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" bundle="${messages}" align="right" >
+			<ec:button label="#{next.label}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right">
 				<ec:event type="click">
+					$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/widgets', 'cart_widgets');
+					$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/payment-details', 'cart_payment_details');
+				
 					var $accordion = $.AppContext.utils.getById('cart_steps');
 					var $item = $accordion.getItem('cart_shipping');
-					var $previousItem = $item.getPrevious();
+					var $nextItem = $item.getNext();
 					
-					$previousItem.select();
+					$nextItem.select();
+				</ec:event>
+			</ec:button>
+			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" bundle="${messages}" align="right" >
+				<ec:event type="click">
+					$.AppContext.utils.updateContentByID(
+						'${plugins.ediacaran.sales.web_path}/cart/address/select', 
+						'client_address_form',
+						false,
+						function($resp){
+							var $accordion = $.AppContext.utils.getById('cart_steps');
+							var $item = $accordion.getItem('cart_shipping');
+							var $previousItem = $item.getPrevious();
+							
+							$previousItem.select();
+						}
+					);
 				</ec:event>
 			</ec:button>
 		</ed:col>

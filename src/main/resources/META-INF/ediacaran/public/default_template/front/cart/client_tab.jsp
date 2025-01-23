@@ -17,6 +17,31 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<ec:button label="#{next.label}" icon2="chevron-right" actionType="submit"  align="right" form="form_user" bundle="${messages}"/>
+		<ec:button label="#{next.label}" icon2="chevron-right" actionType="button"  align="right" form="form_user" bundle="${messages}">
+			<ec:event type="click">
+				var $userForm = $.AppContext.utils.getById('form_user');
+				$userForm.submit(
+					true, 
+					"${plugins.ediacaran.sales.web_path}/cart/select/client", 
+					"cart_result", function($resp){
+					
+						$.AppContext.utils.updateContentByID(
+							"${plugins.ediacaran.sales.web_path}/cart/address/select", 
+							'client_address_form'
+						);									
+					
+						$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/widgets', 'cart_widgets');
+						$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/payment-details', 'cart_payment_details');
+					
+						var $accordion = $.AppContext.utils.getById('cart_steps');
+						var $item = $accordion.getItem('cart_client');
+						var $nextItem = $item.getNext();
+						
+						$nextItem.select();
+					
+					}
+				);
+			</ec:event>
+		</ec:button>
 	</ed:col>
 </ed:row>

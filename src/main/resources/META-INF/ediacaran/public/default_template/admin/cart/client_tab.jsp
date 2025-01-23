@@ -108,7 +108,46 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<ec:button label="#{next.label}" icon2="chevron-right" actionType="submit"  align="right" form="form_user" bundle="${messages}"/>
+		<ec:button label="#{next.label}" icon2="chevron-right" actionType="button"  align="right" form="form_user" bundle="${messages}">
+			<ec:event type="click">
+				var $userForm = $.AppContext.utils.getById('form_user');
+				$userForm.submit(
+					true, 
+					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/select/client", 
+					"cart_result", function($resp){
+					
+						var $accordion = $.AppContext.utils.getById('cart_steps');
+						var $item = $accordion.getItem('cart_client');
+						var $nextItem = $item.getNext();
+					
+						if($nextItem.getAttribute("id") == "cart_address"){
+						
+							$.AppContext.utils.updateContentByID(
+								"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/address/select", 
+								'client_address_form'
+							);									
+						
+						}
+						else
+						if($nextItem.getAttribute("id") == "cart_payment"){
+						
+							$.AppContext.utils.updateContentByID(
+								'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/widgets', 
+								'cart_widgets'
+							);
+							$.AppContext.utils.updateContentByID(
+								'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-details', 
+								'cart_payment_details'
+							);
+							
+						}
+					
+						$nextItem.select();
+					
+					}
+				);
+			</ec:event>
+		</ec:button>
 		<ec:button label="#{new.label}" icon="plus" actionType="button" align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContentByID(

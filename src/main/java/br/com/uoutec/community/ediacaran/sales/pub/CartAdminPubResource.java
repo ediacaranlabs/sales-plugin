@@ -53,6 +53,7 @@ import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
 import br.com.uoutec.community.ediacaran.user.pub.RequestPropertiesPubEntity;
+import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -88,6 +89,10 @@ public class CartAdminPubResource {
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
 
+	@Transient
+	@Inject
+	private VarParser varParser;
+	
 	@Transient
 	@Inject
 	private SubjectProvider subjectProvider;
@@ -332,6 +337,7 @@ public class CartAdminPubResource {
 			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getClient()));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
 			result.put("client_data_view",			clientEntityTypes.getClientEntityView(adminCart.getClient()));
+			result.put("payment_gateway_uri_base",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-type"));
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("principal",					subjectProvider.getSubject().getPrincipal());
 			

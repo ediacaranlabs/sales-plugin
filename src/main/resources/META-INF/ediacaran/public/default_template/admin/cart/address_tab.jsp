@@ -11,8 +11,47 @@
 	</span>
 	<ed:row>
 		<ed:col>
-			<ec:button label="#{next_button.title}" icon2="chevron-right" actionType="submit" bundle="${messages}"  align="right" />
+			<ec:button label="#{next_button.title}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right" >
+				<ec:event type="click">
+					var $userForm = $.AppContext.utils.getById('address_user');
+					$userForm.submit(
+						true, 
+						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/address/select", 
+						"cart_result", function($resp){
+						
+							$.AppContext.utils.updateContentByID(
+								"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/shipping/select", 
+								'cart_shipping_details'
+							);									
+						
+							var $accordion = $.AppContext.utils.getById('cart_steps');
+							var $item = $accordion.getItem('cart_address');
+							var $nextItem = $item.getNext();
+							
+							$nextItem.select();
+						
+						}
+					);
+				</ec:event>
+			</ec:button>
 			<ec:button icon="chevron-left" label="#{back_button.title}" actionType="button" bundle="${messages}" align="right" >
+				<ec:event type="click">
+					var $userForm = $.AppContext.utils.getById('form_user');
+					$userForm.submit(
+						true, 
+						"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client", 
+						"client_data_view", function($resp){
+						
+							var $accordion = $.AppContext.utils.getById('cart_steps');
+							var $item = $accordion.getItem('cart_address');
+							var $previousItem = $item.getPrevious();
+							
+							$previousItem.select();
+						
+						}
+					);
+				</ec:event>
+				<%--
 				<ec:event type="click">
 					var $accordion = $.AppContext.utils.getById('cart_steps');
 					var $item = $accordion.getItem('cart_address');
@@ -20,6 +59,7 @@
 					
 					$previousItem.select();
 				</ec:event>
+				--%>
 			</ec:button>
 		</ed:col>
 	</ed:row>

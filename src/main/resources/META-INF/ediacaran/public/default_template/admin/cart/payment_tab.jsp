@@ -21,7 +21,29 @@
 					var $item = $accordion.getItem('cart_payment');
 					var $previousItem = $item.getPrevious();
 					
-					$previousItem.select();
+					if($previousItem.getAttribute("id") == "cart_shipping"){
+					
+						var $userForm = $.AppContext.utils.getById('cart_shipping_form');
+						$userForm.submit(
+							true, 
+							"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/shipping/select", 
+							"cart_result", function($resp){
+								$previousItem.select();
+							}
+						);
+					
+					}
+					else
+					if($previousItem.getAttribute("id") == "cart_client"){
+						var $userForm = $.AppContext.utils.getById('form_user');
+						$userForm.submit(
+							true, 
+							"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client", 
+							"client_data_view", function($resp){
+								$previousItem.select();
+							}
+						);
+					}
 				</ec:event>
 			</ec:button>
 		</ed:col>

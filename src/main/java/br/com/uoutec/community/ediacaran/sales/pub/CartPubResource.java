@@ -322,6 +322,7 @@ public class CartPubResource {
 			result.put("supportShipping",			cartService.isSupportShipping(cart));
 			result.put("client",					client);
 			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, client));
+			result.put("payment_gateway_uri_base",	varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/payment-type"));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
 			result.put("client_data_view",			clientEntityTypes.getClientEntityView(client));
 			result.put("countries",					countryRegistry.getAll(locale));

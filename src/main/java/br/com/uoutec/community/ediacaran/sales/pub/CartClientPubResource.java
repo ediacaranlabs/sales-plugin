@@ -148,8 +148,14 @@ public class CartClientPubResource {
 	public ResultAction newClient(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
+		
+		Client client = adminCart.getClient();
+		if(client == null) {
+			client = new Client();
+		}
+		
 		return changeClientView(
-				new Client(), 
+				client, 
 				"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client",
 				subjectProvider.getSubject().getPrincipal(), 
 				locale,

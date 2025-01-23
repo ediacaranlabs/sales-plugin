@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,7 @@ public class Cart implements Serializable{
 	public Cart(){
 		this.id       = UUID.randomUUID().toString();
 		this.itens    = new ItensCollection();
+		this.taxes    = new ArrayList<>();
 	}
 	
 	/*
@@ -117,6 +119,7 @@ public class Cart implements Serializable{
 	public void clear(){
 		this.id = UUID.randomUUID().toString();
 		this.itens.clear();
+		this.taxes.clear();
 	}
 	
 	public Collection<ProductRequest> getItens() {

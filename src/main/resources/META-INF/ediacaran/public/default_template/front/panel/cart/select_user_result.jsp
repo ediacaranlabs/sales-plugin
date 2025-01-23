@@ -6,6 +6,7 @@
 		${exception.message}
 	</ec:alert>
 </c:if>
+<%--
 <c:if test="${empty exception}">
 	<script type="text/javascript">
 
@@ -22,3 +23,4 @@
 		
 	</script>
 </c:if>
+--%>

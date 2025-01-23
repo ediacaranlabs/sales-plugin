@@ -6,6 +6,7 @@
 		${exception.message}
 	</ec:alert>
 </c:if>
+<%--
 <c:if test="${empty exception}">
 	<script type="text/javascript">
 		$.AppContext.utils.updateContentByID(
@@ -20,3 +21,4 @@
 		$nextItem.select();
 	</script>
 </c:if>
+--%>

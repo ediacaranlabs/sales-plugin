@@ -72,7 +72,8 @@ public class CartShippingPubResource {
 	}
 	
 	/* show shipping */
-	@Action("/cart/shipping")
+	
+	@Action("/cart/shipping/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
@@ -102,7 +103,7 @@ public class CartShippingPubResource {
 		return showShipping(client, cart, cart.getShippingAddress(), locale);
 	}
 
-	@Action("${plugins.ediacaran.front.admin_context}/cart/shipping")
+	@Action("${plugins.ediacaran.front.admin_context}/cart/shipping/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
