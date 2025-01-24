@@ -23,6 +23,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.annotation.web.WebActionStrategyType;
 import org.brandao.brutos.web.HttpStatus;
 
+import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
@@ -30,6 +31,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -77,7 +79,7 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT})
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> showShipping(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -107,7 +109,8 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> showShipping(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
@@ -134,6 +137,7 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_shipping_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> selectShipping(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -170,6 +174,8 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_shipping_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> selectShipping(
 			@Basic(bean = "shipping_method")
 			String shippingMethod, 

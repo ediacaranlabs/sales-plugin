@@ -112,7 +112,7 @@ public class CartClientPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
-	@RequiresRole(BasicRoles.USER)
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SEARCH)
 	public SystemUserSearchResultPubEntity searchUsers(
 			@DetachedName ClientSearchPubEntity request,
@@ -143,7 +143,7 @@ public class CartClientPubResource {
 	
 	@Action("${plugins.ediacaran.front.admin_context}/cart/client")
 	@RequestMethod(RequestMethodTypes.GET)
-	@RequiresRole(BasicRoles.USER)
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction newClient(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -166,7 +166,7 @@ public class CartClientPubResource {
 	
 	@Action("/cart/client")
 	@RequestMethod(RequestMethodTypes.GET)
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT})
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public ResultAction editClient(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
@@ -198,7 +198,7 @@ public class CartClientPubResource {
 
 	@Action("${plugins.ediacaran.front.admin_context}/cart/client/{client.protectedID}")
 	@RequestMethod(RequestMethodTypes.GET)
-	@RequiresRole(BasicRoles.USER)
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction editClient(
 			@Basic(bean="client")
@@ -233,7 +233,7 @@ public class CartClientPubResource {
 	
 	@Action("/cart/client")
 	@RequestMethod(RequestMethodTypes.POST)
-	@RequiresRole(BasicRoles.USER)
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public ResultAction changeClientView(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
@@ -265,7 +265,7 @@ public class CartClientPubResource {
 
 	@Action("${plugins.ediacaran.front.admin_context}/cart/client")
 	@RequestMethod(RequestMethodTypes.POST)
-	@RequiresRole(BasicRoles.USER)
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction changeClientView(
 			@Basic(bean="client")
@@ -339,6 +339,7 @@ public class CartClientPubResource {
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_user_result")
 	@Result("vars")
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> selectUser(
 			@Basic(bean="client")
 			AuthenticatedSystemUserPubEntity systemUserPubEntity,			
@@ -368,6 +369,8 @@ public class CartClientPubResource {
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_user_result")
 	@Result("vars")
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> selectUser(
 			@Basic(bean="client")
 			ClientPubEntity systemUserPubEntity,			

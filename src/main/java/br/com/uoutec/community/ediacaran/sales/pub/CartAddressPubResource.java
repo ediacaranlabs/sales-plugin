@@ -108,7 +108,7 @@ public class CartAddressPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/address")
 	@View("${plugins.ediacaran.sales.template}/front/panel/client/address")
 	@Result("vars")
-	@RequiresRole({BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> address(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -164,7 +164,7 @@ public class CartAddressPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/address/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address")
 	@Result("vars")
-	@RequiresRole({BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> selectAddress(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -231,7 +231,7 @@ public class CartAddressPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
-	@RequiresRole({BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> setAddress(
 			@Basic(bean = "client.selectedBillingAddress")

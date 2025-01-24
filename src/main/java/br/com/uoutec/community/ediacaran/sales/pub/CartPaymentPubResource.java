@@ -25,6 +25,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.annotation.web.WebActionStrategyType;
 import org.brandao.brutos.web.HttpStatus;
 
+import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -33,6 +34,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.Principal;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequiresRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
@@ -84,7 +86,7 @@ public class CartPaymentPubResource {
 	@Action("/cart/payment-details")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/payment_details")
 	@Result("vars")
-	@RequiresRole(BasicRoles.CLIENT)
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String, Object> paymentDetails(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -116,6 +118,8 @@ public class CartPaymentPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/payment-details")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/payment_details")
 	@Result("vars")
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.CREATE)
 	public Map<String, Object> paymentDetails(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -154,7 +158,7 @@ public class CartPaymentPubResource {
 	@Action("/cart/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole(BasicRoles.CLIENT)
+	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public ResultAction paymentType(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -169,6 +173,8 @@ public class CartPaymentPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
+	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.CREATE)
 	public ResultAction paymentType(
 			@Basic(bean="code")String code,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
