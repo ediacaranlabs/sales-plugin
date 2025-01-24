@@ -48,7 +48,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
@@ -104,7 +104,7 @@ public class CartAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/cart/index")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -323,7 +323,7 @@ public class CartAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/cart/checkout")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	public Map<String, Object> checkout(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -355,7 +355,7 @@ public class CartAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/cart/result_checkout")
 	@Result(value="checkout", mappingType = MappingTypes.VALUE)
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	public Checkout checkout(
 			@Basic(bean="payment")
 			PaymentPubEntity paymentPubEntity,

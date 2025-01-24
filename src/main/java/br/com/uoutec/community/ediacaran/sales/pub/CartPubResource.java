@@ -45,7 +45,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -115,7 +115,7 @@ public class CartPubResource {
 	@Action(value="/payment-details")
 	@View("${plugins.ediacaran.sales.template}/front/cart/payment_details")
 	@Result("vars")
-	@RequiresRole(BasicRoles.CLIENT)
+	@RequireAnyRole(BasicRoles.CLIENT)
 	public Map<String, Object> paymentDetails(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -155,7 +155,7 @@ public class CartPubResource {
 	@Action("/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole(BasicRoles.CLIENT)
+	@RequireAnyRole(BasicRoles.CLIENT)
 	public ResultAction paymentType(
 			@Basic(bean="code")String code,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -304,7 +304,7 @@ public class CartPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/cart/checkout")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	public Map<String, Object> checkout(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{

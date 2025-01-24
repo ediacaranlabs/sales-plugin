@@ -32,7 +32,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.pub.entity.AuthenticatedSystemUserPubEntity;
@@ -79,7 +79,7 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> showShipping(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -109,7 +109,7 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/shipping")
 	@RequestMethod(RequestMethodTypes.GET)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> showShipping(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -137,7 +137,7 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_shipping_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> selectShipping(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -174,7 +174,7 @@ public class CartShippingPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_shipping_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> selectShipping(
 			@Basic(bean = "shipping_method")

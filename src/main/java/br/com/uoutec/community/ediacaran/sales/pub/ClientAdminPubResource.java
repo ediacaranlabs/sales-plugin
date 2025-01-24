@@ -39,7 +39,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.pub.manager.SystemUserManagerPubResourceMessages;
@@ -73,7 +73,7 @@ public class ClientAdminPubResource {
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/client/index")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.SHOW)
 	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -99,7 +99,7 @@ public class ClientAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SEARCH)
 	public synchronized ClientSearchResultPubEntity search(
 			@DetachedName ClientSearchPubEntity request,
@@ -144,7 +144,7 @@ public class ClientAdminPubResource {
 		"/edit/{client.protectedID}", 
 		"/edit/{client.protectedID}/{type}"
 	})
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction edit(
 			@Basic(bean = "client")
@@ -203,7 +203,7 @@ public class ClientAdminPubResource {
 	}
 
 	@Action({"/address", "/address/{type}"})
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction address(
 			@Basic(bean="type")
@@ -254,7 +254,7 @@ public class ClientAdminPubResource {
 	})
 	@View("${plugins.ediacaran.sales.template}/front/panel/client/address_selected")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> selectedAddress(
 			@Basic(bean = "client")
@@ -290,7 +290,7 @@ public class ClientAdminPubResource {
 	@Action("/edit")
 	@RequestMethod("POST")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public ResultAction editNewView(
 			@Basic(bean="client")
@@ -339,7 +339,7 @@ public class ClientAdminPubResource {
 	@RequestMethod("POST")
 	@View("${plugins.ediacaran.sales.template}/admin/client/result")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.SAVE)
 	public Map<String,Object> save(
 			@Basic(bean="client")

@@ -35,7 +35,7 @@ import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -86,7 +86,7 @@ public class CartPaymentPubResource {
 	@Action("/cart/payment-details")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/payment_details")
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String, Object> paymentDetails(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -118,7 +118,7 @@ public class CartPaymentPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/payment-details")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/payment_details")
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.ORDER.CREATE)
 	public Map<String, Object> paymentDetails(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -158,7 +158,7 @@ public class CartPaymentPubResource {
 	@Action("/cart/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public ResultAction paymentType(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,			
@@ -173,7 +173,7 @@ public class CartPaymentPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/payment-type/{code}")
 	@RequestMethod(RequestMethodTypes.GET)
 	@ResponseErrors(rendered=false, name="exception")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.ORDER.CREATE)
 	public ResultAction paymentType(
 			@Basic(bean="code")String code,

@@ -49,7 +49,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
@@ -91,7 +91,7 @@ public class OrderAdminPubResource {
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/order/index")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.SHOW)
 	public Map<String, Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -119,7 +119,7 @@ public class OrderAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.SEARCH)
 	public synchronized Serializable search(
 			@DetachedName OrderSearchPubEntity request,
@@ -169,7 +169,7 @@ public class OrderAdminPubResource {
 	@Action("/payment/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/payment_result")
 	@Result("order")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.PAYMENT)
 	public Order payment(
 			@DetachedName
@@ -210,7 +210,7 @@ public class OrderAdminPubResource {
 	@Action("/edit/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/edit")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.EDIT)
 	public Map<String,Object> edit(
 			@DetachedName

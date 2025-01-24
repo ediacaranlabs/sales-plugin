@@ -108,10 +108,7 @@ public class ClientRegistryImp
 				return null;
 			}
 			
-			EntityInheritanceManager entityInheritanceUtil = 
-					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-				
-			return user.getCountry() == null? new Client(user) : entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
+			return toClient(user);
 		}
 		catch(DoPrivilegedException ex) {
 			throw new ClientRegistryException(ex.getCause());
@@ -124,15 +121,20 @@ public class ClientRegistryImp
 	@Override
 	public Client toClient(SystemUser user) throws ClientRegistryException {
 		
+		EntityInheritanceManager entityInheritanceUtil = 
+				EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+		
+		return toClient(user, entityInheritanceUtil);
+	}
+
+	private Client toClient(SystemUser user, EntityInheritanceManager entityInheritanceUtil) throws ClientRegistryException {
+		
 		try {
 			if(user == null) {
 				return null;
 			}
 			
-			EntityInheritanceManager entityInheritanceUtil = 
-					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-				
-			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
+			return user.getCountry() == null? new Client(user) : entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
 		}
 		catch(DoPrivilegedException ex) {
 			throw new ClientRegistryException(ex.getCause());
@@ -156,10 +158,7 @@ public class ClientRegistryImp
 				return null;
 			}
 			
-			EntityInheritanceManager entityInheritanceUtil = 
-					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-				
-			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
+			return toClient(user);
 		}
 		catch(DoPrivilegedException ex) {
 			throw new ClientRegistryException(ex.getCause());
@@ -187,7 +186,7 @@ public class ClientRegistryImp
 			List<Client> cl = new ArrayList<>();
 			
 			for(SystemUser e: usr.getItens()) {
-				cl.add(entityInheritanceUtil.getInstance(Client.class, e.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {e}));
+				cl.add(toClient(e, entityInheritanceUtil));
 			}
 
 			return new ClientSearchResult(usr.isHasNextPage(), usr.getMaxPages(), usr.getPage(), cl);

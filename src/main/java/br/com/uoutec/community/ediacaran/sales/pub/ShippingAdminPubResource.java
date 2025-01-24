@@ -45,7 +45,7 @@ import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethodRegistry;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -77,7 +77,7 @@ public class ShippingAdminPubResource {
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/index")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.SHOW)
 	public void index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -88,7 +88,7 @@ public class ShippingAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.SEARCH)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public ShippingsSearchResultPubEntity search(
@@ -132,7 +132,7 @@ public class ShippingAdminPubResource {
 	@Action("/edit/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.INVOICE.SHOW)
 	public Map<String,Object> invoiceDetail(
 			@DetachedName
@@ -169,7 +169,7 @@ public class ShippingAdminPubResource {
 	@Action("/new/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
 	@Result("vars")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.CREATE)
 	public Map<String,Object> newShipping(
 			@DetachedName
@@ -269,7 +269,7 @@ public class ShippingAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
 	@Result("vars")
 	@RequestMethod("POST")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.SAVE)
 	public Map<String,Object> save(
 			@DetachedName
@@ -319,7 +319,7 @@ public class ShippingAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
 	@Result("vars")
 	@RequestMethod("POST")
-	@RequiresRole(BasicRoles.USER)
+	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.CANCEL)
 	public Map<String,Object> cancel(
 			@DetachedName

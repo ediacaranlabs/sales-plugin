@@ -35,7 +35,7 @@ import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.security.RequiresRole;
+import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
@@ -95,7 +95,7 @@ public class CartAddressPubResource {
 	@Action("/cart/address")
 	@View("${plugins.ediacaran.sales.template}/front/panel/client/address")
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> showAddress(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
@@ -108,7 +108,7 @@ public class CartAddressPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/address")
 	@View("${plugins.ediacaran.sales.template}/front/panel/client/address")
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> address(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -133,7 +133,7 @@ public class CartAddressPubResource {
 	@Action("/cart/address/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address")
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> selectAddress(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
@@ -164,7 +164,7 @@ public class CartAddressPubResource {
 	@Action("${plugins.ediacaran.front.admin_context}/cart/address/select")
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address")
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> selectAddress(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -205,7 +205,7 @@ public class CartAddressPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> setAddress(
 			@DetachedName
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity,
@@ -231,7 +231,7 @@ public class CartAddressPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/panel/cart/select_address_result")
 	@RequestMethod(RequestMethodTypes.POST)
 	@Result("vars")
-	@RequiresRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String,Object> setAddress(
 			@Basic(bean = "client.selectedBillingAddress")
