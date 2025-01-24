@@ -16,14 +16,22 @@
 		<ed:col>
 			<ec:button label="#{next.label}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right">
 				<ec:event type="click">
-					$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/widgets', 'cart_widgets');
-					$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/payment-details', 'cart_payment_details');
-				
-					var $accordion = $.AppContext.utils.getById('cart_steps');
-					var $item = $accordion.getItem('cart_shipping');
-					var $nextItem = $item.getNext();
-					
-					$nextItem.select();
+				var $form = $.AppContext.utils.getById('cart_shipping_form');
+				$form.submit(
+					true, 
+					"${plugins.ediacaran.sales.web_path}/cart/shipping/select", 
+					"cart_result", 
+					function($resp){
+							$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/widgets', 'cart_widgets');
+							$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/payment-details', 'cart_payment_details');
+						
+							var $accordion = $.AppContext.utils.getById('cart_steps');
+							var $item = $accordion.getItem('cart_shipping');
+							var $nextItem = $item.getNext();
+							
+							$nextItem.select();
+						}
+					);
 				</ec:event>
 			</ec:button>
 			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" bundle="${messages}" align="right" >
