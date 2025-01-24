@@ -111,7 +111,7 @@ public class ClientRegistryImp
 			EntityInheritanceManager entityInheritanceUtil = 
 					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
 				
-			return entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
+			return user.getCountry() == null? new Client(user) : entityInheritanceUtil.getInstance(Client.class, user.getCountry().getIsoAlpha3(), new Class<?>[] {SystemUser.class}, new Object[] {user});
 		}
 		catch(DoPrivilegedException ex) {
 			throw new ClientRegistryException(ex.getCause());
