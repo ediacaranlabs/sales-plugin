@@ -180,7 +180,8 @@ public class CartClientPubResource {
 			if(authenticatedSystemUserPubEntity == null) {
 				authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
 			}
-			client = (Client)authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
+			client = clientRegistry.toClient(user);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartClientPubResource.class, "showUser", "view", locale, ex);
@@ -213,7 +214,8 @@ public class CartClientPubResource {
 			if(clientPubEntity == null) {
 				clientPubEntity = new ClientPubEntity();
 			}
-			client = (Client)clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, false, true);
+			SystemUser user = clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, false, true);
+			client = clientRegistry.toClient(user);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartClientPubResource.class, "showUser", "view", locale, ex);

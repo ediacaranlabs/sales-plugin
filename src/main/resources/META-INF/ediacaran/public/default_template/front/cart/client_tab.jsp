@@ -43,5 +43,10 @@
 				);
 			</ec:event>
 		</ec:button>
+		<ec:button label="#{reset.label}" actionType="button"  align="right" bundle="${messages}">
+			<ec:event type="click">
+				$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/client', 'client_data_view');
+			</ec:event>
+		</ec:button>	
 	</ed:col>
 </ed:row>
