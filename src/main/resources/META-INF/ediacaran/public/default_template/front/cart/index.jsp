@@ -46,38 +46,21 @@
 	<section>
 		<ed:container>
 			<ed:row>
-				<ed:col size="12">
-						<hr>
+				<ed:col size="12" id="cart_result">
 				</ed:col>
 			</ed:row>
-			
-			<c:if test="${!empty vars.user && !vars.user.complete}">
-				<ec:alert style="danger">
-					<a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart">
-						<fmt:message key="cart_review.retriction_msg" bundle="${messages}" />
-					</a>
-				</ec:alert>
-			</c:if>
-			
-			<!-- products-table -->
 			<ed:row>
-				<ed:col id="product_content" size="12">
-					<jsp:include page="products.jsp"/>
+				<!-- products-table -->
+				<ed:col size="9" id="cart">
+					<!-- products-tab -->
+					<jsp:include page="products_tab.jsp"/>
+					<!-- /products-tab -->
+				</ed:col>
+				<!-- /products-table -->
+				<ed:col size="3" id="cart_widgets">
+					<jsp:include page="widgets.jsp"/>
 				</ed:col>
 			</ed:row>
-			<!-- /products-table -->
-
-			<ed:row>
-				<ed:col>
-					<div id="result-checkout" class="result-check"></div>
-					<ec:button align="right" actionType="button" label="#{cart_review.checkout.submit}" bundle="${messages}">
-						<ec:event type="click">
-							location.href = '${plugins.ediacaran.sales.web_path}/cart/checkout';
-						</ec:event>
-					</ec:button>
-				</ed:col>
-			</ed:row>
-			
 		</ed:container>
 	</section>
 
