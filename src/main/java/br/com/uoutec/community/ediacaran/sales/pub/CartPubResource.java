@@ -152,6 +152,8 @@ public class CartPubResource {
 		Map<String,String> addData;
 
 		try{
+			cart.clearTaxes();
+			
 			addData = addPubData == null? new HashMap<>() : addPubData;
 			requestProperties = requestPropertiesPubEntity.rebuild(false, true, true);
 			addData.put("host", requestProperties.getRemoteAddress());

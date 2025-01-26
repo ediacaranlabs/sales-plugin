@@ -152,6 +152,10 @@ public class Cart implements Serializable{
 		return null;
 	}
 	
+	public void clearTaxes() {
+		this.taxes = new ArrayList<>();
+	}
+	
 	public BigDecimal getTax(){
 		return BigDecimal.ZERO;
 	}

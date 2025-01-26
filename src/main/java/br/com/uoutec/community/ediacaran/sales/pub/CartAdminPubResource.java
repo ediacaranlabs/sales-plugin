@@ -210,6 +210,8 @@ public class CartAdminPubResource {
 		Map<String,String> addData;
 
 		try{
+			adminCart.getCart().clearTaxes();
+			
 			addData 			= addPubData == null? new HashMap<>() : addPubData;
 			requestProperties	= requestPropertiesPubEntity.rebuild(false, true, true);
 			product 			= productPubEntity.rebuild(true, false, true);

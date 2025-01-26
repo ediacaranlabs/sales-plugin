@@ -38,6 +38,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ClientSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
@@ -284,6 +285,14 @@ public class CartClientPubResource {
 				clientPubEntity = new ClientPubEntity();
 			}
 			client = (Client)clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, true, false);
+			
+			if(client.getId() == null) {
+				Client tmpClient = clientRegistry.getClientBySystemID(String.valueOf(client.getSystemID()));
+				if(tmpClient != null) {
+					throw new ClientRegistryException("exist");
+				}
+			}
+			
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartClientPubResource.class, "showUser", "view", locale, ex);
@@ -383,6 +392,14 @@ public class CartClientPubResource {
 		Client client = null;
 		try{
 			client = (Client)systemUserPubEntity.rebuild(systemUserPubEntity.getProtectedID() != null, true, true);
+			
+			if(client.getId() == null) {
+				Client tmpClient = clientRegistry.getClientBySystemID(String.valueOf(client.getSystemID()));
+				if(tmpClient != null) {
+					throw new ClientRegistryException("exist");
+				}
+			}
+			
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "showUser", "view", locale, ex);
