@@ -44,8 +44,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.AuthenticationRequiredException;
-import br.com.uoutec.community.ediacaran.security.BasicRoles;
-import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -221,7 +219,6 @@ public class CartPubResource {
 	@View("${plugins.ediacaran.sales.template}/front/cart/checkout")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
-	@RequireAnyRole(BasicRoles.USER)
 	public Map<String, Object> checkout(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -249,12 +246,21 @@ public class CartPubResource {
 
 			return result;
 		}
+		catch(InvalidRequestException ex) {
+			if(ex.getCause() instanceof AuthenticationRequiredException) {
+				String login = varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart/checkout");
+				WebFlowController.redirectTo(login);
+				return null;
+			}
+			throw ex;
+		}
 		catch(Throwable ex) {
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
-	}	
+	}
+	
 	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
 	@View("${plugins.ediacaran.sales.template}/front/cart/result_checkout")

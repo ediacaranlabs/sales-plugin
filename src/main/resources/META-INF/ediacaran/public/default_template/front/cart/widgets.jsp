@@ -51,7 +51,7 @@
 				</ed:row>
 			</ed:col>
 		</ed:row>
-		<c:if test="${empty vars.show_widget_itens || vars.show_widget_itens}">
+		<c:if test="${Controller.cart.totalItens > 0 && (empty vars.show_widget_itens || vars.show_widget_itens)}">
 		<ed:row style="form">
 			<ed:col>
 				${Controller.cart.totalItens}

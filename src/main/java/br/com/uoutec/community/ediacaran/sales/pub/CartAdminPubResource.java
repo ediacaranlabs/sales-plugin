@@ -60,7 +60,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @Singleton
 @Controller(value="${plugins.ediacaran.front.admin_context}/cart", defaultActionName="/")
 @Actions({
-	@Action(value="/widgets", view=@View("${plugins.ediacaran.sales.template}/front/panel/cart/widgets"))
+	@Action(value="/widgets", view=@View("${plugins.ediacaran.sales.template}/front/cart/widgets"))
 })
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartAdminPubResource {
@@ -107,6 +107,8 @@ public class CartAdminPubResource {
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)
 	public Map<String, Object> index(
+			@Basic(bean = "resetCart")
+			Boolean resetCart,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
@@ -114,8 +116,11 @@ public class CartAdminPubResource {
 		try {
 			Map<String,Object> result = new HashMap<String, Object>();
 			
-			adminCart.setCart(new Cart());
-			adminCart.setClient(new Client());
+			if(resetCart == null || resetCart.booleanValue()) {
+				adminCart.setCart(new Cart());
+				adminCart.setClient(new Client());
+			}
+			
 			result.put("client",					adminCart.getClient());
 			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getClient()));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());

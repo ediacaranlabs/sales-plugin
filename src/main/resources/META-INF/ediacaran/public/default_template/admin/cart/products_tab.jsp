@@ -80,7 +80,7 @@
 	<ed:col>
 		<ec:button id="checkout_page_button" label="#{checkout.label}" style="success" icon="check-circle" actionType="button" align="right" bundle="${messages}">
 			<ec:event type="click">
-				$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/checkout', 'cart');
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/checkout');
 			</ec:event>
 		</ec:button>
 		<ec:button label="#{search.label}" icon="search" actionType="button" align="right" bundle="${messages}">

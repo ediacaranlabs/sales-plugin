@@ -177,7 +177,7 @@ public class Cart implements Serializable{
 		
 		if(taxes != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = new ArrayList<>(taxes);
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
@@ -201,7 +201,7 @@ public class Cart implements Serializable{
 		
 		if(taxes != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = new ArrayList<>(taxes);
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
@@ -231,7 +231,7 @@ public class Cart implements Serializable{
 		
 		if(taxes != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = new ArrayList<>(taxes);
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
