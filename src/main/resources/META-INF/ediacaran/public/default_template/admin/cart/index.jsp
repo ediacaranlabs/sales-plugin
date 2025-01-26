@@ -45,7 +45,7 @@
 			</ed:col>
 			<!-- /products-table -->
 			<ed:col size="3" id="cart_widgets">
-				<jsp:include page="widgets.jsp"/>
+				<jsp:include page="/default_template/front/cart/widgets.jsp"/>
 			</ed:col>
 		</ed:row>
 	</ec:box-body>

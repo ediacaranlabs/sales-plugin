@@ -48,6 +48,7 @@ $.AppContext.onload(function(){
 				<ed:col size="8">
 					<ec:breadcrumb title="#{cart_review.title}" bundle="${messages}">
 						<ec:breadcrumb-path icon="home" text="" lnk="/" />
+						<ec:breadcrumb-path text="#{cart_review.back.title}" lnk="${plugins.ediacaran.sales.web_path}/cart" bundle="${messages}"/>
 					</ec:breadcrumb>
 				</ed:col>
 			</ed:row>

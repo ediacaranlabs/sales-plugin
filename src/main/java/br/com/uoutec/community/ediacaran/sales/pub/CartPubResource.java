@@ -108,6 +108,7 @@ public class CartPubResource {
 			Locale locale) throws InvalidRequestException{
 		
 		Map<String,Object> result = new HashMap<String, Object>();
+		result.put("show_widget_itens",	false);
 		return result;
 	}
 	
@@ -244,7 +245,8 @@ public class CartPubResource {
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("address_form", 				varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/address"));
 			result.put("principal",					null);
-			
+			result.put("show_widget_itens",			true);
+
 			return result;
 		}
 		catch(Throwable ex) {

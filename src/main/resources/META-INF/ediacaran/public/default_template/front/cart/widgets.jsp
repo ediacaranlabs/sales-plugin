@@ -20,7 +20,7 @@
 </c:forEach>
 <ed:row style="cart_widget_title">
 	<ed:col>
-		<h3>Order Summary</h3>
+		<h3><fmt:message key="cart_review.table.summary" bundle="${messages}"/></h3>
 		<hr>
 	</ed:col>
 </ed:row>
@@ -51,9 +51,17 @@
 				</ed:row>
 			</ed:col>
 		</ed:row>
+		<c:if test="${empty vars.show_widget_itens || vars.show_widget_itens}">
 		<ed:row style="form">
 			<ed:col>
-				${Controller.cart.totalItens} ${Controller.cart.totalItens > 1? 'itens' : 'item'} in cart
+				${Controller.cart.totalItens}
+				<c:if test="${Controller.cart.totalItens <= 1}">
+					<fmt:message key="cart_review.table.item" bundle="${messages}"/>
+				</c:if> 
+				<c:if test="${Controller.cart.totalItens > 1}">
+					<fmt:message key="cart_review.table.itens" bundle="${messages}"/>
+				</c:if> 
+				<fmt:message key="cart_review.table.itens.suffix" bundle="${messages}"/>
 				<hr>
 			</ed:col>
 		</ed:row>
@@ -81,9 +89,9 @@
 			</ed:col>
 		</ed:row>
 		</c:forEach>
+		</c:if>
 	</ed:col>
 </ed:row>
-
 <%--			
 <ed:row style="cart_widget_title">
 	<ed:col>

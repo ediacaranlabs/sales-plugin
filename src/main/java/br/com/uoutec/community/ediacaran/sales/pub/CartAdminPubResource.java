@@ -60,7 +60,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @Singleton
 @Controller(value="${plugins.ediacaran.front.admin_context}/cart", defaultActionName="/")
 @Actions({
-	@Action(value="/widgets", view=@View("${plugins.ediacaran.sales.template}/admin/cart/widgets"))
+	@Action(value="/widgets", view=@View("${plugins.ediacaran.sales.template}/front/panel/cart/widgets"))
 })
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartAdminPubResource {
@@ -122,6 +122,7 @@ public class CartAdminPubResource {
 			result.put("client_data_view",			clientEntityTypes.getClientEntityView(adminCart.getClient()));
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("principal",					subjectProvider.getSubject().getPrincipal());
+			result.put("show_widget_itens",			false);
 			
 			return result;
 		}
@@ -271,6 +272,7 @@ public class CartAdminPubResource {
 			result.put("payment_gateway_uri_base",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-type"));
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("principal",					subjectProvider.getSubject().getPrincipal());
+			result.put("show_widget_itens",			true);
 			
 			return result;
 		}
