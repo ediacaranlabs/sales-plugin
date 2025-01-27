@@ -19,34 +19,14 @@ public class ActionsPluginInstaller {
 				
 		ActionRegistry actionRegistry = EntityContextPlugin.getEntity(ActionRegistry.class);
 		
-		actionRegistry.registerAction(
-				OrderStatus.PENDING_PAYMENT.name(), 
-				3, 
-				10, 
-				ChronoUnit.SECONDS, 
-				EntityContextPlugin.getEntity(PendingPaymentAction.class)
-		);
+		actionRegistry.registerAction(OrderStatus.PENDING_PAYMENT.name(), 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(PendingPaymentAction.class));
+		actionRegistry.registerAction(OrderStatus.PAYMENT_RECEIVED.name(), 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(PaymentReceivedAction.class));
+		actionRegistry.registerAction(OrderStatus.ORDER_INVOICED.name(), 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(OrderInvoicedAction.class));
 		
-		actionRegistry.addNextAction(OrderStatus.PENDING_PAYMENT.name(), OrderStatus.PAYMENT_RECEIVED.name());
-		
-		actionRegistry.registerAction(
-				OrderStatus.PAYMENT_RECEIVED.name(), 
-				3, 
-				10, 
-				ChronoUnit.SECONDS, 
-				EntityContextPlugin.getEntity(PaymentReceivedAction.class)
-		);
-		
+		actionRegistry.addNextAction(OrderStatus.PENDING_PAYMENT.name(), 		OrderStatus.PAYMENT_RECEIVED.name());
+		actionRegistry.addNextAction(OrderStatus.PAYMENT_RECEIVED.name(), 		OrderStatus.ORDER_INVOICED.name());
 		actionRegistry.addExceptionAction(OrderStatus.PAYMENT_RECEIVED.name(), EmptyInvoiceException.class, null);
-		actionRegistry.addNextAction(OrderStatus.PAYMENT_RECEIVED.name(), OrderStatus.ORDER_INVOICED.name());
 		
-		actionRegistry.registerAction(
-				OrderStatus.ORDER_INVOICED.name(), 
-				3, 
-				10, 
-				ChronoUnit.SECONDS, 
-				EntityContextPlugin.getEntity(OrderInvoicedAction.class)
-		);
 	}
 	
 	public void uninstall() throws Throwable {

@@ -231,7 +231,7 @@ public class CartRegistryImp
 			actionRegistry.executeAction(
 					PaymentStatus.PENDING_PAYMENT.name(), 
 					ActionExecutorRequestBuilder.builder()
-						.addParameter("order", order.getId())
+						.withParameter("order", order.getId())
 					.build()
 			);
 
