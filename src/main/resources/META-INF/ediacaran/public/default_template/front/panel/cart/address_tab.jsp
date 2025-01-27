@@ -8,7 +8,7 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:form id="address_user" method="POST" action="${plugins.ediacaran.sales.web_path}/cart/address/select" update="cart_result">
 	<span id="client_address_form">
-		<jsp:include page="/default_template/front/panel/cart/select_address.jsp"/>
+		<jsp:include page="select_address.jsp"/>
 	</span>
 	<ed:row>
 		<ed:col>

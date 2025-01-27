@@ -3,8 +3,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" 				prefix="fn" %>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
-<%@page trimDirectiveWhitespaces="true" %>
-<ec:setTemplatePackage name="admin"/>
+
 <ec:setBundle var="messages" locale="${locale}"/>
 <ed:row>
 	<ed:col>

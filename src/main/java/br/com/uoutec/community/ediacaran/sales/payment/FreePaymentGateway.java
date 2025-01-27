@@ -36,14 +36,14 @@ public class FreePaymentGateway extends  AbstractPaymentGateway{
 	@Override
 	public String getOwnerView(PaymentRequest paymentRequest) throws PaymentGatewayException {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		String view = varParser.getValue("${plugins.ediacaran.sales.web_path}/default_template/front/cart/order_free_payment.jsp");
+		String view = varParser.getValue("${plugins.ediacaran.sales.web_path}/default_template/front/panel/cart/order_free_payment.jsp");
 		return view;
 	}
 
 	@Override
 	public String getView() throws PaymentGatewayException {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		String view = varParser.getValue("${plugins.ediacaran.sales.web_path}:/default_template/front/cart/free_payment.jsp");
+		String view = varParser.getValue("${plugins.ediacaran.sales.web_path}:/default_template/front/panel/cart/free_payment.jsp");
 		return view;
 	}
 

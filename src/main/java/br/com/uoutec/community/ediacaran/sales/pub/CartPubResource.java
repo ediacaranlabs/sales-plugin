@@ -218,7 +218,7 @@ public class CartPubResource {
 	}
 
 	@Action("/checkout")
-	@View("${plugins.ediacaran.sales.template}/front/cart/checkout")
+	@View("${plugins.ediacaran.sales.template}/front/panel/cart/checkout")
 	@Result("vars")
 	@ResponseErrors(rendered=false, name="exception")
 	public Map<String, Object> checkout(
@@ -265,7 +265,7 @@ public class CartPubResource {
 	
 	@Action("/checkout")
 	@RequestMethod(RequestMethodTypes.POST)
-	@View("${plugins.ediacaran.sales.template}/front/cart/result_checkout")
+	@View("${plugins.ediacaran.sales.template}/front/panel/cart/result_checkout")
 	@Result("link")
 	@ResponseErrors(rendered=false, name="exception")
 	public String checkout(
