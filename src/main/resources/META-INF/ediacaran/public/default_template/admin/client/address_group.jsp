@@ -9,7 +9,7 @@
 <span formgroup="addresses" formgrouptype="index">
 	<ec:accordion>
 		<ec:accordion-item title="${address.addressLine1} ${address.addressLine2} ${address.city} ${address.region} ${address.country.isoAlpha3} - ${address.zip}">
-			<jsp:include page="address.jsp"/>
+			<jsp:include page="/default_template/front/panel/client/address.jsp"/>
 			<ed:row>
 				<ed:col>
 					<ec:checkbox label="#{remove.label}" value="true" name="deleted" align="right" bundle="${messages}"/>

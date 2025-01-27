@@ -25,7 +25,7 @@ public class ActionsPluginInstaller {
 		
 		actionRegistry.addNextAction(OrderStatus.PENDING_PAYMENT.name(), 		OrderStatus.PAYMENT_RECEIVED.name());
 		actionRegistry.addNextAction(OrderStatus.PAYMENT_RECEIVED.name(), 		OrderStatus.ORDER_INVOICED.name());
-		actionRegistry.addExceptionAction(OrderStatus.PAYMENT_RECEIVED.name(), EmptyInvoiceException.class, null);
+		actionRegistry.addExceptionAction(OrderStatus.PAYMENT_RECEIVED.name(),	EmptyInvoiceException.class, null);
 		
 	}
 	
