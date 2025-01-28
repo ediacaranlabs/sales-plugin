@@ -27,12 +27,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
-import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
 @Table(name="rw_shipping")
 @EntityListeners(ShippingEntityListener.class)
-public class ShippingEntity implements PublicType, Serializable{
+public class ShippingEntity implements Serializable{
 
 	private static transient final long serialVersionUID = -5167928569154696530L;
 
