@@ -308,70 +308,6 @@ public class OrderRegistryImp
 		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 		OrderRegistryUtil.checkNewOrderStatus(order, status);
 		o.setStatus(status);
-		/*
-		Order order;
-		try{
-			order = orderEntityAccess.findById(o.getId());
-		}
-		catch(Throwable e){
-			throw new OrderNotFoundRegistryException(o.getId());
-		}
-
-		OrderStatus newStatus = OrderStatus.ON_HOLD;
-		Payment payment = order.getPayment();
-		
-		switch (payment.getStatus()) {
-		case NEW:
-		case ON_HOLD:
-			newStatus = OrderStatus.ON_HOLD;
-			break;
-		case PENDING_PAYMENT:
-		case PENDING_PAYMENT_CONFIRMATION:
-		case PAYMENT_REVIEW:
-			newStatus = OrderStatus.PENDING_PAYMENT;
-			break;
-		case PAYMENT_RECEIVED:
-			newStatus = OrderStatus.PAYMENT_RECEIVED;
-			break;
-		case SUSPECTED_FRAUD:
-			newStatus = OrderStatus.PENDING_PAYMENT;
-			break;
-		case REFOUND:
-			newStatus = OrderStatus.REFOUND;
-			break;
-		default:
-			break;
-		}
-		
-		if(newStatus == OrderStatus.PAYMENT_RECEIVED) {
-			
-		}
-		
-		if(order.getCompleteInvoice() != null && order.getCompleteShipping() != null) {
-			newStatus = OrderStatus.COMPLETE;
-		}
-		else
-		if(order.getCompleteShipping() != null) {
-			newStatus = OrderStatus.ORDER_SHIPPED;
-		}
-		else
-		if(order.getCompleteInvoice() != null) {
-			newStatus = OrderStatus.ORDER_INVOICED;
-		}
-		else
-		if(order.getPayment().getReceivedFrom() != null) {
-			newStatus = OrderStatus.PAYMENT_RECEIVED;
-		}
-		
-		try {
-			updateOrder(order);
-		} catch (EntityAccessException e) {
-			throw new OrderRegistryException(e);
-		}
-		catch (ValidationException e) {
-			throw new OrderRegistryException(e);
-		}
-		*/
 	}
 	
 	/**
@@ -480,38 +416,6 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(ex);
 		}
 	}
-	
-	/*
-	private void updateOrderStatus(Order order, Payment payment) throws OrderRegistryException {
-		
-		switch (payment.getStatus()) {
-			case NEW:
-			case ON_HOLD:
-				if(!order.getStatus().isValidNextStatus(OrderStatus.ON_HOLD)) {
-					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
-				}
-				order.setStatus(OrderStatus.ON_HOLD);
-				break;
-			case PAYMENT_RECEIVED:
-				if(!order.getStatus().isValidNextStatus(OrderStatus.PAYMENT_RECEIVED)) {
-					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
-				}
-				order.setStatus(OrderStatus.PAYMENT_RECEIVED);
-				break;
-			case PAYMENT_REVIEW:
-			case PENDING_PAYMENT:
-			case PENDING_PAYMENT_CONFIRMATION:
-			case SUSPECTED_FRAUD:
-				if(!order.getStatus().isValidNextStatus(OrderStatus.PENDING_PAYMENT)) {
-					throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
-				}
-				order.setStatus(OrderStatus.PENDING_PAYMENT);
-				break;
-			default:
-				throw new OrderRegistryException("invalid payment status: " + payment.getStatus());
-		}
-	}
-	*/
 	
 	@ActivateRequestContext
 	public boolean isAvailability(Cart cart) 
