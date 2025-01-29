@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -175,12 +176,18 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@ActivateRequestContext
-	public List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException {
+	public InvoicesResultSearch searchInvoice(InvoiceSearch value) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
 		try{
-			return entityAccess.search(value, first, max);
+			int page = value.getPage() == null? 1 : value.getPage().intValue();
+			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<InvoiceResultSearch> itens = entityAccess.search(value, firstResult, maxResults);
+			return new InvoicesResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
 		}
 		catch(Throwable e){
 			throw new PersistenceInvoiceRegistryException(e);

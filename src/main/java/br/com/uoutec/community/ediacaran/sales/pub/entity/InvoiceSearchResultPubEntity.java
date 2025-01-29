@@ -1,11 +1,16 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
+import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class InvoiceSearchResultPubEntity implements Serializable {
+public class InvoiceSearchResultPubEntity extends AbstractPubEntity<InvoicesResultSearch> {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
@@ -15,16 +20,50 @@ public class InvoiceSearchResultPubEntity implements Serializable {
 	
 	private int page;
 	
-	private List<InvoiceEntitySearchResultPubEntity> data;
+	private List<InvoiceResultSearchPubEntity> data;
 
-	public InvoiceSearchResultPubEntity(int maxPages, int page, boolean hasNextPage, List<InvoiceEntitySearchResultPubEntity> data) {
+	public InvoiceSearchResultPubEntity(InvoicesResultSearch invoicesResultSearch, Locale locale) {
 		super();
-		this.maxPages = maxPages;
-		this.page = page;
-		this.data = data;
-		this.hasNextPage = hasNextPage;
+		this.maxPages = invoicesResultSearch.getMaxPages();
+		this.page = invoicesResultSearch.getPage();
+		this.hasNextPage = invoicesResultSearch.getHasNextPage();
+		
+		if(invoicesResultSearch.getItens() != null) {
+			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale);
+			this.data = invoicesResultSearch.getItens().stream()
+					.map((e)->new InvoiceResultSearchPubEntity(e, locale, dtaFormt)).collect(Collectors.toList());
+		}
 	}
 
+	@Override
+	protected boolean isEqualId(InvoicesResultSearch instance) throws Throwable {
+		return false;
+	}
+
+	@Override
+	protected boolean hasId(InvoicesResultSearch instance) throws Throwable {
+		return false;
+	}
+
+	@Override
+	protected InvoicesResultSearch reloadEntity() throws Throwable {
+		return null;
+	}
+
+	@Override
+	protected void throwReloadEntityFail() throws Throwable {
+		throw new IllegalStateException();
+	}
+
+	@Override
+	protected InvoicesResultSearch createNewInstance() throws Throwable {
+		return null;
+	}
+
+	@Override
+	protected void copyTo(InvoicesResultSearch o, boolean reload, boolean override, boolean validate) throws Throwable {
+	}
+	
 	public int getMaxPages() {
 		return maxPages;
 	}
@@ -41,11 +80,11 @@ public class InvoiceSearchResultPubEntity implements Serializable {
 		this.page = page;
 	}
 
-	public List<InvoiceEntitySearchResultPubEntity> getData() {
+	public List<InvoiceResultSearchPubEntity> getData() {
 		return data;
 	}
 
-	public void setData(List<InvoiceEntitySearchResultPubEntity> data) {
+	public void setData(List<InvoiceResultSearchPubEntity> data) {
 		this.data = data;
 	}
 

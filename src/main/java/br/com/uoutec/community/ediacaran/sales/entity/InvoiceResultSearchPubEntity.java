@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class InvoiceEntitySearchResultPubEntity implements Serializable {
+public class InvoiceResultSearchPubEntity implements Serializable {
 
 	private static final long serialVersionUID = 9166429937476180931L;
 
@@ -28,7 +28,7 @@ public class InvoiceEntitySearchResultPubEntity implements Serializable {
 	
 	//private String invoice;
 
-	public InvoiceEntitySearchResultPubEntity(InvoiceResultSearch invoiceResultSearch, Locale locale, DateTimeFormatter dateTimeFormatter) {
+	public InvoiceResultSearchPubEntity(InvoiceResultSearch invoiceResultSearch, Locale locale, DateTimeFormatter dateTimeFormatter) {
 		this.id = invoiceResultSearch.getInvoice().getId();
 		this.owner = invoiceResultSearch.getOwner().getFirstName() + " " + invoiceResultSearch.getOwner().getLastName();
 		this.date = invoiceResultSearch.getInvoice().getDate() == null? null : dateTimeFormatter.format(invoiceResultSearch.getInvoice().getDate());

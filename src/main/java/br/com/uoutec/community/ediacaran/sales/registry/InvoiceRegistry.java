@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
@@ -29,7 +29,7 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	Invoice toInvoice(Order order)  throws OrderRegistryException, PersistenceInvoiceRegistryException;
 	
-	List<InvoiceResultSearch> searchInvoice(InvoiceSearch value, Integer first, Integer max) throws InvoiceRegistryException;
+	InvoicesResultSearch searchInvoice(InvoiceSearch value) throws InvoiceRegistryException;
 	
 	void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException;
 	

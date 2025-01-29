@@ -1,10 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,9 +26,8 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceEntitySearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.InvoicePubEntity;
@@ -42,8 +38,8 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
-import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -120,16 +116,8 @@ public class InvoiceAdminPubResource {
 		
 		
 		try{
-			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale);
-			int page = request.getPage() == null? 0 : request.getPage();
-			int firstResult = (page-1)*10;
-			int maxResult = 11;
-			List<InvoiceResultSearch> values = invoiceRegistry.searchInvoice(search, firstResult, maxResult);
-			
-			List<InvoiceEntitySearchResultPubEntity> result = values.stream()
-					.map((e)->new InvoiceEntitySearchResultPubEntity(e, locale, dtaFormt)).collect(Collectors.toList());
-			
-			return new InvoiceSearchResultPubEntity(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
+			InvoicesResultSearch resultSearch = invoiceRegistry.searchInvoice(search);
+			return new InvoiceSearchResultPubEntity(resultSearch, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
