@@ -389,7 +389,7 @@ public class InvoiceEntityAccessImp
 		    List<InvoiceResultSearch> result = new ArrayList<InvoiceResultSearch>();
     
 		    for(InvoiceEntity e: list) {
-		    	result.add(new InvoiceResultSearch(e.toEntity(), e.getOwner().toEntity()));
+		    	result.add(new InvoiceResultSearch(e.toEntity(), e.getClient().toEntity()));
 		    }
 		    
 			return result;

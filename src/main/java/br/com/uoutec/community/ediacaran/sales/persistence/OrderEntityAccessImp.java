@@ -55,12 +55,12 @@ public class OrderEntityAccessImp
 				throw new EntityAccessException("id");
 			}
 			
-			pEntity.setId(IDGenerator.getUniqueOrderID('O', value.getOwner()));
+			pEntity.setId(IDGenerator.getUniqueOrderID('O', value.getClient()));
 			
 			/*
 			if(pEntity.getInvoice() != null){
 				//if(pEntity.getInvoice().getId() == null){
-					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getOwner()));
+					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getClient()));
 					entityManager.persist(pEntity.getInvoice());
 				//}
 			}
@@ -68,7 +68,7 @@ public class OrderEntityAccessImp
 			
 			if(pEntity.getPayment() != null){
 				if(pEntity.getPayment().getId() == null){
-					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getOwner()));
+					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getClient()));
 					pEntity.getPayment().setOrder(pEntity.getId());
 					entityManager.persist(pEntity.getPayment());
 				}
@@ -92,7 +92,7 @@ public class OrderEntityAccessImp
 			if(list != null){
 				for(ProductRequestEntity e: list){
 					e.setOrder(pEntity);
-					e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
+					e.setId(IDGenerator.getUniqueOrderID('R', value.getClient()));
 					entityManager.persist(e);
 					
 					List<ProductRequestTaxEntity> prdel = e.getTaxes();
@@ -100,7 +100,7 @@ public class OrderEntityAccessImp
 					if(prdel != null){
 						for(ProductRequestTaxEntity k: prdel){
 							k.setProductRequest(e);
-							k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
+							k.setId(IDGenerator.getUniqueOrderID('D', value.getClient()));
 							entityManager.persist(k);
 						}
 					}
@@ -112,7 +112,7 @@ public class OrderEntityAccessImp
 			if(odl != null){
 				for(OrderTaxEntity k: odl){
 					k.setOrderEntity(pEntity);
-					k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
+					k.setId(IDGenerator.getUniqueOrderID('D', value.getClient()));
 					entityManager.persist(k);
 				}
 			}
@@ -131,7 +131,7 @@ public class OrderEntityAccessImp
 			/*
 			if(pEntity.getInvoice() != null){
 				if(pEntity.getInvoice().getId() == null){
-					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getOwner()));
+					pEntity.getInvoice().setId(IDGenerator.getUniqueOrderID('I', value.getClient()));
 					entityManager.persist(pEntity.getInvoice());
 				}
 				else{
@@ -142,7 +142,7 @@ public class OrderEntityAccessImp
 			
 			if(pEntity.getPayment() != null){
 				if(pEntity.getPayment().getId() == null){
-					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getOwner()));
+					pEntity.getPayment().setId(IDGenerator.getUniqueOrderID('P', value.getClient()));
 					pEntity.getPayment().setOrder(pEntity.getId());
 					entityManager.persist(pEntity.getPayment());
 				}
@@ -178,7 +178,7 @@ public class OrderEntityAccessImp
 				for(ProductRequestEntity e: list){
 					if(e.getId() == null){
 						e.setOrder(pEntity);
-						e.setId(IDGenerator.getUniqueOrderID('R', value.getOwner()));
+						e.setId(IDGenerator.getUniqueOrderID('R', value.getClient()));
 						entityManager.persist(e);
 					}
 					else{
@@ -191,7 +191,7 @@ public class OrderEntityAccessImp
 						for(ProductRequestTaxEntity k: prdel){
 							if(k.getId() == null){
 								k.setProductRequest(e);
-								k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
+								k.setId(IDGenerator.getUniqueOrderID('D', value.getClient()));
 								entityManager.persist(k);
 							}
 							else{
@@ -209,7 +209,7 @@ public class OrderEntityAccessImp
 				for(OrderTaxEntity k: odl){
 					if(k.getId() == null){
 						k.setOrderEntity(pEntity);
-						k.setId(IDGenerator.getUniqueOrderID('D', value.getOwner()));
+						k.setId(IDGenerator.getUniqueOrderID('D', value.getClient()));
 						entityManager.persist(k);
 					}
 					else{
@@ -350,7 +350,7 @@ public class OrderEntityAccessImp
 		    List<OrderResultSearch> result = new ArrayList<OrderResultSearch>();
     
 		    for(OrderEntity e: list) {
-		    	result.add(new OrderResultSearch(e.toEntity(), e.getOwner().toEntity()));
+		    	result.add(new OrderResultSearch(e.toEntity(), e.getClient().toEntity()));
 		    }
 		    
 			return result;
@@ -617,7 +617,7 @@ public class OrderEntityAccessImp
 			log.setDate(LocalDateTime.now());
 			log.setMessage(message);
 			log.setOrderId(order.getId());
-			log.setOwner(order.getOwner());
+			log.setOwner(order.getClient());
 			
 			OrderLogEntity e = new OrderLogEntity(log);
 			entityManager.persist(e);

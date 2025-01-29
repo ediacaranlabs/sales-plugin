@@ -38,8 +38,8 @@ public class InvoiceEntity implements Serializable{
 	private LocalDateTime date;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_owner",  updatable = false, referencedColumnName="cod_system_user")
-	private SystemUserEntity owner;
+	@JoinColumn(name="cod_client",  updatable = false, referencedColumnName="cod_system_user")
+	private SystemUserEntity client;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="cod_order",  updatable = false, referencedColumnName="cod_order")
@@ -87,9 +87,9 @@ public class InvoiceEntity implements Serializable{
 		this.cancelDate = e.getCancelDate();
 		this.cancelJustification = e.getCancelJustification();
 		
-		if(e.getOwner() > 0) {
-			this.owner = new SystemUserEntity();
-			this.owner.setId(e.getOwner());
+		if(e.getClient() > 0) {
+			this.client = new SystemUserEntity();
+			this.client.setId(e.getClient());
 		}
 		
 		this.value = e.getSubtotal();
@@ -136,12 +136,12 @@ public class InvoiceEntity implements Serializable{
 		this.order = order;
 	}
 
-	public SystemUserEntity getOwner() {
-		return owner;
+	public SystemUserEntity getClient() {
+		return client;
 	}
 
-	public void setOwner(SystemUserEntity owner) {
-		this.owner = owner;
+	public void setClient(SystemUserEntity client) {
+		this.client = client;
 	}
 
 	public BigDecimal getValue() {
@@ -233,8 +233,8 @@ public class InvoiceEntity implements Serializable{
 		e.setCancelDate(this.cancelDate);
 		e.setCancelJustification(this.cancelJustification);
 		
-		if(this.owner != null) {
-			e.setOwner(this.owner.getId());
+		if(this.client != null) {
+			e.setClient(this.client.getId());
 		}
 		
 		if(this.itens != null){

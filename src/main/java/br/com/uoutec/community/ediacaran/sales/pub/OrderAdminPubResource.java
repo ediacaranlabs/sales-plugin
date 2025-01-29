@@ -226,7 +226,7 @@ public class OrderAdminPubResource {
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
-			client = clientRegistry.findClientById(order.getOwner());
+			client = clientRegistry.findClientById(order.getClient());
 			shippings = shippingRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){

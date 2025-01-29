@@ -163,7 +163,7 @@ public class OrderPanelPubResource {
 		Client client;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
-			client = clientRegistry.findClientById(order.getOwner());
+			client = clientRegistry.findClientById(order.getClient());
 			invoices = invoiceRegistry.findByOrder(order.getId(), SystemUserRegistry.CURRENT_USER);
 		}
 		catch(Throwable ex){

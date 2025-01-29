@@ -163,7 +163,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			Invoice e = entityAccess.findById(id);
 			
 			if(e != null) {
-				if(systemUser != null && e.getOwner() != systemUser.getId()) {
+				if(systemUser != null && e.getClient() != systemUser.getId()) {
 					return null;
 				}
 			}
@@ -223,7 +223,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		List<Invoice> actualInvoices;
 		
 		Client client = new Client();
-		client.setId(actualOrder.getOwner());
+		client.setId(actualOrder.getClient());
 		actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, client, entityAccess);
 		
 		return createInvoice(actualOrder, actualInvoices);
@@ -251,7 +251,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		try {
 			SystemUser user = new SystemUser();
-			user.setId(order.getOwner());
+			user.setId(order.getClient());
 			invoices = entityAccess.findByOrder(order.getId(), user);
 		}
 		catch (EntityAccessException e) {
@@ -366,7 +366,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			) throws RegistryException, EntityAccessException, ProductTypeHandlerException {
 		
 		Client client = new Client();
-		client.setId(entity.getOwner());
+		client.setId(entity.getClient());
 		
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
@@ -390,7 +390,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 		
 		Client client = new Client();
-		client.setId(entity.getOwner());
+		client.setId(entity.getClient());
 		
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);

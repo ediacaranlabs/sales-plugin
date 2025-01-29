@@ -379,7 +379,7 @@ public class ShippingEntityAccessImp
 					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
 		    
 		    for(ShippingEntity e: list) {
-				SystemUser user = e.getOrder().getOwner().toEntity();
+				SystemUser user = e.getOrder().getClient().toEntity();
 				Client client = Client.toClient(user, entityInheritanceUtil);
 		    	result.add(new ShippingResultSearch(e.toEntity(), client));
 		    }

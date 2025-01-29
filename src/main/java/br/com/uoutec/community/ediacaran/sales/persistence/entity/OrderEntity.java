@@ -36,8 +36,8 @@ public class OrderEntity implements Serializable{
 	private String id;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_owner", updatable = false, referencedColumnName="cod_system_user")
-	private SystemUserEntity owner;
+	@JoinColumn(name="cod_client", updatable = false, referencedColumnName="cod_system_user")
+	private SystemUserEntity client;
 
 	@Column(name="dsc_cartid", length=128)
 	private String cartID;
@@ -105,9 +105,9 @@ public class OrderEntity implements Serializable{
 		this.cartID = e.getCartID();
 		this.id = e.getId();
 		
-		if(e.getOwner() > 0) {
-			this.owner = new SystemUserEntity();
-			this.owner.setId(e.getOwner());
+		if(e.getClient() > 0) {
+			this.client = new SystemUserEntity();
+			this.client.setId(e.getClient());
 		}
 		
 		this.paymentType = e.getPaymentType();
@@ -151,12 +151,12 @@ public class OrderEntity implements Serializable{
 		this.id = id;
 	}
 
-	public SystemUserEntity getOwner() {
-		return owner;
+	public SystemUserEntity getClient() {
+		return client;
 	}
 
-	public void setOwner(SystemUserEntity owner) {
-		this.owner = owner;
+	public void setClient(SystemUserEntity client) {
+		this.client = client;
 	}
 
 	public LocalDateTime getDate() {
@@ -308,8 +308,8 @@ public class OrderEntity implements Serializable{
 		e.setDate(this.date);
 		e.setId(this.id);
 		
-		if(this.owner != null) {
-			e.setOwner(this.owner.getId());
+		if(this.client != null) {
+			e.setClient(this.client.getId());
 		}
 		
 		e.setPayment(this.payment == null? null : this.payment.toEntity());

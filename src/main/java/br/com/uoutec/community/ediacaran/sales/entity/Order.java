@@ -32,7 +32,7 @@ public class Order implements Serializable{
 
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 1, groups = DataValidation.class)
-	private int owner;
+	private int client;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.UUID)
@@ -87,12 +87,12 @@ public class Order implements Serializable{
 		this.id = id;
 	}
 
-	public int getOwner() {
-		return owner;
+	public int getClient() {
+		return client;
 	}
 
-	public void setOwner(int owner) {
-		this.owner = owner;
+	public void setClient(int client) {
+		this.client = client;
 	}
 
 	public String toStringDate(Locale locale) {

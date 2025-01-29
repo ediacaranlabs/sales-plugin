@@ -190,7 +190,7 @@ public class OrderRegistryImp
 			Order order = orderEntityAccess.findById(id);
 			
 			if(order != null) {
-				if(systemUser != null && order.getOwner() != systemUser.getId()) {
+				if(systemUser != null && order.getClient() != systemUser.getId()) {
 					return null;
 				}
 			}
@@ -384,7 +384,7 @@ public class OrderRegistryImp
 		
 		Order order                   = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
-		Client actualUser             = OrderRegistryUtil.getActualClient(order.getOwner(), clientRegistry);
+		Client actualUser             = OrderRegistryUtil.getActualClient(order.getClient(), clientRegistry);
 		
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
 		paymentGateway.payment(new PaymentRequest(actualUser, order.getPayment()));

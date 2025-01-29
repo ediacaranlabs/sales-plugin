@@ -179,7 +179,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 				
 				if(client != null) {
 					Order order = orderregistry.findByCartID(e.getOrder());
-					if(order == null || order.getOwner() != client.getId()) {
+					if(order == null || order.getClient() != client.getId()) {
 						return null;
 					}
 				}
@@ -256,7 +256,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		try {
 			user = new Client();
-			user.setId(actualOrder.getOwner());
+			user.setId(actualOrder.getClient());
 			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, user, entityAccess);
 		}
 		catch(Throwable e) {
@@ -389,7 +389,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			) throws OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
 		
 		Client client = new Client();
-		client.setId(order.getOwner());
+		client.setId(order.getClient());
 
 		OrderRegistry orderRegistry   = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);
@@ -411,7 +411,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			) throws ShippingRegistryException, EntityAccessException, OrderRegistryException, ProductTypeRegistryException, InvoiceRegistryException {
 		
 		Client user = new Client();
-		user.setId(order.getOwner());
+		user.setId(order.getClient());
 		
 		OrderRegistry orderRegistry      = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);

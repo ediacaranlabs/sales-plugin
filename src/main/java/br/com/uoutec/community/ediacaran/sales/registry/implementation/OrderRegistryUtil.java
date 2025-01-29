@@ -70,7 +70,7 @@ public class OrderRegistryUtil {
 		order.setCartID(cart.getId());
 		order.setStatus(OrderStatus.NEW);
 		order.setId(null);
-		order.setOwner(client.getId());
+		order.setClient(client.getId());
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());

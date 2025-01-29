@@ -36,7 +36,7 @@ public class Invoice implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 1, groups = DataValidation.class)
-	private int owner;
+	private int client;
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
@@ -70,12 +70,12 @@ public class Invoice implements Serializable{
 		this.order = order;
 	}
 
-	public int getOwner() {
-		return owner;
+	public int getClient() {
+		return client;
 	}
 
-	public void setOwner(int owner) {
-		this.owner = owner;
+	public void setClient(int owner) {
+		this.client = owner;
 	}
 
 	public LocalDateTime getDate() {
