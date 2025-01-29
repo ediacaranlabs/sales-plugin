@@ -50,6 +50,7 @@ import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.entity.registry.RegistryException;
+import br.com.uoutec.filter.invoker.annotation.EnableFilters;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -86,6 +87,7 @@ public class OrderRegistryImp
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
 	public void registerOrder(Order entity)	throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPermission());
@@ -123,6 +125,7 @@ public class OrderRegistryImp
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
 	public void removeOrder(Order entity) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRemovePermission());
@@ -324,6 +327,7 @@ public class OrderRegistryImp
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
 	public Order createOrder(Cart cart, Payment payment, 
 			String message, PaymentGateway paymentGateway) throws OrderRegistryException {
 		
@@ -373,6 +377,7 @@ public class OrderRegistryImp
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
 	public void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
@@ -432,6 +437,7 @@ public class OrderRegistryImp
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
 	public void createRefound(String orderID, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());

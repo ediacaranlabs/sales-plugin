@@ -10,8 +10,9 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerExcept
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
-public interface ProductTypeHandler {
+public interface ProductTypeHandler extends PublicBean{
 
 	String getProductOrderView();
 	
