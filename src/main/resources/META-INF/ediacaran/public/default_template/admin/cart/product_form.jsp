@@ -2,7 +2,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
-<%@page trimDirectiveWhitespaces="true" %>
+
 <ec:setBundle var="messages" locale="${locale}"/>
 <ed:row>
 	<ed:col>

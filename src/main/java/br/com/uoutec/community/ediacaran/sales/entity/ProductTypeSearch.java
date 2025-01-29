@@ -1,6 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProductTypeSearch {
 
@@ -12,6 +14,12 @@ public class ProductTypeSearch {
 
 	private BigDecimal maxCost;
 
+	private Map<String,String> params;
+	
+	public ProductTypeSearch() {
+		this.params = new HashMap<>();
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -42,6 +50,14 @@ public class ProductTypeSearch {
 
 	public void setMaxCost(BigDecimal maxCost) {
 		this.maxCost = maxCost;
+	}
+	
+	public void set(String name, String value) {
+		params.put(name, value);
+	}
+
+	public String get(String name) {
+		return params.get(name);
 	}
 	
 }

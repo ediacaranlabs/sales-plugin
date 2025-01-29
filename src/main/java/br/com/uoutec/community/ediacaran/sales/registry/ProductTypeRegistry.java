@@ -3,8 +3,9 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
-public interface ProductTypeRegistry {
+public interface ProductTypeRegistry extends PublicBean{
 
 	public static final String PRODUCTTYPE_TOKEN_TYPE = "PRODUCT_ACCESS";
 
