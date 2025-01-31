@@ -37,6 +37,7 @@ import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.entity.registry.RegistryException;
+import br.com.uoutec.filter.invoker.annotation.EnableFilters;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -68,6 +69,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public void registerInvoice(Invoice entity) throws ValidationException, RegistryException, EntityAccessException, ProductTypeHandlerException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRegisterPermission());
@@ -99,6 +101,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException, ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getRemovePermission());
@@ -126,6 +129,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public Invoice findById(String id) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -134,6 +138,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -150,6 +155,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException{
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -176,6 +182,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public InvoicesResultSearch searchInvoice(InvoiceSearch value) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
@@ -197,6 +204,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
 		throws RegistryException, ProductTypeHandlerException{
 		
@@ -212,6 +220,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public Invoice toInvoice(Order order) throws OrderRegistryException, PersistenceInvoiceRegistryException {
 		
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
@@ -232,6 +241,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
@@ -243,6 +253,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
@@ -287,6 +298,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	
 	@Override
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public List<Invoice> findByOrder(String id) throws InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
@@ -301,6 +313,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	@Override
 	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
 	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException{
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
