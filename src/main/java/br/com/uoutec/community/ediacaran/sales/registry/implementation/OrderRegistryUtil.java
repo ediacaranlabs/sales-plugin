@@ -438,6 +438,7 @@ public class OrderRegistryUtil {
 		}
 		
 	}
+	
 	public static Order getActualOrder(Order order, OrderEntityAccess entityAccess) throws OrderNotFoundRegistryException {
 		try{
 			return entityAccess.findById(order.getId());
@@ -445,6 +446,10 @@ public class OrderRegistryUtil {
 		catch(Throwable e){
 			throw new OrderNotFoundRegistryException(order.getId());
 		}
+	}
+
+	public static Order getActualOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		return orderRegistry.findById(order.getId());
 	}
 	
 	public static boolean isCompletedOrder(Order order, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException {
