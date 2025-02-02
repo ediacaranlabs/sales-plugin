@@ -110,15 +110,28 @@ public class OrderRegistryImp
 	}
 
 	private void registryNewOrder(Order entity) 
-					throws PaymentGatewayException, EntityAccessException, ValidationException{
+					throws PaymentGatewayException, EntityAccessException, ValidationException, ClientRegistryException{
 		validateOrder(entity, saveValidations);
 		orderEntityAccess.save(entity);
+		
+		Client client = clientRegistry.findClientById(entity.getClient());
+		orderEntityAccess.saveIndex(entity, client);
+		
 		orderEntityAccess.flush();
 	}
 	
-	private void updateOrder(Order entity) throws EntityAccessException, ValidationException{
+	private void updateOrder(Order entity) throws EntityAccessException, ValidationException, ClientRegistryException{
 		validateOrder(entity, updateValidations);
 		orderEntityAccess.update(entity);
+		
+		Client client = clientRegistry.findClientById(entity.getClient());
+		if(entity.isRemoved()) {
+			orderEntityAccess.deleteIndex(entity, client);
+		}
+		else {
+			orderEntityAccess.updateIndex(entity, client);
+		}
+		
 		orderEntityAccess.flush();
 	}
 	
@@ -223,7 +236,12 @@ public class OrderRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
 		try{
-			return orderEntityAccess.searchOrder(value, first, max);
+			List<OrderResultSearch> result = orderEntityAccess.searchOrder(value, first, max);
+			for(OrderResultSearch e: result) {
+				e.setOrder(orderEntityAccess.findById(e.getOrder().getId()));
+				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
+			}
+			return result;
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);

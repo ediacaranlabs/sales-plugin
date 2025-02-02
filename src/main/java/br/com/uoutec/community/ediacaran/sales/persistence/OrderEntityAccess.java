@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
@@ -22,6 +23,12 @@ public interface OrderEntityAccess {
 	void update(Order value) throws EntityAccessException;
 	
 	void delete(Order value) throws EntityAccessException;
+
+	void saveIndex(Order value, Client client) throws EntityAccessException;
+	
+	void updateIndex(Order value, Client client) throws EntityAccessException;
+	
+	void deleteIndex(Order value, Client client) throws EntityAccessException;
 	
 	List<OrderResultSearch> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws EntityAccessException;
 	

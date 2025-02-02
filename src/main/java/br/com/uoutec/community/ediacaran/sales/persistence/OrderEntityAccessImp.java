@@ -17,6 +17,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
@@ -24,13 +25,13 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
-import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -225,6 +226,36 @@ public class OrderEntityAccessImp
     	}
 	}
 	
+	public void saveIndex(Order value, Client client) throws EntityAccessException {
+		try{
+			OrderIndexEntity pEntity = new OrderIndexEntity(value, client);
+			entityManager.persist(pEntity);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+
+	public void updateIndex(Order value, Client client) throws EntityAccessException {
+		try{
+			OrderIndexEntity pEntity = new OrderIndexEntity(value, client);
+			entityManager.merge(pEntity);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+
+	public void deleteIndex(Order value, Client client) throws EntityAccessException {
+		try{
+			OrderIndexEntity pEntity = new OrderIndexEntity(value, client);
+			entityManager.remove(pEntity);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+	
 	@Override
 	protected OrderEntity toPersistenceEntity(Order entity)
 			throws Throwable {
@@ -260,12 +291,8 @@ public class OrderEntityAccessImp
 	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderEntity> criteria = 
-		    		builder.createQuery(OrderEntity.class);
-		    Root<OrderEntity> from = 
-		    		criteria.from(OrderEntity.class);
-		    Join<OrderEntity, SystemUserEntity> systemUserJoin = from.join("client");
-		    //Join<OrderEntity, PaymentEntity> paymentJoin = from.join("payment");
+		    CriteriaQuery<OrderIndexEntity> criteria = builder.createQuery(OrderIndexEntity.class);
+		    Root<OrderIndexEntity> from = criteria.from(OrderIndexEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -308,7 +335,7 @@ public class OrderEntityAccessImp
 		    }
 		    
 		    if(value.getOwner() != null) {
-			    and.add(builder.equal(systemUserJoin.get("id"), value.getOwner()));
+			    and.add(builder.equal(from.get("id"), value.getOwner()));
 		    }
 
 		    if(value.getStatus() != null) {
@@ -316,7 +343,7 @@ public class OrderEntityAccessImp
 		    }
 		    
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
-			    and.add(builder.like(systemUserJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+			    and.add(builder.like(from.get("clientName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
 		    }
 		    
 		    if(!and.isEmpty()) {
@@ -327,14 +354,13 @@ public class OrderEntityAccessImp
 	    		);
 		    }
 		    
-	    	List<javax.persistence.criteria.Order> orderList = 
-	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	List<javax.persistence.criteria.Order> orderList = new ArrayList<javax.persistence.criteria.Order>();
+	    	
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
 	    	criteria.orderBy(orderList);
 	    	
-		    TypedQuery<OrderEntity> typed = 
-		    		entityManager.createQuery(criteria);
+		    TypedQuery<OrderIndexEntity> typed = entityManager.createQuery(criteria);
 
 
 		    if(first != null) {
@@ -345,12 +371,15 @@ public class OrderEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    
-		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
+		    List<OrderIndexEntity> list = (List<OrderIndexEntity>)typed.getResultList();
 		    List<OrderResultSearch> result = new ArrayList<OrderResultSearch>();
     
-		    for(OrderEntity e: list) {
-		    	result.add(new OrderResultSearch(e.toEntity(), e.getClient().toEntity()));
+		    for(OrderIndexEntity e: list) {
+		    	Order o = new Order();
+		    	o.setId(e.getId());
+		    	Client c = new Client();
+		    	c.setId(e.getClient());
+		    	result.add(new OrderResultSearch(o, c));
 		    }
 		    
 			return result;
@@ -365,10 +394,8 @@ public class OrderEntityAccessImp
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<OrderEntity> criteria = 
-		    		builder.createQuery(OrderEntity.class);
-		    Root<OrderEntity> from = 
-		    		criteria.from(OrderEntity.class);
+		    CriteriaQuery<OrderEntity> criteria = builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = criteria.from(OrderEntity.class);
 		    
 		    criteria.select(from);
 		    
