@@ -27,7 +27,7 @@ import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUser
 @Entity
 @Table(name="rw_order")
 @EntityListeners(OrderEntityListener.class)
-public class OrderEntity implements Serializable{
+public class OrderEntity implements /*PublicType, */Serializable {
 
 	private static final long serialVersionUID = 8764002166887883414L;
 
