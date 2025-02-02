@@ -264,7 +264,7 @@ public class OrderEntityAccessImp
 		    		builder.createQuery(OrderEntity.class);
 		    Root<OrderEntity> from = 
 		    		criteria.from(OrderEntity.class);
-		    Join<OrderEntity, SystemUserEntity> systemUserJoin = from.join("owner");
+		    Join<OrderEntity, SystemUserEntity> systemUserJoin = from.join("client");
 		    //Join<OrderEntity, PaymentEntity> paymentJoin = from.join("payment");
 		    
 		    criteria.select(from);
@@ -375,7 +375,7 @@ public class OrderEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 
 		    if(owner != null) {
-		    	and.add(builder.equal(from.get("owner"), owner));
+		    	and.add(builder.equal(from.get("client"), owner));
 		    }
 		    
 		    if(!and.isEmpty()) {
@@ -431,7 +431,7 @@ public class OrderEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 
 		    if(owner != null) {
-		    	and.add(builder.equal(from.get("owner"), owner));
+		    	and.add(builder.equal(from.get("client"), owner));
 		    }
 
 		    if(status != null) {
