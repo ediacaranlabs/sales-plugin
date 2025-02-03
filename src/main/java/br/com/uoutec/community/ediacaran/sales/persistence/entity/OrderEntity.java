@@ -22,7 +22,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
-import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 
 @Entity
 @Table(name="rw_order")
@@ -36,8 +35,8 @@ public class OrderEntity implements /*PublicType, */Serializable {
 	private String id;
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_client", updatable = false, referencedColumnName="cod_system_user")
-	private SystemUserEntity client;
+	@Column(name="cod_client", updatable = false)
+	private Integer client;
 
 	@Column(name="dsc_cartid", length=128)
 	private String cartID;
@@ -104,12 +103,7 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		this.date = e.getDate();
 		this.cartID = e.getCartID();
 		this.id = e.getId();
-		
-		if(e.getClient() > 0) {
-			this.client = new SystemUserEntity();
-			this.client.setId(e.getClient());
-		}
-		
+		this.client = e.getClient();
 		this.paymentType = e.getPaymentType();
 		this.value = e.getSubtotal();
 		this.discount = e.getDiscount();
@@ -151,11 +145,11 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		this.id = id;
 	}
 
-	public SystemUserEntity getClient() {
+	public Integer getClient() {
 		return client;
 	}
 
-	public void setClient(SystemUserEntity client) {
+	public void setClient(Integer client) {
 		this.client = client;
 	}
 
@@ -307,11 +301,7 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		
 		e.setDate(this.date);
 		e.setId(this.id);
-		
-		if(this.client != null) {
-			e.setClient(this.client.getId());
-		}
-		
+		e.setClient(this.client);
 		e.setPayment(this.payment == null? null : this.payment.toEntity());
 		e.setRemoved(this.removed == null? false : this.removed);
 		e.setStatus(this.status);
@@ -331,16 +321,6 @@ public class OrderEntity implements /*PublicType, */Serializable {
 			e.setItens(l);
 		}
 
-		/*
-		if(this.invoices != null){
-			List<Invoice> l = new ArrayList<Invoice>();
-			for(InvoiceEntity k: this.invoices){
-				l.add(k.toEntity());
-			}
-			e.setInvoice(l);
-		}
-		*/
-		
 		if(this.taxes != null){
 			List<Tax> tax = new ArrayList<Tax>();
 			e.setTaxes(tax);

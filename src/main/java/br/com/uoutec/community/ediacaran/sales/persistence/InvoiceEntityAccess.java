@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
@@ -18,6 +19,12 @@ public interface InvoiceEntityAccess {
 	void update(Invoice value) throws EntityAccessException;
 	
 	void delete(Invoice value) throws EntityAccessException;
+	
+	void saveIndex(Invoice value, Client client) throws EntityAccessException;
+
+	void updateIndex(Invoice value, Client client) throws EntityAccessException;
+
+	void deleteIndex(Invoice value, Client client) throws EntityAccessException;
 	
 	List<Invoice> getList(Integer first, Integer max, SystemUser user) throws EntityAccessException;
 	

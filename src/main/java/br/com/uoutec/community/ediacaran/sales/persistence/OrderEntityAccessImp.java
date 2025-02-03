@@ -375,11 +375,7 @@ public class OrderEntityAccessImp
 		    List<OrderResultSearch> result = new ArrayList<OrderResultSearch>();
     
 		    for(OrderIndexEntity e: list) {
-		    	Order o = new Order();
-		    	o.setId(e.getId());
-		    	Client c = new Client();
-		    	c.setId(e.getClient());
-		    	result.add(new OrderResultSearch(o, c));
+		    	result.add(e.toEntity());
 		    }
 		    
 			return result;

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
@@ -128,6 +129,28 @@ public class OrderIndexEntity implements Serializable {
 		this.total = total;
 	}
 
+	public OrderResultSearch toEntity() {
+		return toEntity(null);
+	}
+	
+	public OrderResultSearch toEntity(OrderResultSearch e) {
+		
+		if(e == null) {
+			e = new OrderResultSearch(null, null);
+		}
+		
+		Order o = new Order();
+		o.setId(id);
+		
+		Client client = new Client();
+		client.setId(this.client);
+		
+		e.setOrder(o);
+		e.setOwner(client);
+		
+		return e;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

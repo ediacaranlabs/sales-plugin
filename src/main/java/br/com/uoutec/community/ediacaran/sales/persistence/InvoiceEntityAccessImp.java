@@ -16,10 +16,12 @@ import javax.persistence.criteria.Root;
 
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
@@ -151,6 +153,36 @@ public class InvoiceEntityAccessImp
     	}
 	}
 	
+	public void saveIndex(Invoice value, Client client) throws EntityAccessException {
+		try{
+			InvoiceIndexEntity pEntity = new InvoiceIndexEntity(value, client);
+			entityManager.persist(pEntity);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+
+	public void updateIndex(Invoice value, Client client) throws EntityAccessException {
+		try{
+			InvoiceIndexEntity pEntity = new InvoiceIndexEntity(value, client);
+			entityManager.merge(pEntity);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+
+	public void deleteIndex(Invoice value, Client client) throws EntityAccessException {
+		try{
+			InvoiceIndexEntity pEntity = new InvoiceIndexEntity(value, client);
+			entityManager.remove(pEntity);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+		
 	@Override
 	protected InvoiceEntity toPersistenceEntity(Invoice entity)
 			throws Throwable {
@@ -293,12 +325,8 @@ public class InvoiceEntityAccessImp
 	public List<InvoiceResultSearch> search(InvoiceSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<InvoiceEntity> criteria = 
-		    		builder.createQuery(InvoiceEntity.class);
-		    Root<InvoiceEntity> from = 
-		    		criteria.from(InvoiceEntity.class);
-		    Join<InvoiceEntity, SystemUserEntity> systemUserJoin = from.join("owner");
-		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
+		    CriteriaQuery<InvoiceIndexEntity> criteria =	builder.createQuery(InvoiceIndexEntity.class);
+		    Root<InvoiceIndexEntity> from = criteria.from(InvoiceIndexEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -318,7 +346,7 @@ public class InvoiceEntityAccessImp
 		    }
 		    
 		    if(value.getOrder() != null) {
-		    	and.add(builder.equal(orderJoin.get("id"), value.getOrder()));
+		    	and.add(builder.equal(from.get("order"), value.getOrder()));
 		    }
 		    
 		    if(value.getStartDate() != null || value.getEndDate() != null) {
@@ -354,11 +382,11 @@ public class InvoiceEntityAccessImp
 		    }
 		    
 		    if(value.getOwner() != null) {
-			    and.add(builder.equal(systemUserJoin.get("id"), value.getOwner()));
+			    and.add(builder.equal(from.get("client"), value.getOwner()));
 		    }
 
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
-			    and.add(builder.like(systemUserJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+			    and.add(builder.like(from.get("clientName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
 		    }
 		    
 		    if(!and.isEmpty()) {
@@ -373,8 +401,7 @@ public class InvoiceEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<InvoiceEntity> typed = 
-		    		entityManager.createQuery(criteria);
+		    TypedQuery<InvoiceIndexEntity> typed = entityManager.createQuery(criteria);
 
 
 		    if(first != null) {
@@ -385,11 +412,11 @@ public class InvoiceEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<InvoiceEntity> list = (List<InvoiceEntity>)typed.getResultList();
+		    List<InvoiceIndexEntity> list = (List<InvoiceIndexEntity>)typed.getResultList();
 		    List<InvoiceResultSearch> result = new ArrayList<InvoiceResultSearch>();
     
-		    for(InvoiceEntity e: list) {
-		    	result.add(new InvoiceResultSearch(e.toEntity(), e.getClient().toEntity()));
+		    for(InvoiceIndexEntity e: list) {
+		    	result.add(e.toEntity());
 		    }
 		    
 			return result;
