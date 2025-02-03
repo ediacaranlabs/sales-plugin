@@ -30,7 +30,7 @@ public class OrderIndexEntity implements Serializable {
 	@Column(name="cod_order", length=38)
 	private String id;
 
-	@Column(name="dsc_client", length=255)
+	@Column(name="dsc_client")
 	private Integer client;
 	
 	@Column(name="dsc_client_name", length=255)

@@ -452,6 +452,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		return ()->jaaPrincipal.getName();
 	}
-	
+
 	
 }
