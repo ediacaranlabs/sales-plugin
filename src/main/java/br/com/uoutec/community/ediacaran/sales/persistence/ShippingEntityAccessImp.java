@@ -24,12 +24,10 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingEntity;
-import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingIndexEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -305,12 +303,8 @@ public class ShippingEntityAccessImp
 	public List<ShippingResultSearch> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<ShippingEntity> criteria = 
-		    		builder.createQuery(ShippingEntity.class);
-		    Root<ShippingEntity> from = 
-		    		criteria.from(ShippingEntity.class);
-		    Join<ShippingEntity, OrderEntity> orderJoin = from.join("order");
-		    Join<OrderEntity, SystemUserEntity> userJoin = orderJoin.join("owner");
+		    CriteriaQuery<ShippingIndexEntity> criteria = builder.createQuery(ShippingIndexEntity.class);
+		    Root<ShippingIndexEntity> from = criteria.from(ShippingIndexEntity.class);
 		    
 		    criteria.select(from);
 		    
@@ -321,7 +315,7 @@ public class ShippingEntityAccessImp
 		    }
 
 		    if(value.getOrder() != null) {
-		    	and.add(builder.equal(orderJoin.get("id"), value.getOrder()));
+		    	and.add(builder.equal(from.get("order"), value.getOrder()));
 		    }
 		    
 		    if(value.getStartDate() != null || value.getEndDate() != null) {
@@ -341,11 +335,11 @@ public class ShippingEntityAccessImp
 		    }
 
 		    if(value.getOwner() != null) {
-			    and.add(builder.equal(userJoin.get("id"), value.getOwner()));
+			    and.add(builder.equal(from.get("client"), value.getOwner()));
 		    }
 
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
-			    and.add(builder.like(userJoin.get("searchName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+			    and.add(builder.like(from.get("clientName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
 		    }
 		    
 		    if(!and.isEmpty()) {
@@ -360,8 +354,7 @@ public class ShippingEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
-		    TypedQuery<ShippingEntity> typed = 
-		    		entityManager.createQuery(criteria);
+		    TypedQuery<ShippingIndexEntity> typed = entityManager.createQuery(criteria);
 
 
 		    if(first != null) {
@@ -372,16 +365,11 @@ public class ShippingEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<ShippingEntity> list = (List<ShippingEntity>)typed.getResultList();
+		    List<ShippingIndexEntity> list = (List<ShippingIndexEntity>)typed.getResultList();
 		    List<ShippingResultSearch> result = new ArrayList<ShippingResultSearch>();
 
-			EntityInheritanceManager entityInheritanceUtil = 
-					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-		    
-		    for(ShippingEntity e: list) {
-				SystemUser user = e.getOrder().getClient().toEntity();
-				Client client = Client.toClient(user, entityInheritanceUtil);
-		    	result.add(new ShippingResultSearch(e.toEntity(), client));
+		    for(ShippingIndexEntity e: list) {
+		    	result.add(e.toEntity());
 		    }
 		    
 			return result;

@@ -206,6 +206,11 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			int maxResults = maxItens + 1;
 			List<ShippingResultSearch> itens = entityAccess.search(value, firstResult, maxResults);
 			
+			for(ShippingResultSearch e: itens) {
+				e.setShipping(entityAccess.findById(e.getShipping().getId()));
+				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
+			}
+			
 			return new ShippingsResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
 		}
 		catch(Throwable e){

@@ -140,4 +140,30 @@ public class Address implements Serializable{
 		this.zip = zip;
 	}
 	
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		
+		if(addressLine1 != null) {
+			builder = builder.length() == 0? builder.append(addressLine1) : builder.append(" ").append(addressLine1);
+		}
+		
+		if(addressLine2 != null) {
+			builder = builder.length() == 0? builder.append(addressLine2) : builder.append(" ").append(addressLine2);
+		}
+		
+		if(region != null) {
+			builder = builder.length() == 0? builder.append(region) : builder.append(" ").append(region);
+		}
+
+		if(city != null) {
+			builder = builder.length() == 0? builder.append(city) : builder.append(" ").append(city);
+		}
+		
+		if(country != null) {
+			builder = builder.length() == 0? builder.append(country.getName()) : builder.append(" ").append(country.getName());
+		}
+		
+		return builder.toString();
+	}
+
 }

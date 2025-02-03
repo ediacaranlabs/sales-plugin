@@ -59,6 +59,9 @@ public class ShippingEntity implements Serializable{
 	@JoinColumn(name = "cod_order", referencedColumnName = "cod_order" )
 	private OrderEntity order;
 
+	@Column(name="cod_client",  updatable = false)
+	private Integer client;
+	
 	@Column(name="dat_created")
 	private LocalDateTime date;
 
@@ -113,6 +116,7 @@ public class ShippingEntity implements Serializable{
 		this.date = e.getDate();
 		this.cancelDate = e.getCancelDate();
 		this.cancelJustification = e.getCancelJustification();
+		this.client = e.getClient();
 		
 		this.depth = e.getDepth();
 		this.height = e.getHeight();
@@ -146,6 +150,30 @@ public class ShippingEntity implements Serializable{
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Integer getClient() {
+		return client;
+	}
+
+	public void setClient(Integer client) {
+		this.client = client;
+	}
+
+	public LocalDateTime getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(LocalDateTime cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public String getCancelJustification() {
+		return cancelJustification;
+	}
+
+	public void setCancelJustification(String cancelJustification) {
+		this.cancelJustification = cancelJustification;
 	}
 
 	public String getShippingType() {

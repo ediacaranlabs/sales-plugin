@@ -31,7 +31,6 @@ public class InvoiceIndexEntity implements Serializable{
 	@Column(name="dat_date")
 	private LocalDateTime date;
 
-	@ManyToOne(fetch=FetchType.EAGER)
 	@Column(name="cod_client",  updatable = false)
 	private Integer client;
 	

@@ -18,5 +18,13 @@ public class ShippingResultSearch {
 	public Client getOwner() {
 		return owner;
 	}
+
+	public void setShipping(Shipping shipping) {
+		this.shipping = shipping;
+	}
+
+	public void setOwner(Client owner) {
+		this.owner = owner;
+	}
 	
 }

@@ -36,6 +36,10 @@ public class Shipping implements Serializable{
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
+	@Min(value = 1, groups = DataValidation.class)
+	private int client;
+	
+	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
 	@NotNull(groups = ShippingCancelValidation.class)
@@ -116,6 +120,14 @@ public class Shipping implements Serializable{
 
 	public void setOrigin(Address origin) {
 		this.origin = origin;
+	}
+
+	public int getClient() {
+		return client;
+	}
+
+	public void setClient(int client) {
+		this.client = client;
 	}
 
 	public Address getDest() {
