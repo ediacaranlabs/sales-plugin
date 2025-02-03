@@ -57,10 +57,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
 	
-	@Inject
-	private ClientRegistry clientRegistry;
-	
-	@Inject
 	private ProductTypeRegistry productTypeRegistry;
 
 	@Inject
@@ -194,6 +190,13 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
 			List<InvoiceResultSearch> itens = entityAccess.search(value, firstResult, maxResults);
+			ClientRegistry clientRegistry   = EntityContextPlugin.getEntity(ClientRegistry.class);
+			
+			for(InvoiceResultSearch e: itens) {
+				e.setInvoice(entityAccess.findById(e.getInvoice().getId()));
+				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
+			}
+			
 			return new InvoicesResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
 		}
 		catch(Throwable e){
@@ -283,6 +286,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		LocalDateTime cancelDate          = LocalDateTime.now();
 		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		ClientRegistry clientRegistry     = EntityContextPlugin.getEntity(ClientRegistry.class);
 		
 		for(Entry<String,List<Invoice>> entry: map.entrySet()) {
 			
@@ -290,7 +294,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			order.setId(entry.getKey());
 			
 			InvoiceRegistryUtil.cancelInvoices(invoices, order, justification, 
-					cancelDate, orderRegistry, shippingRegistry, entityAccess);
+					cancelDate, orderRegistry, shippingRegistry, entityAccess, clientRegistry);
 			
 		}
 		
@@ -381,6 +385,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Client client = new Client();
 		client.setId(entity.getClient());
 		
+		ClientRegistry clientRegistry      = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
@@ -393,7 +398,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
 		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
-		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess);
+		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess, clientRegistry);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
@@ -405,6 +410,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Client client = new Client();
 		client.setId(entity.getClient());
 		
+		ClientRegistry clientRegistry      = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
@@ -415,7 +421,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		
 		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
-		InvoiceRegistryUtil.update(entity, order, entityAccess);
+		InvoiceRegistryUtil.update(entity, order, entityAccess, clientRegistry);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 	}

@@ -308,9 +308,13 @@ public class InvoiceRegistryUtil {
 		}
 	}
 	
-	public static void save(Invoice invoice, Order order, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+	public static void save(Invoice invoice, Order order, InvoiceEntityAccess entityAccess, ClientRegistry clientRegistry) throws InvoiceRegistryException {
 		try {
 			entityAccess.save(invoice);
+			
+			Client client = clientRegistry.findClientById(invoice.getClient());
+			entityAccess.saveIndex(invoice, client);
+			
 			entityAccess.flush();
 		}
 		catch(Throwable e){
@@ -319,9 +323,13 @@ public class InvoiceRegistryUtil {
 		}
 	}
 
-	public static void update(Invoice invoice, Order order, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+	public static void update(Invoice invoice, Order order, InvoiceEntityAccess entityAccess, ClientRegistry clientRegistry) throws InvoiceRegistryException {
 		try {
 			entityAccess.update(invoice);
+			
+			Client client = clientRegistry.findClientById(invoice.getClient());
+			entityAccess.saveIndex(invoice, client);
+			
 			entityAccess.flush();
 		}
 		catch(Throwable e){
@@ -364,7 +372,7 @@ public class InvoiceRegistryUtil {
 
 	public static void cancelInvoices(List<Invoice> invoices, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		
@@ -376,7 +384,7 @@ public class InvoiceRegistryUtil {
 			i.setCancelDate(cancelDate);
 			i.setCancelJustification(justification);
 			
-			update(i, actualOrder, entityAccess);
+			update(i, actualOrder, entityAccess, clientRegistry);
 			
 			orderRegistry.registryLog(actualOrder.getId(), "canceled invoice #" + i.getId() + ": " +  justification);
 			
