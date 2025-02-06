@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -231,17 +232,25 @@ public class OrderRegistryImp
 	
 	@Override
 	@ActivateRequestContext
-	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws OrderRegistryException {
+	public OrdersResultSearch searchOrder(OrderSearch value) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
 		try{
-			List<OrderResultSearch> result = orderEntityAccess.searchOrder(value, first, max);
-			for(OrderResultSearch e: result) {
+			int page = value.getPage() == null? 1 : value.getPage().intValue();
+			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<OrderResultSearch> itens = orderEntityAccess.searchOrder(value, firstResult, maxResults);
+			ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
+			
+			for(OrderResultSearch e: itens) {
 				e.setOrder(orderEntityAccess.findById(e.getOrder().getId()));
 				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
 			}
-			return result;
+			
+			return new OrdersResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);

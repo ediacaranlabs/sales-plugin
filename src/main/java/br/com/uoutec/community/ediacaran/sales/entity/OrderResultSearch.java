@@ -1,8 +1,10 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import java.io.Serializable;
 
-public class OrderResultSearch {
+public class OrderResultSearch implements Serializable {
+
+	private static final long serialVersionUID = 9166429937476180931L;
 
 	private Order order;
 	
@@ -21,12 +23,13 @@ public class OrderResultSearch {
 		this.order = order;
 	}
 
-	public SystemUser getOwner() {
+	public Client getOwner() {
 		return owner;
 	}
 
 	public void setOwner(Client owner) {
 		this.owner = owner;
 	}
+	
 	
 }

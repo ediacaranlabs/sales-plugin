@@ -20,7 +20,7 @@ import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEn
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -288,7 +288,7 @@ public class OrderEntityAccessImp
 		return value;
 	}
 
-	public List<OrderResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws EntityAccessException {
+	public List<OrdersResultSearch> searchOrder(OrderSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<OrderIndexEntity> criteria = builder.createQuery(OrderIndexEntity.class);
@@ -372,7 +372,7 @@ public class OrderEntityAccessImp
 		    }
 		    
 		    List<OrderIndexEntity> list = (List<OrderIndexEntity>)typed.getResultList();
-		    List<OrderResultSearch> result = new ArrayList<OrderResultSearch>();
+		    List<OrdersResultSearch> result = new ArrayList<OrdersResultSearch>();
     
 		    for(OrderIndexEntity e: list) {
 		    	result.add(e.toEntity());

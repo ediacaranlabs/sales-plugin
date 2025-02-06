@@ -3,7 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.util.List;
 
-public class OrderSearchResult implements Serializable {
+public class OrdersResultSearch implements Serializable {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
@@ -13,9 +13,9 @@ public class OrderSearchResult implements Serializable {
 	
 	private int page;
 	
-	private List<OrderResult> data;
+	private List<OrderResultSearch> data;
 
-	public OrderSearchResult(int maxPages, int page, boolean hasNextPage, List<OrderResult> data) {
+	public OrdersResultSearch(boolean hasNextPage, int maxPages, int page, List<OrderResultSearch> data) {
 		super();
 		this.maxPages = maxPages;
 		this.page = page;
@@ -39,11 +39,11 @@ public class OrderSearchResult implements Serializable {
 		this.page = page;
 	}
 
-	public List<OrderResult> getData() {
+	public List<OrderResultSearch> getData() {
 		return data;
 	}
 
-	public void setData(List<OrderResult> data) {
+	public void setData(List<OrderResultSearch> data) {
 		this.data = data;
 	}
 

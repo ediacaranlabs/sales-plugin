@@ -32,10 +32,10 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResult;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -147,12 +147,12 @@ public class OrderAdminPubResource {
 			int page = request.getPage() == null? 0 : request.getPage();
 			int firstResult = (page-1)*10;
 			int maxResult = 11;
-			List<OrderResultSearch> values = orderRegistry.searchOrder(orderSearch, firstResult, maxResult);
+			List<OrdersResultSearch> values = orderRegistry.searchOrder(orderSearch, firstResult, maxResult);
 			
-			List<OrderResult> result = values.stream()
-					.map((e)->new OrderResult(e, locale, dtaFormt)).collect(Collectors.toList());
+			List<OrderResultSearch> result = values.stream()
+					.map((e)->new OrderResultSearch(e, locale, dtaFormt)).collect(Collectors.toList());
 			
-			return new OrderSearchResult(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
+			return new OrdersResultSearch(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
