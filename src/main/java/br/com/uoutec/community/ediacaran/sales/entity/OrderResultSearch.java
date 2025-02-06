@@ -6,9 +6,9 @@ public class OrderResultSearch {
 
 	private Order order;
 	
-	private SystemUser owner;
+	private Client owner;
 
-	public OrderResultSearch(Order order, SystemUser owner) {
+	public OrderResultSearch(Order order, Client owner) {
 		this.order = order;
 		this.owner = owner;
 	}
@@ -25,7 +25,7 @@ public class OrderResultSearch {
 		return owner;
 	}
 
-	public void setOwner(SystemUser owner) {
+	public void setOwner(Client owner) {
 		this.owner = owner;
 	}
 	
