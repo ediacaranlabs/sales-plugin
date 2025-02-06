@@ -1,14 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,16 +28,15 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPanelPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPanelPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrdersResultSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -125,16 +121,8 @@ public class OrderPanelPubResource {
 		
 		
 		try{
-			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
-			int page = request.getPage() == null? 0 : request.getPage();
-			int firstResult = (page-1)*10;
-			int maxResult = 11;
-			List<OrdersResultSearch> values = orderRegistry.searchOrder(orderSearch, firstResult, maxResult);
-			
-			List<OrderResultSearch> result = values.stream()
-					.map((e)->new OrderResultSearch(e, locale, dtaFormt)).collect(Collectors.toList());
-			
-			return new OrdersResultSearch(-1, page, result.size() > 10, result.size() > 10? result.subList(0, 9) : result);
+			OrdersResultSearch values = orderRegistry.searchOrder(orderSearch);
+			return new OrdersResultSearchPubEntity(values, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
