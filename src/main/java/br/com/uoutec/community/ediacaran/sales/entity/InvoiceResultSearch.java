@@ -1,14 +1,12 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-
 public class InvoiceResultSearch {
 
 	private Invoice invoice;
 	
-	private SystemUser owner;
+	private Client owner;
 
-	public InvoiceResultSearch(Invoice invoice, SystemUser owner) {
+	public InvoiceResultSearch(Invoice invoice, Client owner) {
 		this.invoice = invoice;
 		this.owner = owner;
 	}
@@ -21,11 +19,11 @@ public class InvoiceResultSearch {
 		this.invoice = invoice;
 	}
 
-	public SystemUser getOwner() {
+	public Client getOwner() {
 		return owner;
 	}
 
-	public void setOwner(SystemUser owner) {
+	public void setOwner(Client owner) {
 		this.owner = owner;
 	}
 	
