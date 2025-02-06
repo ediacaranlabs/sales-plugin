@@ -75,7 +75,7 @@ public class ProductEntity implements Serializable,PublicType{
 		}
 		
 		if(e.getName() != null) {
-			this.name = StringUtil.toSearch(e.getName());
+			this.nameSearch = StringUtil.toSearch(e.getName());
 		}
 
 	}
