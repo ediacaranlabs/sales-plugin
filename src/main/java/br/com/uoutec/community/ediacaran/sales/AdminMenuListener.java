@@ -65,7 +65,7 @@ public class AdminMenuListener
 				.setName("Sales")
 				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.name)
-				.setRole(BasicRoles.USER)
+				.setRole(BasicRoles.USER, BasicRoles.MANAGER)
 				.setPermission(SalesUserPermissions.ORDER.ALL)
 				.addItem("orders")
 					.setIcon("circle")
@@ -73,7 +73,7 @@ public class AdminMenuListener
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.orders)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders")
-					.setRole(BasicRoles.USER)
+					.setRole(BasicRoles.USER, BasicRoles.MANAGER)
 					.setPermission(SalesUserPermissions.ORDER.SHOW)
 				.getParent()
 					.addItem("invoices")
@@ -82,7 +82,7 @@ public class AdminMenuListener
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.invoices)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices")
-					.setRole(BasicRoles.USER)
+					.setRole(BasicRoles.USER, BasicRoles.MANAGER)
 					.setPermission(SalesUserPermissions.ORDER.SHOW)
 				.getParent()
 					.addItem("clients")
@@ -91,8 +91,17 @@ public class AdminMenuListener
 					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.clients)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/clients")
-					.setRole(BasicRoles.USER)
-					.setPermission(SalesUserPermissions.CLIENT.SHOW);
+					.setRole(BasicRoles.USER, BasicRoles.MANAGER)
+					.setPermission(SalesUserPermissions.CLIENT.SHOW)
+				.getParent()
+					.addItem("products")
+					.setIcon("circle")
+					.setName("Products")
+					.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.products)
+					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products")
+					.setRole(BasicRoles.USER, BasicRoles.MANAGER)
+					.setPermission(SalesUserPermissions.PRODUCT.SHOW);
 		}
 		
 	}
