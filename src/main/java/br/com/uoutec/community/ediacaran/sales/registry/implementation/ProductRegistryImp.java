@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Default;
@@ -24,7 +25,7 @@ public class ProductRegistryImp
 	@Inject
 	private ProductEntityAccess entityAccess;
 	
-	public void registerProduct(Product entity) throws ProductRegistryException{
+	public void registerProduct(Product entity) throws ProductRegistryException {
 		try{
 			
 			if(entity.getId() > 0){
@@ -77,7 +78,12 @@ public class ProductRegistryImp
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<Product> products = entityAccess.searchProduct(value, firstResult, maxResults);
+			List<Product> list = entityAccess.searchProduct(value, firstResult, maxResults);
+			List<Product> products = new ArrayList<>();
+			
+			for(Product e: list) {
+				products.add(entityAccess.findById(e.getId()));
+			}
 			
 			return new ProductSearchResult(products.size() > maxItens, -1, page, products.size() > maxItens? products.subList(0, maxItens -1) : products);
 		}

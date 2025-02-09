@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductIndexEntity;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -37,21 +38,19 @@ public class ProductEntityAccessImp
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<ProductEntity> criteria = 
-		    		builder.createQuery(ProductEntity.class);
-		    Root<ProductEntity> from = 
-		    		criteria.from(ProductEntity.class);
+		    CriteriaQuery<ProductIndexEntity> criteria = builder.createQuery(ProductIndexEntity.class);
+		    Root<ProductIndexEntity> from = 	criteria.from(ProductIndexEntity.class);
 		    
 		    criteria.select(from);
 		    
 		    List<Predicate> and = new ArrayList<Predicate>();
 
 		    if(value.getDescription() != null) {
-		    	and.add(builder.equal(from.get("descriptionSearch"), StringUtil.toSearch(value.getDescription())));
+		    	and.add(builder.equal(from.get("description"), StringUtil.toSearch(value.getDescription())));
 		    }
 
 		    if(value.getName() != null) {
-		    	and.add(builder.equal(from.get("nameSearch"), StringUtil.toSearch(value.getName())));
+		    	and.add(builder.equal(from.get("name"), StringUtil.toSearch(value.getName())));
 		    }
 		    
 		    if(value.getMinCost() != null || value.getMaxCost() != null) {
@@ -86,8 +85,7 @@ public class ProductEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.asc(from.get("name")));
 	    	
-		    TypedQuery<ProductEntity> typed = 
-		    		entityManager.createQuery(criteria);
+		    TypedQuery<ProductIndexEntity> typed = entityManager.createQuery(criteria);
 
 
 		    if(first != null) {
@@ -98,10 +96,10 @@ public class ProductEntityAccessImp
 			    typed.setMaxResults(max);		    	
 		    }
 		    
-		    List<ProductEntity> list = (List<ProductEntity>)typed.getResultList();
+		    List<ProductIndexEntity> list = (List<ProductIndexEntity>)typed.getResultList();
 		    List<Product> result = new ArrayList<Product>();
     
-		    for(ProductEntity e: list) {
+		    for(ProductIndexEntity e: list) {
 		    	result.add(e.toEntity());
 		    }
 		    
