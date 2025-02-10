@@ -342,7 +342,7 @@ public class CartPubResource {
 	
 	public String getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
-			return productTypeRegistry.getProductType(code).getHandler().getProductCartView();
+			return productTypeRegistry.getProductType(code).getViewHandler().getProductCartView();
 		}
 		catch(Throwable e) {
 			return null;

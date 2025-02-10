@@ -3,8 +3,6 @@ package br.com.uoutec.community.ediacaran.sales;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductTypeSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductTypeSearchResult;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
@@ -14,14 +12,6 @@ import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 public interface ProductTypeHandler extends PublicBean{
 
-	String getProductOrderView();
-	
-	String getProductFormView();
-	
-	String getProductCartView();
-	
-	ProductTypeSearchResult search(ProductTypeSearch value, int page, int maxItensPerPage);
-	
 	/* cart */
 	
 	void addItem(Cart cart, ItensCollection itens, ProductRequest productRequest) 

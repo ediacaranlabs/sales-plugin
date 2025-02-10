@@ -26,7 +26,7 @@ import org.brandao.brutos.web.HttpStatus;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
-import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.ProductTypeViewHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
@@ -137,12 +137,12 @@ public class ProductsCartAdminPubResource {
 			Locale locale) throws InvalidRequestException{
 
 		Product product;
-		ProductTypeHandler productTypeHandler;
+		ProductTypeViewHandler productTypeViewHandler;
 		try{
 			product = productPubEntity.rebuild(true, false, false);
 			
 			ProductType productType = productTypeRegistry.getProductType(product.getProductType());
-			productTypeHandler = productType.getHandler();
+			productTypeViewHandler = productType.getViewHandler();
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(ProductsCartAdminPubResource.class, "productForm", "loadData", locale, ex);
@@ -152,7 +152,7 @@ public class ProductsCartAdminPubResource {
 		ResultAction ra = new ResultActionImp();
 		
 		try{
-			String view = productTypeHandler.getProductFormView();
+			String view = productTypeViewHandler.getProductFormView();
 			
 			if(view != null){
 				ra.setView(view, true);

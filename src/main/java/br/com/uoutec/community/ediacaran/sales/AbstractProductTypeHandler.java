@@ -7,8 +7,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerExcept
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.ediacaran.core.VarParser;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public abstract class AbstractProductTypeHandler 
 	implements ProductTypeHandler{
@@ -69,24 +67,6 @@ public abstract class AbstractProductTypeHandler
 	@Override
 	public void postRegisterOrder(SystemUser user, Cart cart, ProductRequest productRequest)
 			throws ProductTypeHandlerException {
-	}
-	
-	@Override
-	public String getProductFormView() {
-		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		return varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/cart/product_form.jsp");
-	}
-	
-	@Override
-	public String getProductCartView() {
-		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		return varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/front/cart/product.jsp");
-	}
-	
-	@Override
-	public String getProductOrderView() {
-		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		return varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/cart/product.jsp");
 	}
 	
 }

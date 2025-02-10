@@ -30,7 +30,7 @@ import org.brandao.brutos.web.HttpStatus;
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.sales.ClientEntityTypes;
-import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
+import br.com.uoutec.community.ediacaran.sales.ProductTypeViewHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
@@ -47,8 +47,8 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
-import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.user.entity.RequestProperties;
@@ -149,21 +149,21 @@ public class CartAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 		
-		ProductRequest product 					= null;
-		ProductTypeHandler productTypeHandler	= null;
-		Throwable exception 					= null;
-		String view 							= null;
-		boolean resolvedView 					= false;
+		ProductRequest product 							= null;
+		ProductTypeViewHandler productTypeViewHandler	= null;
+		Throwable exception 							= null;
+		String view 									= null;
+		boolean resolvedView 							= false;
 		
 		try{
 			product 				= adminCart.getCart().get(productIndex);
 			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
-			productTypeHandler 		= productType.getHandler();
+			productTypeViewHandler 		= productType.getViewHandler();
 			
 			cartService.setQuantity(adminCart.getCart(), productIndex, qty);
 			
-			if(productTypeHandler != null) {
-				view         = productTypeHandler.getProductOrderView();
+			if(productTypeViewHandler != null) {
+				view         = productTypeViewHandler.getProductOrderView();
 				resolvedView = true;
 			}
 			
@@ -332,7 +332,7 @@ public class CartAdminPubResource {
 
 	public String getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
-			return productTypeRegistry.getProductType(code).getHandler().getProductOrderView();
+			return productTypeRegistry.getProductType(code).getViewHandler().getProductOrderView();
 		}
 		catch(Throwable e) {
 			return null;
@@ -348,18 +348,18 @@ public class CartAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
 
-		ProductRequest product 					= null;
-		ProductTypeHandler productTypeHandler	= null;
-		String view 							= null;
-		boolean resolvedView 					= false;
-		Throwable exception 					= null;
+		ProductRequest product 							= null;
+		ProductTypeViewHandler productTypeViewHandler	= null;
+		String view 									= null;
+		boolean resolvedView 							= false;
+		Throwable exception 							= null;
 		
 		try{
-			product 				= adminCart.getCart().get(serial);
-			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
-			productTypeHandler 		= productType.getHandler();
-			view 					= productTypeHandler.getProductOrderView();
-			resolvedView 			= true;
+			product 					= adminCart.getCart().get(serial);
+			ProductType productType 	= productTypeRegistry.getProductType(product.getProduct().getProductType());
+			productTypeViewHandler 		= productType.getViewHandler();
+			view 						= productTypeViewHandler.getProductOrderView();
+			resolvedView 				= true;
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "loadData", locale, ex);
