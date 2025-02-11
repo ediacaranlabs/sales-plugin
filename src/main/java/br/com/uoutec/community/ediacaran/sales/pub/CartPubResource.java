@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Actions;
 import org.brandao.brutos.annotation.Basic;
@@ -340,9 +341,9 @@ public class CartPubResource {
 		
 	}
 	
-	public String getProductCartView(String code) throws ProductTypeRegistryException {
+	public ResultAction getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
-			return productTypeRegistry.getProductType(code).getViewHandler().getProductCartView();
+			return productTypeRegistry.getProductType(code).getViewHandler().getProductCartView(code);
 		}
 		catch(Throwable e) {
 			return null;

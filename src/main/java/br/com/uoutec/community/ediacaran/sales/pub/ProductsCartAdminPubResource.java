@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.brandao.brutos.ResultAction;
-import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
@@ -149,19 +148,10 @@ public class ProductsCartAdminPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 
-		ResultAction ra = new ResultActionImp();
+		ResultAction ra;
 		
 		try{
-			String view = productTypeViewHandler.getProductFormView();
-			
-			if(view != null){
-				ra.setView(view, true);
-			}
-			else{
-				ra.setContentType(String.class);
-				ra.setContent("");
-			}
-			
+			ra = productTypeViewHandler.getProductFormView(productPubEntity, locale);
 			ra.add("product", product);
 		}
 		catch(Throwable ex){

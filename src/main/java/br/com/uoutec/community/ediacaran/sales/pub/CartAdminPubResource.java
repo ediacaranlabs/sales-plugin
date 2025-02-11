@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.brandao.brutos.ResultAction;
-import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Actions;
 import org.brandao.brutos.annotation.Basic;
@@ -152,35 +151,20 @@ public class CartAdminPubResource {
 		ProductRequest product 							= null;
 		ProductTypeViewHandler productTypeViewHandler	= null;
 		Throwable exception 							= null;
-		String view 									= null;
-		boolean resolvedView 							= false;
+		ResultAction ra									= null;
 		
 		try{
 			product 				= adminCart.getCart().get(productIndex);
 			ProductType productType = productTypeRegistry.getProductType(product.getProduct().getProductType());
-			productTypeViewHandler 		= productType.getViewHandler();
+			productTypeViewHandler	= productType.getViewHandler();
 			
 			cartService.setQuantity(adminCart.getCart(), productIndex, qty);
-			
-			if(productTypeViewHandler != null) {
-				view         = productTypeViewHandler.getProductOrderView();
-				resolvedView = true;
-			}
+			ra = productTypeViewHandler.getProductOrderView(product);
 			
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "updateQuantity", locale, ex);
 			exception    = new InvalidRequestException(error, ex);
-		}
-		
-		ResultAction ra = new ResultActionImp();
-
-		if(view != null){
-			ra.setView(view, resolvedView);
-		}
-		else{
-			ra.setContentType(String.class);
-			ra.setContent("");
 		}
 		
 		ra.add("productRequest", product);
@@ -330,9 +314,9 @@ public class CartAdminPubResource {
 		
 	}
 
-	public String getProductCartView(String code) throws ProductTypeRegistryException {
+	public ResultAction getProductCartView(String code) throws ProductTypeRegistryException {
 		try {
-			return productTypeRegistry.getProductType(code).getViewHandler().getProductOrderView();
+			return productTypeRegistry.getProductType(code).getViewHandler().getProductOrderView(code);
 		}
 		catch(Throwable e) {
 			return null;
@@ -350,30 +334,18 @@ public class CartAdminPubResource {
 
 		ProductRequest product 							= null;
 		ProductTypeViewHandler productTypeViewHandler	= null;
-		String view 									= null;
-		boolean resolvedView 							= false;
+		ResultAction ra									= null;
 		Throwable exception 							= null;
 		
 		try{
 			product 					= adminCart.getCart().get(serial);
 			ProductType productType 	= productTypeRegistry.getProductType(product.getProduct().getProductType());
 			productTypeViewHandler 		= productType.getViewHandler();
-			view 						= productTypeViewHandler.getProductOrderView();
-			resolvedView 				= true;
+			ra 							= productTypeViewHandler.getProductOrderView(product);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "loadData", locale, ex);
 			exception = new InvalidRequestException(error, ex);
-		}
-		
-		ResultAction ra = new ResultActionImp();
-		
-		if(view != null){
-			ra.setView(view, resolvedView);
-		}
-		else{
-			ra.setContentType(String.class);
-			ra.setContent("");
 		}
 		
 		ra.add("productRequest", product);

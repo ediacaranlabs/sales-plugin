@@ -46,7 +46,11 @@
 	<ed:col id="products-list">
 		<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
 			<c:set var="productRequest" scope="request" value="${productRequest}" />
-			<ec:include uri="${Controller.getProductCartView(productRequest.product.productType)}" resolved="true" />
+			<c:set var="productView" scope="request" value="${Controller.getProductCartView(productRequest.product.productType)}" />
+			<c:set var="productViewVars" scope="request" value="${productView.vars}" />
+			<c:if test="${!empty productView.view}">
+				<ec:include uri="${productView.view}" resolved="${productView.resolvedView}" />
+			</c:if>
 		</c:forEach>
 	</ed:col>
 </ed:row>
