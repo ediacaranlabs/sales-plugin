@@ -12,17 +12,17 @@ import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.ValidationException;
-import br.com.uoutec.pub.entity.AbstractPubEntity;
 import br.com.uoutec.pub.entity.DataValidation;
 import br.com.uoutec.pub.entity.IdValidation;
 
-public class ProductPubEntity extends AbstractPubEntity<Product>{
+public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
@@ -183,6 +183,29 @@ public class ProductPubEntity extends AbstractPubEntity<Product>{
 	@Override
 	protected boolean hasId(Product instance) throws Throwable {
 		return instance.getId() > 0;
+	}
+
+	@Override
+	protected String getCodeType() {
+		return productType;
+	}
+
+	@Override
+	protected Class<?> getGenericType() {
+		return ProductPubEntity.class;
+	}
+
+	@Override
+	protected void loadProperties(GenericPubEntity<Product> e) {
+		ProductPubEntity x = (ProductPubEntity)e; 
+		this.cost = x.getCost();
+		this.currency = x.getCurrency();
+		this.description = x.getDescription();
+		this.id = x.getId();
+		this.name = x.getName();
+		this.periodType = x.getPeriodType();
+		this.productType = x.getProductType();
+		this.protectedID = x.getProtectedID();
 	}
 	
 }
