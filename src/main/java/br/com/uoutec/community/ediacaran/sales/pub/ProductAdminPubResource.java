@@ -130,8 +130,8 @@ public class ProductAdminPubResource {
 	}
 	
 	@Action({
-		"/edit",
-		"/edit/{product.protectedID}"
+		"/edit/{product.productType}",
+		"/edit/{product.productType}/{product.protectedID}"
 	})
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
