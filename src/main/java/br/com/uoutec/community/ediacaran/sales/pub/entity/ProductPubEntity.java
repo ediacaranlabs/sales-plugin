@@ -13,6 +13,7 @@ import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.front.components.Image;
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
@@ -32,6 +33,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	
 	@NotNull(groups = IdValidation.class)
 	private String protectedID;
+	
+	private Image thumbnail;
 	
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3,groups=DataValidation.class)
@@ -104,6 +107,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Image getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(Image thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 
 	public String getProductType() {

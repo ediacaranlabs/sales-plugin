@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -30,6 +31,8 @@ public class Product implements Serializable{
 	@Length(max = 128, groups = DataValidation.class)
 	protected String name;
 	
+	protected Path thumb;
+
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Size(max=2048)
@@ -76,6 +79,14 @@ public class Product implements Serializable{
 		this.description = description;
 	}
 
+	public Path getThumb() {
+		return thumb;
+	}
+
+	public void setThumb(Path thumb) {
+		this.thumb = thumb;
+	}
+
 	public String getProductType() {
 		return productType;
 	}
@@ -120,4 +131,8 @@ public class Product implements Serializable{
 		this.currency = currency;
 	}
 
+	public String getPublicThumb() {
+		return thumb == null? null : "/images/products/" + getProtectedID() + ".png";
+	}
+	
 }
