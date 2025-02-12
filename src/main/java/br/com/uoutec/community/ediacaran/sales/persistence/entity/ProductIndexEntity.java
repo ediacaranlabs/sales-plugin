@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -23,7 +21,6 @@ public class ProductIndexEntity implements Serializable,PublicType{
 	private static final long serialVersionUID = 7360107228997614767L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="cod_product", length=11)
 	private Integer id;
 	

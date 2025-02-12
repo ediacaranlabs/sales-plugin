@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
@@ -24,6 +25,10 @@ public class ProductSearchResultPubEntity extends AbstractPubEntity<ProductSearc
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductPubEntity> itens;
 
+	@Constructor
+	public ProductSearchResultPubEntity() {
+	}
+	
 	public ProductSearchResultPubEntity(ProductSearchResult e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();

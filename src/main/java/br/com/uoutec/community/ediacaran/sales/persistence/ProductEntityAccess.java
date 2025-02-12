@@ -16,6 +16,14 @@ public interface ProductEntityAccess {
 
 	void delete(Product entity) throws EntityAccessException;
 
+	void saveIndex(Product value) throws EntityAccessException;
+
+	void updateIndex(Product value) throws EntityAccessException;
+
+	void deleteIndex(Product value) throws EntityAccessException;
+
+	boolean ifIndexExist(Product value) throws EntityAccessException;
+	
 	Product findById(Serializable id) throws EntityAccessException;
 	
 	List<Product> getProductByType(ProductType serviceType) throws EntityAccessException;

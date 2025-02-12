@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
@@ -29,6 +30,10 @@ public class InvoiceRecalcPubEntity
 	private BigDecimal taxes;
 	
 	private BigDecimal total;
+	
+	@Constructor
+	public InvoiceRecalcPubEntity() {
+	}
 	
 	public InvoiceRecalcPubEntity(Invoice invoice, Locale locale) {
 		super(invoice);

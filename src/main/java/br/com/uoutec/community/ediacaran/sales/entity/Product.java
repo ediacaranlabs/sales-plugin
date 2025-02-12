@@ -100,6 +100,7 @@ public class Product implements Serializable{
 		return 
 			cost == null || currency == null? 
 					"" :
+					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
 	}
 	

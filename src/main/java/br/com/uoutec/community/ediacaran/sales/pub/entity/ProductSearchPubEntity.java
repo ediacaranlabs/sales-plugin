@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import javax.resource.spi.IllegalStateException;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -21,7 +20,6 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 
 	private BigDecimal maxCost;
 
-	@NotNull
 	private String productType;
 	
 	private Integer page;

@@ -57,7 +57,6 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String currency;
 
-	@Transient
 	private String costString;
 	
 	@Constructor

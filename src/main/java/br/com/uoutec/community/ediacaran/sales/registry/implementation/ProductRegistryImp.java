@@ -3,9 +3,11 @@ package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
@@ -25,6 +27,8 @@ public class ProductRegistryImp
 	@Inject
 	private ProductEntityAccess entityAccess;
 	
+	@ActivateRequestContext
+	@Transactional
 	public void registerProduct(Product entity) throws ProductRegistryException {
 		try{
 			
@@ -34,6 +38,14 @@ public class ProductRegistryImp
 			else{
 				entityAccess.save(entity);				
 			}
+			
+			if(entityAccess.ifIndexExist(entity)) {
+				entityAccess.updateIndex(entity);
+			}
+			else {
+				entityAccess.saveIndex(entity);
+			}
+			entityAccess.flush();
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);

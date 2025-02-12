@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Map;
 
+import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -24,6 +25,10 @@ public class ProductRequestRecalcPubEntity
 	private BigDecimal taxes;
 	
 	private BigDecimal total;
+
+	@Constructor
+	public ProductRequestRecalcPubEntity() {
+	}
 	
 	public ProductRequestRecalcPubEntity(ProductRequest e, Locale locale) {
 		super(e, locale);
