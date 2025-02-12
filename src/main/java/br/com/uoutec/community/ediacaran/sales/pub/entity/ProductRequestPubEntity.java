@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
@@ -53,12 +54,12 @@ public class ProductRequestPubEntity extends AbstractPubEntity<ProductRequest>{
 	public ProductRequestPubEntity(){
 	}
 	
-	public ProductRequestPubEntity(ProductRequest e){
+	public ProductRequestPubEntity(ProductRequest e, Locale locale){
 		this.addData = e.getAddData();
 		this.cost = e.getCost();
 		this.currency = e.getCurrency();
 		this.id = e.getId();
-		this.product = e.getProduct() == null? null : new ProductPubEntity(e.getProduct());
+		this.product = e.getProduct() == null? null : new ProductPubEntity(e.getProduct(), locale);
 		this.units = e.getUnits();
 		this.serial = e.getSerial();
 		

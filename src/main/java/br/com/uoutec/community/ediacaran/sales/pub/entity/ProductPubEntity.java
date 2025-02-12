@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -56,11 +57,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String currency;
 
+	@Transient
+	private String costString;
+	
 	@Constructor
 	public ProductPubEntity(){
 	}
 
-	public ProductPubEntity(Product e){
+	public ProductPubEntity(Product e, Locale locale){
 		this.periodType = e.getPeriodType();
 		this.cost = e.getCost();
 		this.currency = e.getCurrency();
@@ -68,6 +72,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
 		this.name = e.getName();
 		this.productType = e.getProductType();
+		this.costString = e.getCostString(locale);
 	}
 	
 	public String getProtectedID() {
@@ -132,6 +137,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getCostString() {
+		return costString;
+	}
+
+	public void setCostString(String costString) {
+		this.costString = costString;
 	}
 
 	@Override

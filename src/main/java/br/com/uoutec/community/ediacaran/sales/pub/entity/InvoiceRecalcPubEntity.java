@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.MappingTypes;
@@ -29,12 +30,12 @@ public class InvoiceRecalcPubEntity
 	
 	private BigDecimal total;
 	
-	public InvoiceRecalcPubEntity(Invoice invoice) {
+	public InvoiceRecalcPubEntity(Invoice invoice, Locale locale) {
 		super(invoice);
 	
 		this.itens = new ArrayList<>();
 		for(ProductRequest e: invoice.getItens()) {
-			this.itens.add(new ProductRequestRecalcPubEntity(e));
+			this.itens.add(new ProductRequestRecalcPubEntity(e, locale));
 		}
 		
 		this.subtotal = invoice.getSubtotal();

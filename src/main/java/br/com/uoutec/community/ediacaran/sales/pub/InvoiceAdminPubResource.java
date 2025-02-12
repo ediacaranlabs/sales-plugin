@@ -238,7 +238,7 @@ public class InvoiceAdminPubResource {
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
-		return new InvoiceRecalcPubEntity(invoice);
+		return new InvoiceRecalcPubEntity(invoice, locale);
 	}
 	
 	@Action("/save")

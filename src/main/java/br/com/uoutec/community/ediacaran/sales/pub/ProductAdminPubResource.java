@@ -126,7 +126,7 @@ public class ProductAdminPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 		
-		return new ProductSearchResultPubEntity(result);
+		return new ProductSearchResultPubEntity(result, locale);
 	}
 	
 	@Action({

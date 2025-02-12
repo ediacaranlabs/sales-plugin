@@ -34,7 +34,6 @@ public class OrderEntity implements /*PublicType, */Serializable {
 	@Column(name="cod_order", length=38)
 	private String id;
 
-	@ManyToOne(fetch=FetchType.EAGER)
 	@Column(name="cod_client", updatable = false)
 	private Integer client;
 

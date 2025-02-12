@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.MappingTypes;
@@ -23,14 +24,14 @@ public class ProductSearchResultPubEntity extends AbstractPubEntity<ProductSearc
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductPubEntity> itens;
 
-	public ProductSearchResultPubEntity(ProductSearchResult e) {
+	public ProductSearchResultPubEntity(ProductSearchResult e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.isHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
 			for(Product p: e.getItens()) {
-				itens.add(new ProductPubEntity(p));
+				itens.add(new ProductPubEntity(p, locale));
 			}
 		}
 	}

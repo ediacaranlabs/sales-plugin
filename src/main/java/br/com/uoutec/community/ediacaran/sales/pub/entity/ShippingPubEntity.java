@@ -97,7 +97,7 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
 			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestPubEntity(p));
+				this.products.add(new ProductRequestPubEntity(p, locale));
 			}
 		}
 		

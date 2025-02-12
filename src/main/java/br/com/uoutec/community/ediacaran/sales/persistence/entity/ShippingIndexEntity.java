@@ -30,7 +30,6 @@ public class ShippingIndexEntity implements Serializable{
 	@Column(name="cod_shipping_type")
 	private String shippingType;
 
-	@ManyToOne(fetch=FetchType.EAGER)
 	@Column(name="cod_order", length=38)
 	private String order;
 

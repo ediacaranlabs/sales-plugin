@@ -2,6 +2,8 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Locale;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -92,6 +94,13 @@ public class Product implements Serializable{
 
 	public boolean isFree(){
 		return this.cost == null || this.cost.equals(BigDecimal.ZERO);
+	}
+	
+	public String getCostString(Locale locale) {
+		return 
+			cost == null || currency == null? 
+					"" :
+					DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
 	}
 	
 	public BigDecimal getCost() {

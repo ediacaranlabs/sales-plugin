@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.Map;
 
 import org.brandao.brutos.annotation.Transient;
@@ -24,8 +25,8 @@ public class ProductRequestRecalcPubEntity
 	
 	private BigDecimal total;
 	
-	public ProductRequestRecalcPubEntity(ProductRequest e) {
-		super(e);
+	public ProductRequestRecalcPubEntity(ProductRequest e, Locale locale) {
+		super(e, locale);
 		this.subtotal = e.getSubtotal();
 		this.discounts = e.getDiscount();
 		this.taxes = e.getTax();
