@@ -33,7 +33,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
@@ -98,7 +98,7 @@ public class ProductsCartAdminPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
-	public ProductSearchResultPubEntity searchProduct(
+	public ProductsSearchResultPubEntity searchProduct(
 			@DetachedName
 			ProductSearchPubEntity productSearch,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -123,7 +123,7 @@ public class ProductsCartAdminPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 		
-		return new ProductSearchResultPubEntity(result, locale);
+		return new ProductsSearchResultPubEntity(result, locale);
 	}
 	
 	@Action("/{protectedID}")

@@ -24,6 +24,8 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	private ActionsPluginInstaller actionsPluginInstaller;
 	
+	private DriversPluginInstaller driversPluginInstaller;
+	
 	public PluginInstaller() {
 		this.securityPluginInstaller = new SecurityPluginInstaller();
 		this.i18nPluginInstaller = new I18nPluginInstaller();
@@ -33,6 +35,7 @@ public class PluginInstaller extends AbstractPlugin {
 		this.entitiesPluginInstaller = new EntitiesPluginInstaller(getPackagesNames());
 		this.shippingMethodPluginInstaller = new ShippingMethodPluginInstaller();
 		this.actionsPluginInstaller = new ActionsPluginInstaller();
+		this.driversPluginInstaller = new DriversPluginInstaller();
 	}
 	
 	@Override
@@ -45,6 +48,7 @@ public class PluginInstaller extends AbstractPlugin {
 		entitiesPluginInstaller.install();
 		shippingMethodPluginInstaller.install();
 		actionsPluginInstaller.install();
+		driversPluginInstaller.install();
 	}
 
 	@Override
@@ -57,6 +61,7 @@ public class PluginInstaller extends AbstractPlugin {
 		entitiesPluginInstaller.uninstall();
 		shippingMethodPluginInstaller.uninstall();
 		actionsPluginInstaller.uninstall();
+		driversPluginInstaller.uninstall();
 	}
 	
 }

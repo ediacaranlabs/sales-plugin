@@ -15,6 +15,7 @@ import org.brandao.brutos.annotation.Transient;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.front.components.Image;
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -60,8 +61,6 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String currency;
 
-	private String costString;
-	
 	@Constructor
 	public ProductPubEntity(){
 	}
@@ -74,7 +73,6 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
 		this.name = e.getName();
 		this.productType = e.getProductType();
-		this.costString = e.getCostString(locale);
 	}
 	
 	public String getProtectedID() {
@@ -149,14 +147,6 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.currency = currency;
 	}
 
-	public String getCostString() {
-		return costString;
-	}
-
-	public void setCostString(String costString) {
-		this.costString = costString;
-	}
-
 	@Override
 	protected void preRebuild(Product instance, boolean reload, boolean override, boolean validate) {
 		try {
@@ -194,6 +184,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setName(this.name);
 		o.setPeriodType(this.periodType);
 		o.setProductType(this.productType);
+		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
 	}
 
 	@Override

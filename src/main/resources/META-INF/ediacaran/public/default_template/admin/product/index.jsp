@@ -66,7 +66,7 @@
 						<ec:table-row>
 							<ec:table-col><ec:center></ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.name}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.costString}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.cost}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>
 								<ec:button id="!{item.id}_button" icon="pencil" style="info" actionType="button">
