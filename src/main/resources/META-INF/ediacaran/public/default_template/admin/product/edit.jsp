@@ -45,7 +45,7 @@
 								name="name" 
 								value="${vars.entity.name}" 
 								label="#{resource_form.name.label}"
-								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('MARKETPLACE:MODULES:FIELDS:NAME')}"
+								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:NAME')}"
 								bundle="${messages}">
 								<ec:field-validator>
 									<ec:field-validator-rule 
@@ -75,7 +75,7 @@
 								rows="10" 
 								name="description" 
 								label="#{resource_form.description.label}"
-								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('MARKETPLACE:MODULES:FIELDS:DESCRIPTION')}"
+								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:DESCRIPTION')}"
 								bundle="${messages}">${vars.entity.description}</ec:textarea>
 							<ec:field-validator field="description">
 								<ec:field-validator-rule 
@@ -105,7 +105,7 @@
 								label="#{resource_form.tags.label}" 
 								align="center" 
 								value="${vars.entity.tagsString}"
-								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('MARKETPLACE:MODULES:FIELDS:TAGS')}"
+								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:TAGS')}"
 								bundle="${messages}">
 								<ec:field-validator>
 									<ec:field-validator-rule 
@@ -129,7 +129,7 @@
 							<ec:field-group>
 								<ec:prepend-field>
 					    			<ec:select 
-										readonly="${!pageContext.request.userPrincipal.isGrantedPermission('MARKETPLACE:MODULES:FIELDS:CURRENCY')}"
+										readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:CURRENCY')}"
 					    				name="currency">
 					    				<ec:option value="USD">USD</ec:option>
 										<ec:field-validator>
@@ -142,7 +142,7 @@
 								</ec:prepend-field>
 								<ec:textfield 
 									name="cost" 
-									readonly="${!pageContext.request.userPrincipal.isGrantedPermission('MARKETPLACE:MODULES:FIELDS:COST')}"
+									readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:COST')}"
 									value="${vars.entity.cost}">
 									<ec:field-validator>
 										<ec:field-validator-rule 
@@ -163,7 +163,7 @@
 		    				<c:forEach items="${vars.periodList}" var="period" >
 		    					<ec:radio name="periodType" 
 		    						label="${period.getName(locale)}" 
-									readonly="${!pageContext.request.userPrincipal.isGrantedPermission('MARKETPLACE:MODULES:FIELDS:PERIOD')}"
+									readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:PERIOD')}"
 		    						value="${period}" 
 		    						selected="${vars.entity.periodType == period}" inline="true" />
 		    				</c:forEach>
