@@ -46,7 +46,7 @@ public class ProductRequest implements Serializable {
 	private int maxExtra;
 	
 	@NotNull
-	protected PeriodType periodType;
+	protected MeasurementUnit measurementUnit;
 	
 	@NotNull
 	protected BigDecimal cost;
@@ -86,7 +86,7 @@ public class ProductRequest implements Serializable {
 		setDescription(value.getDescription());
 		setMaxExtra(value.getMaxExtra());
 		setName(value.getName());
-		setPeriodType(value.getPeriodType());
+		setMeasurementUnit(value.getMeasurementUnit());
 		setProduct(value.getProduct());
 		setProductID(value.getProductID());
 		setSerial(value.getSerial());
@@ -135,12 +135,12 @@ public class ProductRequest implements Serializable {
 		this.maxExtra = maxExtra;
 	}
 
-	public PeriodType getPeriodType() {
-		return periodType;
+	public MeasurementUnit getMeasurementUnit() {
+		return measurementUnit;
 	}
 
-	public void setPeriodType(PeriodType periodType) {
-		this.periodType = periodType;
+	public void setMeasurementUnit(MeasurementUnit measurementUnit) {
+		this.measurementUnit = measurementUnit;
 	}
 
 	public int getUnits() {
@@ -292,11 +292,11 @@ public class ProductRequest implements Serializable {
 		BigDecimal subTotal = this.getSubtotal();
 		LocalDate now       = LocalDate.now();
 
-		if(subTotal.compareTo(BigDecimal.ZERO)  <= 0 || this.periodType == null || now.isAfter(validate)){
+		if(subTotal.compareTo(BigDecimal.ZERO)  <= 0 || this.measurementUnit == null || now.isAfter(validate)){
 			return BigDecimal.ZERO;
 		}
 		
-		BigDecimal hours    = new BigDecimal(this.periodType.toHours());
+		BigDecimal hours    = new BigDecimal(this.measurementUnit.toHours());
 		BigDecimal byHour   = subTotal.divide(hours, 24, RoundingMode.HALF_UP);
 		Duration duration   = Duration.between(now, validate);//DateUtil.getHours(now, validate);
 		long hoursRemaining = duration.get(ChronoUnit.HOURS);
@@ -306,7 +306,7 @@ public class ProductRequest implements Serializable {
 	public BigDecimal getProporcionalTime(LocalDate validate, Product product){
 		
 		BigDecimal value   = this.getRemainingValue(validate);
-		BigDecimal hours   = new BigDecimal(this.periodType.toHours());
+		BigDecimal hours   = new BigDecimal(this.measurementUnit.toHours());
 		BigDecimal byHour  = this.cost.divide(hours);
 		int hoursRemaining = value.divide(byHour, 24, RoundingMode.HALF_UP).intValue();
 		

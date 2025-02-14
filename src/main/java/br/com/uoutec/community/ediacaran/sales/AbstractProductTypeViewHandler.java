@@ -7,6 +7,7 @@ import java.util.Map;
 import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.ResultActionImp;
 
+import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
@@ -35,7 +36,7 @@ public abstract class AbstractProductTypeViewHandler
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("entity", product);
-		
+		vars.put("measurementUnit", MeasurementUnit.values());
 		ra.add("vars", vars);
 		return ra;
 	}

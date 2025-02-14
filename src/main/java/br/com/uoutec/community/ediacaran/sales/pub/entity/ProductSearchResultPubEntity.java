@@ -15,6 +15,8 @@ public class ProductSearchResultPubEntity extends ProductPubEntity{
 	
 	private String cost;
 
+	private String tags;
+	
 	@Constructor
 	public ProductSearchResultPubEntity(){
 	}
@@ -23,6 +25,7 @@ public class ProductSearchResultPubEntity extends ProductPubEntity{
 		super(e, locale);
 		this.thumbnail = e.getPublicThumb();
 		this.cost = e.getCostString(locale);
+		this.tags = e.getTagsString();
 	}
 
 	public String getThumbnailPath() {
@@ -41,6 +44,16 @@ public class ProductSearchResultPubEntity extends ProductPubEntity{
 	@Transient
 	public void setCostString(String cost) {
 		this.cost = cost;
+	}
+
+	public String getTagsString() {
+		return tags;
+	}
+
+	@Transient
+	public void setTagsString(String tags) {
+		this.tags = tags;
+		super.setTagsString(tags);
 	}
 	
 }

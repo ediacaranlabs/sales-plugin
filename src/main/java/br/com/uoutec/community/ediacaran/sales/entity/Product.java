@@ -41,7 +41,7 @@ public class Product implements Serializable{
 	protected String description;
 	
 	@NotNull(groups = DataValidation.class)
-	protected PeriodType periodType;
+	protected MeasurementUnit measurementUnit;
 	
 	@NotNull(groups = DataValidation.class)
 	protected String productType;
@@ -100,12 +100,12 @@ public class Product implements Serializable{
 		this.productType = productType;
 	}
 
-	public PeriodType getPeriodType() {
-		return periodType;
+	public MeasurementUnit getMeasurementUnit() {
+		return measurementUnit;
 	}
 
-	public void setPeriodType(PeriodType periodType) {
-		this.periodType = periodType;
+	public void setMeasurementUnit(MeasurementUnit measurementUnit) {
+		this.measurementUnit = measurementUnit;
 	}
 
 	public boolean isFree(){

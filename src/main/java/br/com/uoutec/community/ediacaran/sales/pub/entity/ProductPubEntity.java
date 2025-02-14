@@ -18,7 +18,7 @@ import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.front.components.Image;
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
-import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
+import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
@@ -55,7 +55,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	
 	@NotNull(groups=DataValidation.class)
 	@Enumerated(EnumerationType.STRING)
-	private PeriodType periodType;
+	private MeasurementUnit measurementUnit;
 
 	@NotNull(groups=DataValidation.class)
 	private BigDecimal cost;
@@ -77,7 +77,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	}
 
 	public ProductPubEntity(Product e, Locale locale){
-		this.periodType = e.getPeriodType();
+		this.measurementUnit = e.getMeasurementUnit();
 		this.cost = e.getCost();
 		this.currency = e.getCurrency();
 		this.description = e.getDescription();
@@ -151,12 +151,12 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.productType = productType;
 	}
 
-	public PeriodType getPeriodType() {
-		return periodType;
+	public MeasurementUnit getMeasurementUnit() {
+		return measurementUnit;
 	}
 
-	public void setPeriodType(PeriodType periodType) {
-		this.periodType = periodType;
+	public void setMeasurementUnit(MeasurementUnit measurementUnit) {
+		this.measurementUnit = measurementUnit;
 	}
 
 	public BigDecimal getCost() {
@@ -210,7 +210,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setDescription(this.description);
 		o.setId(this.id);
 		o.setName(this.name);
-		o.setPeriodType(this.periodType);
+		o.setMeasurementUnit(this.measurementUnit);
 		o.setProductType(this.productType);
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
 		o.setTags(tagsString != null? StringUtil.toSet(tagsString, ",") : tags);
@@ -246,7 +246,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.description = x.getDescription();
 		this.id = x.getId();
 		this.name = x.getName();
-		this.periodType = x.getPeriodType();
+		this.measurementUnit = x.getMeasurementUnit();
 		this.productType = x.getProductType();
 		this.protectedID = x.getProtectedID();
 	}

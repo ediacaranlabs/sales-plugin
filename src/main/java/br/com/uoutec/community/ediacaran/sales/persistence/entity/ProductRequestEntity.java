@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
+import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
@@ -61,7 +61,7 @@ public class ProductRequestEntity implements Serializable{
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_period_type", length=32)
-	private PeriodType periodType;
+	private MeasurementUnit measurementUnit;
 	
 	@Column(name="vlr_units", length=11)
 	private Integer units;
@@ -113,7 +113,7 @@ public class ProductRequestEntity implements Serializable{
 		this.currency         = e.getCurrency();
 		this.product          = e.getProduct() == null? null : new ProductEntity(e.getProduct());
 		this.units            = e.getUnits();
-		this.periodType       = e.getPeriodType();
+		this.measurementUnit  = e.getMeasurementUnit();
 		this.shortDescription = e.getShortDescription();
 		this.description      = e.getDescription();
 		this.productID        = e.getProductID();
@@ -209,12 +209,12 @@ public class ProductRequestEntity implements Serializable{
 		this.addData = addData;
 	}
 
-	public PeriodType getPeriodType() {
-		return periodType;
+	public MeasurementUnit getMeasurementUnit() {
+		return measurementUnit;
 	}
 
-	public void setPeriodType(PeriodType periodType) {
-		this.periodType = periodType;
+	public void setMeasurementUnit(MeasurementUnit measurementUnit) {
+		this.measurementUnit = measurementUnit;
 	}
 
 	public String getProductID() {
@@ -267,7 +267,7 @@ public class ProductRequestEntity implements Serializable{
 		e.setProduct(this.product == null? null : this.product.toEntity());
 		e.setAddData(DataUtil.decode(this.addData));
 		e.setUnits(this.units);
-		e.setPeriodType(this.periodType);
+		e.setMeasurementUnit(this.measurementUnit);
 		e.setShortDescription(this.shortDescription);
 		e.setDescription(this.description);
 		e.setProductID(this.productID);

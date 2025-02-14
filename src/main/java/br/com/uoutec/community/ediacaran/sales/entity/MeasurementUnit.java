@@ -6,7 +6,7 @@ import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.MessageBundle;
 
-public enum PeriodType {
+public enum MeasurementUnit {
 
 	UNITS(0),
 	
@@ -19,11 +19,11 @@ public enum PeriodType {
 	YEAR(8760);
 	
 	public static final String RESOURCE_BUNDLE = 
-			MessageBundle.toPackageID(PeriodType.class);
+			MessageBundle.toPackageID(MeasurementUnit.class);
 	
 	private int hour;
 	
-	private PeriodType(int hour){
+	private MeasurementUnit(int hour){
 		this.hour = hour;
 	}
 	

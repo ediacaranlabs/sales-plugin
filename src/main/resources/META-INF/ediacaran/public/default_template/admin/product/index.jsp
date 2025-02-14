@@ -59,6 +59,7 @@
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.image" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.name" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.value" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center>tags</ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.action" bundle="${messages}"/></ec:center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
@@ -73,9 +74,10 @@
 							</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.name}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.cost}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.tags}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>
-								<ec:button id="!{item.id}_button" icon="pencil" style="info" actionType="button">
+								<ec:button icon="pencil" style="info" actionType="button">
 									<ec:event type="click">
 										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/edit/!{item.productType.toLowerCase()}/!{item.protectedID}');
 									</ec:event>

@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
+import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
@@ -46,8 +46,8 @@ public class ProductEntity implements Serializable,PublicType{
 	private String productType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="set_period_type", length=32)
-	private PeriodType periodType;
+	@Column(name="set_measurement_unit", length=32)
+	private MeasurementUnit measurementUnit;
 	
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
@@ -59,13 +59,13 @@ public class ProductEntity implements Serializable,PublicType{
 	}
 	
 	public ProductEntity(Product e){
-		this.cost           = e.getCost();
-		this.currency       = e.getCurrency();
-		this.productType    = e.getProductType();
-		this.description    = e.getDescription();
-		this.periodType     = e.getPeriodType();
-		this.id             = e.getId() <= 0? null : e.getId();
-		this.name           = e.getName();
+		this.cost            = e.getCost();
+		this.currency        = e.getCurrency();
+		this.productType     = e.getProductType();
+		this.description     = e.getDescription();
+		this.measurementUnit = e.getMeasurementUnit();
+		this.id              = e.getId() <= 0? null : e.getId();
+		this.name            = e.getName();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -106,12 +106,20 @@ public class ProductEntity implements Serializable,PublicType{
 		this.productType = productType;
 	}
 
-	public PeriodType getPeriodType() {
-		return periodType;
+	public String getTags() {
+		return tags;
 	}
 
-	public void setPeriodType(PeriodType periodType) {
-		this.periodType = periodType;
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public MeasurementUnit getMeasurementUnit() {
+		return measurementUnit;
+	}
+
+	public void setMeasurementUnit(MeasurementUnit measurementUnit) {
+		this.measurementUnit = measurementUnit;
 	}
 
 	public BigDecimal getCost() {
@@ -137,7 +145,7 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setCost(this.cost);
 		e.setCurrency(this.currency);
 		e.setProductType(this.productType);
-		e.setPeriodType(this.periodType);
+		e.setMeasurementUnit(this.measurementUnit);
 		e.setDescription(this.description);
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
