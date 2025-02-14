@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +31,9 @@ public class ProductIndexEntity implements Serializable,PublicType{
 	@Column(name="dsc_description", length=255)
 	private String description;
 
+	@Column(name = "dsc_search_tags", length = 255)
+	private String tags;
+	
 	@Column(name="cod_product_type")
 	private String productType;
 
@@ -55,11 +59,18 @@ public class ProductIndexEntity implements Serializable,PublicType{
 			this.name = StringUtil.toSearch(e.getName());
 		}
 
+		if(e.getTags() != null) {
+			this.tags = e.getTags().stream().collect(Collectors.joining(" "));
+			this.tags = StringUtil.toSearch(e.getDescription());
+			this.tags = this.tags.length() > 255? this.tags.substring(0, 253) : this.tags;
+		}
+		
 	}
 
 	public Product toEntity(){
 		return toEntity(null);
 	}
+	
 	public Product toEntity(Product e){
 		
 		if(e == null) {

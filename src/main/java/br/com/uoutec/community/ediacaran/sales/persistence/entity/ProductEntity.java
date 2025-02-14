@@ -2,6 +2,8 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +39,9 @@ public class ProductEntity implements Serializable,PublicType{
 	@Lob
 	private String description;
 
+	@Column(name = "dsc_tags", length = 256)
+	private String tags;
+	
 	@Column(name="cod_product_type")
 	private String productType;
 
@@ -61,6 +66,12 @@ public class ProductEntity implements Serializable,PublicType{
 		this.periodType     = e.getPeriodType();
 		this.id             = e.getId() <= 0? null : e.getId();
 		this.name           = e.getName();
+		
+		if(e.getTags() != null) {
+			this.tags = e.getTags().stream()
+					.collect(Collectors.joining(";"));
+		}
+		
 	}
 	
 	public Integer getId() {
@@ -130,6 +141,12 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setDescription(this.description);
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
+		
+		if(this.tags != null) {
+			e.setTags(Arrays.stream(this.tags.split("\\;"))
+					.collect(Collectors.toSet())
+			);
+		}
 		
 		return e;
 	}
