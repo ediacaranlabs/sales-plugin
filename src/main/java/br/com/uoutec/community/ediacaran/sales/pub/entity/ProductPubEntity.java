@@ -1,7 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -20,6 +22,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.PeriodType;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
+import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.pub.entity.DataValidation;
@@ -61,8 +64,16 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String currency;
 
+	@Size(max = 600)
+	@Pattern(regexp="^([^\"\',]+)(,([^\"\',]+))*$")
+	private String tagsString;
+
+	@NotNull(groups = DataValidation.class)
+	private Set<String> tags;
+	
 	@Constructor
 	public ProductPubEntity(){
+		setTags(new HashSet<>());
 	}
 
 	public ProductPubEntity(Product e, Locale locale){
@@ -73,6 +84,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
 		this.name = e.getName();
 		this.productType = e.getProductType();
+		this.tags = e.getTags();
 	}
 	
 	public String getProtectedID() {
@@ -113,6 +125,22 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	public void setThumbnail(Image thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	public String getTagsString() {
+		return tagsString;
+	}
+
+	public void setTagsString(String tagsString) {
+		this.tagsString = tagsString;
+	}
+
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
 	}
 
 	public String getProductType() {
@@ -185,6 +213,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setPeriodType(this.periodType);
 		o.setProductType(this.productType);
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
+		o.setTags(tagsString != null? StringUtil.toSet(tagsString, ",") : tags);
 	}
 
 	@Override

@@ -64,7 +64,13 @@
 					<ec:table-body>
 						<ec:forEach items="!{response.itens}" var="item">
 						<ec:table-row>
-							<ec:table-col><ec:center></ec:center></ec:table-col>
+							<ec:table-col><ec:center>
+								<ec:image 
+									src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
+									style="thumbnail"
+									align="center"
+								/>
+							</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.name}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.cost}</ec:center></ec:table-col>
 							<ec:table-col>

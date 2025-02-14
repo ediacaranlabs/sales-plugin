@@ -1,10 +1,13 @@
 package br.com.uoutec.community.ediacaran.sales;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.ResultActionImp;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -16,7 +19,25 @@ public abstract class AbstractProductTypeViewHandler
 	
 	@Override
 	public ResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
-		throw new UnsupportedOperationException();
+		
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		Product product;
+		
+		try {
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
+		}
+		catch(Throwable ex) {
+			throw new InvalidRequestException(ex);
+		}
+		
+		ResultAction ra = new ResultActionImp();
+		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit.jsp"), true);
+		
+		Map<String,Object> vars = new HashMap<>();
+		vars.put("entity", product);
+		
+		ra.add("vars", vars);
+		return ra;
 	}
 
 	@Override

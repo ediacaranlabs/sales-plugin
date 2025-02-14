@@ -129,9 +129,13 @@ public class ProductAdminPubResource {
 		return new ProductsSearchResultPubEntity(result, locale);
 	}
 	
+	public static void main(String[] s) {
+		System.out.println("dsd_sçsds".matches("[^/\\s//]+"));
+	}
+	
 	@Action({
-		"/edit/{product.productType}",
-		"/edit/{product.productType}/{product.protectedID}"
+		"/edit/{product.productType:[^/\\s//]+}",
+		"/edit/{product.productType:[^/\\s//]+}/{product.protectedID:[^/\\s//]+}"
 	})
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)

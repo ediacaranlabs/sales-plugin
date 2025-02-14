@@ -68,6 +68,10 @@ public class ProductRegistryImp
 	
 	public void removeProduct(Product entity) throws ProductRegistryException{
 		try{
+			if(entity.getThumb() != null) {
+				objectsManager.unregisterObject(getThumbPath(entity), null);
+			}
+			
 			entityAccess.delete(entity);
 		}
 		catch(Throwable e){
@@ -77,7 +81,9 @@ public class ProductRegistryImp
 
 	public Product findProductById(int id) throws ProductRegistryException{
 		try{
-			return entityAccess.findById(id);
+			Product e = entityAccess.findById(id);
+			e.setThumb((Path)objectsManager.getObject(getThumbPath(e), null));
+			return e;
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);
@@ -108,7 +114,9 @@ public class ProductRegistryImp
 			List<Product> products = new ArrayList<>();
 			
 			for(Product e: list) {
-				products.add(entityAccess.findById(e.getId()));
+				e = entityAccess.findById(e.getId());
+				e.setThumb((Path)objectsManager.getObject(getThumbPath(e), null));
+				products.add(e);
 			}
 			
 			return new ProductSearchResult(products.size() > maxItens, -1, page, products.size() > maxItens? products.subList(0, maxItens -1) : products);
@@ -119,6 +127,10 @@ public class ProductRegistryImp
 	}
 	
 	private String getThumbPath(Product e) {
+		
+		if(e == null || e.getId() <= 0) {
+			return null;
+		}
 		
 		List<String> partsList = new ArrayList<>();
 		String id = Integer.toString(e.getId(), Character.MAX_RADIX);
@@ -134,7 +146,7 @@ public class ProductRegistryImp
 			int from = i;
 			int to = i + maxlen;
 			
-			if(to >= chars.length) {
+			if(to > chars.length) {
 				to = chars.length - 1;
 			}
 			

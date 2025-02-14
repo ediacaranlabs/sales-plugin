@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import org.hibernate.validator.constraints.Length;
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
+import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -51,6 +53,9 @@ public class Product implements Serializable{
 	@Pattern(regexp = CommonValidation.CURRENCY, groups = DataValidation.class)
 	protected String currency;
 
+	@NotNull(groups = DataValidation.class)
+	protected Set<String> tags;
+	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
 	}
@@ -107,12 +112,24 @@ public class Product implements Serializable{
 		return this.cost == null || this.cost.equals(BigDecimal.ZERO);
 	}
 	
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
+
 	public String getCostString(Locale locale) {
 		return 
 			cost == null || currency == null? 
 					"" :
 					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
+	}
+	
+	public String getTagsString() {
+		return tags == null? null: StringUtil.toString(tags, ",");
 	}
 	
 	public BigDecimal getCost() {

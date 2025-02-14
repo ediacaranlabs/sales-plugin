@@ -30,7 +30,7 @@ public class ProductTypeRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getRegisterPermission());
 		
-		map.put(e.getCode(), e);
+		map.put(e.getCode().toLowerCase(), e);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ProductTypeRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getRemovePermission());
 		
-		map.remove(code);
+		map.remove(code.toLowerCase());
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class ProductTypeRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_TYPE.getGetPermission());
 		
-		return map.get(code);
+		return map.get(code.toLowerCase());
 	}
 
 	@Override
