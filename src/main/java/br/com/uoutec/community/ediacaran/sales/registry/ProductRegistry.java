@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
@@ -18,5 +19,11 @@ public interface ProductRegistry {
 	List<Product> getProductByType(ProductType serviceType) throws ProductRegistryException;
 	
 	ProductSearchResult search(ProductSearch value)	throws ProductRegistryException;
+
+	void registerProductImages(List<ProductImage> images, Product entity) throws ProductRegistryException;
+
+	void removeProductImages(List<ProductImage> images, Product entity) throws ProductRegistryException;
+	
+	List<ProductImage> getImagesByProduct(Product product)	throws ProductRegistryException;
 	
 }
