@@ -7,9 +7,7 @@
 <ec:setTemplatePackage name="admin"/>
 <style>
 </style>
-<ed:row>
-	<ed:col id="imagesArea">
-	</ed:col>
+<ed:row id="imagesArea">
 </ed:row>
 <ed:row>
 	<ed:col>
@@ -23,6 +21,37 @@
 </ed:row>
 
 <!--  Image Template -->
+<ec:template id="imageTemplate" var="obj">
+	<ed:col size="4">
+		<span formgroup="image">
+			<ec:box>
+				<ec:box-body>
+					<ed:row>
+						<ed:col size="12">
+							<ec:imagefield name="image"
+								src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png')}"
+								button="Select" 
+								width="128" height="128" border="squad">
+							</ec:imagefield>
+						</ed:col>
+					</ed:row>
+					<ed:row>
+						<ed:col>
+							<ec:textarea label="Description" name="description" rows="3"></ec:textarea>
+						</ed:col>
+					</ed:row>
+					<ed:row>
+						<ed:col>
+							<ec:checkbox label="Remove" align="right" name="deleted" value="true"/>
+						</ed:col>
+					</ed:row>
+				</ec:box-body>
+			</ec:box>
+		</span>
+	</ed:col>
+</ec:template>
+
+<%--
 <ec:template id="imageTemplate" var="obj">
 	<span formgroup="image">
 		<ec:accordion>
@@ -48,3 +77,4 @@
 		</ec:accordion>
 	</span>
 </ec:template>
+--%>
