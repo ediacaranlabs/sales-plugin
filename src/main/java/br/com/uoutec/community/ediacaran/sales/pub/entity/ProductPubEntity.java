@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -70,6 +71,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	@NotNull(groups = DataValidation.class)
 	private Set<String> tags;
+	
+	private List<ProductImagePubEntity> images;
 	
 	@Constructor
 	public ProductPubEntity(){
@@ -173,6 +176,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public List<ProductImagePubEntity> getImages() {
+		return images;
+	}
+
+	public void setImages(List<ProductImagePubEntity> images) {
+		this.images = images;
 	}
 
 	@Override

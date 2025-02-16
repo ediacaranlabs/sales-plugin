@@ -24,6 +24,8 @@ public interface ProductRegistry {
 
 	void removeProductImages(List<ProductImage> images, Product entity) throws ProductRegistryException;
 	
+	public ProductImage getImagesByID(String id) throws ProductRegistryException;
+	
 	List<ProductImage> getImagesByProduct(Product product)	throws ProductRegistryException;
 	
 }

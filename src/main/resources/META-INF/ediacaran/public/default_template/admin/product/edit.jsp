@@ -26,25 +26,30 @@
 
 <ec:box>
 	<ec:box-body>
-		<ec:form method="POST" id="resource_form" enctype="multipart/form-data"
+		<ec:form method="POST" id="product_form" enctype="multipart/form-data"
 			update="result_resource_form" 
 			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/save" >
-			<ed:row style="form">
-				<ed:col size="3" classStyle="form-group has-feedback">
-					<ec:imagefield name="thumbnail"
-						src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
-						button="#{resource_form.thumbnail.button}" 
-						bundle="${messages}" width="200" height="200" border="squad">
-					</ec:imagefield>
-				</ed:col>
-				<ed:col size="9">
-					<ec:tabs>
-						<ec:tabs-item active="true" title="Details">
-							<jsp:include page="/default_template/admin/product/product_tab.jsp"/>
-						</ec:tabs-item>
-					</ec:tabs>
-				</ed:col>
-			</ed:row>
+			<span formgroup="product">
+				<ed:row style="form">
+					<ed:col size="3" classStyle="form-group has-feedback">
+						<ec:imagefield name="thumbnail"
+							src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
+							button="#{resource_form.thumbnail.button}" 
+							bundle="${messages}" width="200" height="200" border="squad">
+						</ec:imagefield>
+					</ed:col>
+					<ed:col size="9">
+						<ec:tabs>
+							<ec:tabs-item active="true" title="Details">
+								<jsp:include page="/default_template/admin/product/product_tab.jsp"/>
+							</ec:tabs-item>
+							<ec:tabs-item title="Image Gallery">
+								<jsp:include page="/default_template/admin/product/image_gallery_tab.jsp"/>
+							</ec:tabs-item>
+						</ec:tabs>
+					</ed:col>
+				</ed:row>
+			</span>
 			<ed:row>
 				<ed:col size="12">
 					<ec:button 

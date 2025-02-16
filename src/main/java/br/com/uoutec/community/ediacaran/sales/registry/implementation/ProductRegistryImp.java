@@ -242,6 +242,16 @@ public class ProductRegistryImp
 	}
 
 	@Override
+	public ProductImage getImagesByID(String id) throws ProductRegistryException {
+		try {
+			return imageEntityAccess.findById(id);
+		}
+		catch(EntityAccessException ex) {
+			throw new ProductRegistryException(ex);
+		}
+	}
+	
+	@Override
 	public List<ProductImage> getImagesByProduct(Product product) throws ProductRegistryException {
 		
 		List<ProductImage> images;

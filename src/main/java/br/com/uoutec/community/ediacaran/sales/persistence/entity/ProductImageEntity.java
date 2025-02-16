@@ -15,7 +15,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 @Table(
 		name="rw_product_image",
 		indexes = {
-				@Index(name="product_image_unique", columnList = "id, product", unique = true)
+				@Index(name="product_image_unique", columnList = "cod_image, cod_product", unique = true)
 		}
 )
 @EntityListeners(ProductImageEntityListener.class)

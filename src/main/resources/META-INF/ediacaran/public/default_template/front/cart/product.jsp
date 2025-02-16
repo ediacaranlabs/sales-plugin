@@ -24,10 +24,10 @@
 					<ed:col>
 						<ec:form id="update-item-cart-form-min-${productRequest.serial}">
 							<ec:select name="units"> <!-- style="width: 60px" -->
-								<ec:option value="1" selected="${productRequest.units == 1}">1${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+								<ec:option value="1" selected="${productRequest.units == 1}">1${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:option>
 								<c:if test="${productRequest.maxExtra > 1}">
 									<c:forEach var="units" begin="2" end="${productRequest.maxExtra + 1}">
-										<ec:option value="${units}" selected="${productRequest.units == units}">${units}${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+										<ec:option value="${units}" selected="${productRequest.units == units}">${units}${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:option>
 									</c:forEach>
 								</c:if>
 								<ec:event type="change">
@@ -68,10 +68,10 @@
 			<ed:col size="3">
 				<ec:form id="update-item-cart-form-${productRequest.serial}">
 					<ec:select name="units"> <!-- style="width: 60px" -->
-						<ec:option value="1" selected="${productRequest.units == 1}">1${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+						<ec:option value="1" selected="${productRequest.units == 1}">1${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:option>
 						<c:if test="${productRequest.maxExtra > 1}">
 							<c:forEach var="units" begin="2" end="${productRequest.maxExtra + 1}">
-								<ec:option value="${units}" selected="${productRequest.units == units}">${units}${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:option>
+								<ec:option value="${units}" selected="${productRequest.units == units}">${units}${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:option>
 							</c:forEach>
 						</c:if>
 						<ec:event type="change">

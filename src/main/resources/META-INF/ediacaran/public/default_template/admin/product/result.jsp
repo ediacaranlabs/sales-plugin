@@ -14,9 +14,39 @@
 	</ec:alert>
 	<script type="text/javascript">
 	$.AppContext.onload(function(){
-		var $form = $.AppContext.utils.getById('resource_form');
-		var $owner = $form.getField('protectedID');
-		$owner.setValue('${id}');
+		//get product form
+		var $form = $.AppContext.utils.getById('product_form');
+		
+		// set product id
+		var $protectedID = $form.getField('product.protectedID');
+		$protectedID.setValue('${vars.entity.protectedID}');
+		
+		
+		// set images id
+		<c:forEach items="${vars.images}" var="image" varStatus="imagesStep">
+		var $image = $form.getField('image[${imagesStep.index}].protectedID');
+		$image.setValue('${image.entity.protectedID}');
+		</c:forEach>
+		
+		//remove deleted images
+		
+		//get all images
+		var $imagesElement = $.AppContext.utils.getById('images');
+		var $images = $imagesElement.search(function($e){
+			return $e.getAttribute("formgroup") == 'image';
+		});
+		
+		//remove images marked as deleted
+		for (let $img of $images){
+			let $path = $img.getAttribute("group-path");
+			let $deleted = $form.getField($path + ".deleted");
+			
+			if($deleted.getValue()){
+				$img.remove();
+			}
+			
+		}
+		
 	});
 	</script>
 </c:if>

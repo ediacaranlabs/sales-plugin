@@ -60,9 +60,9 @@
 												</ec:field-validator-rule>
 											</ec:field-validator>
 										</ec:textfield>
-										<c:if test="${!empty productRequest.product.periodType && productRequest.product.periodType != 'UNITS'}">
+										<c:if test="${!empty productRequest.product.measurementUnit && productRequest.product.measurementUnit != 'UNITS'}">
 											<ec:append-field>
-												<ec:prepend-field-item>${empty productRequest.product.periodType || productRequest.product.periodType == 'UNITS'? '' : '/'.concat(productRequest.product.periodType.getName(locale))}</ec:prepend-field-item>
+												<ec:prepend-field-item>${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:prepend-field-item>
 											</ec:append-field>
 										</c:if>
 									</ec:field-group>
