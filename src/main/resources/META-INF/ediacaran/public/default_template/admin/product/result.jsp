@@ -24,16 +24,16 @@
 		
 		// set images id
 		<c:forEach items="${vars.images}" var="image" varStatus="imagesStep">
-		var $image = $form.getField('image[${imagesStep.index}].protectedID');
+		var $image = $form.getField('product.images[${imagesStep.index}].protectedID');
 		$image.setValue('${image.entity.protectedID}');
 		</c:forEach>
 		
 		//remove deleted images
 		
 		//get all images
-		var $imagesElement = $.AppContext.utils.getById('images');
+		var $imagesElement = $.AppContext.utils.getById('imagesArea');
 		var $images = $imagesElement.search(function($e){
-			return $e.getAttribute("formgroup") == 'image';
+			return $e.getAttribute("formgroup") == 'images';
 		});
 		
 		//remove images marked as deleted

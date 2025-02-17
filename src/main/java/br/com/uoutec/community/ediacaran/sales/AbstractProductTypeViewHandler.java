@@ -65,7 +65,7 @@ public abstract class AbstractProductTypeViewHandler
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
 			if(productPubEntity.getImages() != null) {
 				for(ProductImagePubEntity i: productPubEntity.getImages()) {
-					if(i.getId() != null && i.getDeleted() != null && i.getDeleted().booleanValue()) {
+					if(i.getProtectedID() != null && i.getDeleted() != null && i.getDeleted().booleanValue()) {
 						ProductImage tmp = i.rebuild(true, false, true);
 						group.add(new ProductImageGroup(i, tmp));
 						removeList.add(tmp);
