@@ -51,8 +51,13 @@ public class ProductImageEntityAccessImp
 
 	    	and.add(builder.equal(from.get("product"), product.getId()));
 
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		and.stream().toArray(Predicate[]::new)
+	    		);
+		    }
+	    	
 		    TypedQuery<ProductImageEntity> typed = entityManager.createQuery(criteria);
-
 
 		    List<ProductImageEntity> list = (List<ProductImageEntity>)typed.getResultList();
 		    List<ProductImage> result = new ArrayList<ProductImage>();
