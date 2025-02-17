@@ -26,28 +26,30 @@ public abstract class AbstractProductTypeViewHandler
 	@Override
 	public ResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
-		ProductRegistry productRegistry;
-		VarParser varParser;
-		Product product;
-		List<ProductImage> images;
+		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		Product product = null;
+		List<ProductImage> images = null;
+		Throwable exception = null;
+
+		ResultAction ra = new ResultActionImp();
+		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit.jsp"), true);
+		
 		try {
-			varParser = EntityContextPlugin.getEntity(VarParser.class);
-			productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
 			images = productRegistry.getImagesByProduct(product);
 		}
 		catch(Throwable ex) {
-			throw new InvalidRequestException(ex);
+			exception = ex;
+			ra.add("exception", exception);
+			return ra;
 		}
-		
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("entity", product);
 		vars.put("images", images);
 		vars.put("measurementUnit", MeasurementUnit.values());
 		
-		ResultAction ra = new ResultActionImp();
-		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit.jsp"), true);
 		ra.add("vars", vars);
 		
 		return ra;
@@ -56,10 +58,16 @@ public abstract class AbstractProductTypeViewHandler
 	@Override
 	public ResultAction save(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
-		Product product;
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
+		Product product = null;
 		List<ProductImage> saveList = new ArrayList<>();
 		List<ProductImage> removeList = new ArrayList<>();
 		List<ProductImageGroup> group = new ArrayList<>();
+		Throwable exception = null;
+
+		ResultAction ra = new ResultActionImp();
+		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/result.jsp"), true);
 		
 		try {
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
@@ -80,29 +88,27 @@ public abstract class AbstractProductTypeViewHandler
 			}
 		}
 		catch(Throwable ex) {
-			throw new InvalidRequestException(ex);
+			exception = ex;
+			ra.add("exception", exception);
+			return ra;
 		}
 
-		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ProductRegistry productRegistry;
+		
 		try {
-			varParser = EntityContextPlugin.getEntity(VarParser.class);
-			productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
-			
 			productRegistry.registerProduct(product);
 			productRegistry.removeProductImages(removeList, product);			
 			productRegistry.registerProductImages(saveList, product);			
 		}
 		catch(Throwable ex) {
-			throw new InvalidRequestException(ex);
+			exception = ex;
+			ra.add("exception", exception);
+			return ra;
 		}
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("entity", product);
 		vars.put("images", group);
 		
-		ResultAction ra = new ResultActionImp();
-		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/result.jsp"), true);
 		ra.add("vars", vars);
 		return ra;
 	}

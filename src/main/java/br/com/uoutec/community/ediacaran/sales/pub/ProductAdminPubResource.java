@@ -193,7 +193,7 @@ public class ProductAdminPubResource {
 	@Action({"/save/{product.productType:[^/\\\\s//]+}"})
 	@RequestMethod("POST")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.ORDER.SAVE)
+	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)
 	public ResultAction save(
 			@Basic(bean="product")
 			ProductPubEntity productPubEntity,
@@ -221,7 +221,7 @@ public class ProductAdminPubResource {
 	@Action({"/delete"})
 	@RequestMethod("POST")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.ORDER.DELETE)
+	@RequiresPermissions(SalesUserPermissions.PRODUCT.DELETE)
 	public ResultAction remove(
 			@Basic(bean="product")
 			ProductPubEntity productPubEntity,
