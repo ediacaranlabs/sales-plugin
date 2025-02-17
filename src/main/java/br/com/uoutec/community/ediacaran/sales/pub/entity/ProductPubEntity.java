@@ -10,9 +10,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Enumerated;
 import org.brandao.brutos.annotation.EnumerationType;
+import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.application.validation.CommonValidation;
@@ -72,6 +74,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@NotNull(groups = DataValidation.class)
 	private Set<String> tags;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductImagePubEntity> images;
 	
 	@Constructor

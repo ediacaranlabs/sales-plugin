@@ -15,6 +15,7 @@ import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -149,7 +150,7 @@ public class Product implements Serializable{
 	}
 
 	public String getPublicThumb() {
-		return thumb == null? null : "/images/products/" + getProtectedID() + ".png";
+		return thumb == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
 	}
 	
 }

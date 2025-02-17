@@ -3,6 +3,8 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.util.Objects;
 
 import br.com.uoutec.application.io.Path;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 
 public class ProductImage {
 	
@@ -56,6 +58,14 @@ public class ProductImage {
 		this.product = product;
 	}
 
+	public String getPublicThumb() {
+		return image == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
+	}
+	
+	public String getProtectedID() {
+		return id == null || id == null? null : SecretUtil.toProtectedID(id);		
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

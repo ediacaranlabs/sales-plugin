@@ -31,9 +31,9 @@ public class ProductImagePubEntity extends AbstractPubEntity<ProductImage>{
 	
 	private Image image;
 	
-	@NotNull(groups=DataValidation.class)
 	@Size(min=3,groups=DataValidation.class)
 	private String description;
+	
 	private Boolean deleted;
 	
 	@Constructor

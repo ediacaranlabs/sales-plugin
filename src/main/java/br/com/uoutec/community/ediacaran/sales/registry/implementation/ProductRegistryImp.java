@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.control.ActivateRequestContext;
@@ -11,7 +10,6 @@ import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
 import br.com.uoutec.application.io.Path;
-import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
@@ -21,6 +19,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductImageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -61,7 +60,7 @@ public class ProductRegistryImp
 			entityAccess.flush();
 			
 			if(entity.getThumb() != null) {
-				String path = getThumbPath(entity);
+				String path = ProductUtil.getThumbPath(entity);
 				objectsManager.registerObject(path, null, entity.getThumb());
 				entity.setThumb((Path)objectsManager.getObject(path));
 			}
@@ -75,7 +74,7 @@ public class ProductRegistryImp
 	public void removeProduct(Product entity) throws ProductRegistryException{
 		try{
 			if(entity.getThumb() != null) {
-				objectsManager.unregisterObject(getThumbPath(entity), null);
+				objectsManager.unregisterObject(ProductUtil.getThumbPath(entity), null);
 			}
 			
 			entityAccess.delete(entity);
@@ -88,7 +87,7 @@ public class ProductRegistryImp
 	public Product findProductById(int id) throws ProductRegistryException{
 		try{
 			Product e = entityAccess.findById(id);
-			e.setThumb((Path)objectsManager.getObject(getThumbPath(e), null));
+			e.setThumb((Path)objectsManager.getObject(ProductUtil.getThumbPath(e), null));
 			return e;
 		}
 		catch(Throwable e){
@@ -121,7 +120,7 @@ public class ProductRegistryImp
 			
 			for(Product e: list) {
 				e = entityAccess.findById(e.getId());
-				e.setThumb((Path)objectsManager.getObject(getThumbPath(e), null));
+				e.setThumb((Path)objectsManager.getObject(ProductUtil.getThumbPath(e), null));
 				products.add(e);
 			}
 			
@@ -130,57 +129,6 @@ public class ProductRegistryImp
 		catch(Throwable e){
 			throw new ProductRegistryException(e);
 		}
-	}
-
-	private String getThumbPath(ProductImage e) {
-
-		if(e == null || e.getId() == null) {
-			return null;
-		}
-		
-		Product product = new Product();
-		product.setId(e.getProduct());
-		
-		String productPath = getThumbPath(product);
-		return productPath + "/images/" + e.getId().toLowerCase();
-	}
-
-	private String getThumbPath(Product e) {
-		
-		if(e == null || e.getId() <= 0) {
-			return null;
-		}
-		
-		return getThumbPath(Integer.toString(e.getId(), Character.MAX_RADIX).toLowerCase());
-	}
-	
-	private String getThumbPath(String id) {
-		List<String> partsList = new ArrayList<>();
-		
-		int maxlen = id.length() / 3;
-		maxlen = maxlen == 0? id.length() : maxlen;
-		
-		char[] chars = id.toCharArray();
-		int i = 0;
-		
-		while(i<chars.length) {
-			
-			int from = i;
-			int to = i + maxlen;
-			
-			if(to > chars.length) {
-				to = chars.length - 1;
-			}
-			
-			char[] tmp = Arrays.copyOfRange(chars, from, to);
-			partsList.add(new String(tmp));
-			i += maxlen;
-			
-		}
-		
-		String path = String.join("/", partsList);
-		
-		return SalesPluginConstants.PRODUCTS_DRIVER_NAME + SalesPluginConstants.IMAGES_DRIVER_PATH + "/" + path;
 	}
 	
 	@Override
@@ -206,8 +154,8 @@ public class ProductRegistryImp
 
 			for(ProductImage pi: images) {
 				if(pi.getImage() != null) {
-					String path = getThumbPath(pi);
-					objectsManager.registerObject(path, null, entity.getThumb());
+					String path = ProductUtil.getThumbPath(pi);
+					objectsManager.registerObject(path, null, pi.getImage());
 					pi.setImage((Path)objectsManager.getObject(path));
 				}			
 			}
@@ -224,7 +172,7 @@ public class ProductRegistryImp
 		try {
 			for(ProductImage pi: images) {
 				if(pi.getImage() != null) {
-					String path = getThumbPath(pi);
+					String path = ProductUtil.getThumbPath(pi);
 					objectsManager.unregisterObject(path, null);
 				}			
 			}
@@ -244,7 +192,14 @@ public class ProductRegistryImp
 	@Override
 	public ProductImage getImagesByID(String id) throws ProductRegistryException {
 		try {
-			return imageEntityAccess.findById(id);
+			ProductImage e = imageEntityAccess.findById(id);
+			
+			if(e != null) {
+				String path = ProductUtil.getThumbPath(e);
+				e.setImage((Path)objectsManager.getObject(path));
+			}			
+
+			return e;
 		}
 		catch(EntityAccessException ex) {
 			throw new ProductRegistryException(ex);
@@ -260,10 +215,8 @@ public class ProductRegistryImp
 			images = imageEntityAccess.getImagesByProduct(product);
 			
 			for(ProductImage pi: images) {
-				if(pi.getImage() != null) {
-					String path = getThumbPath(pi);
-					pi.setImage((Path)objectsManager.getObject(path));
-				}			
+				String path = ProductUtil.getThumbPath(pi);
+				pi.setImage((Path)objectsManager.getObject(path));
 			}
 			
 			return images;

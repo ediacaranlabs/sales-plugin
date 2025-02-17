@@ -26,11 +26,15 @@ public abstract class AbstractProductTypeViewHandler
 	@Override
 	public ResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
-		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		ProductRegistry productRegistry;
+		VarParser varParser;
 		Product product;
-		
+		List<ProductImage> images;
 		try {
+			varParser = EntityContextPlugin.getEntity(VarParser.class);
+			productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
+			images = productRegistry.getImagesByProduct(product);
 		}
 		catch(Throwable ex) {
 			throw new InvalidRequestException(ex);
@@ -39,6 +43,7 @@ public abstract class AbstractProductTypeViewHandler
 		
 		Map<String,Object> vars = new HashMap<>();
 		vars.put("entity", product);
+		vars.put("images", images);
 		vars.put("measurementUnit", MeasurementUnit.values());
 		
 		ResultAction ra = new ResultActionImp();
@@ -67,7 +72,7 @@ public abstract class AbstractProductTypeViewHandler
 					}
 					else
 					if((i.getDeleted() == null || !i.getDeleted().booleanValue())) {
-						ProductImage tmp = i.rebuild(true, true, true);
+						ProductImage tmp = i.rebuild(i.getProtectedID() != null, true, true);
 						group.add(new ProductImageGroup(i, tmp));
 						saveList.add(tmp);
 					}
@@ -153,14 +158,30 @@ public abstract class AbstractProductTypeViewHandler
 		return ra;
 	}
 	
-	private static class ProductImageGroup {
+	public static class ProductImageGroup {
 		
-		public ProductImagePubEntity pubEntity;
+		private ProductImagePubEntity pubEntity;
 		
-		public ProductImage entity;
+		private ProductImage entity;
 
 		public ProductImageGroup(ProductImagePubEntity pubEntity, ProductImage entity) {
 			this.pubEntity = pubEntity;
+			this.entity = entity;
+		}
+
+		public ProductImagePubEntity getPubEntity() {
+			return pubEntity;
+		}
+
+		public void setPubEntity(ProductImagePubEntity pubEntity) {
+			this.pubEntity = pubEntity;
+		}
+
+		public ProductImage getEntity() {
+			return entity;
+		}
+
+		public void setEntity(ProductImage entity) {
 			this.entity = entity;
 		}
 		
