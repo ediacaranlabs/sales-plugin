@@ -278,6 +278,9 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.productType = x.getProductType();
 		this.protectedID = x.getProtectedID();
 		this.thumbnail = x.thumbnail;
+		this.shortDescription = x.shortDescription;
+		this.tags = x.tags;
+		this.tagsString = x.tagsString;
 	}
 	
 }

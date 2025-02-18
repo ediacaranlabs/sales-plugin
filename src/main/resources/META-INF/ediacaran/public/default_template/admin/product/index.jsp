@@ -65,6 +65,7 @@
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.image" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.name" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.value" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center>Description</ec:center></ec:table-col>
 						<ec:table-col><ec:center>tags</ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="result.tab.title.action" bundle="${messages}"/></ec:center></ec:table-col>
 					</ec:table-header>
@@ -91,6 +92,7 @@
 							</ec:table-col>
 							<ec:table-col><ec:center>!{item.name}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.cost}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.shortDescription}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.tags}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>

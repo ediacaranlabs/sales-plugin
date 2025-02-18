@@ -40,6 +40,35 @@
 <ed:row style="form">
 	<ed:col size="12" classStyle="form-group has-feedback">
 		<ec:textarea 
+			rows="2" 
+			name="shortDescription" 
+			label="Short description"
+			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:SHORT_DESCRIPTION')}"
+			bundle="${messages}">${vars.entity.shortDescription}</ec:textarea>
+		<ec:field-validator field="description">
+			<ec:field-validator-rule 
+				name="notEmpty" 
+				message="#{resource_form.description.notEmpty}" 
+				bundle="${messages}"/>
+			<ec:field-validator-rule 
+				name="regexp"
+				message="#{resource_form.description.regex}"
+				bundle="${messages}">
+				<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
+			</ec:field-validator-rule>
+			<ec:field-validator-rule 
+				name="stringLength" 
+				message="#{resource_form.description.length}" 
+				bundle="${messages}">
+					<ec:field-validator-param name="min">3</ec:field-validator-param>
+					<ec:field-validator-param name="max">256</ec:field-validator-param>
+			</ec:field-validator-rule>
+		</ec:field-validator>
+	</ed:col>
+</ed:row>
+<ed:row style="form">
+	<ed:col size="12" classStyle="form-group has-feedback">
+		<ec:textarea 
 			rows="10" 
 			name="description" 
 			label="#{resource_form.description.label}"

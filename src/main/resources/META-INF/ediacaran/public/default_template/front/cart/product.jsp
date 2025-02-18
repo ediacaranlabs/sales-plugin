@@ -14,7 +14,7 @@
 			<ed:col id="product-image">
 				<ec:center><ec:image 
 				 	style="fluid"
-					src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.productRequest.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.productRequest.product.publicThumb}"/></ec:center>
+					src="${plugins.ediacaran.sales.image_prefix_address}${empty productRequest.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : productRequest.product.publicThumb}"/></ec:center>
 			</ed:col>
 			<ed:col>
 				<ed:row>
@@ -94,7 +94,7 @@
 				<ec:center>
 				<ec:image 
 			 		style="fluid"
-					src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.productRequest.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.productRequest.product.publicThumb}"/>
+					src="${plugins.ediacaran.sales.image_prefix_address}${empty productRequest.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : productRequest.product.publicThumb}"/>
 				</ec:center>
 			</ed:col>
 			<ed:col size="4" id="cart_item_description_${step.index}">
