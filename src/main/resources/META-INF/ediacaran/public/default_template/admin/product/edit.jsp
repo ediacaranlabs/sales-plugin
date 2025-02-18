@@ -28,31 +28,12 @@
 	<ec:box-body>
 		<ec:form method="POST" id="product_form" enctype="multipart/form-data"
 			update="result_product_form" 
-			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/save/${vars.entity.productType.toLowerCase()}" >
-			<ed:row>
-				<ed:col>
-					<span formgroup="product">
-						<ed:row style="form">
-							<ed:col size="3" classStyle="form-group has-feedback">
-								<ec:imagefield name="thumbnail"
-									src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
-									button="#{resource_form.thumbnail.button}" 
-									bundle="${messages}" width="200" height="200" border="squad"/>
-							</ed:col>
-							<ed:col size="9">
-								<ec:tabs>
-									<ec:tabs-item active="true" title="Details">
-										<jsp:include page="/default_template/admin/product/product_tab.jsp"/>
-									</ec:tabs-item>
-									<ec:tabs-item title="Image Gallery">
-										<jsp:include page="/default_template/admin/product/image_gallery_tab.jsp"/>
-									</ec:tabs-item>
-								</ec:tabs>
-							</ed:col>
-						</ed:row>
-					</span>
-				</ed:col>
-			</ed:row>
+			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/save/${vars.product_view.vars.entity.productType.toLowerCase()}" >
+			<!-- product-view -->
+			<c:set var="localVars" value="${vars}" />
+			<c:set var="vars" scope="request" value="${localVars.product_view.vars}" />
+			<ec:include uri="${localVars.product_view.view}" resolved="${localVars.product_view.resolvedView}" />
+			<!-- /product-view -->
 			<ed:row>
 				<ed:col id="result_product_form">
 				</ed:col>

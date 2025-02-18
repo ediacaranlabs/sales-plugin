@@ -133,9 +133,11 @@ public class ProductAdminPubResource {
 		"/edit/{product.productType:[^/\\s//]+}",
 		"/edit/{product.productType:[^/\\s//]+}/{product.protectedID:[^/\\s//]+}"
 	})
+	@View("${plugins.ediacaran.sales.template}/admin/product/edit")
+	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
-	public ResultAction edit(
+	public Map<String,Object> edit(
 			@Basic(bean = "product")
 			ProductPubEntity productPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -144,7 +146,11 @@ public class ProductAdminPubResource {
 		try {
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().edit(productPubEntity, locale);
+			ResultAction ra = productType.getViewHandler().edit(productPubEntity, locale);
+			
+			Map<String,Object> vars = new HashMap<>();
+			vars.put("product_view", ra);
+			return vars;
 		}
 		catch(InvalidRequestException ex){
 			throw ex;

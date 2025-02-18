@@ -33,7 +33,7 @@ public abstract class AbstractProductTypeViewHandler
 		Throwable exception = null;
 
 		ResultAction ra = new ResultActionImp();
-		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit.jsp"), true);
+		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit_product.jsp"), true);
 		
 		try {
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
@@ -45,12 +45,9 @@ public abstract class AbstractProductTypeViewHandler
 			return ra;
 		}
 		
-		Map<String,Object> vars = new HashMap<>();
-		vars.put("entity", product);
-		vars.put("images", images);
-		vars.put("measurementUnit", MeasurementUnit.values());
-		
-		ra.add("vars", vars);
+		ra.add("entity", product);
+		ra.add("images", images);
+		ra.add("measurementUnit", MeasurementUnit.values());
 		
 		return ra;
 	}
