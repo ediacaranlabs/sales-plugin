@@ -1,8 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,16 +25,13 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
-import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -48,13 +43,6 @@ public class ProductAdminPubResource {
 	@Transient
 	@Inject
 	private ProductViewerRegistry productViewerRegistry;
-	
-	@Transient
-	@Inject
-	private I18nRegistry i18nRegistry;
-	
-	@Inject
-	private ProductTypeRegistry productTypeRegistry;
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/product/index")
@@ -136,36 +124,6 @@ public class ProductAdminPubResource {
 		
 	}
 	
-	@Action("/update/{code}")
-	@RequestMethod("POST")
-	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
-	public ResultAction update(
-			@Basic(bean="product")
-			ProductPubEntity productPubEntity,
-			@Basic(bean="code")
-			String code,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale) throws InvalidRequestException {
-		
-		try {
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().updateView(productPubEntity, code, locale);
-		}
-		catch(InvalidRequestException ex){
-			throw ex;
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ProductAdminPubResourceMessages.update.error.fail_load_request, 
-							locale);
-			throw new InvalidRequestException(error, ex);
-		}
-	}
-	
 	@Action({"/save/{product.productType:[^/\\\\s//]+}"})
 	@RequestMethod("POST")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
@@ -176,22 +134,21 @@ public class ProductAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
+
 		try {
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().save(productPubEntity, locale);
+			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
+			return handler.getProductAdminViewer().saveProduct(productPubEntity, locale);
 		}
-		catch(InvalidRequestException ex){
+		catch(InvalidRequestException ex) {
 			throw ex;
 		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ProductAdminPubResourceMessages.save.error.fail_load_request, 
-							locale);
-			throw new InvalidRequestException(error, ex);
+		catch(Throwable ex) {
+			WebResultAction ra = new WebResultActionImp();
+			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			ra.setReason("product viewer misconfiguration");
+			return ra;
 		}
+		
 	}
 
 	@Action({"/delete"})
@@ -205,21 +162,19 @@ public class ProductAdminPubResource {
 			Locale locale) throws InvalidRequestException {
 		
 		try {
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().remove(productPubEntity, locale);
+			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
+			return handler.getProductAdminViewer().removeProduct(productPubEntity, locale);
 		}
-		catch(InvalidRequestException ex){
+		catch(InvalidRequestException ex) {
 			throw ex;
 		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ProductAdminPubResourceMessages.delete.error.fail_load_request, 
-							locale);
-			throw new InvalidRequestException(error, ex);
+		catch(Throwable ex) {
+			WebResultAction ra = new WebResultActionImp();
+			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			ra.setReason("product viewer misconfiguration");
+			return ra;
 		}
+		
 	}
 	
 }

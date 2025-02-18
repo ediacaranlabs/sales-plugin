@@ -21,6 +21,4 @@ public interface ProductAdminViewer {
 	
 	ResultAction removeProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException;
 	
-	ResultAction getView(ProductPubEntity productPubEntity, String code, Locale locale) throws InvalidRequestException;
-	
 }

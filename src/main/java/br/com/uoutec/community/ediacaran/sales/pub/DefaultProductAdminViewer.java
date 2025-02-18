@@ -123,21 +123,50 @@ public class DefaultProductAdminViewer implements ProductAdminViewer{
 
 	@Override
 	public ResultAction saveProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
+		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
+		
+		try {
+			String type = productPubEntity.getProductType();
+			ProductType productType = productTypeRegistry.getProductType(type);
+			return productType.getViewHandler().save(productPubEntity, locale);
+		}
+		catch(InvalidRequestException ex){
+			throw ex;
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.edit.error.fail_load_request, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+		
 	}
 
 	@Override
 	public ResultAction removeProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResultAction getView(ProductPubEntity productPubEntity, String code, Locale locale)
-			throws InvalidRequestException {
-		// TODO Auto-generated method stub
-		return null;
+		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
+		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
+		
+		try {
+			String type = productPubEntity.getProductType();
+			ProductType productType = productTypeRegistry.getProductType(type);
+			return productType.getViewHandler().remove(productPubEntity, locale);
+		}
+		catch(InvalidRequestException ex){
+			throw ex;
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.edit.error.fail_load_request, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
 	}
 
 }

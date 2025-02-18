@@ -26,6 +26,8 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	private DriversPluginInstaller driversPluginInstaller;
 	
+	private ProductViewerPluginInstaller productViewerPluginInstaller;
+	
 	public PluginInstaller() {
 		this.securityPluginInstaller = new SecurityPluginInstaller();
 		this.i18nPluginInstaller = new I18nPluginInstaller();
@@ -36,6 +38,7 @@ public class PluginInstaller extends AbstractPlugin {
 		this.shippingMethodPluginInstaller = new ShippingMethodPluginInstaller();
 		this.actionsPluginInstaller = new ActionsPluginInstaller();
 		this.driversPluginInstaller = new DriversPluginInstaller();
+		this.productViewerPluginInstaller = new ProductViewerPluginInstaller();
 	}
 	
 	@Override
@@ -49,10 +52,12 @@ public class PluginInstaller extends AbstractPlugin {
 		shippingMethodPluginInstaller.install();
 		actionsPluginInstaller.install();
 		driversPluginInstaller.install();
+		productViewerPluginInstaller.install();
 	}
 
 	@Override
 	public void uninstall() throws Throwable {
+		productViewerPluginInstaller.uninstall();
 		securityPluginInstaller.uninstall();
 		i18nPluginInstaller.uninstall();
 		paymentGatewayPluginInstaller.uninstall();
