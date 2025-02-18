@@ -313,7 +313,14 @@ public class InvoiceRegistryUtil {
 			entityAccess.save(invoice);
 			
 			Client client = clientRegistry.findClientById(invoice.getClient());
-			entityAccess.saveIndex(invoice, client);
+			
+			if(entityAccess.ifIndexExist(invoice)) {
+				entityAccess.updateIndex(invoice, client);
+			}
+			else {
+				entityAccess.saveIndex(invoice, client);
+			}
+			
 			
 			entityAccess.flush();
 		}
@@ -328,7 +335,13 @@ public class InvoiceRegistryUtil {
 			entityAccess.update(invoice);
 			
 			Client client = clientRegistry.findClientById(invoice.getClient());
-			entityAccess.saveIndex(invoice, client);
+			
+			if(entityAccess.ifIndexExist(invoice)) {
+				entityAccess.updateIndex(invoice, client);
+			}
+			else {
+				entityAccess.saveIndex(invoice, client);
+			}
 			
 			entityAccess.flush();
 		}

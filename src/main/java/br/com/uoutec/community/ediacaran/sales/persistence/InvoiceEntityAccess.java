@@ -26,6 +26,8 @@ public interface InvoiceEntityAccess {
 
 	void deleteIndex(Invoice value, Client client) throws EntityAccessException;
 	
+	boolean ifIndexExist(Invoice value) throws EntityAccessException;
+	
 	List<Invoice> getList(Integer first, Integer max, SystemUser user) throws EntityAccessException;
 	
 	List<Invoice> findByOrder(String order, SystemUser user) throws EntityAccessException;
