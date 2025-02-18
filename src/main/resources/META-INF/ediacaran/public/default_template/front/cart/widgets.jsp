@@ -51,10 +51,10 @@
 				</ed:row>
 			</ed:col>
 		</ed:row>
-		<c:if test="${Controller.cart.totalItens > 0 && (empty vars.show_widget_itens || vars.show_widget_itens)}">
+		<%--<c:if test="${Controller.cart.totalItens > 0 && (empty vars.show_widget_itens || vars.show_widget_itens)}">--%>
+		<c:if test="${Controller.cart.totalItens > 0}">
 		<ed:row style="form">
 			<ed:col>
-				${Controller.cart.totalItens}
 				<c:if test="${Controller.cart.totalItens <= 1}">
 					<fmt:message key="cart_review.table.item" bundle="${messages}"/>
 				</c:if> 
@@ -68,7 +68,9 @@
 		<c:forEach items="${Controller.cart.itens}" var="item">
 		<ed:row style="form">
 			<ed:col>
-				<ec:center><ec:image src="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png"/></ec:center>
+				<ec:center><ec:image 
+					style="fluid"
+					src="${plugins.ediacaran.sales.image_prefix_address}${empty item.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : item.product.publicThumb}"/></ec:center>
 			</ed:col>
 			<ed:col>
 				<ed:row style="form">

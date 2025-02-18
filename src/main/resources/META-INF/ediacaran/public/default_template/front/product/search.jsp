@@ -43,10 +43,6 @@
 							icon="home" 
 							text="" 
 							lnk="${plugins.ediacaran.sales.web_path}"/>
-						<ec:breadcrumb-path 
-							text="#{header.breadcrumb.parent}" 
-							lnk="${plugins.ediacaran.sales.web_path}/"
-							bundle="${messages}" />
 					</ec:breadcrumb>
 				</ed:col>
 			</ed:row>
@@ -105,11 +101,11 @@
 											<ed:row>
 												<ed:col size="12">
 													<ec:button 
-														label="Add cart" 
+														label="#{result.add_cart.label}" 
 														align="right"
 														bundle="${messages}">
 														<ec:event type="click">
-															location.href = '${plugins.ediacaran.sales.web_path}/products/!{item.protectedID}'; 
+															location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{item.protectedID}'; 
 														</ec:event>
 													</ec:button>
 												</ed:col>

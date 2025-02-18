@@ -13,6 +13,8 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 
 	private String thumbnail;
 	
+	private String publicID;
+	
 	private String cost;
 
 	private String tags;
@@ -26,6 +28,7 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 		this.thumbnail = e.getPublicThumb();
 		this.cost = e.getCostString(locale);
 		this.tags = null;
+		this.publicID = e.getPublicID();
 	}
 
 	public String getThumbnailPath() {
@@ -59,6 +62,14 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 	@Transient
 	public void setDescription(String value) {
 		super.setDescription(value);
+	}
+
+	public String getPublicID() {
+		return publicID;
+	}
+
+	public void setPublicID(String publicID) {
+		this.publicID = publicID;
 	}
 	
 }

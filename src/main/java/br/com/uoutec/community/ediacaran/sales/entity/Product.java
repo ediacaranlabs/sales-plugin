@@ -59,7 +59,6 @@ public class Product implements Serializable{
 	@Pattern(regexp = CommonValidation.CURRENCY, groups = DataValidation.class)
 	protected String currency;
 
-	@NotNull(groups = DataValidation.class)
 	protected Set<String> tags;
 	
 	public String getProtectedID() {
