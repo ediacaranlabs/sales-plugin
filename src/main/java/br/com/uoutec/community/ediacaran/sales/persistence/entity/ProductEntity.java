@@ -39,6 +39,9 @@ public class ProductEntity implements Serializable,PublicType{
 	@Lob
 	private String description;
 
+	@Column(name="dsc_short_description", length=256)
+	private String shortDescription;
+	
 	@Column(name = "dsc_tags", length = 256)
 	private String tags;
 	
@@ -59,13 +62,14 @@ public class ProductEntity implements Serializable,PublicType{
 	}
 	
 	public ProductEntity(Product e){
-		this.cost            = e.getCost();
-		this.currency        = e.getCurrency();
-		this.productType     = e.getProductType();
-		this.description     = e.getDescription();
-		this.measurementUnit = e.getMeasurementUnit();
-		this.id              = e.getId() <= 0? null : e.getId();
-		this.name            = e.getName();
+		this.cost             = e.getCost();
+		this.currency         = e.getCurrency();
+		this.productType      = e.getProductType();
+		this.description      = e.getDescription();
+		this.measurementUnit  = e.getMeasurementUnit();
+		this.id               = e.getId() <= 0? null : e.getId();
+		this.name             = e.getName();
+		this.shortDescription = e.getShortDescription();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -149,6 +153,7 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setDescription(this.description);
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
+		e.setShortDescription(this.shortDescription);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))

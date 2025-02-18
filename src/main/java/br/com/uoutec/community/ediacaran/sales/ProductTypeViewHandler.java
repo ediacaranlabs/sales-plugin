@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales;
 
 import java.util.Locale;
 
-import org.brandao.brutos.ResultAction;
+import org.brandao.brutos.web.WebResultAction;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
@@ -11,22 +11,22 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 
 public interface ProductTypeViewHandler extends PublicBean{
 
-	ResultAction getProductOrderView(ProductRequest product);
+	WebResultAction getProductOrderView(ProductRequest product);
 
-	ResultAction getProductOrderView(String code);
+	WebResultAction getProductOrderView(String code);
 	
-	ResultAction getProductFormView(ProductPubEntity productPubEntity, Locale locale);
+	WebResultAction getProductFormView(ProductPubEntity productPubEntity, Locale locale);
 
-	ResultAction getProductCartView(ProductRequest product);
+	WebResultAction getProductCartView(ProductRequest product);
 
-	ResultAction getProductCartView(String code);
+	WebResultAction getProductCartView(String code);
 	
-	ResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException;
+	WebResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException;
 	
-	ResultAction save(ProductPubEntity productPubEntity,Locale locale) throws InvalidRequestException;
+	WebResultAction save(ProductPubEntity productPubEntity,Locale locale) throws InvalidRequestException;
 
-	ResultAction remove(ProductPubEntity productPubEntity,Locale locale) throws InvalidRequestException;
+	WebResultAction remove(ProductPubEntity productPubEntity,Locale locale) throws InvalidRequestException;
 	
-	ResultAction updateView(ProductPubEntity productPubEntity, String code, Locale locale) throws InvalidRequestException;
+	WebResultAction updateView(ProductPubEntity productPubEntity, String code, Locale locale) throws InvalidRequestException;
 	
 }

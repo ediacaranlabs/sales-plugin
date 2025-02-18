@@ -25,7 +25,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 public class DefaultProductAdminViewer implements ProductAdminViewer{
 
 	@Override
-	public ResultAction showProductSearch(Locale locale) throws InvalidRequestException {
+	public WebResultAction showProductSearch(Locale locale) throws InvalidRequestException {
 		
 		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
 		
@@ -87,7 +87,7 @@ public class DefaultProductAdminViewer implements ProductAdminViewer{
 	}
 
 	@Override
-	public ResultAction showProductEdit(ProductPubEntity productPubEntity, Locale locale)
+	public WebResultAction showProductEdit(ProductPubEntity productPubEntity, Locale locale)
 			throws InvalidRequestException {
 		
 		WebResultAction r = new WebResultActionImp();
@@ -122,7 +122,7 @@ public class DefaultProductAdminViewer implements ProductAdminViewer{
 	}
 
 	@Override
-	public ResultAction saveProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+	public WebResultAction saveProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
 		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
 		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
@@ -147,7 +147,7 @@ public class DefaultProductAdminViewer implements ProductAdminViewer{
 	}
 
 	@Override
-	public ResultAction removeProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+	public WebResultAction removeProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
 		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
 		

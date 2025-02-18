@@ -5,7 +5,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
@@ -26,7 +25,7 @@ import org.brandao.brutos.web.WebResultActionImp;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
@@ -44,18 +43,25 @@ public class ProductPubResource {
 	private ProductViewerRegistry productViewerRegistry;
 	
 	@Action("/")
-	public ResultAction index(
+	public WebResultAction index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 			) {
 		
 		try {
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.getProductViewer().showProductSearch(locale);
+			WebResultAction ra = handler.getProductViewer().showProductSearch(locale);
+			
+			if(ra == null) {
+				throw new NullPointerException("ResultAction");
+			}
+			
+			return ra;
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
 			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			ra.setContentType(String.class);
 			ra.setReason("product viewer misconfiguration");
 			return ra;
 		}
@@ -69,7 +75,7 @@ public class ProductPubResource {
 	@Result(mappingType = MappingTypes.OBJECT)
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SEARCH)
-	public ProductsSearchResultPubEntity searchProduct(
+	public ProductsSimplifiedSearchResultPubEntity searchProduct(
 			@DetachedName
 			ProductSearchPubEntity productSearch,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -87,7 +93,7 @@ public class ProductPubResource {
 	}
 	
 	@Action("/{product.protectedID:[^/\\s//]+}-{suf:.+}")
-	public ResultAction showProduct(
+	public WebResultAction showProduct(
 			@Basic(bean = "product")
 			ProductPubEntity productPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)

@@ -52,6 +52,10 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String description;
 
+	@NotNull(groups=DataValidation.class)
+	@Size(min=3, max = 256,groups=DataValidation.class)
+	private String shortDescription;
+	
 	@Enumerated(EnumerationType.STRING)
 	@NotNull(groups=DataValidation.class)
 	private String productType;
@@ -91,6 +95,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.name = e.getName();
 		this.productType = e.getProductType();
 		this.tags = e.getTags();
+		this.shortDescription = e.getShortDescription();
 	}
 	
 	public String getProtectedID() {
@@ -189,6 +194,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.images = images;
 	}
 
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
 	@Override
 	protected void preRebuild(Product instance, boolean reload, boolean override, boolean validate) {
 		try {
@@ -227,7 +240,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setMeasurementUnit(this.measurementUnit);
 		o.setProductType(this.productType);
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
-		o.setTags(tagsString != null? StringUtil.toSet(tagsString, ",") : tags);
+		o.setTags(this.tagsString != null? StringUtil.toSet(this.tagsString, ",") : tags);
+		o.setShortDescription(this.shortDescription);
 	}
 
 	@Override

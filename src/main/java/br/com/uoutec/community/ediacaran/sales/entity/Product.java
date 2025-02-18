@@ -38,6 +38,11 @@ public class Product implements Serializable{
 
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	@Size(max=256)
+	protected String shortDescription;
+	
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Size(max=2048)
 	protected String description;
 	
@@ -109,6 +114,14 @@ public class Product implements Serializable{
 		this.measurementUnit = measurementUnit;
 	}
 
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
 	public boolean isFree(){
 		return this.cost == null || this.cost.equals(BigDecimal.ZERO);
 	}
@@ -151,6 +164,10 @@ public class Product implements Serializable{
 
 	public String getPublicThumb() {
 		return thumb == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
+	}
+
+	public String getPublicID() {
+		return name == null? null : ProductUtil.getPublicID(this);
 	}
 	
 }

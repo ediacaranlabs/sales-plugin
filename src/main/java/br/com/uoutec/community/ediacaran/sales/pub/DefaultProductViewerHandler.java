@@ -8,7 +8,7 @@ public class DefaultProductViewerHandler implements ProductViewerHandler{
 	
 	public DefaultProductViewerHandler() {
 		this.productAdminViewer = new DefaultProductAdminViewer();
-		this.productViewer = null;
+		this.productViewer = new DefaultProductViewer();
 	}
 	
 	@Override

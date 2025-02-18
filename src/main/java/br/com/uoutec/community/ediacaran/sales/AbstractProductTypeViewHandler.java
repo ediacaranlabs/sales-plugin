@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.brandao.brutos.ResultAction;
-import org.brandao.brutos.ResultActionImp;
+import org.brandao.brutos.web.WebResultAction;
+import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
@@ -24,7 +24,7 @@ public abstract class AbstractProductTypeViewHandler
 	implements ProductTypeViewHandler{
 	
 	@Override
-	public ResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+	public WebResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
 		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
@@ -32,7 +32,7 @@ public abstract class AbstractProductTypeViewHandler
 		List<ProductImage> images = null;
 		Throwable exception = null;
 
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit_product.jsp"), true);
 		
 		try {
@@ -53,7 +53,7 @@ public abstract class AbstractProductTypeViewHandler
 	}
 
 	@Override
-	public ResultAction save(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+	public WebResultAction save(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
 		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
@@ -63,7 +63,7 @@ public abstract class AbstractProductTypeViewHandler
 		List<ProductImageGroup> group = new ArrayList<>();
 		Throwable exception = null;
 
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/result.jsp"), true);
 		
 		try {
@@ -111,52 +111,52 @@ public abstract class AbstractProductTypeViewHandler
 	}
 
 	@Override
-	public ResultAction remove(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+	public WebResultAction remove(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public ResultAction updateView(ProductPubEntity productPubEntity, String code, Locale locale)
+	public WebResultAction updateView(ProductPubEntity productPubEntity, String code, Locale locale)
 			throws InvalidRequestException {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public ResultAction getProductFormView(ProductPubEntity productPubEntity, Locale locale) {
+	public WebResultAction getProductFormView(ProductPubEntity productPubEntity, Locale locale) {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/cart/product_form.jsp"), true);
 		return ra;
 	}
 	
 	@Override
-	public ResultAction getProductCartView(ProductRequest product) {
+	public WebResultAction getProductCartView(ProductRequest product) {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/front/cart/product.jsp"), true);
 		return ra;
 	}
 
 	@Override
-	public ResultAction getProductCartView(String productType) {
+	public WebResultAction getProductCartView(String productType) {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/front/cart/product.jsp"), true);
 		return ra;
 	}
 	
 	@Override
-	public ResultAction getProductOrderView(ProductRequest product) {
+	public WebResultAction getProductOrderView(ProductRequest product) {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/cart/product.jsp"), true);
 		return ra;
 	}
 
 	@Override
-	public ResultAction getProductOrderView(String productType) {
+	public WebResultAction getProductOrderView(String productType) {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ResultAction ra = new ResultActionImp();
+		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/cart/product.jsp"), true);
 		return ra;
 	}
