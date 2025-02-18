@@ -22,14 +22,10 @@ import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
-import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
-import br.com.uoutec.community.ediacaran.security.BasicRoles;
-import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
-import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -73,8 +69,6 @@ public class ProductPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
-	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.PRODUCT.SEARCH)
 	public ProductsSimplifiedSearchResultPubEntity searchProduct(
 			@DetachedName
 			ProductSearchPubEntity productSearch,

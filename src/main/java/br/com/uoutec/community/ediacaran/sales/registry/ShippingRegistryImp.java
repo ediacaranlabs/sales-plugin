@@ -96,7 +96,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			}
 		}
 		catch(ValidationException e){
-			throw new ShippingRegistryException(e.getMessage());
+			throw new ShippingRegistryException(e.getMessage(), e);
 		}
 		catch(ShippingRegistryException e){
 			throw e;
