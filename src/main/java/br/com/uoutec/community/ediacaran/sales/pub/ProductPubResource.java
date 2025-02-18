@@ -51,7 +51,7 @@ public class ProductPubResource {
 		
 		try {
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.showProductSearch(locale);
+			return handler.getProductViewer().showProductSearch(locale);
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
@@ -78,7 +78,7 @@ public class ProductPubResource {
 		
 		try {
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.searchProduct(productSearch, locale);
+			return handler.getProductViewer().searchProduct(productSearch, locale);
 		}
 		catch(Throwable ex) {
 			return null;
@@ -95,7 +95,7 @@ public class ProductPubResource {
 		
 		try {
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.showProduct(productPubEntity, locale);
+			return handler.getProductViewer().showProduct(productPubEntity, locale);
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
