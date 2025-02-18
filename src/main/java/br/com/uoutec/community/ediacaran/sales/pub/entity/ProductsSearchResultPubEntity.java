@@ -23,7 +23,7 @@ public class ProductsSearchResultPubEntity extends AbstractPubEntity<ProductSear
 	private Integer page;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ProductSimplifiedSearchResultPubEntity> itens;
+	private List<ProductSearchResultPubEntity> itens;
 
 	@Constructor
 	public ProductsSearchResultPubEntity() {
@@ -36,7 +36,7 @@ public class ProductsSearchResultPubEntity extends AbstractPubEntity<ProductSear
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
 			for(Product p: e.getItens()) {
-				itens.add(new ProductSimplifiedSearchResultPubEntity(p, locale));
+				itens.add(new ProductSearchResultPubEntity(p, locale));
 			}
 		}
 	}
@@ -104,11 +104,11 @@ public class ProductsSearchResultPubEntity extends AbstractPubEntity<ProductSear
 		this.page = page;
 	}
 
-	public List<ProductSimplifiedSearchResultPubEntity> getItens() {
+	public List<ProductSearchResultPubEntity> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<ProductSimplifiedSearchResultPubEntity> itens) {
+	public void setItens(List<ProductSearchResultPubEntity> itens) {
 		this.itens = itens;
 	}
 	

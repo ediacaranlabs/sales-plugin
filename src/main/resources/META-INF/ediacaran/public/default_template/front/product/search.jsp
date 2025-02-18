@@ -99,7 +99,7 @@
 												<ed:col size="12">
 													!{item.name}<br>
 													<b>!{item.cost}</b><br>
-													!{item.description}<br>
+													!{item.shortDescription}<br>
 												</ed:col>
 											</ed:row>
 											<ed:row>
