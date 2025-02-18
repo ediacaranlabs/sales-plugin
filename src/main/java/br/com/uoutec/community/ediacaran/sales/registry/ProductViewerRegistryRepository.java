@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.pub.ProductViewerHandler;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
@@ -16,9 +17,12 @@ import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 public class ProductViewerRegistryRepository implements PublicBean{
 
 	private ConcurrentMap<String, ProductViewerHandler> map;
+
+	private ConcurrentMap<String, Widget> widgetMap;
 	
 	public ProductViewerRegistryRepository() {
 		this.map = new ConcurrentHashMap<>();
+		this.widgetMap = new ConcurrentHashMap<>();
 	}
 	
 	public void registerProductViewerHandler(ProductViewerHandler handler) throws ProductViewerRegistryException{
@@ -50,6 +54,30 @@ public class ProductViewerRegistryRepository implements PublicBean{
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCTVIEWER_REGISTRY.getListPermission());
 		
 		return new ArrayList<>(map.values());
+	}
+
+	public void registerProductViewerWidget(Widget widget) throws ProductViewerRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCTVIEWER_REGISTRY.WIDGET.getRegisterPermission());
+		
+		Widget old = widgetMap.putIfAbsent(widget.getName(), widget);
+		if(old != null) {
+			throw new ProductViewerRegistryException("handler already registered: " + widget.getName());
+		}
+	}
+	
+	public void unregisterProductViewerWidget(String id) throws ProductViewerRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCTVIEWER_REGISTRY.WIDGET.getRemovePermission());
+		
+		widgetMap.remove(id);
+	}
+
+	public List<Widget> getProductViewerWidgets(){
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCTVIEWER_REGISTRY.WIDGET.getListPermission());
+		
+		return new ArrayList<>(widgetMap.values());
 	}
 	
 }

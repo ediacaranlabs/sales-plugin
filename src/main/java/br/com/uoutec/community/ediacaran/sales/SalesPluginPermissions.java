@@ -298,6 +298,28 @@ public final class SalesPluginPermissions {
 		public static SecurityPermission getGetPermission() {
 			return new RuntimeSecurityPermission(basePermission + "get");
 		}
+
+		public static class WIDGET {
+
+			public static final String basePermission = PRODUCTVIEWER_REGISTRY.basePermission + "widget.";
+			
+			public static SecurityPermission getRegisterPermission() {
+				return new RuntimeSecurityPermission(basePermission + "register");
+			}
+
+			public static SecurityPermission getListPermission() {
+				return new RuntimeSecurityPermission(basePermission + "list");
+			}
+			
+			public static SecurityPermission getRemovePermission() {
+				return new RuntimeSecurityPermission(basePermission + "remove");
+			}
+
+			public static SecurityPermission getGetPermission() {
+				return new RuntimeSecurityPermission(basePermission + "get");
+			}
+			
+		}
 		
 	}
 	
