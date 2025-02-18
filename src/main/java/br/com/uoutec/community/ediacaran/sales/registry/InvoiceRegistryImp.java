@@ -57,6 +57,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
 	
+	@Inject
 	private ProductTypeRegistry productTypeRegistry;
 
 	@Inject

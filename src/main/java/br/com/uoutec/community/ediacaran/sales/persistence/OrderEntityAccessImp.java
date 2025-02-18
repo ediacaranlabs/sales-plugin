@@ -335,7 +335,7 @@ public class OrderEntityAccessImp
 		    }
 		    
 		    if(value.getOwner() != null) {
-			    and.add(builder.equal(from.get("id"), value.getOwner()));
+			    and.add(builder.equal(from.get("client"), value.getOwner()));
 		    }
 
 		    if(value.getStatus() != null) {

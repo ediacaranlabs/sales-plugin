@@ -59,7 +59,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private ClientRegistry clientRegistry;
 
 	@Inject
-	private OrderRegistry orderregistry;
+	private OrderRegistry orderRegistry;
 	
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
@@ -178,7 +178,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 				
 				
 				if(client != null) {
-					Order order = orderregistry.findByCartID(e.getOrder());
+					Order order = orderRegistry.findByCartID(e.getOrder());
 					if(order == null || order.getClient() != client.getId()) {
 						return null;
 					}

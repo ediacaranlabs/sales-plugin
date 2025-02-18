@@ -27,7 +27,6 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingEntity
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingIndexEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
-import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -201,7 +200,6 @@ public class ShippingEntityAccessImp
 		    		builder.createQuery(ShippingEntity.class);
 		    Root<ShippingEntity> from = criteria.from(ShippingEntity.class);
 		    Join<ShippingEntity, OrderEntity> orderJoin = from.join("order");
-		    Join<OrderEntity, SystemUserEntity> userJoin = orderJoin.join("owner");
 		    
 		    criteria.select(from);
 
@@ -209,7 +207,7 @@ public class ShippingEntityAccessImp
 	    	and.add(builder.equal(orderJoin.get("id"), order));
 		    
 	    	if(user != null) {
-		    	and.add(builder.equal(userJoin.get("id"), user.getId()));
+		    	and.add(builder.equal(from.get("client"), user.getId()));
 	    	}
 	    	
 		    if(!and.isEmpty()) {
@@ -250,15 +248,13 @@ public class ShippingEntityAccessImp
 		    CriteriaQuery<ShippingEntity> criteria = 
 		    		builder.createQuery(ShippingEntity.class);
 		    Root<ShippingEntity> from = criteria.from(ShippingEntity.class);
-		    Join<ShippingEntity, OrderEntity> orderJoin = from.join("order");
-		    Join<OrderEntity, SystemUserEntity> userJoin = orderJoin.join("owner");
 		    
 		    criteria.select(from);
 
 		    List<Predicate> and = new ArrayList<Predicate>();
 		    
 	    	if(user != null) {
-		    	and.add(builder.equal(userJoin.get("id"), user.getId()));
+		    	and.add(builder.equal(from.get("client"), user.getId()));
 	    	}
 		    
 		    if(!and.isEmpty()) {

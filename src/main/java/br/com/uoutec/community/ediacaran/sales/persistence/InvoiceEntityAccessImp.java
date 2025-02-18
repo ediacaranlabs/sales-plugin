@@ -224,7 +224,7 @@ public class InvoiceEntityAccessImp
 		    		builder.createQuery(InvoiceEntity.class);
 		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
 		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
-		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("owner");
+		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("client");
 		    
 		    criteria.select(from);
 
@@ -273,7 +273,7 @@ public class InvoiceEntityAccessImp
 		    CriteriaQuery<InvoiceEntity> criteria = 
 		    		builder.createQuery(InvoiceEntity.class);
 		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
-		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("owner");
+		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("client");
 		    
 		    criteria.select(from);
 
