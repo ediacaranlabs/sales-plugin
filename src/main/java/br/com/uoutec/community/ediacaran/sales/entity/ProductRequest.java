@@ -270,7 +270,7 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getTotal(){
 		
-		BigDecimal value = cost.multiply(new BigDecimal(units));
+		BigDecimal value = cost;
 		
 		if(taxes != null) {
 			
