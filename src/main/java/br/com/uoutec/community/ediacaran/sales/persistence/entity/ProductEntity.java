@@ -35,8 +35,8 @@ public class ProductEntity implements Serializable,PublicType{
 	@Column(name="dsc_name", length=128)
 	private String name;
 	
-	@Column(name="dsc_description")
 	@Lob
+	@Column(name="dsc_description", length=2048)
 	private String description;
 
 	@Column(name="dsc_short_description", length=256)

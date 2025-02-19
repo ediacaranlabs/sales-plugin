@@ -92,7 +92,7 @@
 							</ec:table-col>
 							<ec:table-col><ec:center>!{item.name}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.cost}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.shortDescription}</ec:center></ec:table-col>
+							<ec:table-col>!{item.shortDescription}</ec:table-col>
 							<ec:table-col><ec:center>!{item.tags}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>

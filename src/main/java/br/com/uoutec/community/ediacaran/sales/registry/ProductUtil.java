@@ -7,12 +7,11 @@ import java.util.List;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
-import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 public class ProductUtil {
 
 	public static String getPublicID(Product product) {
-		return product.getProtectedID() + "-" + StringUtil.normalize(product.getName(), "-");		
+		return "/" + product.getName().trim().replaceAll("\\s+", "-") + "/" + product.getProtectedID() + "/";		
 	}
 	
 	public static String getPublicThumbPath(ProductImage e) {

@@ -19,7 +19,7 @@
 			<ed:col>
 				<ed:row>
 					<ed:col size="12">
-						${productRequest.description}
+						${productRequest.shortDescription}
 					</ed:col>
 				</ed:row>
 				<ed:row>
@@ -98,7 +98,7 @@
 				</ec:center>
 			</ed:col>
 			<ed:col size="4" id="cart_item_description_${step.index}">
-				<ec:center>${productRequest.description}</ec:center>
+				<ec:center>${productRequest.shortDescription}</ec:center>
 				<p>
 			</ed:col>
 			<ed:col size="3">

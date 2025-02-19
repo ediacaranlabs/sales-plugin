@@ -86,7 +86,10 @@ public class ProductPubResource {
 		
 	}
 	
-	@Action("/{product.protectedID:[^/\\s//]+}-{suf:.+}")
+	@Action({
+		"/{name:[^/\\s//\\.]+}/{product.protectedID:[^/\\s//\\.]+}/",
+		"/{name:[^/\\s//\\.]+}/{product.protectedID:[^/\\s//\\.]+}"
+	})
 	public WebResultAction showProduct(
 			@Basic(bean = "product")
 			ProductPubEntity productPubEntity,
@@ -95,7 +98,13 @@ public class ProductPubResource {
 		
 		try {
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.getProductViewer().showProduct(productPubEntity, locale);
+			WebResultAction ra = handler.getProductViewer().showProduct(productPubEntity, locale);
+			
+			if(ra == null) {
+				throw new NullPointerException("WebResultAction");
+			}
+			
+			return ra;
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
