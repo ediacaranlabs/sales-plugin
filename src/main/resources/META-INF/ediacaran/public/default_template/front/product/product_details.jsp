@@ -45,7 +45,7 @@
 							lnk="${plugins.ediacaran.sales.web_path}" />
 						<ec:breadcrumb-path 
 							text="#{header.breadcrumb.parent}" 
-							lnk="${plugins.ediacaran.sales.web_path}/search"
+							lnk="${plugins.ediacaran.sales.web_path}/products"
 							bundle="${messages}"
 							/>
 					</ec:breadcrumb>

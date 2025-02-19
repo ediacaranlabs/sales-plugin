@@ -42,6 +42,12 @@
 
 
 </style>
+<c:if test="${Controller.cart.itens.size() == 0}">
+	<ec:center>
+	</ec:center>
+</c:if>
+
+<c:if test="${Controller.cart.itens.size() > 0}">
 <ed:row>
 	<ed:col id="products-list">
 		<c:forEach var="productRequest" varStatus="step" items="${Controller.cart.itens}">
@@ -54,3 +60,4 @@
 		</c:forEach>
 	</ed:col>
 </ed:row>
+</c:if>
