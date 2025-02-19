@@ -94,7 +94,7 @@
 									</c:if>
 								</ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.description}</center></ec:table-col>
+								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>

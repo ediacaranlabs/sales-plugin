@@ -256,6 +256,16 @@ public class OrderEntityAccessImp
     	}
 	}
 	
+	public boolean ifIndexExist(Order value) throws EntityAccessException {
+		try{
+			Object o = entityManager.find(OrderIndexEntity.class, value.getId());
+			return o != null;
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+	
 	@Override
 	protected OrderEntity toPersistenceEntity(Order entity)
 			throws Throwable {

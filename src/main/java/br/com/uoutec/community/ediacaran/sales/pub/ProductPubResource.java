@@ -26,6 +26,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -34,6 +35,10 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class ProductPubResource {
 
+	@Transient
+	@Inject
+	private Cart cart;
+	
 	@Transient
 	@Inject
 	private ProductViewerRegistry productViewerRegistry;
@@ -115,4 +120,8 @@ public class ProductPubResource {
 		
 	}
 
+	public Cart getCart() {
+		return cart;
+	}
+	
 }

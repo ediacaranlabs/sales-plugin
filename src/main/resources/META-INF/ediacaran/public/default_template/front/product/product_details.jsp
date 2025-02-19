@@ -15,6 +15,12 @@
 .box-body {
 	min-height: 120px !important;
 }
+
+#produc_images img{
+	width: 100px;
+	height: auto;
+	cursor: pointer;
+}
 </style>
 <title>${entity.name}</title>
 </head>
@@ -51,14 +57,30 @@
 	<section class="content">
 		<ed:container>
 		<ed:row>
-			<ed:col size="10">
+			<ed:col size="9">
 				<ed:row>
-					<ed:col size="3">
-						<ec:image
+					<ed:col size="5">
+						<ec:image id="principal_img"
 							style="fluid"
 							src="${plugins.ediacaran.sales.image_prefix_address}${empty entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : entity.publicThumb}"/>
+						<c:if test="${images.size() > 0}">
+							<ec:carousel id="produc_images">
+								<c:forEach items="${images}" var="image">
+									<ec:carousel-item>
+										<a href="#" id="product_img_${image.protectedID}">
+											<ec:image align="center" src="${plugins.ediacaran.sales.image_prefix_address}${image.publicThumb}"/>
+										</a>
+										<ec:event componentName="product_img_${image.protectedID}" type="click">
+											var $img = $.AppContext.utils.getById('principal_img');
+											$img.setAttribute('src', '${plugins.ediacaran.sales.image_prefix_address}${image.publicThumb}');
+										</ec:event>
+										
+									</ec:carousel-item>
+								</c:forEach>
+							</ec:carousel>
+						</c:if>
 					</ed:col>
-					<ed:col size="9">
+					<ed:col size="7">
 						<h3>${entity.name}</h3>
 						<p>${entity.shortDescription}<p>
 						<h5>${entity.getCostString(locale)}</h5>
@@ -80,13 +102,14 @@
 							align="right"
 							bundle="${messages}">
 							<ec:event type="click">
-								location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{entity.protectedID}'; 
+								location.href = '${plugins.ediacaran.sales.web_path}/cart/add/${entity.protectedID}'; 
 							</ec:event>
 						</ec:button>
 					</ed:col>
 				</ed:row>
 			</ed:col>
-			<ed:col size="2">
+			<ed:col size="3">
+				<jsp:include page="widgets.jsp"/>
 			</ed:col>
 		</ed:row>
 		</ed:container>

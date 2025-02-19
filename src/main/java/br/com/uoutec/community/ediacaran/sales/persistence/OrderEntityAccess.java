@@ -30,6 +30,8 @@ public interface OrderEntityAccess {
 	
 	void deleteIndex(Order value, Client client) throws EntityAccessException;
 	
+	boolean ifIndexExist(Order value) throws EntityAccessException;
+	
 	List<OrderResultSearch> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws EntityAccessException;
 	
 	List<Order> getOrders(Integer owner, Integer first, Integer max) throws EntityAccessException;

@@ -72,7 +72,7 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.description}</center></ec:table-col>
+								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
 								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
 								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>

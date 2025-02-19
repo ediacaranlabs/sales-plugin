@@ -116,7 +116,13 @@ public class OrderRegistryImp
 		orderEntityAccess.save(entity);
 		
 		Client client = clientRegistry.findClientById(entity.getClient());
-		orderEntityAccess.saveIndex(entity, client);
+		
+		if(orderEntityAccess.ifIndexExist(entity)) {
+			orderEntityAccess.updateIndex(entity, client);
+		}
+		else {
+			orderEntityAccess.saveIndex(entity, client);
+		}
 		
 		orderEntityAccess.flush();
 	}
@@ -127,10 +133,17 @@ public class OrderRegistryImp
 		
 		Client client = clientRegistry.findClientById(entity.getClient());
 		if(entity.isRemoved()) {
-			orderEntityAccess.deleteIndex(entity, client);
+			if(orderEntityAccess.ifIndexExist(entity)) {
+				orderEntityAccess.deleteIndex(entity, client);
+			}
 		}
 		else {
-			orderEntityAccess.updateIndex(entity, client);
+			if(orderEntityAccess.ifIndexExist(entity)) {
+				orderEntityAccess.updateIndex(entity, client);
+			}
+			else {
+				orderEntityAccess.saveIndex(entity, client);
+			}
 		}
 		
 		orderEntityAccess.flush();

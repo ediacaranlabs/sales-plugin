@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.brandao.brutos.web.HttpStatus;
@@ -7,6 +8,7 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
@@ -68,10 +70,13 @@ public class DefaultProductViewer implements ProductViewer{
 	public WebResultAction showProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
 		ProductViewerRegistry productViewerRegistry = EntityContextPlugin.getEntity(ProductViewerRegistry.class);
+		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
 		
 		Product product = null;
+		List<ProductImage> images = null;
 		try{
 			product = productPubEntity.rebuild(true, false, true);
+			images = productRegistry.getImagesByProduct(product);
 		}
 		catch(Throwable ex){
 			ex.printStackTrace();
@@ -84,6 +89,7 @@ public class DefaultProductViewer implements ProductViewer{
 		WebResultAction ra = new WebResultActionImp();
 		ra.setView("${plugins.ediacaran.sales.template}/front/product/product_details");
 		ra.add("entity", product);
+		ra.add("images", images);
 		ra.add("widgets", productViewerRegistry.getProductViewerWidgets());
 		return ra;
 
