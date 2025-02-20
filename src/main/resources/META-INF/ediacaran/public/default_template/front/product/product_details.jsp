@@ -63,6 +63,16 @@
 						<ec:image id="principal_img"
 							style="fluid"
 							src="${plugins.ediacaran.sales.image_prefix_address}${empty entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : entity.publicThumb}"/>
+					</ed:col>
+					<ed:col size="7">
+						<h3>${entity.name}</h3>
+						<p>${entity.shortDescription}<p>
+						<c:forEach items="${infos}" var="inf">
+							<!-- info (${inf.id}) -->
+							<ec:sectionView section="${tab.content}"/>
+							<!-- /info (${inf.id}) -->
+						</c:forEach>
+						<h5>${entity.getCostString(locale)}</h5>
 						<c:if test="${images.size() > 0}">
 							<ec:carousel id="produc_images">
 								<c:forEach items="${images}" var="image">
@@ -74,16 +84,10 @@
 											var $img = $.AppContext.utils.getById('principal_img');
 											$img.setAttribute('src', '${plugins.ediacaran.sales.image_prefix_address}${image.publicThumb}');
 										</ec:event>
-										
 									</ec:carousel-item>
 								</c:forEach>
 							</ec:carousel>
 						</c:if>
-					</ed:col>
-					<ed:col size="7">
-						<h3>${entity.name}</h3>
-						<p>${entity.shortDescription}<p>
-						<h5>${entity.getCostString(locale)}</h5>
 					</ed:col>
 				</ed:row>
 				<ed:row>
@@ -92,6 +96,13 @@
 							<ec:tabs-item title="Details" active="true">
 								${entity.description}
 							</ec:tabs-item>
+							<c:forEach items="${tabs}" var="tab">
+							<!-- tab (${tab.id}) -->
+							<ec:tabs-item title="${tab.title}">
+								<ec:sectionView section="${tab.content}"/>
+							</ec:tabs-item>
+							<!-- /tab (${tab.id}) -->
+							</c:forEach>
 						</ec:tabs>
 					</ed:col>
 				</ed:row>

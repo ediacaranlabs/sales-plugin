@@ -14,7 +14,7 @@
 	</ed:row>
 	<ed:row style="cart_widget">
 		<ed:col>
-			<ec:include uri="${widget.resource}"/>
+			<ec:sectionView section="${widget.content}" />
 		</ed:col>
 	</ed:row>
 </c:forEach>

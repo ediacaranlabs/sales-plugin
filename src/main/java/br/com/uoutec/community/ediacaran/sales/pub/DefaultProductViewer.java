@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebResultAction;
@@ -16,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductWidget;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -74,9 +76,14 @@ public class DefaultProductViewer implements ProductViewer{
 		
 		Product product = null;
 		List<ProductImage> images = null;
+		List<ProductWidgetWrapper> widgets = null;
 		try{
 			product = productPubEntity.rebuild(true, false, true);
 			images = productRegistry.getImagesByProduct(product);
+			
+			List<ProductWidget> productWidgets = productViewerRegistry.getProductViewerWidgets();
+			widgets = productWidgets.stream().map((e)->new ProductWidgetWrapper(e)).collect(Collectors.toList());
+			
 		}
 		catch(Throwable ex){
 			ex.printStackTrace();
@@ -90,7 +97,7 @@ public class DefaultProductViewer implements ProductViewer{
 		ra.setView("${plugins.ediacaran.sales.template}/front/product/product_details");
 		ra.add("entity", product);
 		ra.add("images", images);
-		ra.add("widgets", productViewerRegistry.getProductViewerWidgets());
+		ra.add("widgets", widgets);
 		return ra;
 
 	}

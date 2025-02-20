@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import br.com.uoutec.application.SystemProperties;
-import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.sales.pub.ProductViewerHandler;
 import br.com.uoutec.ediacaran.core.plugins.PluginType;
 
@@ -68,7 +67,7 @@ public class ProductViewerRegistryImp implements ProductViewerRegistry {
 	}
 
 	@Override
-	public void registerProductViewerWidget(Widget widget) throws ProductViewerRegistryException {
+	public void registerProductViewerWidget(ProductWidget widget) throws ProductViewerRegistryException {
 		repository.registerProductViewerWidget(widget);
 	}
 
@@ -78,7 +77,7 @@ public class ProductViewerRegistryImp implements ProductViewerRegistry {
 	}
 
 	@Override
-	public List<Widget> getProductViewerWidgets() {
+	public List<ProductWidget> getProductViewerWidgets() {
 		return repository.getProductViewerWidgets();
 	}
 	

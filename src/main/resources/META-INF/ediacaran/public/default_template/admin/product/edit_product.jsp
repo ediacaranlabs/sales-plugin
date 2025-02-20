@@ -24,6 +24,13 @@
 						<ec:tabs-item title="Image Gallery">
 							<jsp:include page="/default_template/admin/product/image_gallery_tab.jsp"/>
 						</ec:tabs-item>
+						<c:forEach items="${vars.tabs}" var="tab">
+						<!-- tab (${tab.id}) -->
+						<ec:tabs-item title="${tab.title}">
+							<ec:sectionView section="${tab.content}"/>
+						</ec:tabs-item>
+						<!-- /tab (${tab.id}) -->
+						</c:forEach>
 					</ec:tabs>
 				</ed:col>
 			</ed:row>
