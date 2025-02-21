@@ -29,6 +29,7 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 		this.cost = e.getCostString(locale);
 		this.tags = null;
 		this.publicID = e.getPublicID();
+		super.setShortDescription(super.getShortDescription() == null? null : (super.getShortDescription().length() > 128? super.getShortDescription().substring(0, 128) + " ..." : super.getShortDescription())  );
 	}
 
 	public String getThumbnailPath() {

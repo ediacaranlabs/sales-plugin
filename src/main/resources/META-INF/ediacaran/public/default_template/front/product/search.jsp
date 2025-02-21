@@ -95,7 +95,7 @@
 											</ed:row>
 											<ed:row>
 												<ed:col size="12">
-													!{item.name}<br>
+													<h5>!{item.name}</h5><br>
 													<b>!{item.cost}</b><br>
 													!{item.shortDescription}<br>
 												</ed:col>
