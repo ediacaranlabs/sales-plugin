@@ -103,7 +103,7 @@ public class ClientBRPubEntity extends ClientPubEntity{
 		super.loadProperties(e);
 		if(super.getData() != null && super.getData().get("document") != null) {
 			if(this.document == null) {
-				this.document = super.getData().get("document");
+				this.document = String.valueOf(super.getData().get("document"));
 			}
 		}
 	}
