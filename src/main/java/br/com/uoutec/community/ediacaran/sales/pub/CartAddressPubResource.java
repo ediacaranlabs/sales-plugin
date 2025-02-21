@@ -50,7 +50,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ActionStrategy(WebActionStrategyType.DETACHED)
 @ResponseErrors(rendered=false)
 public class CartAddressPubResource {
-
+ 
 	@Transient
 	@Inject
 	private ErrorMappingProvider errorMappingProvider;
