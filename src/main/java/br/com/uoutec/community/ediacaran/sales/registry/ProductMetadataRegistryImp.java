@@ -7,8 +7,8 @@ import javax.inject.Singleton;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttributeEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataAttributeRegistryUtil;
@@ -58,9 +58,13 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry{
 	}
 
 	@Override
-	public ProductSearchResult search(ProductSearch value) throws ProductRegistryException {
-		// TODO Auto-generated method stub
-		return null;
+	public ProductMetadataSearchResult search(ProductMetadataSearch value) throws ProductRegistryException {
+		try{
+			return ProductMetadataRegistryUtil.search(value, entityAccess);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
 	}
 
 	@Override

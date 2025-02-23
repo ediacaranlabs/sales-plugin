@@ -1,8 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.io.Serializable;
+import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
@@ -19,6 +22,16 @@ public class ProductMetadataRegistryUtil {
 	}
 	
 	/* - ------- ---------------------------- */
+
+	public static ProductMetadataSearchResult search(ProductMetadataSearch value, ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
+		int page = value.getPage() == null? 0 : value.getPage().intValue();
+		int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+		
+		int firstResult = (page - 1)*maxItens;
+		int maxResults = maxItens + 1;
+		List<ProductMetadata> list = entityAccess.search(value, firstResult, maxResults);
+		return new ProductMetadataSearchResult(list.size() > maxItens, -1, page, list.size() > maxItens? list.subList(0, maxItens -1) : list);
+	}
 	
 	public static void save(ProductMetadata entity, ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
 		entityAccess.save(entity);	

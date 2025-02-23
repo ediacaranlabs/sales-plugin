@@ -4,8 +4,8 @@ import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.entity.registry.Registry;
 
@@ -17,7 +17,7 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	
 	ProductMetadata findProductMetadataById(int id) throws ProductRegistryException;
 	
-	ProductSearchResult search(ProductSearch value)	throws ProductRegistryException;
+	ProductMetadataSearchResult search(ProductMetadataSearch value)	throws ProductRegistryException;
 
 	ProductMetadataAttribute findProductMetadataAttributeById(int id) throws ProductRegistryException;
 	
