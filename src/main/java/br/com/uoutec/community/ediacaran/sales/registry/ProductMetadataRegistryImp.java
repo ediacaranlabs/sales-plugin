@@ -7,21 +7,26 @@ import javax.inject.Singleton;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttributeEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttributeOptionEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataAttributeRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataRegistryUtil;
 
 @Singleton
-public class ProductMetadataRegistryImp implements ProductMetadataRegistry{
+public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 
 	@Inject
 	private ProductMetadataEntityAccess entityAccess;
 	
 	@Inject
 	private ProductMetadataAttributeEntityAccess metadataentityAccess;
+	
+	@Inject
+	private ProductMetadataAttributeOptionEntityAccess productMetadataAttributeOptionEntityAccess;
 	
 	@Override
 	public void registerProductMetadata(ProductMetadata entity) throws ProductRegistryException {
@@ -67,6 +72,8 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry{
 		}
 	}
 
+	/* Attributes */
+	
 	@Override
 	public ProductMetadataAttribute findProductMetadataAttributeById(int id) throws ProductRegistryException {
 		try{
@@ -123,6 +130,64 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry{
 		}
 	}
 
+	/* options */
+	
+	@Override
+	public ProductMetadataAttributeOption findProductMetadataAttributeOptionById(int id) throws ProductRegistryException {
+		try{
+			return ProductMetadataAttributeOptionRegistryUtil.get(id, productMetadataAttributeOptionEntityAccess);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
+
+	@Override
+	public void registerProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
+			throws ProductRegistryException {
+		
+		try {
+			for(ProductMetadataAttributeOption entity: options) {
+				ProductMetadataAttributeOptionRegistryUtil.validate(entity);
+			}
+			
+			for(ProductMetadataAttributeOption entity: options) {
+				ProductMetadataAttributeOptionRegistryUtil.saveOrUpdate(entity, productMetadataAttributeOptionEntityAccess);
+			}
+			
+			ProductMetadataAttributeOptionRegistryUtil.sendToRepository(productMetadataAttributeOptionEntityAccess);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
+
+	@Override
+	public void removeProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
+			throws ProductRegistryException {
+		try {
+			for(ProductMetadataAttributeOption entity: options) {
+				ProductMetadataAttributeOptionRegistryUtil.delete(entity, productMetadataAttributeOptionEntityAccess);
+			}
+			
+			ProductMetadataAttributeOptionRegistryUtil.sendToRepository(productMetadataAttributeOptionEntityAccess);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
+
+	@Override
+	public List<ProductMetadataAttributeOption> getProductMetadataAttributeOptions(ProductMetadataAttribute parent)
+			throws ProductRegistryException {
+		try {
+			return ProductMetadataAttributeOptionRegistryUtil.getByParent(parent, productMetadataAttributeOptionEntityAccess);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
+	
 	@Override
 	public void flush() {
 	}

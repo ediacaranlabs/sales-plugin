@@ -17,7 +17,7 @@ public interface ProductMetadataAttributeOptionEntityAccess {
 
 	ProductMetadataAttributeOption findById(Serializable id) throws EntityAccessException;
 	
-	List<ProductMetadataAttributeOption> getByProductMetadata(ProductMetadataAttribute productMetadataAttribute) throws EntityAccessException;
+	List<ProductMetadataAttributeOption> getByProductMetadataAttribute(ProductMetadataAttribute productMetadataAttribute) throws EntityAccessException;
 	
 	void flush();
 	
