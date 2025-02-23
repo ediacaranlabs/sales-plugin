@@ -162,6 +162,116 @@ public final class SalesPluginPermissions {
 		}
 		
 	}
+
+	public static class PRODUCT {
+		
+		public static final String basePermission = SalesPluginPermissions.basePermission + "product.";
+		
+		public static SecurityPermission getRegisterPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register");
+		}
+
+		public static SecurityPermission getListPermission() {
+			return new RuntimeSecurityPermission(basePermission + "list");
+		}
+		
+		public static SecurityPermission getRemovePermission() {
+			return new RuntimeSecurityPermission(basePermission + "remove");
+		}
+
+		public static SecurityPermission getGetPermission() {
+			return new RuntimeSecurityPermission(basePermission + "get");
+		}
+
+		public static class IMAGE {
+			
+			public static final String basePermission = SalesPluginPermissions.PRODUCT.basePermission + "image.";
+			
+			public static SecurityPermission getRegisterPermission() {
+				return new RuntimeSecurityPermission(basePermission + "register");
+			}
+
+			public static SecurityPermission getListPermission() {
+				return new RuntimeSecurityPermission(basePermission + "list");
+			}
+			
+			public static SecurityPermission getRemovePermission() {
+				return new RuntimeSecurityPermission(basePermission + "remove");
+			}
+
+			public static SecurityPermission getGetPermission() {
+				return new RuntimeSecurityPermission(basePermission + "get");
+			}
+			
+		}
+		
+	}
+
+	public static class PRODUCT_METADATA {
+		
+		public static final String basePermission = SalesPluginPermissions.basePermission + "product_metadata.";
+		
+		public static SecurityPermission getRegisterPermission() {
+			return new RuntimeSecurityPermission(basePermission + "register");
+		}
+
+		public static SecurityPermission getListPermission() {
+			return new RuntimeSecurityPermission(basePermission + "list");
+		}
+		
+		public static SecurityPermission getRemovePermission() {
+			return new RuntimeSecurityPermission(basePermission + "remove");
+		}
+
+		public static SecurityPermission getGetPermission() {
+			return new RuntimeSecurityPermission(basePermission + "get");
+		}
+
+		public static class ATTRIBUTE {
+			
+			public static final String basePermission = SalesPluginPermissions.PRODUCT_METADATA.basePermission + "attribute.";
+			
+			public static SecurityPermission getRegisterPermission() {
+				return new RuntimeSecurityPermission(basePermission + "register");
+			}
+
+			public static SecurityPermission getListPermission() {
+				return new RuntimeSecurityPermission(basePermission + "list");
+			}
+			
+			public static SecurityPermission getRemovePermission() {
+				return new RuntimeSecurityPermission(basePermission + "remove");
+			}
+
+			public static SecurityPermission getGetPermission() {
+				return new RuntimeSecurityPermission(basePermission + "get");
+			}
+			
+			public static class OPTIONS {
+				
+				public static final String basePermission = SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.basePermission + "options.";
+				
+				public static SecurityPermission getRegisterPermission() {
+					return new RuntimeSecurityPermission(basePermission + "register");
+				}
+
+				public static SecurityPermission getListPermission() {
+					return new RuntimeSecurityPermission(basePermission + "list");
+				}
+				
+				public static SecurityPermission getRemovePermission() {
+					return new RuntimeSecurityPermission(basePermission + "remove");
+				}
+
+				public static SecurityPermission getGetPermission() {
+					return new RuntimeSecurityPermission(basePermission + "get");
+				}
+				
+			}
+			
+		}
+
+	}
 	
 	public static class INVOICE_REGISTRY {
 

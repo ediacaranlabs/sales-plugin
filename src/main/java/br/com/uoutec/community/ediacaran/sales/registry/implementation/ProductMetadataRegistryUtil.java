@@ -7,18 +7,32 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
+import br.com.uoutec.entity.registry.DataValidation;
+import br.com.uoutec.entity.registry.IdValidation;
+import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public class ProductMetadataRegistryUtil {
 
+	private static final Class<?>[] saveValidations = 
+			new Class[] {DataValidation.class, ParentValidation.class};
+
+	private static final Class<?>[] updateValidations = 
+			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
+	
 	public static ProductMetadata getActual(ProductMetadata entity, ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
 		return get(entity.getId(), entityAccess);
 	}
 
-	public static void validate(ProductMetadata product, Class<?> ... groups) throws ValidationException, EntityAccessException {
-		ValidatorBean.validate(product, groups);
+	public static void validate(ProductMetadata entity) throws ValidationException, EntityAccessException {
+		if(entity.getId() <= 0){
+			ValidatorBean.validate(entity, saveValidations);
+		}
+		else {
+			ValidatorBean.validate(entity, updateValidations);
+		}
 	}
 	
 	/* - ------- ---------------------------- */

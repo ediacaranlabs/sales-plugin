@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
@@ -41,9 +43,12 @@ public class ProductRegistryImp
 	@Inject
 	private ObjectsTemplateManager objectsManager;
 	
-	@ActivateRequestContext
 	@Transactional
+	@ActivateRequestContext
 	public void registerProduct(Product entity) throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getRegisterPermission());
+		
 		try{
 			ProductRegistryUtil.validate(entity, productMetadataEntityAccess);
 			ProductRegistryUtil.saveOrUpdate(entity, entityAccess);
@@ -56,7 +61,13 @@ public class ProductRegistryImp
 		}
 	}
 	
+	@Override
+	@Transactional
+	@ActivateRequestContext
 	public void removeProduct(Product entity) throws ProductRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getRemovePermission());
+		
 		try{
 			Product actualEntity = ProductRegistryUtil.getActualProduct(entity, entityAccess, objectsManager);
 			ProductRegistryUtil.deleteProductImage(actualEntity, objectsManager);
@@ -68,7 +79,12 @@ public class ProductRegistryImp
 		}
 	}
 
+	@Override
+	@ActivateRequestContext
 	public Product findProductById(int id) throws ProductRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getGetPermission());
+		
 		try{
 			return ProductRegistryUtil.getProduct(id, entityAccess, objectsManager);
 		}
@@ -77,8 +93,13 @@ public class ProductRegistryImp
 		}
 	}
 	
+	@Override
+	@ActivateRequestContext
 	public List<Product> getProductByType(
 			ProductType productType) throws ProductRegistryException{
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getListPermission());
+		
 		try{
 			return entityAccess.getProductByType(productType);
 		}
@@ -89,7 +110,11 @@ public class ProductRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public ProductSearchResult search(ProductSearch value) throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getListPermission());
+		
 		try{
 			int page = value.getPage() == null? 0 : value.getPage().intValue();
 			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
@@ -117,7 +142,11 @@ public class ProductRegistryImp
 	}
 
 	@Override
+	@Transactional
+	@ActivateRequestContext
 	public void registerProductImages(List<ProductImage> list, Product parent) throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.IMAGE.getRegisterPermission());
 		
 		try{
 			for(ProductImage entity: list) {
@@ -143,8 +172,12 @@ public class ProductRegistryImp
 	}
 
 	@Override
+	@Transactional
+	@ActivateRequestContext
 	public void removeProductImages(List<ProductImage> list, Product parent) throws ProductRegistryException {
 
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.IMAGE.getRemovePermission());
+		
 		List<ProductImage> images = new ArrayList<>();
 		try{
 			for(ProductImage entity: list) {
@@ -173,7 +206,11 @@ public class ProductRegistryImp
 	}
 
 	@Override
+	@ActivateRequestContext
 	public ProductImage getImagesByID(String id) throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.IMAGE.getGetPermission());
+		
 		try {
 			return ProductImageRegistryUtil.get(id, imageEntityAccess);
 		}
@@ -183,7 +220,11 @@ public class ProductRegistryImp
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public List<ProductImage> getImagesByProduct(Product product) throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.IMAGE.getListPermission());
+		
 		try {
 			return ProductImageRegistryUtil.getImages(product, imageEntityAccess);
 		}

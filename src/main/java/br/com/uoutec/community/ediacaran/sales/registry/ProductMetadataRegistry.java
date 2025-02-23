@@ -12,6 +12,8 @@ import br.com.uoutec.entity.registry.Registry;
 
 public interface ProductMetadataRegistry extends PublicBean, Registry{
 
+	/* metadata */
+	
 	void registerProductMetadata(ProductMetadata entity) throws ProductRegistryException;
 	
 	void removeProductMetadata(ProductMetadata entity) throws ProductRegistryException;
@@ -22,11 +24,15 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 
 	ProductMetadataAttribute findProductMetadataAttributeById(int id) throws ProductRegistryException;
 	
+	/* attributes */
+	
 	void registerProductMetadataAttributes(List<ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
 
 	void removeProductMetadataAttributes(List<ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
 	
 	List<ProductMetadataAttribute> getProductMetadataAttributes(ProductMetadata parent)	throws ProductRegistryException;
+	
+	/* options */
 	
 	ProductMetadataAttributeOption findProductMetadataAttributeOptionById(int id) throws ProductRegistryException;
 
