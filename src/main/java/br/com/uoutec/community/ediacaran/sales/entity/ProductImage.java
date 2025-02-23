@@ -1,16 +1,24 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
-public class ProductImage {
+public class ProductImage implements Serializable{
 	
+	private static final long serialVersionUID = 7350569771599012916L;
+
 	protected String id;
 	
-	protected Path image;
+	protected transient Path image;
+	
+	protected volatile transient boolean imageLoaded;
 	
 	protected String description;
 
@@ -24,6 +32,7 @@ public class ProductImage {
 		this.image = image;
 		this.description = description;
 		this.product = product;
+		this.imageLoaded = false;
 	}
 
 	public String getId() {
@@ -35,11 +44,25 @@ public class ProductImage {
 	}
 
 	public Path getImage() {
+		if(!imageLoaded) {
+			loadImage();
+		}
 		return image;
 	}
 
+	private synchronized void loadImage() {
+		
+		if(imageLoaded) {
+			return;
+		}
+		
+		ObjectsTemplateManager objectsManager = EntityContextPlugin.getEntity(ObjectsTemplateManager.class);
+		ProductRegistryUtil.loadProductImage(this, objectsManager);
+	}
+	
 	public void setImage(Path image) {
 		this.image = image;
+		this.imageLoaded = true;
 	}
 
 	public String getDescription() {

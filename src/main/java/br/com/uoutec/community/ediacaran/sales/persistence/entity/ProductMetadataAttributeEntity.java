@@ -13,35 +13,37 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.ProductAttribute;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeOption;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 
 @Entity
 @Table(
-		name="rw_product_attr_metadata",
+		name="rw_product_metadata_attr",
 		indexes = {
-				@Index(columnList = "cod_attribute, cod_product_metadata", unique = true)
+				@Index(columnList = "cod_prod_mtda_attr, cod_product_attr", unique = true),
+				@Index(columnList = "cod_product_metadata")
 		}
-	)
-@EntityListeners(ProductAttributeEntityListener.class)
-public class ProductAttributeEntity implements Serializable{
+)
+@EntityListeners(ProductMetadataAttributeEntityListener.class)
+public class ProductMetadataAttributeEntity implements Serializable{
 
 	private static final long serialVersionUID = 3514513692287877849L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="cod_product_attr", length=11)
+	@Column(name="cod_prod_mtda_attr", length=11)
 	private Integer id;
 	
-	@Column(name="cod_attribute", length=32)
+	@Column(name="cod_product_attr", length=32)
 	private String code;
 	
 	@ManyToOne
-	@JoinColumn(name = "cod_product_metadata", insertable = false, updatable = false)
+	@JoinColumn(name = "cod_product_metadata")
 	private ProductMetadataEntity productMetadata;
 	
 	@Column(name="dsc_name", length=128)
@@ -56,36 +58,37 @@ public class ProductAttributeEntity implements Serializable{
 	@Column(name="dsc_description", length=128)
 	private String description;
 
-	@Column(name="bit_allow_empty")
+	@Column(name="bit_allow_empty", length = 1)
 	private Boolean allowEmpty;
 	
-	@Column(name="vlr_rows")
+	@Column(name="vlr_rows", length = 2)
 	private Short rows;
 	
-	@Column(name="vlr_min_len")
+	@Column(name="vlr_min_len", length = 3)
 	private Short minLength;
 	
-	@Column(name="vlr_max_len")
+	@Column(name="vlr_max_len", length = 3)
 	private Short maxLength;
 
-	@Column(name="vlr_min")
+	@Column(name="vlr_min", length = 3)
 	private Double min;
 	
-	@Column(name="vlr_max")
+	@Column(name="vlr_max", length = 3)
 	private Double max;
 	
 	@Column(name="dsc_regex", length = 128)
 	private String regex;
 
-	@Column(name="vlr_order")
+	@Column(name="vlr_order", length = 3)
 	private Short order;
 
-	private List<ProductAttributeOptionEntity> options;
+	@OneToMany(mappedBy = "productAttribute")
+	private List<ProductMetadataAttributeOptionEntity> options;
 	
-	public ProductAttributeEntity() {
+	public ProductMetadataAttributeEntity() {
 	}
 	
-	public ProductAttributeEntity(ProductAttribute e, ProductMetadataEntity parent) {
+	public ProductMetadataAttributeEntity(ProductMetadataAttribute e, ProductMetadataEntity parent) {
 		this.allowEmpty = e.isAllowEmpty();
 		this.description = e.getDescription();
 		this.id = e.getId() == 0? null : e.getId();
@@ -104,8 +107,8 @@ public class ProductAttributeEntity implements Serializable{
 		
 		if(e.getOptions() != null) {
 			this.options = new ArrayList<>();
-			for(ProductAttributeOption x: e.getOptions()) {
-				this.options.add(new ProductAttributeOptionEntity(x));
+			for(ProductMetadataAttributeOption x: e.getOptions()) {
+				this.options.add(new ProductMetadataAttributeOptionEntity(x));
 			}
 		}
 	}
@@ -234,22 +237,22 @@ public class ProductAttributeEntity implements Serializable{
 		this.order = order;
 	}
 
-	public List<ProductAttributeOptionEntity> getOptions() {
+	public List<ProductMetadataAttributeOptionEntity> getOptions() {
 		return options;
 	}
 
-	public void setOptions(List<ProductAttributeOptionEntity> options) {
+	public void setOptions(List<ProductMetadataAttributeOptionEntity> options) {
 		this.options = options;
 	}
 	
-	public ProductAttribute toEntity() {
+	public ProductMetadataAttribute toEntity() {
 		return toEntity(null);
 	}
 	
-	public ProductAttribute toEntity(ProductAttribute e) {
+	public ProductMetadataAttribute toEntity(ProductMetadataAttribute e) {
 	
 		if(e == null) {
-			e = new ProductAttribute();
+			e = new ProductMetadataAttribute();
 		}
 		
 		e.setAllowEmpty(this.allowEmpty == null? false : this.allowEmpty.booleanValue());
@@ -267,8 +270,8 @@ public class ProductAttributeEntity implements Serializable{
 		e.setValueType(this.valueType);
 		
 		if(this.options != null) {
-			List<ProductAttributeOption> list = new ArrayList<>();
-			for(ProductAttributeOptionEntity x: this.options) {
+			List<ProductMetadataAttributeOption> list = new ArrayList<>();
+			for(ProductMetadataAttributeOptionEntity x: this.options) {
 				list.add(x.toEntity());
 			}
 			e.setOptions(list);

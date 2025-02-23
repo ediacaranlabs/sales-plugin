@@ -35,7 +35,7 @@ public class ProductMetadata {
 	protected String description;
 	
 	@Valid
-	private Map<String, ProductAttribute> attributes;
+	private Map<String, ProductMetadataAttribute> attributes;
 	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
@@ -73,11 +73,11 @@ public class ProductMetadata {
 		this.description = description;
 	}
 
-	public Map<String, ProductAttribute> getAttributes() {
+	public Map<String, ProductMetadataAttribute> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(Map<String, ProductAttribute> attributes) {
+	public void setAttributes(Map<String, ProductMetadataAttribute> attributes) {
 		this.attributes = attributes;
 	}
 	

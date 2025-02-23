@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.ProductAttribute;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 
 @Entity
@@ -38,7 +38,7 @@ public class ProductMetadataEntity implements Serializable {
 	private String description;
 	
     @OneToMany(mappedBy = "productMetadata")
-	private List<ProductAttributeEntity> attributes;
+	private List<ProductMetadataAttributeEntity> attributes;
 	
 	public ProductMetadataEntity(){
 	}
@@ -50,8 +50,8 @@ public class ProductMetadataEntity implements Serializable {
 		
 		if(e.getAttributes() != null) {
 			this.attributes = new ArrayList<>();
-			for(Entry<String, ProductAttribute> x : e.getAttributes().entrySet()) {
-				this.attributes.add(new ProductAttributeEntity(x.getValue(), this));
+			for(Entry<String, ProductMetadataAttribute> x : e.getAttributes().entrySet()) {
+				this.attributes.add(new ProductMetadataAttributeEntity(x.getValue(), this));
 			}
 		}
 		
@@ -96,8 +96,8 @@ public class ProductMetadataEntity implements Serializable {
 		e.setName(this.name);
 
 		if(this.attributes != null) {
-			Map<String, ProductAttribute> map = new HashMap<>();
-			for(ProductAttributeEntity x: this.attributes) {
+			Map<String, ProductMetadataAttribute> map = new HashMap<>();
+			for(ProductMetadataAttributeEntity x: this.attributes) {
 				map.put(x.getCode(), x.toEntity());
 			}
 			e.setAttributes(map);

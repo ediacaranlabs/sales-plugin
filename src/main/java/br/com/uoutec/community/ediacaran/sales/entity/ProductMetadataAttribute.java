@@ -15,7 +15,7 @@ import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.i18n.ValidationException;
 
-public class ProductAttribute {
+public class ProductMetadataAttribute {
 
 	@NotNull(groups = IdValidation.class)
 	@Min(value = 1, groups = IdValidation.class)
@@ -55,7 +55,7 @@ public class ProductAttribute {
 
 	protected short order;
 
-	protected List<ProductAttributeOption> options;
+	protected List<ProductMetadataAttributeOption> options;
 	
 	public int getId() {
 		return id;
@@ -137,11 +137,11 @@ public class ProductAttribute {
 		this.description = description;
 	}
 
-	public List<ProductAttributeOption> getOptions() {
+	public List<ProductMetadataAttributeOption> getOptions() {
 		return options;
 	}
 
-	public void setOptions(List<ProductAttributeOption> options) {
+	public void setOptions(List<ProductMetadataAttributeOption> options) {
 		this.options = options;
 	}
 
@@ -189,7 +189,7 @@ public class ProductAttribute {
 		}
 		
 		if(!options.isEmpty()) {
-			for(ProductAttributeOption op: options) {
+			for(ProductMetadataAttributeOption op: options) {
 				if(value.equals(op.getValue())) {
 					return;
 				}
@@ -234,7 +234,7 @@ public class ProductAttribute {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProductAttribute other = (ProductAttribute) obj;
+		ProductMetadataAttribute other = (ProductMetadataAttribute) obj;
 		return Objects.equals(id, other.id);
 	}
 

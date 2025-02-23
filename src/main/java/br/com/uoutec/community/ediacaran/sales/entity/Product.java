@@ -17,12 +17,15 @@ import org.hibernate.validator.constraints.Length;
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
-public class Product implements Serializable{
+public class Product implements Serializable {
 
 	private static final long serialVersionUID = 2357774653199543812L;
 
@@ -35,7 +38,9 @@ public class Product implements Serializable{
 	@Length(max = 128, groups = DataValidation.class)
 	protected String name;
 	
-	protected Path thumb;
+	protected transient Path thumb;
+	
+	protected volatile transient boolean imageLoaded;
 
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
@@ -99,11 +104,25 @@ public class Product implements Serializable{
 	}
 
 	public Path getThumb() {
+		if(!imageLoaded) {
+			loadImage();
+		}
 		return thumb;
 	}
 
+	private synchronized void loadImage() {
+		
+		if(imageLoaded) {
+			return;
+		}
+		
+		ObjectsTemplateManager objectsManager = EntityContextPlugin.getEntity(ObjectsTemplateManager.class);
+		ProductRegistryUtil.loadProductImage(this, objectsManager);
+	}
+	
 	public void setThumb(Path thumb) {
 		this.thumb = thumb;
+		this.imageLoaded = true;
 	}
 
 	public String getProductType() {
