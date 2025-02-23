@@ -75,7 +75,6 @@ public class ProductRegistryImp
 		catch(Throwable e){
 			throw new ProductRegistryException(e);
 		}
-		
 	}
 	
 	public List<Product> getProductByType(
