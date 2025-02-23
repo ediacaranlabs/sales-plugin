@@ -3,6 +3,9 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -14,10 +17,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductVisibility;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
@@ -49,8 +55,12 @@ public class ProductEntity implements Serializable,PublicType{
 	private String productType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="set_measurement_unit", length=32)
+	@Column(name="set_measurement_unit", length=10)
 	private MeasurementUnit measurementUnit;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="set_product_visibility", length=6)
+	private ProductVisibility visibility;
 	
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
@@ -58,6 +68,10 @@ public class ProductEntity implements Serializable,PublicType{
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
+    @MapKey(name = "id.attributeID")
+    @OneToMany(mappedBy = "product")
+	private Map<String, ProductAttributeValueEntity> attributes;
+	
 	public ProductEntity(){
 	}
 	
@@ -70,10 +84,18 @@ public class ProductEntity implements Serializable,PublicType{
 		this.id               = e.getId() <= 0? null : e.getId();
 		this.name             = e.getName();
 		this.shortDescription = e.getShortDescription();
+		this.visibility       = e.getVisibility();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
 					.collect(Collectors.joining(";"));
+		}
+		
+		if(e.getAttributes() != null) {
+			this.attributes = new HashMap<>();
+			for(Entry<String, String> x: e.getAttributes().entrySet()) {
+				this.attributes.put(x.getKey(), new ProductAttributeValueEntity(this, x.getKey(), x.getValue()));
+			}
 		}
 		
 	}
@@ -143,8 +165,14 @@ public class ProductEntity implements Serializable,PublicType{
 	}
 
 	public Product toEntity(){
+		return toEntity(null);
+	}
+	
+	public Product toEntity(Product e){
 		
-		Product e = new Product();
+		if(e == null) {
+			e = new Product();
+		}
 		
 		e.setCost(this.cost);
 		e.setCurrency(this.currency);
@@ -154,6 +182,7 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
 		e.setShortDescription(this.shortDescription);
+		e.setVisibility(this.visibility);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))
@@ -161,6 +190,13 @@ public class ProductEntity implements Serializable,PublicType{
 			);
 		}
 		
+		if(attributes != null) {
+			Map<String, String> attrs = new HashMap<>();
+			for(Entry<String, ProductAttributeValueEntity> x: attributes.entrySet()) {
+				attrs.put(x.getKey(), x.getValue().getValue());
+			}
+			e.setAttributes(attrs);
+		}
 		return e;
 	}
 }

@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductImageEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
@@ -31,6 +32,9 @@ public class ProductRegistryImp
 	implements ProductRegistry{
 
 	@Inject
+	private ProductMetadataEntityAccess productMetadataEntityAccess;
+	
+	@Inject
 	private ProductEntityAccess entityAccess;
 
 	@Inject
@@ -42,6 +46,14 @@ public class ProductRegistryImp
 	@ActivateRequestContext
 	@Transactional
 	public void registerProduct(Product entity) throws ProductRegistryException {
+		
+		try {
+			ProductRegistryUtil.validate(entity, productMetadataEntityAccess);
+		}
+		catch(Throwable ex) {
+			throw new ProductRegistryException(ex);
+		}
+		
 		try{
 			
 			if(entity.getId() > 0){

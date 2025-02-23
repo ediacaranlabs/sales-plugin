@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.Min;
@@ -42,6 +43,9 @@ public class Product implements Serializable{
 	protected String shortDescription;
 	
 	@NotNull(groups = DataValidation.class)
+	protected ProductVisibility visibility;
+	
+	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Size(max=2048)
 	protected String description;
@@ -51,6 +55,9 @@ public class Product implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	protected String productType;
+
+	@NotNull(groups = DataValidation.class)
+	protected String metadata;
 	
 	@NotNull(groups = DataValidation.class)
 	protected BigDecimal cost;
@@ -60,6 +67,8 @@ public class Product implements Serializable{
 	protected String currency;
 
 	protected Set<String> tags;
+	
+	protected Map<String, String> attributes;
 	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
@@ -105,12 +114,36 @@ public class Product implements Serializable{
 		this.productType = productType;
 	}
 
+	public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+
 	public MeasurementUnit getMeasurementUnit() {
 		return measurementUnit;
 	}
 
 	public void setMeasurementUnit(MeasurementUnit measurementUnit) {
 		this.measurementUnit = measurementUnit;
+	}
+
+	public ProductVisibility getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(ProductVisibility visibility) {
+		this.visibility = visibility;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
 	}
 
 	public String getShortDescription() {
