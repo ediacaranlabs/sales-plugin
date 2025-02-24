@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -154,6 +155,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>
 			for(ProductMetadataAttributePubEntity x: this.attributes) {
 				list.add(x.rebuild(x.getProtectedID() != null, true, true));
 			}
+			o.setAttributes(list.stream().collect(Collectors.toMap((e)->e.getCode(), (e)->e)));
 		}
 	}
 

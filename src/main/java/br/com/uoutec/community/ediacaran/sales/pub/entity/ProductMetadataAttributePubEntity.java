@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,7 +32,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	private Integer id;
 
 	@Transient
-	private int productMetadata;
+	private Integer productMetadata;
 	
 	@NotNull(groups = IdValidation.class)
 	private String protectedID;
@@ -70,14 +71,36 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 
 	protected Short order;
 
-	protected List<ProductMetadataAttributeOption> options;
+	protected List<ProductMetadataAttributeOptionPubEntity> options;
 	
 	@Constructor
 	public ProductMetadataAttributePubEntity(){
 	}
 
 	public ProductMetadataAttributePubEntity(ProductMetadataAttribute e, Locale locale){
-		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(e.getId() + "-" + e.getProductMetadata());
+		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
+		this.allowEmpty = e.isAllowEmpty();
+		this.code = e.getCode();
+		this.description = e.getDescription();
+		this.id = e.getId();
+		this.max = e.getMax();
+		this.maxLength = e.getMaxLength();
+		this.min = e.getMin();
+		this.minLength = e.getMinLength();
+		this.name = e.getName();
+		this.order = e.getOrder();
+		this.productMetadata = e.getProductMetadata();
+		this.regex = e.getRegex();
+		this.rows = e.getRows();
+		this.type = e.getType();
+		this.valueType = e.getValueType();
+		
+		if(e.getOptions() != null) {
+			this.options = new ArrayList<>();
+			for(ProductMetadataAttributeOption x: e.getOptions()) {
+				this.options.add(new ProductMetadataAttributeOptionPubEntity(x, locale));
+			}
+		}
 	}
 	
 	public String getProtectedID() {
@@ -208,11 +231,11 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		this.order = order;
 	}
 
-	public List<ProductMetadataAttributeOption> getOptions() {
+	public List<ProductMetadataAttributeOptionPubEntity> getOptions() {
 		return options;
 	}
 
-	public void setOptions(List<ProductMetadataAttributeOption> options) {
+	public void setOptions(List<ProductMetadataAttributeOptionPubEntity> options) {
 		this.options = options;
 	}
 
@@ -248,6 +271,29 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
 		o.setName(this.name);
+		o.setAllowEmpty(this.allowEmpty == null? true : this.allowEmpty.booleanValue());
+		o.setCode(this.code);
+		o.setDescription(this.description);
+		o.setMax(this.max);
+		o.setMaxLength(this.maxLength == null? 0 : this.maxLength.shortValue());
+		o.setMin(this.min);
+		o.setMinLength(this.minLength == null? 0 : this.minLength.shortValue());
+		o.setName(this.name);
+		o.setOrder(this.order == null? 0 : this.order);
+		o.setProductMetadata(this.productMetadata == null? 0 : this.productMetadata.intValue());
+		o.setRegex(this.regex);
+		o.setRows(this.rows);
+		o.setType(this.type);
+		o.setValueType(this.valueType);
+		
+		if(this.options != null) {
+			List<ProductMetadataAttributeOption> list = new ArrayList<>();
+			for(ProductMetadataAttributeOptionPubEntity x: this.options) {
+				list.add(x.rebuild(x.getProtectedID() != null, true, true));
+			}
+			o.setOptions(list);
+		}
+		
 	}
 
 	@Override

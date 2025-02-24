@@ -8,9 +8,8 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class ProductMetadatasSearchResultPubEntity extends AbstractPubEntity<ProductMetadataSearchResult> {
@@ -24,36 +23,36 @@ public class ProductMetadatasSearchResultPubEntity extends AbstractPubEntity<Pro
 	private Integer page;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ProductSearchResultPubEntity> itens;
+	private List<ProductMetadataSearchResultPubEntity> itens;
 
 	@Constructor
 	public ProductMetadatasSearchResultPubEntity() {
 	}
 	
-	public ProductMetadatasSearchResultPubEntity(ProductSearchResult e, Locale locale) {
+	public ProductMetadatasSearchResultPubEntity(ProductMetadataSearchResult e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.isHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
-			for(Product p: e.getItens()) {
-				itens.add(new ProductSearchResultPubEntity(p, locale));
+			for(ProductMetadata p: e.getItens()) {
+				itens.add(new ProductMetadataSearchResultPubEntity(p, locale));
 			}
 		}
 	}
 
 	@Override
-	protected boolean isEqualId(ProductSearchResult instance) throws Throwable {
+	protected boolean isEqualId(ProductMetadataSearchResult instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected boolean hasId(ProductSearchResult instance) throws Throwable {
+	protected boolean hasId(ProductMetadataSearchResult instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected ProductSearchResult reloadEntity() throws Throwable {
+	protected ProductMetadataSearchResult reloadEntity() throws Throwable {
 		return null;
 	}
 
@@ -63,21 +62,22 @@ public class ProductMetadatasSearchResultPubEntity extends AbstractPubEntity<Pro
 	}
 
 	@Override
-	protected ProductSearchResult createNewInstance() throws Throwable {
-		return new ProductSearchResult();
+	protected ProductMetadataSearchResult createNewInstance() throws Throwable {
+		return new ProductMetadataSearchResult();
 	}
 
 	@Override
-	protected void copyTo(ProductSearchResult o, boolean reload, boolean override, boolean validate) throws Throwable {
+	protected void copyTo(ProductMetadataSearchResult o, boolean reload, boolean override, boolean validate) throws Throwable {
 		o.setHasNextPage(this.hasNextPage == null? false: this.hasNextPage.booleanValue());
 		o.setMaxPages(this.maxPages == null? -1 : this.maxPages.intValue());
 		o.setPage(this.page == null? -1 : this.page.intValue());
 		
 		if(this.itens != null) {
-			List<Product> list = new ArrayList<>();
-			for(ProductPubEntity p: this.itens) {
+			List<ProductMetadata> list = new ArrayList<>();
+			for(ProductMetadataPubEntity p: this.itens) {
 				list.add(p.rebuild(reload, override, validate));
 			}
+			o.setItens(list);
 		}
 	}
 
@@ -105,11 +105,11 @@ public class ProductMetadatasSearchResultPubEntity extends AbstractPubEntity<Pro
 		this.page = page;
 	}
 
-	public List<ProductSearchResultPubEntity> getItens() {
+	public List<ProductMetadataSearchResultPubEntity> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<ProductSearchResultPubEntity> itens) {
+	public void setItens(List<ProductMetadataSearchResultPubEntity> itens) {
 		this.itens = itens;
 	}
 	

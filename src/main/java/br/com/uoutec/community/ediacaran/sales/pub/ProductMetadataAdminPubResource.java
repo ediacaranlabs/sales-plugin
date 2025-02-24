@@ -25,11 +25,10 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadatasSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
@@ -61,17 +60,17 @@ public class ProductMetadataAdminPubResource {
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.PRODUCT.SEARCH)
-	public ProductsSearchResultPubEntity searchProduct(
+	@RequiresPermissions(SalesUserPermissions.PRODUCT_METADATA.SEARCH)
+	public ProductMetadatasSearchResultPubEntity searchProduct(
 			@DetachedName
-			ProductSearchPubEntity productSearch,
+			ProductMetadataSearchPubEntity searchRequest,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
 		try {
-			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.getProductAdminViewer().searchProduct(productSearch, locale);
+			ProductMetadataSearchResult result = productMetadataRegistry.search(searchRequest);
+			return new ProductMetadatasSearchResultPubEntity(result, locale);
 		}
 		catch(InvalidRequestException ex) {
 			throw ex;
