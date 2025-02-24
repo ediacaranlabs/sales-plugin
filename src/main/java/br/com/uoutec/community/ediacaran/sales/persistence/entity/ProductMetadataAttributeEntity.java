@@ -88,7 +88,7 @@ public class ProductMetadataAttributeEntity implements Serializable{
 	public ProductMetadataAttributeEntity() {
 	}
 	
-	public ProductMetadataAttributeEntity(ProductMetadataAttribute e, ProductMetadataEntity parent) {
+	public ProductMetadataAttributeEntity(ProductMetadataAttribute e) {
 		this.allowEmpty = e.isAllowEmpty();
 		this.description = e.getDescription();
 		this.id = e.getId() == 0? null : e.getId();
@@ -99,7 +99,12 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		this.minLength = e.getMinLength();
 		this.name = e.getName();
 		this.order = e.getOrder();
-		this.productMetadata = parent;
+		
+		if(e.getProductMetadata() > 0) {
+			this.productMetadata = new ProductMetadataEntity();
+			this.productMetadata.setId(e.getProductMetadata());
+		}
+
 		this.regex = e.getRegex();
 		this.rows = e.getRows();
 		this.type = e.getType();
@@ -268,6 +273,10 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		e.setRows(this.rows == null? 0 : this.rows.shortValue());
 		e.setType(this.type);
 		e.setValueType(this.valueType);
+		
+		if(this.productMetadata != null){
+			e.setProductMetadata(this.productMetadata.getId());
+		}
 		
 		if(this.options != null) {
 			List<ProductMetadataAttributeOption> list = new ArrayList<>();

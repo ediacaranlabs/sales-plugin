@@ -51,6 +51,10 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 		this.id = e.getId() == 0? null : e.getId();
 		this.description = e.getDescription();
 		this.value = e.getValue();
+		if(e.getProductMetadataAttribute() > 0) {
+			this.productAttribute = new ProductMetadataAttributeEntity();
+			this.productAttribute.setId(e.getProductMetadataAttribute());
+		}
 	}
 
 	public Integer getId() {
@@ -76,7 +80,14 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public ProductMetadataAttributeEntity getProductAttribute() {
+		return productAttribute;
+	}
+
+	public void setProductAttribute(ProductMetadataAttributeEntity productAttribute) {
+		this.productAttribute = productAttribute;
+	}
 
 	public ProductMetadataAttributeOption toEntity() {
 		return toEntity(null);
@@ -90,6 +101,10 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 		e.setDescription(this.description);
 		e.setValue(this.value);
 		e.setId(this.id == null? 0 : this.id.intValue());
+		
+		if(this.productAttribute != null){
+			e.setProductMetadataAttribute(this.productAttribute.getId());
+		}
 		
 		return e;
 	}

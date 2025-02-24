@@ -51,7 +51,7 @@ public class ProductMetadataEntity implements Serializable {
 		if(e.getAttributes() != null) {
 			this.attributes = new ArrayList<>();
 			for(Entry<String, ProductMetadataAttribute> x : e.getAttributes().entrySet()) {
-				this.attributes.add(new ProductMetadataAttributeEntity(x.getValue(), this));
+				this.attributes.add(new ProductMetadataAttributeEntity(x.getValue()));
 			}
 		}
 		
@@ -85,6 +85,14 @@ public class ProductMetadataEntity implements Serializable {
 		return toEntity(null);
 	}
 	
+	public List<ProductMetadataAttributeEntity> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<ProductMetadataAttributeEntity> attributes) {
+		this.attributes = attributes;
+	}
+
 	public ProductMetadata toEntity(ProductMetadata e){
 		
 		if(e == null) {

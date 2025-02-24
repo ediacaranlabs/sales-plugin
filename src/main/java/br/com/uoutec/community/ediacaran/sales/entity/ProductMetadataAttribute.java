@@ -20,6 +20,9 @@ public class ProductMetadataAttribute {
 	@NotNull(groups = IdValidation.class)
 	@Min(value = 1, groups = IdValidation.class)
 	private int id;
+
+	@Min(value = 1, groups = IdValidation.class)
+	private int productMetadata;
 	
 	@NotNull(groups = DataValidation.class)
 	private String code;
@@ -175,6 +178,14 @@ public class ProductMetadataAttribute {
 
 	public void setOrder(short order) {
 		this.order = order;
+	}
+
+	public int getProductMetadata() {
+		return productMetadata;
+	}
+
+	public void setProductMetadata(int productMetadata) {
+		this.productMetadata = productMetadata;
 	}
 
 	public void validate(String value) throws ValidationException {
