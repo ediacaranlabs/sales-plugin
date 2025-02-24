@@ -25,7 +25,9 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadatasSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
@@ -63,12 +65,13 @@ public class ProductMetadataAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.PRODUCT_METADATA.SEARCH)
 	public ProductMetadatasSearchResultPubEntity searchProduct(
 			@DetachedName
-			ProductMetadataSearchPubEntity searchRequest,
+			ProductMetadataSearchPubEntity searchRequestPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
 		try {
+			ProductMetadataSearch searchRequest = searchRequestPubEntity.rebuild(false, true, true);
 			ProductMetadataSearchResult result = productMetadataRegistry.search(searchRequest);
 			return new ProductMetadatasSearchResultPubEntity(result, locale);
 		}
