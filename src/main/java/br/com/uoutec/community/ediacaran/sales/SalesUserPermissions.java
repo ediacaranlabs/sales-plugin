@@ -121,6 +121,24 @@ public final class SalesUserPermissions {
 		public static final String DELETE	= ALL + ":DELETE";
 		
 	}
+
+	public static final class PRODUCT_METADATA {
+
+		public static final String ALL 		= SalesUserPermissions.ALL + ":PRODUCT_METADATA";
+		
+		public static final String CREATE	= ALL + ":CREATE";
+		
+		public static final String SHOW		= ALL + ":SHOW";
+
+		public static final String SEARCH	= ALL + ":SEARCH";
+
+		public static final String EDIT		= ALL + ":EDIT";
+
+		public static final String SAVE		= ALL + ":SAVE";
+
+		public static final String DELETE	= ALL + ":DELETE";
+		
+	}
 	
 	public static final class CLIENT {
 
