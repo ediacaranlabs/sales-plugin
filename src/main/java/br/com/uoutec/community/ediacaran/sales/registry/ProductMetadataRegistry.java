@@ -26,9 +26,9 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	
 	/* attributes */
 	
-	void registerProductMetadataAttributes(List<ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
+	void registerProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
 
-	void removeProductMetadataAttributes(List<ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
+	void removeProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
 	
 	List<ProductMetadataAttribute> getProductMetadataAttributes(ProductMetadata parent)	throws ProductRegistryException;
 	
@@ -36,10 +36,10 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	
 	ProductMetadataAttributeOption findProductMetadataAttributeOptionById(int id) throws ProductRegistryException;
 
-	void registerProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
+	void registerProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
 			throws ProductRegistryException;
 
-	void removeProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> attributes, ProductMetadataAttribute parent)
+	void removeProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> attributes, ProductMetadataAttribute parent)
 			throws ProductRegistryException;
 
 	List<ProductMetadataAttributeOption> getProductMetadataAttributeOptions(ProductMetadataAttribute parent)

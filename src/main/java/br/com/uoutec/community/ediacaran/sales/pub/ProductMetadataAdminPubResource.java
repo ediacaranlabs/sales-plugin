@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
@@ -23,8 +22,6 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.web.HttpStatus;
-import org.brandao.brutos.web.WebResultAction;
-import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
@@ -32,9 +29,9 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataUpdate;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadatasSearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
+import br.com.uoutec.community.ediacaran.sales.service.ProductMetadataService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
@@ -43,7 +40,7 @@ import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
-@Controller(value="${plugins.ediacaran.front.admin_context}/products", defaultActionName="/")
+@Controller(value="${plugins.ediacaran.front.admin_context}/product-metadata", defaultActionName="/")
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class ProductMetadataAdminPubResource {
 
@@ -53,7 +50,7 @@ public class ProductMetadataAdminPubResource {
 	
 	@Transient
 	@Inject
-	private ProductMetadataRegistry productMetadataRegistry;
+	private ProductMetadataService productMetadataService;
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/product_metadata/index")
@@ -81,7 +78,7 @@ public class ProductMetadataAdminPubResource {
 		
 		try {
 			ProductMetadataSearch searchRequest = searchRequestPubEntity.rebuild(false, true, true);
-			ProductMetadataSearchResult result = productMetadataRegistry.search(searchRequest);
+			ProductMetadataSearchResult result = productMetadataService.search(searchRequest);
 			return new ProductMetadatasSearchResultPubEntity(result, locale);
 		}
 		catch(InvalidRequestException ex) {
@@ -93,7 +90,7 @@ public class ProductMetadataAdminPubResource {
 		
 	}
 	
-	@Action("/edit/{product.protectedID:[^/\\s//]+}")
+	@Action("/edit/{product_metadata.protectedID:[^/\\s//]+}")
 	@View("${plugins.ediacaran.sales.template}/admin/product_metadata/edit")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
@@ -136,7 +133,7 @@ public class ProductMetadataAdminPubResource {
 			Locale locale) throws InvalidRequestException {
 		
 
-		ProductMetadata entity;
+		ProductMetadataUpdate entity;
 		try{
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
 		}
@@ -144,20 +141,20 @@ public class ProductMetadataAdminPubResource {
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ProductMetadataAdminPubResourceMessages.edit.error.fail_load_request, 
+							ProductMetadataAdminPubResourceMessages.save.error.fail_load_request, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		try{
-			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
+			productMetadataService.registerProductMetadata(entity);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ProductMetadataAdminPubResourceMessages.edit.error.fail_load_request, 
+							ProductMetadataAdminPubResourceMessages.save.error.fail_save, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
@@ -168,29 +165,48 @@ public class ProductMetadataAdminPubResource {
 		return map;
 	}
 
-	@Action({"/delete"})
 	@RequestMethod("POST")
+	@Action({"/delete"})
+	@View("${plugins.ediacaran.sales.template}/admin/product_metadata/result")
+	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.DELETE)
-	public ResultAction remove(
-			@Basic(bean="product")
-			ProductPubEntity productPubEntity,
+	public Map<String,Object> remove(
+			@Basic(bean = "product_metadata")
+			ProductMetadataPubEntity productMetadataPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
-		try {
-			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.getProductAdminViewer().removeProduct(productPubEntity, locale);
+		ProductMetadata entity;
+		try{
+			entity = productMetadataPubEntity.rebuild(true, false, true);
 		}
-		catch(InvalidRequestException ex) {
-			throw ex;
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductMetadataAdminPubResourceMessages.delete.error.fail_load_request, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
-		catch(Throwable ex) {
-			WebResultAction ra = new WebResultActionImp();
-			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			ra.setReason("product viewer misconfiguration");
-			return ra;
+
+		try{
+			productMetadataService.unregisterProductMetadata(entity);
 		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductMetadataAdminPubResourceMessages.delete.error.fail_remove, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		Map<String,Object> map = new HashMap<>();
+		map.put("entity", entity);
+		return map;
 		
 	}
 	

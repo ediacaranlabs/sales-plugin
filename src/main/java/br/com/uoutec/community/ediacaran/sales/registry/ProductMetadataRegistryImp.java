@@ -48,7 +48,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 			throw new ProductRegistryException(e);
 		}
 	}
-
+	
 	@Override
 	@Transactional
 	@ActivateRequestContext
@@ -113,7 +113,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void registerProductMetadataAttributes(List<ProductMetadataAttribute> attributes, ProductMetadata parent)
+	public void registerProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent)
 			throws ProductRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRegisterPermission());
@@ -137,7 +137,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void removeProductMetadataAttributes(List<ProductMetadataAttribute> attributes, ProductMetadata parent)
+	public void removeProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent)
 			throws ProductRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRemovePermission());
@@ -188,7 +188,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void registerProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
+	public void registerProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
 			throws ProductRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.OPTIONS.getRegisterPermission());
@@ -212,7 +212,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void removeProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
+	public void removeProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
 			throws ProductRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.OPTIONS.getRemovePermission());
