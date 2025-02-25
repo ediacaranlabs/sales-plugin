@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -26,7 +25,7 @@ import br.com.uoutec.pub.entity.AbstractPubEntity;
 import br.com.uoutec.pub.entity.DataValidation;
 import br.com.uoutec.pub.entity.IdValidation;
 
-public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>{
+public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataUpdate>{
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
@@ -47,7 +46,6 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>
 	@Size(min=3, max = 256,groups=DataValidation.class)
 	private String description;
 	
-	@Valid
 	private List<ProductMetadataAttributePubEntity> attributes;
 	
 	@Constructor
@@ -117,7 +115,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>
 	}
 
 	@Override
-	protected void preRebuild(ProductMetadata instance, boolean reload, boolean override, boolean validate) {
+	protected void preRebuild(ProductMetadataUpdate instance, boolean reload, boolean override, boolean validate) {
 		try {
 			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
 		}
@@ -127,10 +125,11 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>
 	}
 	
 	@Override
-	protected ProductMetadata reloadEntity() throws Throwable {
+	protected ProductMetadataUpdate reloadEntity() throws Throwable {
 		ProductMetadataRegistry entityRegistry = 
 				EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
-		return entityRegistry.findProductMetadataById(this.id);
+		ProductMetadata e = entityRegistry.findProductMetadataById(this.id);
+		return e == null? null : new ProductMetadataUpdate(e);
 	}
 
 	@Override
@@ -139,12 +138,12 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>
 	}
 
 	@Override
-	protected ProductMetadata createNewInstance() throws Throwable {
-		return new ProductMetadata();
+	protected ProductMetadataUpdate createNewInstance() throws Throwable {
+		return new ProductMetadataUpdate(new ProductMetadata());
 	}
 
 	@Override
-	protected void copyTo(ProductMetadata o, boolean reload, boolean override,
+	protected void copyTo(ProductMetadataUpdate o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
 		o.setName(this.name);
@@ -152,22 +151,35 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadata>
 		
 		if(this.attributes != null) {
 			List<ProductMetadataAttribute> list = new ArrayList<>();
+			List<ProductMetadataAttributeUpdate> registerList = new ArrayList<>();
+			List<ProductMetadataAttributeUpdate> unregisterList = new ArrayList<>();
+			
 			for(ProductMetadataAttributePubEntity x: this.attributes) {
-				list.add(x.rebuild(x.getProtectedID() != null, true, true));
+				ProductMetadataAttribute xe = x.rebuild(x.getProtectedID() != null, true, true);
+				if(x.getDeleted() != null && x.getDeleted().booleanValue()) {
+					unregisterList.add(new ProductMetadataAttributeUpdate(xe));
+				}
+				else {
+					registerList.add(new ProductMetadataAttributeUpdate(xe));
+				}
+				list.add(xe);
 			}
+			
 			o.setAttributes(list.stream().collect(Collectors.toMap((e)->e.getCode(), (e)->e)));
+			o.setRegisterAttributes(registerList);
+			o.setUnregisterAttributes(unregisterList);
 		}
 	}
 
 	@Override
-	protected boolean isEqualId(ProductMetadata instance) throws Throwable {
+	protected boolean isEqualId(ProductMetadataUpdate instance) throws Throwable {
 		return instance.getId() <= 0? 
 					this.id == null :
 					this.id != null && instance.getId() == this.id;
 	}
 
 	@Override
-	protected boolean hasId(ProductMetadata instance) throws Throwable {
+	protected boolean hasId(ProductMetadataUpdate instance) throws Throwable {
 		return instance.getId() > 0;
 	}
 	

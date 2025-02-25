@@ -38,6 +38,8 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3, max=256, groups=DataValidation.class)
 	private String description;
+
+	private Boolean deleted;
 	
 	@Constructor
 	public ProductMetadataAttributeOptionPubEntity(){
@@ -90,6 +92,14 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	@Override

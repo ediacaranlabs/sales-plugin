@@ -50,28 +50,30 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	private String description;
 
 	@NotNull(groups = DataValidation.class)
-	protected ProductAttributeType type;
+	private ProductAttributeType type;
 	
 	@NotNull(groups = DataValidation.class)
-	protected ProductAttributeValueType valueType;
+	private ProductAttributeValueType valueType;
 	
-	protected Boolean allowEmpty;
+	private Boolean allowEmpty;
 	
-	protected Short rows;
+	private Short rows;
 	
-	protected Short minLength;
+	private Short minLength;
 	
-	protected Short maxLength;
+	private Short maxLength;
 
-	protected Double min;
+	private Double min;
 	
-	protected Double max;
+	private Double max;
 	
-	protected String regex;
+	private String regex;
 
-	protected Short order;
+	private Short order;
 
-	protected List<ProductMetadataAttributeOptionPubEntity> options;
+	private Boolean deleted;
+	
+	private List<ProductMetadataAttributeOptionPubEntity> options;
 	
 	@Constructor
 	public ProductMetadataAttributePubEntity(){
@@ -229,6 +231,18 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 
 	public void setOrder(Short order) {
 		this.order = order;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public void setProductMetadata(Integer productMetadata) {
+		this.productMetadata = productMetadata;
 	}
 
 	public List<ProductMetadataAttributeOptionPubEntity> getOptions() {
