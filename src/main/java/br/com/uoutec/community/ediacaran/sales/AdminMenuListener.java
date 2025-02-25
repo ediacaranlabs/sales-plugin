@@ -101,7 +101,16 @@ public class AdminMenuListener
 					.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.products)
 					.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products")
 					.setRole(BasicRoles.USER, BasicRoles.MANAGER)
-					.setPermission(SalesUserPermissions.PRODUCT.SHOW);
+					.setPermission(SalesUserPermissions.PRODUCT.SHOW)
+			.getParent()
+				.addItem("productMetadata")
+				.setIcon("circle")
+				.setName("productMetadata")
+				.setResourceBundle(AdminMenuListenerMessages.RESOURCE_BUNDLE)
+				.setTemplate(AdminMenuListenerMessages.installMenu.admin_menu.sales_menu.itens.product_metadata)
+				.setResource("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata")
+				.setRole(BasicRoles.USER, BasicRoles.MANAGER)
+				.setPermission(SalesUserPermissions.PRODUCT_METADATA.SHOW);
 		}
 		
 	}
