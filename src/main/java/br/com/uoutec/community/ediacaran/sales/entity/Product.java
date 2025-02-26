@@ -62,7 +62,7 @@ public class Product implements Serializable {
 	protected String productType;
 
 	@NotNull(groups = DataValidation.class)
-	protected String metadata;
+	protected int metadata;
 	
 	@NotNull(groups = DataValidation.class)
 	protected BigDecimal cost;
@@ -133,11 +133,11 @@ public class Product implements Serializable {
 		this.productType = productType;
 	}
 
-	public String getMetadata() {
+	public int getMetadata() {
 		return metadata;
 	}
 
-	public void setMetadata(String metadata) {
+	public void setMetadata(int metadata) {
 		this.metadata = metadata;
 	}
 

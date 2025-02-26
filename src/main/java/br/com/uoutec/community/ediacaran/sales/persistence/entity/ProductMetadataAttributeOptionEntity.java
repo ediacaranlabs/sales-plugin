@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
@@ -37,7 +37,7 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 	@Column(name="dsc_value", length=128)
 	private String value;
 
-	@ManyToMany
+	@ManyToOne
 	@JoinColumn(name = "cod_prod_mtda_attr")
 	private ProductMetadataAttributeEntity 	productAttribute;
 	

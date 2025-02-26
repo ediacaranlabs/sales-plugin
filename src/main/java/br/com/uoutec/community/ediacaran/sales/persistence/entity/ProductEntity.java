@@ -54,6 +54,9 @@ public class ProductEntity implements Serializable,PublicType{
 	@Column(name="cod_product_type")
 	private String productType;
 
+	@Column(name="cod_product_metadata", length=11)
+	private Integer metadata;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_measurement_unit", length=10)
 	private MeasurementUnit measurementUnit;
@@ -85,6 +88,7 @@ public class ProductEntity implements Serializable,PublicType{
 		this.name             = e.getName();
 		this.shortDescription = e.getShortDescription();
 		this.visibility       = e.getVisibility();
+		this.metadata          = e.getMetadata();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -183,6 +187,7 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setName(this.name);
 		e.setShortDescription(this.shortDescription);
 		e.setVisibility(this.visibility);
+		e.setMetadata(this.metadata);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))
