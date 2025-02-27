@@ -70,10 +70,10 @@ public class ProductMetadataRegistryUtil {
 
 	public static void saveOrUpdate(ProductMetadata entity, ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
 		if(entity.getId() <= 0){
-			update(entity, entityAccess);	
+			save(entity, entityAccess);	
 		}
 		else{
-			save(entity, entityAccess);	
+			update(entity, entityAccess);	
 		}
 	}
 

@@ -88,7 +88,7 @@ public class ProductEntity implements Serializable,PublicType{
 		this.name             = e.getName();
 		this.shortDescription = e.getShortDescription();
 		this.visibility       = e.getVisibility();
-		this.metadata          = e.getMetadata();
+		this.metadata          = e.getMetadata() <= 0? null : e.getMetadata();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -187,7 +187,7 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setName(this.name);
 		e.setShortDescription(this.shortDescription);
 		e.setVisibility(this.visibility);
-		e.setMetadata(this.metadata);
+		e.setMetadata(this.metadata == null? 0 : this.metadata);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))

@@ -61,7 +61,7 @@ public class Product implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	protected String productType;
 
-	@NotNull(groups = DataValidation.class)
+	@Min(value = 1, groups = DataValidation.class)
 	protected int metadata;
 	
 	@NotNull(groups = DataValidation.class)

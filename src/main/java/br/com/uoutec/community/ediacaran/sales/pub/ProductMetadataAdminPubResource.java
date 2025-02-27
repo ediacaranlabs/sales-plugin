@@ -21,7 +21,6 @@ import org.brandao.brutos.annotation.View;
 import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
-import org.brandao.brutos.web.HttpStatus;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
@@ -41,7 +40,7 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 
 @Singleton
 @Controller(value="${plugins.ediacaran.front.admin_context}/product-metadata", defaultActionName="/")
-@ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseErrors(rendered=false)
 public class ProductMetadataAdminPubResource {
 
 	@Transient
@@ -103,7 +102,10 @@ public class ProductMetadataAdminPubResource {
 		
 		ProductMetadata entity;
 		try{
-			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
+			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, false, true);
+			Map<String,Object> map = new HashMap<>();
+			map.put("entity", entity);
+			return map;
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -111,13 +113,10 @@ public class ProductMetadataAdminPubResource {
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
 							ProductMetadataAdminPubResourceMessages.edit.error.fail_load_request, 
 							locale);
-			
-			throw new InvalidRequestException(error, ex);
+
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
-		Map<String,Object> map = new HashMap<>();
-		map.put("entity", entity);
-		return map;
 	}
 	
 	@RequestMethod("POST")
@@ -149,6 +148,9 @@ public class ProductMetadataAdminPubResource {
 
 		try{
 			productMetadataService.registerProductMetadata(entity);
+			Map<String,Object> map = new HashMap<>();
+			map.put("entity", entity);
+			return map;
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -160,9 +162,6 @@ public class ProductMetadataAdminPubResource {
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
-		Map<String,Object> map = new HashMap<>();
-		map.put("entity", entity);
-		return map;
 	}
 
 	@RequestMethod("POST")

@@ -50,43 +50,20 @@
 			<ec:data-result var="response">
 				<ec:table>
 					<ec:table-header>
-						<ec:table-col><ec:center><fmt:message key="result.tab.title.image" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="result.tab.title.name" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="result.tab.title.value" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center>Name</ec:center></ec:table-col>
 						<ec:table-col><ec:center>Description</ec:center></ec:table-col>
-						<ec:table-col><ec:center>tags</ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="result.tab.title.action" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center>Actions</ec:center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
 						<ec:forEach items="!{response.itens}" var="item">
 						<ec:table-row>
-							<ec:table-col>
-								<ec:if test="!{item.thumbnail == null}">
-									<ec:image 
-										classStyle="product_image_thumb"
-										src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png')}"
-										style="thumbnail"
-										align="center"
-									/>
-								</ec:if>
-								<ec:if test="!{item.thumbnail != null}">
-									<ec:image
-										classStyle="product_image_thumb" 
-										src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}"
-										style="thumbnail"
-										align="center"
-									/>
-								</ec:if>
-							</ec:table-col>
 							<ec:table-col><ec:center>!{item.name}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.cost}</ec:center></ec:table-col>
-							<ec:table-col>!{item.shortDescription}</ec:table-col>
-							<ec:table-col><ec:center>!{item.tags}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.description}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>
 								<ec:button icon="pencil" style="info" actionType="button">
 									<ec:event type="click">
-										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/edit/!{item.productType.toLowerCase()}/!{item.protectedID}');
+										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata/edit/!{item.protectedID}');
 									</ec:event>
 								</ec:button>
 								</ec:center>

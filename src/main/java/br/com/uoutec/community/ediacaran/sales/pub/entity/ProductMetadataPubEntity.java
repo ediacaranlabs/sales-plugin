@@ -3,12 +3,15 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
+import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.application.validation.CommonValidation;
@@ -45,6 +48,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 	@Size(min=3, max = 256,groups=DataValidation.class)
 	private String description;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductMetadataAttributePubEntity> attributes;
 	
 	@Constructor
@@ -149,6 +153,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
 		
 		if(this.attributes != null) {
+			List<ProductMetadataAttribute> list = new ArrayList<>();
 			List<ProductMetadataAttributeUpdate> registerList = new ArrayList<>();
 			List<ProductMetadataAttributeUpdate> unregisterList = new ArrayList<>();
 			
@@ -160,7 +165,9 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 				else {
 					registerList.add(new ProductMetadataAttributeUpdate(xe));
 				}
+				list.add(xe);
 			}
+			o.setAttributes(list.stream().collect(Collectors.toMap((e)->e.getCode(), (e)->e)));
 			o.setRegisterAttributes(registerList);
 			o.setUnregisterAttributes(unregisterList);
 		}

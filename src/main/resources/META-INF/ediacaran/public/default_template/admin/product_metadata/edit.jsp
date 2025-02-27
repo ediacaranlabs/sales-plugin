@@ -9,15 +9,15 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2><fmt:message key="header.title" bundle="${messages}"/></h2>
+				<h2>Product metadata</h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
-			<ec:breadcrumb title="#{header.title}" bundle="${messages}">
+			<ec:breadcrumb title="Product metadata" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
 				<ec:breadcrumb-path 
-					text="#{header.breadcrumb.parent}" 
-					lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products" 
+					text="Products metadata" 
+					lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata" 
 					bundle="${messages}"/>
 			</ec:breadcrumb>
 		</ed:col>
@@ -26,14 +26,79 @@
 
 <ec:box>
 	<ec:box-body>
-		<ec:form method="POST" id="product_form" enctype="multipart/form-data"
+		<ec:form method="POST" id="product_metadata_form" enctype="multipart/form-data"
 			update="result_product_form" 
-			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/save/${vars.product_view.vars.entity.productType.toLowerCase()}" >
-			<!-- product-view -->
-			<c:set var="localVars" value="${vars}" />
-			<c:set var="vars" scope="request" value="${localVars.product_view.vars}" />
-			<ec:include uri="${localVars.product_view.view}" resolved="${localVars.product_view.resolvedView}" />
-			<!-- /product-view -->
+			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata/save" >
+			<ed:row>
+				<ed:col size="3" classStyle="form-group has-feedback">
+					<ec:imagefield name="thumbnail"
+						src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
+						button="Select" 
+						bundle="${messages}" width="200" height="200" border="squad"/>
+				</ed:col>
+				<ed:col size="9">
+					<input type="hidden" name="protectedID" value="${vars.entity.protectedID}">
+					<ed:row style="form">
+						<ed:col size="12" classStyle="form-group has-feedback">
+							<ec:textfield 
+								name="name" 
+								value="${vars.entity.name}" 
+								label="Name"
+								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:FIELDS:NAME')}"
+								bundle="${messages}">
+								<ec:field-validator>
+									<ec:field-validator-rule 
+										name="notEmpty" 
+										message="empty" 
+										bundle="${messages}"/>
+									<ec:field-validator-rule 
+										name="regexp"
+										message="regex"
+										bundle="${messages}">
+										<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
+									</ec:field-validator-rule>
+									<ec:field-validator-rule 
+										name="stringLength" 
+										message="length" 
+										bundle="${messages}">
+											<ec:field-validator-param name="min">3</ec:field-validator-param>
+											<ec:field-validator-param name="max">128</ec:field-validator-param>
+									</ec:field-validator-rule>
+								</ec:field-validator>
+							</ec:textfield>
+						</ed:col>
+					</ed:row>
+					<ed:row style="form">
+						<ed:col size="12" classStyle="form-group has-feedback">
+							<ec:textarea 
+								rows="10" 
+								name="description" 
+								label="Description"
+								readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:FIELDS:DESCRIPTION')}"
+								bundle="${messages}">${vars.entity.description}</ec:textarea>
+							<ec:field-validator field="description">
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="not empty" 
+									bundle="${messages}"/>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">3</ec:field-validator-param>
+										<ec:field-validator-param name="max">256</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ed:col>
+					</ed:row>				
+				</ed:col>
+			</ed:row>
 			<ed:row>
 				<ed:col id="result_product_form">
 				</ed:col>
@@ -50,3 +115,11 @@
 		</ec:form>
 	</ec:box-body>
 </ec:box>				    
+<ec:template var="entity">
+<ec:tabs>
+	<ec:tabs-item title="">
+		<input type="hidden" name="protectedID" value="!{entity.protectedID}">
+	
+	</ec:tabs-item>
+</ec:tabs>
+</ec:template>

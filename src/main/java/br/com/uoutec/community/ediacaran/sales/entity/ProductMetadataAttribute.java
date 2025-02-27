@@ -54,8 +54,15 @@ public class ProductMetadataAttribute {
 	
 	protected Double max;
 	
+	@Size(max=128)
 	protected String regex;
 
+	@Size(max=32)
+	protected String prefix;
+	
+	@Size(max=32)
+	protected String suffix;
+	
 	protected short order;
 
 	protected List<ProductMetadataAttributeOption> options;
@@ -186,6 +193,22 @@ public class ProductMetadataAttribute {
 
 	public void setProductMetadata(int productMetadata) {
 		this.productMetadata = productMetadata;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
 	}
 
 	public void validate(String value) throws ValidationException {

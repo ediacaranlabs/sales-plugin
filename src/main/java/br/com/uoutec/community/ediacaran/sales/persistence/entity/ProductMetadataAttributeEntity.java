@@ -79,6 +79,12 @@ public class ProductMetadataAttributeEntity implements Serializable{
 	@Column(name="dsc_regex", length = 128)
 	private String regex;
 
+	@Column(name="dsc_prefix", length=32)
+	private String prefix;
+
+	@Column(name="dsc_suffix", length=32)
+	private String suffix;
+	
 	@Column(name="vlr_order", length = 3)
 	private Short order;
 
@@ -99,6 +105,8 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		this.minLength = e.getMinLength();
 		this.name = e.getName();
 		this.order = e.getOrder();
+		this.prefix = e.getPrefix();
+		this.suffix = e.getSuffix();
 		
 		if(e.getProductMetadata() > 0) {
 			this.productMetadata = new ProductMetadataEntity();
@@ -273,6 +281,8 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		e.setRows(this.rows == null? 0 : this.rows.shortValue());
 		e.setType(this.type);
 		e.setValueType(this.valueType);
+		e.setPrefix(this.prefix);
+		e.setSuffix(this.suffix);
 		
 		if(this.productMetadata != null){
 			e.setProductMetadata(this.productMetadata.getId());

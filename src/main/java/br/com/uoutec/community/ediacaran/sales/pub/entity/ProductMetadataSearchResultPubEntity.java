@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.brandao.brutos.annotation.Constructor;
@@ -18,6 +19,11 @@ public class ProductMetadataSearchResultPubEntity extends ProductMetadataPubEnti
 
 	public ProductMetadataSearchResultPubEntity(ProductMetadata e, Locale locale){
 		super(e, locale);
+	}
+	
+	@Transient
+	public void setAttributes(List<ProductMetadataAttributePubEntity> attributes) {
+		super.setAttributes(attributes);
 	}
 	
 	@Transient

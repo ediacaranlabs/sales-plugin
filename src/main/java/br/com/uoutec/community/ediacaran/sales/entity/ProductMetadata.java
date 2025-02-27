@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.Map;
+import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -12,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -79,6 +81,27 @@ public class ProductMetadata {
 
 	public void setAttributes(Map<String, ProductMetadataAttribute> attributes) {
 		this.attributes = attributes;
+	}
+	
+	public String getPublicThumb() {
+		return thumb == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductMetadata other = (ProductMetadata) obj;
+		return id == other.id;
 	}
 	
 }
