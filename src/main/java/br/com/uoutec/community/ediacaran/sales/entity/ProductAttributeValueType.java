@@ -11,6 +11,17 @@ import br.com.uoutec.i18n.MessageBundleThread;
 
 public enum ProductAttributeValueType {
 
+	TEXT(){
+
+		public Object toObject(String value, Locale locale) {
+			return value;
+		}
+
+		public String toString(Object value, Locale locale) {
+			return String.valueOf(value);
+		}
+		
+	},
 	INTEGER(){
 
 		public Object toObject(String value, Locale locale) {

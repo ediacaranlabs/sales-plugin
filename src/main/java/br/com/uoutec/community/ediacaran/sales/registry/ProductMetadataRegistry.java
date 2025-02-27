@@ -28,9 +28,15 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	
 	void registerProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
 
+	void registerDefaultProductMetadataAttribute(ProductMetadataAttribute attribute) throws ProductRegistryException;
+	
 	void removeProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent) throws ProductRegistryException;
 	
+	void removeDefaultProductMetadataAttribute(String code) throws ProductRegistryException;
+	
 	List<ProductMetadataAttribute> getProductMetadataAttributes(ProductMetadata parent)	throws ProductRegistryException;
+	
+	List<ProductMetadataAttribute> getDefaultProductMetadataAttributes() throws ProductRegistryException;
 	
 	/* options */
 	

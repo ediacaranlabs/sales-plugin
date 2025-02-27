@@ -19,13 +19,13 @@ public class ProductMetadataAttribute {
 
 	@NotNull(groups = IdValidation.class)
 	@Min(value = 1, groups = IdValidation.class)
-	private int id;
+	protected int id;
 
 	@Min(value = 1, groups = IdValidation.class)
-	private int productMetadata;
+	protected int productMetadata;
 	
 	@NotNull(groups = DataValidation.class)
-	private String code;
+	protected String code;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT)

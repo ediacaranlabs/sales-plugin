@@ -35,7 +35,7 @@ public class ProductMetadata {
 	protected String description;
 	
 	@Valid
-	private Map<String, ProductMetadataAttribute> attributes;
+	protected Map<String, ProductMetadataAttribute> attributes;
 	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		

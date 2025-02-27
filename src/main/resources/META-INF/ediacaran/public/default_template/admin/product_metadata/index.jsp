@@ -31,22 +31,10 @@
 
 <ec:box>
 	<ec:box-body>
-		<ec:data-table id="productSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/search">
+		<ec:data-table id="productSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata/search">
 			<ed:row>
-				<ed:col size="5">
+				<ed:col>
 	    			<ec:textfield name="name" label="#{search.form.name.label}" bundle="${messages}"/>
-				</ed:col>
-				<ed:col size="3">
-					<ec:select label="#{search.form.product_type.label}" name="productType" bundle="${messages}">
-						<ec:option value=""></ec:option>
-						<c:forEach items="${vars.productTypes}" var="productType">
-						<ec:option value="${productType.code}">${productType.name}</ec:option>
-						</c:forEach>
-					</ec:select>
-				</ed:col>
-				<ed:col size="4">
-		    			<ec:textfield label="#{search.form.min_cost.label}" name="minCost" bundle="${messages}"/>
-		    			<ec:textfield label="#{search.form.max_cost.label}" name="maxCost" bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			<ed:row>
