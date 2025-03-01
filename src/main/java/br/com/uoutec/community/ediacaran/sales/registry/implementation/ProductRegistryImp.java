@@ -150,6 +150,10 @@ public class ProductRegistryImp
 		
 		try{
 			for(ProductImage entity: list) {
+				if(entity.getProduct() != 0 && entity.getProduct() != parent.getId()) {
+					throw new ProductRegistryException("invalid product: " + entity.getProduct() + " != " + parent.getId());
+				}
+				entity.setProduct(parent.getId());
 				ProductImageRegistryUtil.validate(entity);
 				ProductImageRegistryUtil.saveOrUpdate(entity, imageEntityAccess);
 			}
