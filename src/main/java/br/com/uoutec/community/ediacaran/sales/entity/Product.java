@@ -214,7 +214,7 @@ public class Product implements Serializable {
 	}
 
 	public String getPublicThumb() {
-		return thumb == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
+		return getThumb() == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
 	}
 
 	public String getPublicID() {

@@ -133,6 +133,8 @@
 <ec:tabs>
 	<ec:tabs-item title="Attribute">
 	</ec:tabs-item>
+	<ec:tabs-item title="Attribute2">
+	</ec:tabs-item>
 </ec:tabs>
 </ec:template>
 <%-- 
