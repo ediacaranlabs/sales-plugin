@@ -98,6 +98,11 @@
 						</ed:col>
 					</ed:row>
 					<ed:row>
+						<ed:col>
+							Attributes
+						</ed:col>
+					</ed:row>
+					<ed:row>
 						<ed:col id="attrArea">
 						</ed:col>
 					</ed:row>
@@ -107,7 +112,9 @@
 				<ed:col>
 					<ec:button label="Add attribute" align="right" actionType="button" bundle="${messages}">
 						<ec:event type="click">
-							var $attr = $.AppContext.utils.applyTemplate("metadata_attribute", {});
+							var $attr = $.AppContext.utils.applyTemplate("metadata_attribute", {
+								optsAreaID: 'optsArea_' + new Date().getTime() + "_" + Math.floor(Math.random() * 1000)
+							});
 							$.AppContext.utils.content.append("attrArea",$attr);
 						</ec:event>
 					</ec:button>
@@ -202,12 +209,10 @@
 									
 									var $nameFieldPath = $group.getPath();
 									var $nameField = $form.getField($nameFieldPath + ".name");
-									console.log($nameField.getValue());
 									var $item = $accordion.getItens()[0];
 									$item.setTitle($nameField.getValue());
 								}
 							</ec:event>
-							
 						</ec:textfield>
 					</ed:col>
 				</ed:row>
@@ -403,7 +408,116 @@
 						<ec:checkbox name="allowEmpty" label="Allow empty&nbsp;" align="right"/>
 					</ed:col>
 				</ed:row>
+				<ed:row>
+					<ed:col>
+						Options
+					</ed:col>
+				</ed:row>
+				<ed:row>
+					<ed:col id="!{entity.optsAreaID}">
+					</ed:col>
+				</ed:row>
+				<ed:row>
+					<ed:col>
+						<ec:button label="Add option" align="right" actionType="button" bundle="${messages}">
+							<ec:event type="click">
+								var $option = $.AppContext.utils.applyTemplate("option_attribute", {});
+								$.AppContext.utils.content.append("!{entity.optsAreaID}", $option);
+							</ec:event>
+						</ec:button>
+					</ed:col>
+				</ed:row>
 				
+			</ec:accordion-item>
+		</ec:accordion>
+	</span>
+</ec:template>
+
+<ec:template id="option_attribute" var="entity">
+	<span formgroup="options" formgrouptype="index">
+		<ec:accordion>
+			<ec:accordion-item title="">
+				<input type="hidden" name="protectedID" value="!{entity.protectedID}">
+				<ed:row>
+					<ed:col size="6" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="value" 
+							placeholder="Value"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="empty" 
+									bundle="${messages}"/>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[a-z0-9]+{_[a-z0-9]+}*/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">2</ec:field-validator-param>
+										<ec:field-validator-param name="max">32</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="6" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="description"
+							placeholder="Description"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="empty" 
+									bundle="${messages}"/>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">2</ec:field-validator-param>
+										<ec:field-validator-param name="max">128</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+							
+							<ec:event type="keyup">
+								var $source = $event.source;
+								var $form = $source.getForm();
+								
+								var $group = $source.getFormGroup();
+								
+								var $accordion = $group.getFirstChild();
+								
+								if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+								
+									$form.updateFieldIndex();
+									$form.updateFieldNames();
+									
+									var $descriptionFieldPath = $group.getPath();
+									var $descriptionField = $form.getField($descriptionFieldPath + ".description");
+									var $item = $accordion.getItens()[0];
+									$item.setTitle($descriptionField.getValue());
+								}
+							</ec:event>
+							
+						</ec:textfield>
+					</ed:col>
+				</ed:row>
+				<ed:row>
+					<ed:col classStyle="form-group has-feedback">
+						<ec:checkbox name="deleted" label="Delete" align="right"/>
+					</ed:col>
+				</ed:row>
 			</ec:accordion-item>
 		</ec:accordion>
 	</span>
