@@ -96,11 +96,11 @@
 								</ec:field-validator-rule>
 							</ec:field-validator>
 						</ed:col>
-					</ed:row>				
-				</ed:col>
-			</ed:row>
-			<ed:row>
-				<ed:col id="attrArea">
+					</ed:row>
+					<ed:row>
+						<ed:col id="attrArea">
+						</ed:col>
+					</ed:row>
 				</ed:col>
 			</ed:row>
 			<ed:row>
@@ -128,209 +128,283 @@
 			</ed:row>
 		</ec:form>
 	</ec:box-body>
-</ec:box>				    
+</ec:box>
+				    
 <ec:template id="metadata_attribute" var="entity">
-<ec:tabs>
-	<ec:tabs-item title="Attribute">
-	</ec:tabs-item>
-	<ec:tabs-item title="Attribute2">
-	</ec:tabs-item>
-</ec:tabs>
+	<span formgroup="attributes" formgrouptype="index">
+		<ec:accordion>
+			<ec:accordion-item title="">
+			
+				<input type="hidden" name="protectedID" value="!{entity.protectedID}">
+				<ed:row>
+					<ed:col size="3" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="code" 
+							label="Code"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="empty" 
+									bundle="${messages}"/>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[a-z0-9]+{_[a-z0-9]+}*/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">2</ec:field-validator-param>
+										<ec:field-validator-param name="max">32</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="9" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="name" 
+							label="Name"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="empty" 
+									bundle="${messages}"/>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">2</ec:field-validator-param>
+										<ec:field-validator-param name="max">128</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+							<ec:event type="keyup">
+								var $source = $event.source;
+								var $form = $source.getForm();
+								
+								var $group = $source.getFormGroup();
+								
+								var $accordion = $group.getFirstChild();
+								
+								if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+								
+									$form.updateFieldIndex();
+									$form.updateFieldNames();
+									
+									var $nameFieldPath = $group.getPath();
+									var $nameField = $form.getField($nameFieldPath + ".name");
+									console.log($nameField.getValue());
+									var $item = $accordion.getItens()[0];
+									$item.setTitle($nameField.getValue());
+								}
+							</ec:event>
+							
+						</ec:textfield>
+					</ed:col>
+				</ed:row>
+				
+				<ed:row>
+					<ed:col size="6" classStyle="form-group has-feedback">
+						<ec:select name="type" label="Type">
+							<ec:option value="">Select a type</ec:option>
+							<c:forEach items="${vars.types}" var="type">
+								<ec:option value="${type}">${type.getName(locale)}</ec:option>
+							</c:forEach>
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="empty" 
+									bundle="${messages}"/>
+							</ec:field-validator>
+						</ec:select>
+					</ed:col>
+					<ed:col size="6" classStyle="form-group has-feedback">
+						<ec:select name="valueType" label="Value type">
+							<ec:option value="">Select a value type</ec:option>
+							<c:forEach items="${vars.valueTypes}" var="valueType">
+								<ec:option value="${valueType}">${valueType.getName(locale)}</ec:option>
+							</c:forEach>
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="empty" 
+									bundle="${messages}"/>
+							</ec:field-validator>
+						</ec:select>
+					</ed:col>
+				</ed:row>
+				
+				<ed:row>
+					<ed:col size="3" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="minLength" 
+							label="Min length"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">2</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="3" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="maxLength" 
+							label="Max length"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">2</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="3" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="min" 
+							label="Min"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[0-9]+{\.[0-9]+}{0,1}/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">12</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="3" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="max" 
+							label="Max"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[0-9]+{\.[0-9]+}{0,1}/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">12</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+				</ed:row>		
+			
+				<ed:row>
+					<ed:col size="4" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="rows" 
+							label="Rows"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">2</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="4" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="regex" 
+							label="Regex"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">128</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+					<ed:col size="4" classStyle="form-group has-feedback">
+						<ec:textfield 
+							name="order" 
+							label="Order"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="regexp"
+									message="regex"
+									bundle="${messages}">
+									<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
+								</ec:field-validator-rule>
+								<ec:field-validator-rule 
+									name="stringLength" 
+									message="length" 
+									bundle="${messages}">
+										<ec:field-validator-param name="min">1</ec:field-validator-param>
+										<ec:field-validator-param name="max">2</ec:field-validator-param>
+								</ec:field-validator-rule>
+							</ec:field-validator>
+						</ec:textfield>
+					</ed:col>
+				</ed:row>
+			
+				<ed:row>
+					<ed:col classStyle="form-group has-feedback">
+						<ec:checkbox name="deleted" label="Delete" align="right"/>
+						<ec:checkbox name="allowEmpty" label="Allow empty&nbsp;" align="right"/>
+					</ed:col>
+				</ed:row>
+				
+			</ec:accordion-item>
+		</ec:accordion>
+	</span>
 </ec:template>
-<%-- 
-<ec:tabs>
-	<ec:tabs-item title="Attribute">
-		<input type="hidden" name="protectedID" value="!{entity.protectedID}">
-		<ed:row>
-			<ed:col size="3">
-				<ec:textfield 
-					name="code" 
-					label="Code"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="notEmpty" 
-							message="empty" 
-							bundle="${messages}"/>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">/[a-z0-9]+{_[a-z0-9]+}*/</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">2</ec:field-validator-param>
-								<ec:field-validator-param name="max">32</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-			<ed:col size="9">
-				<ec:textfield 
-					name="name" 
-					label="Name"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="notEmpty" 
-							message="empty" 
-							bundle="${messages}"/>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">2</ec:field-validator-param>
-								<ec:field-validator-param name="max">128</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-		</ed:row>
-		
-		<ed:row>
-			<ed:col size="4">
-				<ec:checkbox name="allowEmpty" label="Allow empty"/>
-			</ed:col>
-			<ed:col size="4">
-				<ec:textfield 
-					name="rows" 
-					label="Rows"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">1</ec:field-validator-param>
-								<ec:field-validator-param name="max">2</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-			<ed:col size="4">
-				<ec:textfield 
-					name="regex" 
-					label="Regex"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">1</ec:field-validator-param>
-								<ec:field-validator-param name="max">128</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-		</ed:row>
-		
-		<ed:row>
-			<ed:col size="3">
-				<ec:textfield 
-					name="minLength" 
-					label="Min length"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">1</ec:field-validator-param>
-								<ec:field-validator-param name="max">2</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-			<ed:col size="3">
-				<ec:textfield 
-					name="maxLength" 
-					label="Max length"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">/[0-9]+/</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">1</ec:field-validator-param>
-								<ec:field-validator-param name="max">2</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-			<ed:col size="3">
-				<ec:textfield 
-					name="min" 
-					label="Min"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">/[0-9]+{\.[0-9]+}{0,1}/</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">1</ec:field-validator-param>
-								<ec:field-validator-param name="max">12</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-			<ed:col size="3">
-				<ec:textfield 
-					name="max" 
-					label="Max"
-					bundle="${messages}">
-					<ec:field-validator>
-						<ec:field-validator-rule 
-							name="regexp"
-							message="regex"
-							bundle="${messages}">
-							<ec:field-validator-param name="regexp" raw="true">/[0-9]+{\.[0-9]+}{0,1}/</ec:field-validator-param>
-						</ec:field-validator-rule>
-						<ec:field-validator-rule 
-							name="stringLength" 
-							message="length" 
-							bundle="${messages}">
-								<ec:field-validator-param name="min">1</ec:field-validator-param>
-								<ec:field-validator-param name="max">12</ec:field-validator-param>
-						</ec:field-validator-rule>
-					</ec:field-validator>
-				</ec:textfield>
-			</ed:col>
-		</ed:row>		
-		
-	</ec:tabs-item>
-</ec:tabs>
---%>

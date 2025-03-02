@@ -23,6 +23,8 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
@@ -105,6 +107,8 @@ public class ProductMetadataAdminPubResource {
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, false, true);
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);
+			map.put("types", ProductAttributeType.values());
+			map.put("valueTypes", ProductAttributeValueType.values());
 			return map;
 		}
 		catch(Throwable ex){

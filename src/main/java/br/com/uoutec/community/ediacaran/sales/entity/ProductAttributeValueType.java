@@ -87,7 +87,7 @@ public enum ProductAttributeValueType {
 	;
 
 	public static final String RESOURCE_BUNDLE = 
-			MessageBundle.toPackageID(ProductAttributeType.class);
+			MessageBundle.toPackageID(ProductAttributeValueType.class);
 
 	public Object toObject(String value, Locale locale) {
 		return null;
