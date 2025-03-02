@@ -1,5 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,6 +83,10 @@ public class ProductMetadata {
 
 	public void setAttributes(Map<String, ProductMetadataAttribute> attributes) {
 		this.attributes = attributes;
+	}
+	
+	public List<ProductMetadataAttribute> getAttributeList(){
+		return this.attributes == null? null : new ArrayList<>(this.attributes.values());
 	}
 	
 	public String getPublicThumb() {
