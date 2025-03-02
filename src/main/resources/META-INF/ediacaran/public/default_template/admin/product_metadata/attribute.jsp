@@ -3,9 +3,10 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
+<%--
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:setTemplatePackage name="admin"/>
-
+--%>
 <span formgroup="attributes" formgrouptype="index">
 	<ec:accordion>
 		<ec:accordion-item title="${attribute.name}">
