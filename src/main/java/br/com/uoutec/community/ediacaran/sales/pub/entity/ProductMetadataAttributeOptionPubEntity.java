@@ -3,11 +3,13 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
 
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
+import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
@@ -30,13 +32,14 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	@NotNull(groups = IdValidation.class)
 	private String protectedID;
 	
-	
-	@NotNull(groups=DataValidation.class)
-	@Size(min=3, max=128, groups=DataValidation.class)
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	@Length(max = 128, groups = DataValidation.class)
 	private String value;
 	
-	@NotNull(groups=DataValidation.class)
-	@Size(min=3, max=256, groups=DataValidation.class)
+	@NotNull(groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	@Length(max = 256, groups = DataValidation.class)
 	private String description;
 
 	private Boolean deleted;

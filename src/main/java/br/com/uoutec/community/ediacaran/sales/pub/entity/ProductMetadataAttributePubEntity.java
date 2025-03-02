@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
+import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
@@ -38,11 +39,13 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	private String protectedID;
 	
 	@NotNull(groups = DataValidation.class)
+	@Size(max=32,groups=DataValidation.class)
+	@Pattern(regexp="[a-z0-9]+{_[a-z0-9]+}*",groups=DataValidation.class)
 	private String code;
 	
 	@NotNull(groups=DataValidation.class)
-	@Size(min=3,groups=DataValidation.class)
-	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	@Length(max = 128, groups = DataValidation.class)
 	private String name;
 	
 	@NotNull(groups=DataValidation.class)
@@ -67,6 +70,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	
 	private Double max;
 	
+	@Size(max=128)
 	private String regex;
 
 	private Short order;

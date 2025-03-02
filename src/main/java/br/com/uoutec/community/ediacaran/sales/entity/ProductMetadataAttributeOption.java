@@ -22,12 +22,12 @@ public class ProductMetadataAttributeOption {
 	private int productMetadataAttribute;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Length(max = 128, groups = DataValidation.class)
 	private String value;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Length(max = 256, groups = DataValidation.class)
 	private String description;
 

@@ -38,7 +38,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 	private String protectedID;
 	
 	@NotNull(groups=DataValidation.class)
-	@Size(min=3,groups=DataValidation.class)
+	@Size(max=128,groups=DataValidation.class)
 	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
 	private String name;
 	
@@ -46,6 +46,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3, max = 256,groups=DataValidation.class)
+	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
 	private String description;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
