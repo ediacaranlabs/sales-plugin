@@ -29,7 +29,7 @@
 								name="regexp"
 								message="#{form.attribute.code.validation.regexp}"
 								bundle="${messages}">
-								<ec:field-validator-param name="regexp" raw="true">/[a-z0-9]+{_[a-z0-9]+}*/</ec:field-validator-param>
+								<ec:field-validator-param name="regexp" raw="true">/[a-z0-9]+(_[a-z0-9]+)*/</ec:field-validator-param>
 							</ec:field-validator-rule>
 							<ec:field-validator-rule 
 								name="stringLength" 
@@ -190,7 +190,7 @@
 								name="regexp"
 								message="#{form.attribute.min.validation.regexp}"
 								bundle="${messages}">
-								<ec:field-validator-param name="regexp" raw="true">/[0-9]+{\.[0-9]+}{0,1}/</ec:field-validator-param>
+								<ec:field-validator-param name="regexp" raw="true">/[0-9]+(\.[0-9]+){0,1}/</ec:field-validator-param>
 							</ec:field-validator-rule>
 							<ec:field-validator-rule 
 								name="stringLength" 
@@ -214,7 +214,7 @@
 								name="regexp"
 								message="#{form.attribute.max.validation.regexp}"
 								bundle="${messages}">
-								<ec:field-validator-param name="regexp" raw="true">/[0-9]+{\.[0-9]+}{0,1}/</ec:field-validator-param>
+								<ec:field-validator-param name="regexp" raw="true">/[0-9]+(\.[0-9]+){0,1}/</ec:field-validator-param>
 							</ec:field-validator-rule>
 							<ec:field-validator-rule 
 								name="stringLength" 

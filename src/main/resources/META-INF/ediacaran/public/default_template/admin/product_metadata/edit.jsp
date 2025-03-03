@@ -37,8 +37,11 @@
 						<ed:col size="3" classStyle="form-group has-feedback">
 							<ec:imagefield name="thumbnail"
 								src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
-								button="Select" 
-								bundle="${messages}" width="200" height="200" border="squad"/>
+								button="#{form.thumbnail.button}"
+								width="200" 
+								height="200" 
+								border="squad" 
+								bundle="${messages}"/>
 						</ed:col>
 						<ed:col size="9">
 							<ed:row style="form">
@@ -104,7 +107,7 @@
 					</ed:row>
 				
 				</ec:tabs-item>
-				<ec:tabs-item title="Attributes">
+				<ec:tabs-item title="#{tabs.attribute.title}" bundle="${messages}">
 					<ed:row>
 						<ed:col id="attrArea">
 							<c:forEach items="${entity.attributeList}" var="attribute">

@@ -40,7 +40,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	
 	@NotNull(groups = DataValidation.class)
 	@Size(max=32,groups=DataValidation.class)
-	@Pattern(regexp="[a-z0-9]+{_[a-z0-9]+}*",groups=DataValidation.class)
+	@Pattern(regexp="[a-z0-9]+(_[a-z0-9]+)*",groups=DataValidation.class)
 	private String code;
 	
 	@NotNull(groups=DataValidation.class)

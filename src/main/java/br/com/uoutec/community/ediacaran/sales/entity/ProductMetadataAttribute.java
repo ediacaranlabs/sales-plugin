@@ -26,7 +26,7 @@ public class ProductMetadataAttribute {
 	
 	@NotNull(groups = DataValidation.class)
 	@Size(max=32,groups=DataValidation.class)
-	@Pattern(regexp="[a-z0-9]+{_[a-z0-9]+}*",groups=DataValidation.class)
+	@Pattern(regexp="[a-z0-9]+(_[a-z0-9]+)*",groups=DataValidation.class)
 	protected String code;
 	
 	@NotNull(groups = DataValidation.class)
