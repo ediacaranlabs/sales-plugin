@@ -154,6 +154,7 @@ public class ProductMetadataAdminPubResource {
 			productMetadataService.registerProductMetadata(entity);
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);
+			map.put("attributes", productMetadataService.getAttributes(entity));
 			return map;
 		}
 		catch(Throwable ex){

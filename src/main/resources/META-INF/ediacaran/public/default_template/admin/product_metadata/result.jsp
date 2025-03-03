@@ -15,34 +15,58 @@
 	<script type="text/javascript">
 	$.AppContext.onload(function(){
 		//get product form
-		var $form = $.AppContext.utils.getById('product_form');
+		let $form = $.AppContext.utils.getById('product_metadata_form');
 		
 		// set product id
-		var $protectedID = $form.getField('product.protectedID');
+		let $protectedID = $form.getField('product_metadata.protectedID');
 		$protectedID.setValue('${vars.entity.protectedID}');
 		
 		
-		// set images id
-		<c:forEach items="${vars.images}" var="image" varStatus="imagesStep">
-		var $image = $form.getField('product.images[${imagesStep.index}].protectedID');
-		$image.setValue('${image.entity.protectedID}');
+		// set attribute id
+		<c:forEach items="${vars.attributes}" var="attribute" varStatus="attributeStep">
+		let $attr = $form.getField('product_metadata.attributes[${attributeStep.index}].protectedID');
+		$attr.setValue('${attribute.protectedID}');
+		
+			//set opt id
+			<c:forEach items="${attribute.options}" var="option" varStatus="optionStep">
+			let $opt = $form.getField('product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}].protectedID');
+			$opt.setValue('${option.protectedID}');
+			</c:forEach>
+		
 		</c:forEach>
 		
-		//remove deleted images
+		//remove attributes images
 		
-		//get all images
-		var $imagesElement = $.AppContext.utils.getById('imagesArea');
-		var $images = $imagesElement.search(function($e){
-			return $e.getAttribute("formgroup") == 'images';
+		//get all attr
+		var $attrArea = $.AppContext.utils.getById('attrArea');
+		var $attrs = $attrArea.search(function($e){
+			return $e.getAttribute("formgroup") == 'attributes';
 		});
 		
-		//remove images marked as deleted
-		for (let $img of $images){
-			let $path = $img.getAttribute("group-path");
+		//remove attr marked as deleted
+		for (let $attr of $attrs){
+			let $path = $attr.getAttribute("group-path");
 			let $deleted = $form.getField($path + ".deleted");
 			
 			if($deleted.getValue()){
-				$img.remove();
+				$attr.remove();
+			}
+			else{
+				//remove opts
+				var $opts = $attr.search(function($e){
+					return $e.getAttribute("formgroup") == 'options';
+				});
+				
+				for (let $opt of $opts){
+					let $path = $opt.getAttribute("group-path");
+					let $deleted = $form.getField($path + ".deleted");
+					
+					if($deleted.getValue()){
+						$opt.remove();
+					}
+					
+				}
+				
 			}
 			
 		}

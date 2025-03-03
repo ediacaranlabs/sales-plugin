@@ -25,6 +25,10 @@ public class ProductMetadataService {
 	@Inject
 	private ProductMetadataRegistry productMetadataRegistry;
 
+	public List<ProductMetadataAttribute> getAttributes(ProductMetadata metadata) throws ProductRegistryException{
+		return productMetadataRegistry.getProductMetadataAttributes(metadata);
+	}
+	
 	@Transactional
 	public void registerProductMetadata(ProductMetadata metadata) throws ProductRegistryException {
 		
