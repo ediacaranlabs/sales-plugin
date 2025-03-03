@@ -9,14 +9,14 @@
 	<ed:row>
 		<ed:col size="4">
 			<div class="inner-heading">
-				<h2>Product metadata</h2>
+				<h2><fmt:message key="header.title" bundle="${messages}"/></h2>
 			</div>
 		</ed:col>
 		<ed:col size="8">
-			<ec:breadcrumb title="Product metadata" bundle="${messages}">
+			<ec:breadcrumb title="#{header.title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
 				<ec:breadcrumb-path 
-					text="Products metadata" 
+					text="#{header.breadcrumb.parent}" 
 					lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata" 
 					bundle="${messages}"/>
 			</ec:breadcrumb>
@@ -31,7 +31,7 @@
 			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata/save" >
 			<input type="hidden" name="protectedID" value="${vars.entity.protectedID}">
 			<ec:tabs>
-				<ec:tabs-item title="Information" active="true">
+				<ec:tabs-item title="#{tabs.information.title}" active="true" bundle="${messages}">
 				
 					<ed:row>
 						<ed:col size="3" classStyle="form-group has-feedback">
@@ -46,23 +46,23 @@
 									<ec:textfield 
 										name="name" 
 										value="${vars.entity.name}" 
-										label="Name"
+										label="#{form.name.label}"
 										readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:FIELDS:NAME')}"
 										bundle="${messages}">
 										<ec:field-validator>
 											<ec:field-validator-rule 
 												name="notEmpty" 
-												message="empty" 
+												message="#{form.name.validation.notEmpty}" 
 												bundle="${messages}"/>
 											<ec:field-validator-rule 
 												name="regexp"
-												message="regex"
+												message="#{form.name.validation.regex}"
 												bundle="${messages}">
 												<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 											</ec:field-validator-rule>
 											<ec:field-validator-rule 
 												name="stringLength" 
-												message="length" 
+												message="#{form.name.validation.stringLength}" 
 												bundle="${messages}">
 													<ec:field-validator-param name="min">1</ec:field-validator-param>
 													<ec:field-validator-param name="max">128</ec:field-validator-param>
@@ -76,23 +76,23 @@
 									<ec:textarea 
 										rows="5" 
 										name="description" 
-										label="Description"
+										label="#{form.description.label}"
 										readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:FIELDS:DESCRIPTION')}"
 										bundle="${messages}">${vars.entity.description}</ec:textarea>
 									<ec:field-validator field="description">
 										<ec:field-validator-rule 
 											name="notEmpty" 
-											message="not empty" 
+											message="#{form.description.validation.notEmpty}" 
 											bundle="${messages}"/>
 										<ec:field-validator-rule 
 											name="regexp"
-											message="regex"
+											message="#{form.description.validation.regex}"
 											bundle="${messages}">
 											<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 										</ec:field-validator-rule>
 										<ec:field-validator-rule 
 											name="stringLength" 
-											message="length" 
+											message="#{form.description.validation.stringLength}" 
 											bundle="${messages}">
 												<ec:field-validator-param name="min">3</ec:field-validator-param>
 												<ec:field-validator-param name="max">256</ec:field-validator-param>
@@ -115,7 +115,7 @@
 					</ed:row>
 					<ed:row>
 						<ed:col>
-							<ec:button label="Add attribute" align="right" actionType="button" bundle="${messages}">
+							<ec:button label="#{from.add_attribute.label}" align="right" actionType="button" bundle="${messages}">
 								<ec:event type="click">
 									var $attr = $.AppContext.utils.applyTemplate("metadata_attribute", {
 										optsAreaID: 'optsArea_' + new Date().getTime() + "_" + Math.floor(Math.random() * 1000)
@@ -134,7 +134,7 @@
 			<ed:row>
 				<ed:col size="12">
 					<ec:button 
-						label="#{resource_form.save.label}" 
+						label="#{form.save.label}" 
 						align="right"
 						actionType="submit"
 						bundle="${messages}"/>
