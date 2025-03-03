@@ -301,14 +301,14 @@
 				<ed:col classStyle="form-group has-feedback">
 					<ec:checkbox 
 						name="deleted" 
-						label="Delete" 
+						label="#{form.attribute.deleted.label}" 
 						align="right"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:DELETED')}"
 						bundle="${messages}"/>
 					<ec:checkbox 
 						name="allowEmpty"
 						selected="${attribute.allowEmpty}" 
-						label="Allow empty&nbsp;" 
+						label="#{form.attribute.allowEmpty.label}" 
 						value="true" 
 						align="right"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:ALLOW_EMPTY')}"

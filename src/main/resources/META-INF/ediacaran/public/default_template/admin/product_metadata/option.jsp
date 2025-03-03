@@ -3,36 +3,36 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@page trimDirectiveWhitespaces="true" %>
-<%--
+
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:setTemplatePackage name="admin"/>
---%>
+
 <span formgroup="options" formgrouptype="index">
 	<ec:accordion>
 		<ec:accordion-item title="${option.description}">
-			<input type="hidden" name="protectedID">
+			<input type="hidden" name="protectedID" value="${option.protectedID}">
 			<ed:row>
 				<ed:col size="6" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="value" 
 						value="${option.value}"
-						placeholder="Value"
+						placeholder="#{form.option.value.placeholder}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 						bundle="${messages}">
 						<ec:field-validator>
 							<ec:field-validator-rule 
 								name="notEmpty" 
-								message="empty" 
+								message="#{form.option.value.validation.notEmpty}" 
 								bundle="${messages}"/>
 							<ec:field-validator-rule 
 								name="regexp"
-								message="regex"
+								message="#{form.option.value.validation.regexp}"
 								bundle="${messages}">
 								<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 							</ec:field-validator-rule>
 							<ec:field-validator-rule 
 								name="stringLength" 
-								message="length" 
+								message="#{form.option.value.validation.stringLength}" 
 								bundle="${messages}">
 									<ec:field-validator-param name="min">1</ec:field-validator-param>
 									<ec:field-validator-param name="max">128</ec:field-validator-param>
@@ -44,23 +44,23 @@
 					<ec:textfield 
 						name="description"
 						value="${option.description}"
-						placeholder="Description"
+						placeholder="#{form.option.description.placeholder}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:DESCRIPTION')}"
 						bundle="${messages}">
 						<ec:field-validator>
 							<ec:field-validator-rule 
 								name="notEmpty" 
-								message="empty" 
+								message="#{form.option.description.validation.notEmpty}" 
 								bundle="${messages}"/>
 							<ec:field-validator-rule 
 								name="regexp"
-								message="regex"
+								message="#{form.option.description.validation.regexp}"
 								bundle="${messages}">
 								<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 							</ec:field-validator-rule>
 							<ec:field-validator-rule 
 								name="stringLength" 
-								message="length" 
+								message="#{form.option.description.validation.stringLength}" 
 								bundle="${messages}">
 									<ec:field-validator-param name="min">1</ec:field-validator-param>
 									<ec:field-validator-param name="max">256</ec:field-validator-param>
@@ -94,7 +94,7 @@
 				<ed:col classStyle="form-group has-feedback">
 					<ec:checkbox 
 						name="deleted" 
-						label="Delete" 
+						label="#{form.option.deleted.label}" 
 						align="right" 
 						value="true"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:DELETED')}"
