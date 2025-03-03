@@ -9,6 +9,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -39,6 +40,10 @@ public class ProductMetadataAttributeOption {
 		this.description = description;
 	}
 
+	public String getProtectedID() {
+		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
+	}
+	
 	public int getId() {
 		return id;
 	}

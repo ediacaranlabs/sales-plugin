@@ -143,7 +143,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 
 	@Override
 	protected ProductMetadataUpdate createNewInstance() throws Throwable {
-		return new ProductMetadataUpdate(new ProductMetadata());
+		return new ProductMetadataUpdate();
 	}
 
 	@Override
@@ -152,6 +152,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 		o.setDescription(this.description);
 		o.setName(this.name);
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
+		o.setDescription(this.description);
 		
 		if(this.attributes != null) {
 			List<ProductMetadataAttribute> list = new ArrayList<>();

@@ -141,7 +141,7 @@ public class ProductMetadataAdminPubResource {
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
 		}
 		catch(Throwable ex){
-			String error = i18nRegistry
+			ex.printStackTrace();			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
 							ProductMetadataAdminPubResourceMessages.save.error.fail_load_request, 
@@ -157,6 +157,7 @@ public class ProductMetadataAdminPubResource {
 			return map;
 		}
 		catch(Throwable ex){
+			ex.printStackTrace();
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
