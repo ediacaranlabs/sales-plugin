@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,8 +11,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.i18n.ValidationException;
@@ -155,11 +159,38 @@ public class ProductMetadataAttribute {
 	}
 
 	public List<ProductMetadataAttributeOption> getOptions() {
+		if(!optionsLoaded) {
+			loadOptions();
+		}
 		return options;
 	}
 
+	private volatile boolean optionsLoaded = false;
+	
+	private synchronized void loadOptions() {
+		
+		if(optionsLoaded) {
+			return;
+		}
+		
+		this.options = ContextSystemSecurityCheck.doPrivileged(()->{
+			
+			if(this.id <= 0) {
+				return new ArrayList<>();
+			}
+			
+			ProductMetadataRegistry registry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
+			List<ProductMetadataAttributeOption> tmp = registry.getProductMetadataAttributeOptions(this);
+			optionsLoaded = true;
+			return tmp;
+		});
+		
+	}
+	
+	
 	public void setOptions(List<ProductMetadataAttributeOption> options) {
 		this.options = options;
+		this.optionsLoaded = true;
 	}
 
 	public boolean isAllowEmpty() {

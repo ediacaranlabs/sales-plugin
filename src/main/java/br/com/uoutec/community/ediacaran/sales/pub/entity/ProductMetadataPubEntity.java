@@ -160,13 +160,16 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 			List<ProductMetadataAttributeUpdate> unregisterList = new ArrayList<>();
 			
 			for(ProductMetadataAttributePubEntity x: this.attributes) {
-				ProductMetadataAttribute xe = x.rebuild(x.getProtectedID() != null, true, true);
-				if(x.getDeleted() != null && x.getDeleted().booleanValue()) {
-					unregisterList.add(new ProductMetadataAttributeUpdate(xe));
+				ProductMetadataAttributeUpdate xe = x.rebuild(x.getProtectedID() != null, true, true);
+				
+				if(x.getProtectedID() != null) {
+					if(x.getDeleted() != null && x.getDeleted().booleanValue()) {
+						unregisterList.add(xe);
+						continue;
+					}
 				}
-				else {
-					registerList.add(new ProductMetadataAttributeUpdate(xe));
-				}
+				
+				registerList.add(xe);
 				list.add(xe);
 			}
 			o.setAttributes(list.stream().collect(Collectors.toMap((e)->e.getCode(), (e)->e)));

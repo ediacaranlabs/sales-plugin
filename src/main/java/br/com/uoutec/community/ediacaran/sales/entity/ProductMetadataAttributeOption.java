@@ -41,7 +41,7 @@ public class ProductMetadataAttributeOption {
 	}
 
 	public String getProtectedID() {
-		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
+		return id <= 0? null : SecretUtil.toProtectedID(id + "-" + productMetadataAttribute);		
 	}
 	
 	public int getId() {

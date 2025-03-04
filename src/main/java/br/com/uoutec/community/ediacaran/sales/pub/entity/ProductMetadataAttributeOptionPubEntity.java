@@ -107,11 +107,19 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 
 	@Override
 	protected void preRebuild(ProductMetadataAttributeOption instance, boolean reload, boolean override, boolean validate) {
+		
 		try {
-			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
+			String str = SecretUtil.toID(this.protectedID);
+			String[] parts = str.split("\\-");
+			if(parts.length != 2) {
+				throw new IllegalStateException();
+			}
+			this.id = Integer.parseInt(parts[0]);
+			this.productMetadataAttribute = Integer.parseInt(parts[1]);
 		}
 		catch(Throwable ex){
 			this.id = 0;
+			this.productMetadataAttribute = 0;
 		}
 	}
 	

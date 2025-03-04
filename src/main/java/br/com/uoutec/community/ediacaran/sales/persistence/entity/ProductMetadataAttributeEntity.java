@@ -3,7 +3,9 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -88,7 +90,7 @@ public class ProductMetadataAttributeEntity implements Serializable{
 	@Column(name="vlr_order", length = 3)
 	private Short order;
 
-	@OneToMany(mappedBy = "productAttribute")
+	@OneToMany(mappedBy = "productAttribute", cascade = CascadeType.REFRESH)
 	private List<ProductMetadataAttributeOptionEntity> options;
 	
 	public ProductMetadataAttributeEntity() {
@@ -297,6 +299,23 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		}
 		
 		return e;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductMetadataAttributeEntity other = (ProductMetadataAttributeEntity) obj;
+		return Objects.equals(id, other.id);
 	}
 	
 }

@@ -128,18 +128,19 @@ public class ProductMetadataAttributeEntityAccessImp
 	public void delete(ProductMetadataAttribute entity) throws EntityAccessException {
 		try{
 			ProductMetadataAttributeEntity e = new ProductMetadataAttributeEntity(entity);					
+			e = (ProductMetadataAttributeEntity)entityManager.merge(e);
 
 			if(e.getOptions() != null) {
 				
 				List<ProductMetadataAttributeOptionEntity> list2 = e.getOptions();
 				
 				for(ProductMetadataAttributeOptionEntity x: list2) {
+					x = (ProductMetadataAttributeOptionEntity)entityManager.merge(x);
 					entityManager.remove(x);
 				}
 			}
 			
 			entityManager.remove(e);
-			
     	}
     	catch(Throwable e){
     		throw new EntityAccessException(e);
@@ -157,7 +158,7 @@ public class ProductMetadataAttributeEntityAccessImp
 		    Join<ProductMetadataEntity, ProductMetadataAttributeEntity> join = from.join("productMetadata");
 		    
 		    criteria.select(from);
-		    
+
 		    List<Predicate> and = new ArrayList<Predicate>();
 
 	    	and.add(builder.equal(join.get("id"), productMetadata.getId()));

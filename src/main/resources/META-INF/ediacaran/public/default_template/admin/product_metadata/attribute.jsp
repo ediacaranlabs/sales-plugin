@@ -133,7 +133,7 @@
 				<ed:col size="3" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="minLength" 
-						value="${attribute.minLength}"
+						value="${attribute.minLength == 0? '' : attribute.minLength}"
 						label="#{form.attribute.minLength.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:MIN_LEN')}"
 						bundle="${messages}">
@@ -157,7 +157,7 @@
 				<ed:col size="3" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="maxLength" 
-						value="${attribute.maxLength}"
+						value="${attribute.maxLength == 0? '' : attribute.maxLength}"
 						label="#{form.attribute.maxLength.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:MAX_LEN')}"
 						bundle="${messages}">
@@ -181,7 +181,7 @@
 				<ed:col size="3" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="min" 
-						value="${attribute.min}"
+						value="${attribute.min == 0? '' : attribute.min}"
 						label="#{form.attribute.min.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:MIN')}"
 						bundle="${messages}">
@@ -205,7 +205,7 @@
 				<ed:col size="3" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="max" 
-						value="${attribute.max}"
+						value="${attribute.max == 0? '' : attribute.max}"
 						label="#{form.attribute.max.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:MAX')}"
 						bundle="${messages}">
@@ -232,7 +232,7 @@
 				<ed:col size="4" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="rows" 
-						value="${attribute.rows}"
+						value="${attribute.rows == 0? '' : attribute.rows}"
 						label="#{form.attribute.rows.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:ROWS')}"
 						bundle="${messages}">
@@ -274,7 +274,7 @@
 				<ed:col size="4" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="order" 
-						value="${attribute.order}"
+						value="${attribute.order == 0? '' : attribute.order}"
 						label="#{form.attribute.order.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:ORDER')}"
 						bundle="${messages}">
@@ -303,6 +303,7 @@
 						name="deleted" 
 						label="#{form.attribute.deleted.label}" 
 						align="right"
+						value="true"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:DELETED')}"
 						bundle="${messages}"/>
 					<ec:checkbox 

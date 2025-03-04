@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataPubEntity;
@@ -152,9 +154,10 @@ public class ProductMetadataAdminPubResource {
 
 		try{
 			productMetadataService.registerProductMetadata(entity);
+			List<ProductMetadataAttribute> list = productMetadataService.getAttributes(entity);
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);
-			map.put("attributes", productMetadataService.getAttributes(entity));
+			map.put("attributes", list);
 			return map;
 		}
 		catch(Throwable ex){

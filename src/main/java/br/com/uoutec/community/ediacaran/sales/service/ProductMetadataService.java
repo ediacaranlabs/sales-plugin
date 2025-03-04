@@ -85,39 +85,29 @@ public class ProductMetadataService {
 	}
 	
 	private void registerProductMetadataAttributes(List<ProductMetadataAttributeUpdate> list, ProductMetadataUpdate metadata) throws ProductRegistryException {
-		
+
 		for(ProductMetadataAttributeUpdate e: list) {
 			e.setOptions(null);
-			
-			if(e.getRegisterOptions() != null) {
-				registerProductMetadataAttributeOptions(e.getRegisterOptions(), e);
-			}
-			
-			if(e.getUnregisterOptions() != null) {
-				unregisterProductMetadataAttributeOptions(e.getUnregisterOptions(), e);
-			}
-			
 		}
 		
 		productMetadataRegistry.registerProductMetadataAttributes(list, metadata);
 		
-	}
-
-	private void unregisterProductMetadataAttributes(List<ProductMetadataAttributeUpdate> list, ProductMetadataUpdate metadata) throws ProductRegistryException {
-		
 		for(ProductMetadataAttributeUpdate e: list) {
-			e.setOptions(null);
 			
-			if(e.getUnregisterOptions() != null) {
-				unregisterProductMetadataAttributeOptions(e.getUnregisterOptions(), e);
-			}
-
 			if(e.getRegisterOptions() != null) {
 				registerProductMetadataAttributeOptions(e.getRegisterOptions(), e);
 			}
 			
+			if(e.getUnregisterOptions() != null) {
+				unregisterProductMetadataAttributeOptions(e.getUnregisterOptions(), e);
+			}
+			
 		}
 		
+		
+	}
+
+	private void unregisterProductMetadataAttributes(List<ProductMetadataAttributeUpdate> list, ProductMetadataUpdate metadata) throws ProductRegistryException {
 		productMetadataRegistry.removeProductMetadataAttributes(list, metadata);
 	}
 

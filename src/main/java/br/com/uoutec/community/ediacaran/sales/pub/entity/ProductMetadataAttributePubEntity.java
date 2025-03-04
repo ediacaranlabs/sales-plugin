@@ -8,7 +8,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
+import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 import org.hibernate.validator.constraints.Length;
 
@@ -25,7 +27,7 @@ import br.com.uoutec.pub.entity.AbstractPubEntity;
 import br.com.uoutec.pub.entity.DataValidation;
 import br.com.uoutec.pub.entity.IdValidation;
 
-public class ProductMetadataAttributePubEntity extends AbstractPubEntity<ProductMetadataAttribute>{
+public class ProductMetadataAttributePubEntity extends AbstractPubEntity<ProductMetadataAttributeUpdate>{
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
@@ -76,6 +78,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 
 	private Boolean deleted;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductMetadataAttributeOptionPubEntity> options;
 	
 	@Constructor
@@ -257,7 +260,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	}
 
 	@Override
-	protected void preRebuild(ProductMetadataAttribute instance, boolean reload, boolean override, boolean validate) {
+	protected void preRebuild(ProductMetadataAttributeUpdate instance, boolean reload, boolean override, boolean validate) {
 		
 		try {
 			String str = SecretUtil.toID(this.protectedID);
@@ -271,15 +274,15 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		catch(Throwable ex){
 			this.id = 0;
 			this.productMetadata = 0;
-			return;
 		}
 	}
 	
 	@Override
-	protected ProductMetadataAttribute reloadEntity() throws Throwable {
+	protected ProductMetadataAttributeUpdate reloadEntity() throws Throwable {
 		ProductMetadataRegistry entityRegistry = 
 				EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
-		return entityRegistry.findProductMetadataAttributeById(this.id);
+		ProductMetadataAttribute e = entityRegistry.findProductMetadataAttributeById(this.id);
+		return e == null? null : new ProductMetadataAttributeUpdate(e);
 	}
 
 	@Override
@@ -288,12 +291,12 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	}
 
 	@Override
-	protected ProductMetadataAttribute createNewInstance() throws Throwable {
-		return new ProductMetadataAttribute();
+	protected ProductMetadataAttributeUpdate createNewInstance() throws Throwable {
+		return new ProductMetadataAttributeUpdate();
 	}
 
 	@Override
-	protected void copyTo(ProductMetadataAttribute o, boolean reload, boolean override,
+	protected void copyTo(ProductMetadataAttributeUpdate o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
 		o.setName(this.name);
@@ -314,23 +317,39 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		
 		if(this.options != null) {
 			List<ProductMetadataAttributeOption> list = new ArrayList<>();
+			List<ProductMetadataAttributeOption> register = new ArrayList<>();
+			List<ProductMetadataAttributeOption> unregister = new ArrayList<>();
+			
 			for(ProductMetadataAttributeOptionPubEntity x: this.options) {
-				list.add(x.rebuild(x.getProtectedID() != null, true, true));
+				ProductMetadataAttributeOption e = x.rebuild(x.getProtectedID() != null, true, true);
+				
+				if(x.getProtectedID() != null) {
+					if(x.getDeleted() != null && x.getDeleted().booleanValue()) {
+						unregister.add(e);
+						continue;
+					}
+				}
+				
+				register.add(e);
+				list.add(e);
 			}
+			
 			o.setOptions(list);
+			o.setRegisterOptions(register);
+			o.setUnregisterOptions(unregister);
 		}
 		
 	}
 
 	@Override
-	protected boolean isEqualId(ProductMetadataAttribute instance) throws Throwable {
+	protected boolean isEqualId(ProductMetadataAttributeUpdate instance) throws Throwable {
 		return instance.getId() <= 0? 
 					this.id == null :
 					this.id != null && instance.getId() == this.id;
 	}
 
 	@Override
-	protected boolean hasId(ProductMetadataAttribute instance) throws Throwable {
+	protected boolean hasId(ProductMetadataAttributeUpdate instance) throws Throwable {
 		return instance.getId() > 0;
 	}
 	

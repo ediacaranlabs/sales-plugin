@@ -198,6 +198,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		
 		try {
 			for(ProductMetadataAttribute entity: attributes) {
+				entity = ProductMetadataAttributeRegistryUtil.get(entity.getId(), metadataentityAccess);
 				ProductMetadataAttributeRegistryUtil.delete(entity, metadataentityAccess);
 			}
 			
@@ -267,7 +268,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		try {
 			for(ProductMetadataAttributeOption entity: options) {
 				if(entity.getProductMetadataAttribute() <= 0) {
-					entity.setProductMetadataAttribute(0);
+					entity.setProductMetadataAttribute(parent.getId());
 				}
 				else
 				if(entity.getProductMetadataAttribute() != parent.getId()) {

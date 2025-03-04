@@ -177,11 +177,13 @@ public class ProductMetadataEntityAccessImp
 						List<ProductMetadataAttributeOptionEntity> list2 = e.getOptions();
 						
 						for(ProductMetadataAttributeOptionEntity x: list2) {
+							x = (ProductMetadataAttributeOptionEntity)entityManager.merge(x);
 							entityManager.remove(x);
 						}
 					}
 					
 					if(e.getId() == null) {
+						e = (ProductMetadataAttributeEntity)entityManager.merge(e);
 						entityManager.remove(e);
 					}
 					
