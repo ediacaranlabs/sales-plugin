@@ -63,10 +63,10 @@ public class ProductMetadataAttributeRegistryUtil {
 
 	public static void saveOrUpdate(ProductMetadataAttribute entity, ProductMetadataAttributeEntityAccess entityAccess) throws EntityAccessException {
 		if(entity.getId() <= 0){
-			update(entity, entityAccess);	
+			save(entity, entityAccess);	
 		}
 		else{
-			save(entity, entityAccess);	
+			update(entity, entityAccess);	
 		}
 	}
 

@@ -23,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttrib
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataAttributeRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataRegistryUtil;
+import br.com.uoutec.i18n.ValidationException;
 
 @Singleton
 public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
@@ -129,6 +130,16 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRegisterPermission());
 		
 		try {
+			for(ProductMetadataAttribute entity: attributes) {
+				if(entity.getProductMetadata() <= 0) {
+					entity.setProductMetadata(parent.getId());
+				}
+				else
+				if(entity.getProductMetadata() != parent.getId()) {
+					throw new ValidationException("invalid product metadata id: " + entity.getProductMetadata() + " != " + parent.getId());
+				}
+			}
+			
 			for(ProductMetadataAttribute entity: attributes) {
 				ProductMetadataAttributeRegistryUtil.validate(entity);
 			}
@@ -254,6 +265,17 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.OPTIONS.getRegisterPermission());
 		
 		try {
+			for(ProductMetadataAttributeOption entity: options) {
+				if(entity.getProductMetadataAttribute() <= 0) {
+					entity.setProductMetadataAttribute(0);
+				}
+				else
+				if(entity.getProductMetadataAttribute() != parent.getId()) {
+					throw new ValidationException("invalid product metadata id: " + entity.getProductMetadataAttribute() + " != " + parent.getId());
+				}
+			}
+			
+			
 			for(ProductMetadataAttributeOption entity: options) {
 				ProductMetadataAttributeOptionRegistryUtil.validate(entity);
 			}

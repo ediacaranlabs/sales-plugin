@@ -150,9 +150,11 @@
 </ec:box>
 				    
 <ec:template id="metadata_attribute" var="attribute">
+	<c:remove var="attribute" scope="request"/>
 	<jsp:include page="attribute.jsp"/>
 </ec:template>
 
 <ec:template id="option_attribute" var="option">
+	<c:remove var="option" scope="request"/>
 	<jsp:include page="option.jsp"/>
 </ec:template>

@@ -321,10 +321,10 @@
 					Options
 				</ed:col>
 			</ed:row>
-			<c:if test="${empty entity}">
+			<c:if test="${empty attribute}">
 				<c:set var="optionsArea" value="!{attribute.optsAreaID}"/>
 			</c:if>
-			<c:if test="${!empty entity}">
+			<c:if test="${!empty attribute}">
 				<c:set var="optionsArea" value="${attribute.protectedID}"/>
 			</c:if>
 			<ed:row>

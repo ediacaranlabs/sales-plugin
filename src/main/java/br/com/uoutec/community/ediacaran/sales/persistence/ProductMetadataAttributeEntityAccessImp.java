@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductMetadataAttributeEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductMetadataAttributeOptionEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductMetadataEntity;
@@ -77,13 +78,18 @@ public class ProductMetadataAttributeEntityAccessImp
 			
 			if(e.getOptions() != null) {
 				
-				List<ProductMetadataAttributeOptionEntity> list2 = e.getOptions();
+				List<ProductMetadataAttributeOptionEntity> list = e.getOptions();
+				List<ProductMetadataAttributeOption> list2 = entity.getOptions();
 				
-				for(ProductMetadataAttributeOptionEntity x: list2) {
+				int i=0;
+				for(ProductMetadataAttributeOptionEntity x: list) {
 					x.setProductAttribute(e);
 					entityManager.persist(x);
+					x.toEntity(list2.get(i));
 				}
 			}
+			
+			e.toEntity(entity);
     	}
     	catch(Throwable e){
     		throw new EntityAccessException(e);

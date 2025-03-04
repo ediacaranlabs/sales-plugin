@@ -22,14 +22,16 @@
 		$protectedID.setValue('${vars.entity.protectedID}');
 		
 		
+		let $attr;
+		let $opt;
 		// set attribute id
 		<c:forEach items="${vars.attributes}" var="attribute" varStatus="attributeStep">
-		let $attr = $form.getField('product_metadata.attributes[${attributeStep.index}].protectedID');
+		$attr = $form.getField('product_metadata.attributes[${attributeStep.index}].protectedID');
 		$attr.setValue('${attribute.protectedID}');
 		
 			//set opt id
 			<c:forEach items="${attribute.options}" var="option" varStatus="optionStep">
-			let $opt = $form.getField('product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}].protectedID');
+			$opt = $form.getField('product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}].protectedID');
 			$opt.setValue('${option.protectedID}');
 			</c:forEach>
 		
@@ -38,22 +40,22 @@
 		//remove attributes images
 		
 		//get all attr
-		var $attrArea = $.AppContext.utils.getById('attrArea');
-		var $attrs = $attrArea.search(function($e){
+		let $attrArea = $.AppContext.utils.getById('attrArea');
+		let $attrs = $attrArea.search(function($e){
 			return $e.getAttribute("formgroup") == 'attributes';
 		});
 		
 		//remove attr marked as deleted
-		for (let $attr of $attrs){
-			let $path = $attr.getAttribute("group-path");
+		for (let $att of $attrs){
+			let $path = $att.getAttribute("group-path");
 			let $deleted = $form.getField($path + ".deleted");
 			
 			if($deleted.getValue()){
-				$attr.remove();
+				$att.remove();
 			}
 			else{
 				//remove opts
-				var $opts = $attr.search(function($e){
+				var $opts = $att.search(function($e){
 					return $e.getAttribute("formgroup") == 'options';
 				});
 				

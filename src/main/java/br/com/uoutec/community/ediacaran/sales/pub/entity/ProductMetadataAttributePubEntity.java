@@ -83,7 +83,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	}
 
 	public ProductMetadataAttributePubEntity(ProductMetadataAttribute e, Locale locale){
-		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
+		this.protectedID = e.getId() <= 0? null : e.getProtectedID();
 		this.allowEmpty = e.isAllowEmpty();
 		this.code = e.getCode();
 		this.description = e.getDescription();
@@ -258,11 +258,20 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 
 	@Override
 	protected void preRebuild(ProductMetadataAttribute instance, boolean reload, boolean override, boolean validate) {
+		
 		try {
-			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
+			String str = SecretUtil.toID(this.protectedID);
+			String[] parts = str.split("\\-");
+			if(parts.length != 2) {
+				throw new IllegalStateException();
+			}
+			this.id = Integer.parseInt(parts[0]);
+			this.productMetadata = Integer.parseInt(parts[1]);
 		}
 		catch(Throwable ex){
 			this.id = 0;
+			this.productMetadata = 0;
+			return;
 		}
 	}
 	
@@ -288,7 +297,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
 		o.setName(this.name);
-		o.setAllowEmpty(this.allowEmpty == null? true : this.allowEmpty.booleanValue());
+		o.setAllowEmpty(this.allowEmpty == null? false : this.allowEmpty.booleanValue());
 		o.setCode(this.code);
 		o.setDescription(this.description);
 		o.setMax(this.max);
@@ -299,7 +308,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		o.setOrder(this.order == null? 0 : this.order);
 		o.setProductMetadata(this.productMetadata == null? 0 : this.productMetadata.intValue());
 		o.setRegex(this.regex);
-		o.setRows(this.rows);
+		o.setRows(this.rows == null? 0 : this.rows.shortValue());
 		o.setType(this.type);
 		o.setValueType(this.valueType);
 		
