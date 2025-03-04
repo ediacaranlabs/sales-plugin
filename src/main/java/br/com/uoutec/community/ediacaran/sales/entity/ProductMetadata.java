@@ -34,7 +34,7 @@ public class ProductMetadata {
 	protected Path thumb;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
 	@Size(max=256)
 	protected String description;
 	

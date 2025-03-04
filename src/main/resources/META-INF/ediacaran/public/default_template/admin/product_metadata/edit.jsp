@@ -92,7 +92,7 @@
 												name="regexp"
 												message="#{form.description.validation.regex}"
 												bundle="${messages}">
-												<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
+												<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 											</ec:field-validator-rule>
 											<ec:field-validator-rule 
 												name="stringLength" 
