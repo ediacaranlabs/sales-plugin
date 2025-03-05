@@ -7,6 +7,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -147,6 +148,45 @@ public class ProductMetadataAttributeEntityAccessImp
     	}
 	}
 
+	@Override
+	public ProductMetadataAttribute findByCode(String code, ProductMetadata parent)	throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductMetadataAttributeEntity> criteria = builder.createQuery(ProductMetadataAttributeEntity.class);
+		    Root<ProductMetadataAttributeEntity> from = criteria.from(ProductMetadataAttributeEntity.class);
+		    Join<ProductMetadataEntity, ProductMetadataAttributeEntity> join = from.join("productMetadata");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+
+	    	and.add(builder.equal(from.get("code"), code));
+	    	and.add(builder.equal(join.get("id"), parent.getId()));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductMetadataAttributeEntity> typed = entityManager.createQuery(criteria);
+
+
+		    ProductMetadataAttributeEntity e = (ProductMetadataAttributeEntity)typed.getSingleResult();
+		    
+		    return e == null? null : e.toEntity();
+		}
+		catch(NoResultException e) {
+			return null;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}	
+	}
+	
 	@Override
 	public List<ProductMetadataAttribute> getByProductMetadata(ProductMetadata productMetadata)
 			throws EntityAccessException {

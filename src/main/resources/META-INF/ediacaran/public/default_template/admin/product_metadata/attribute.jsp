@@ -9,7 +9,7 @@
 
 <span formgroup="attributes" formgrouptype="index">
 	<ec:accordion>
-		<ec:accordion-item title="${attribute.name}">
+		<ec:accordion-item title="${attribute.code} - ${attribute.name}">
 		
 			<input type="hidden" name="protectedID" value="${attribute.protectedID}">
 			<ed:row>
@@ -39,6 +39,26 @@
 									<ec:field-validator-param name="max">32</ec:field-validator-param>
 							</ec:field-validator-rule>
 						</ec:field-validator>
+						<ec:event type="keyup">
+							var $source = $event.source;
+							var $form = $source.getForm();
+							
+							var $group = $source.getFormGroup();
+							
+							var $accordion = $group.getFirstChild();
+							
+							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
+							
+								$form.updateFieldIndex();
+								$form.updateFieldNames();
+								
+								var $nameFieldPath = $group.getPath();
+								var $nameField = $form.getField($nameFieldPath + ".name");
+								var $codeField = $form.getField($nameFieldPath + ".code");
+								var $item = $accordion.getItens()[0];
+								$item.setTitle($codeField.getValue() + " - " + $nameField.getValue());
+							}
+						</ec:event>
 					</ec:textfield>
 				</ed:col>
 				<ed:col size="9" classStyle="form-group has-feedback">
@@ -82,8 +102,9 @@
 								
 								var $nameFieldPath = $group.getPath();
 								var $nameField = $form.getField($nameFieldPath + ".name");
+								var $codeField = $form.getField($nameFieldPath + ".code");
 								var $item = $accordion.getItens()[0];
-								$item.setTitle($nameField.getValue());
+								$item.setTitle($codeField.getValue() + " - " + $nameField.getValue());
 							}
 						</ec:event>
 					</ec:textfield>

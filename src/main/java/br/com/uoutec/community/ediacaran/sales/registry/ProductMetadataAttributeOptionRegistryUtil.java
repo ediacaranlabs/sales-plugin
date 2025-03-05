@@ -29,7 +29,27 @@ public class ProductMetadataAttributeOptionRegistryUtil {
 		return entityAccess.getByProductMetadataAttribute(parent);
 	}
 	
-	public static void validate(ProductMetadataAttributeOption entity) throws ValidationException, EntityAccessException {
+	public static void validate(ProductMetadataAttributeOption entity, ProductMetadataAttribute parent, ProductMetadataAttributeOptionEntityAccess entityAccess) throws ValidationException, EntityAccessException, OptionCodeDuplicatedProductRegistryException {
+		
+		if(entity.getProductMetadataAttribute() != parent.getId()) {
+			throw new ValidationException("invalid product metadata id: " + entity.getProductMetadataAttribute() + " != " + parent.getId());
+		}
+		
+		if(entity.getId() <= 0){
+			ValidatorBean.validate(entity, saveValidations);
+			
+			if(entityAccess != null) {
+				ProductMetadataAttributeOption current = entityAccess.findByValue(entity.getValue(), parent);
+				
+				if(current != null) {
+					throw new OptionCodeDuplicatedProductRegistryException(parent.getName() + "." + entity.getDescription());
+				}
+			}
+		}
+		else {
+			ValidatorBean.validate(entity, updateValidations);
+		}
+		
 		if(entity.getId() <= 0){
 			ValidatorBean.validate(entity, saveValidations);
 		}

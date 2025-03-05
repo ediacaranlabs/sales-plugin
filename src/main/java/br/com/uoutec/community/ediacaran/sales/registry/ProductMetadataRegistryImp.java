@@ -23,7 +23,6 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttrib
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataAttributeRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataRegistryUtil;
-import br.com.uoutec.i18n.ValidationException;
 
 @Singleton
 public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
@@ -134,14 +133,10 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 				if(entity.getProductMetadata() <= 0) {
 					entity.setProductMetadata(parent.getId());
 				}
-				else
-				if(entity.getProductMetadata() != parent.getId()) {
-					throw new ValidationException("invalid product metadata id: " + entity.getProductMetadata() + " != " + parent.getId());
-				}
 			}
 			
 			for(ProductMetadataAttribute entity: attributes) {
-				ProductMetadataAttributeRegistryUtil.validate(entity);
+				ProductMetadataAttributeRegistryUtil.validate(entity, parent, metadataentityAccess);
 			}
 			
 			for(ProductMetadataAttribute entity: attributes) {
@@ -149,6 +144,9 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 			}
 			
 			ProductMetadataAttributeRegistryUtil.sendToRepository(metadataentityAccess);
+		}
+		catch(ProductRegistryException e){
+			throw e;
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);
@@ -161,7 +159,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRegisterPermission());
 		
 		try {
-			ProductMetadataAttributeRegistryUtil.validate(entity);
+			ProductMetadataAttributeRegistryUtil.validate(entity, null, null);
 			
 			ProductMetadataAttribute e = new ProductMetadataAttribute();
 			e.setAllowEmpty(entity.isAllowEmpty());
@@ -270,15 +268,10 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 				if(entity.getProductMetadataAttribute() <= 0) {
 					entity.setProductMetadataAttribute(parent.getId());
 				}
-				else
-				if(entity.getProductMetadataAttribute() != parent.getId()) {
-					throw new ValidationException("invalid product metadata id: " + entity.getProductMetadataAttribute() + " != " + parent.getId());
-				}
 			}
 			
-			
 			for(ProductMetadataAttributeOption entity: options) {
-				ProductMetadataAttributeOptionRegistryUtil.validate(entity);
+				ProductMetadataAttributeOptionRegistryUtil.validate(entity, parent, productMetadataAttributeOptionEntityAccess);
 			}
 			
 			for(ProductMetadataAttributeOption entity: options) {
@@ -286,6 +279,9 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 			}
 			
 			ProductMetadataAttributeOptionRegistryUtil.sendToRepository(productMetadataAttributeOptionEntityAccess);
+		}
+		catch(ProductRegistryException e){
+			throw e;
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);

@@ -16,6 +16,8 @@ public interface ProductMetadataAttributeEntityAccess {
 	void delete(ProductMetadataAttribute entity) throws EntityAccessException;
 
 	ProductMetadataAttribute findById(Serializable id) throws EntityAccessException;
+
+	ProductMetadataAttribute findByCode(String code, ProductMetadata parent) throws EntityAccessException;
 	
 	List<ProductMetadataAttribute> getByProductMetadata(ProductMetadata productMetadata) throws EntityAccessException;
 	

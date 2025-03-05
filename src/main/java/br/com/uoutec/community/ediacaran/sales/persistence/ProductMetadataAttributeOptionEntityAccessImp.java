@@ -7,6 +7,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -66,6 +67,44 @@ public class ProductMetadataAttributeOptionEntityAccessImp
 		return value;
 	}
 
+	@Override
+	public ProductMetadataAttributeOption findByValue(String value, ProductMetadataAttribute parent) throws EntityAccessException{
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductMetadataAttributeOptionEntity> criteria = builder.createQuery(ProductMetadataAttributeOptionEntity.class);
+		    Root<ProductMetadataAttributeOptionEntity> from = criteria.from(ProductMetadataAttributeOptionEntity.class);
+		    Join<ProductMetadataAttribute, ProductMetadataAttributeOptionEntity> join = from.join("productAttribute");
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
+
+	    	and.add(builder.equal(join.get("id"), parent.getId()));
+	    	and.add(builder.equal(from.get("value"), value));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductMetadataAttributeOptionEntity> typed = entityManager.createQuery(criteria);
+
+		    ProductMetadataAttributeOptionEntity e = (ProductMetadataAttributeOptionEntity)typed.getSingleResult();
+		    		
+			return e == null? null : e.toEntity();
+		}
+		catch(NoResultException e) {
+			return null;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+	}
+	
 	@Override
 	public List<ProductMetadataAttributeOption> getByProductMetadataAttribute(ProductMetadataAttribute parent)
 			throws EntityAccessException {

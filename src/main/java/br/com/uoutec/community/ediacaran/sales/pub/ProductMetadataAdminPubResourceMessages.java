@@ -58,6 +58,9 @@ public class ProductMetadataAdminPubResourceMessages {
 			
 			public static final String fail_save = "save.error.fail_save";
 			
+			public static final String attribute_code_duplicated = "save.error.attribute_code_duplicated";
+			
+			public static final String option_code_duplicated = "save.error.option_code_duplicated";
 		}
 		
 	}

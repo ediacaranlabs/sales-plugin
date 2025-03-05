@@ -34,6 +34,8 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataPubEnti
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadataUpdate;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductMetadatasSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.AttributeCodeDuplicatedProductRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OptionCodeDuplicatedProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.service.ProductMetadataService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
@@ -143,7 +145,7 @@ public class ProductMetadataAdminPubResource {
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
 		}
 		catch(Throwable ex){
-			ex.printStackTrace();			String error = i18nRegistry
+			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
 							ProductMetadataAdminPubResourceMessages.save.error.fail_load_request, 
@@ -160,8 +162,25 @@ public class ProductMetadataAdminPubResource {
 			map.put("attributes", list);
 			return map;
 		}
+		catch(AttributeCodeDuplicatedProductRegistryException ex){
+			String error = i18nRegistry
+					.getString(
+							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductMetadataAdminPubResourceMessages.save.error.attribute_code_duplicated, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		catch(OptionCodeDuplicatedProductRegistryException ex){
+			String error = i18nRegistry
+					.getString(
+							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductMetadataAdminPubResourceMessages.save.error.option_code_duplicated, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
 		catch(Throwable ex){
-			ex.printStackTrace();
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,

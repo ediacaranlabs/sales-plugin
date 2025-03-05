@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttributeEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.AttributeCodeDuplicatedProductRegistryException;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
@@ -29,13 +30,27 @@ public class ProductMetadataAttributeRegistryUtil {
 		return entityAccess.getByProductMetadata(parent);
 	}
 	
-	public static void validate(ProductMetadataAttribute entity) throws ValidationException, EntityAccessException {
+	public static void validate(ProductMetadataAttribute entity, ProductMetadata parent, ProductMetadataAttributeEntityAccess entityAccess) throws ValidationException, EntityAccessException, AttributeCodeDuplicatedProductRegistryException {
+		
+		if(parent != null && entity.getProductMetadata() != parent.getId()) {
+			throw new ValidationException("invalid product metadata id: " + entity.getProductMetadata() + " != " + parent.getId());
+		}
+		
 		if(entity.getId() <= 0){
 			ValidatorBean.validate(entity, saveValidations);
+			
+			if(entityAccess != null) {
+				ProductMetadataAttribute current = entityAccess.findByCode(entity.getCode(), parent);
+				
+				if(current != null) {
+					throw new AttributeCodeDuplicatedProductRegistryException(entity.getName());
+				}
+			}
 		}
 		else {
 			ValidatorBean.validate(entity, updateValidations);
 		}
+		
 	}
 	
 	/* - ------- ---------------------------- */

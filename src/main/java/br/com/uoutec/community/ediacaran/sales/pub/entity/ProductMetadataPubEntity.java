@@ -172,7 +172,15 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 				registerList.add(xe);
 				list.add(xe);
 			}
-			o.setAttributes(list.stream().collect(Collectors.toMap((e)->e.getCode(), (e)->e)));
+			o.setAttributes(list.stream()
+					.collect(Collectors.toMap(
+							(e)->e.getCode(), 
+							(e)->e,
+							(e1, e2) -> {
+				                 return e1.getId() > 0? e1 : e2;
+				             }							
+					)
+			));
 			o.setRegisterAttributes(registerList);
 			o.setUnregisterAttributes(unregisterList);
 		}
