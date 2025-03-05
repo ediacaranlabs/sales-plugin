@@ -326,7 +326,25 @@
 						align="right"
 						value="true"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:DELETED')}"
-						bundle="${messages}"/>
+						bundle="${messages}">
+						<ec:event type="click">
+							let $source = $event.source;
+							let $form = $source.getForm();
+							
+							$form.updateFieldIndex();
+							$form.updateFieldNames();
+							
+							let $group = $source.getFormGroup();
+
+							let $path = $group.getAttribute("group-path");
+							let $deleted = $form.getField($path + ".deleted");
+							let $protectedID = $form.getField($path + ".protectedID");
+							
+							if($protectedID.getValue() == '' && $deleted.getValue()){
+								$group.remove();
+							}
+						</ec:event>
+					</ec:checkbox>
 					<ec:checkbox 
 						name="allowEmpty"
 						selected="${attribute.allowEmpty}" 

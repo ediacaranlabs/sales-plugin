@@ -20,7 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOp
 @Table(
 		name="rw_product_attr_option",
 		indexes = {
-				@Index(columnList = "cod_option, dsc_value", unique = true),
+				@Index(columnList = "cod_prod_mtda_attr, dsc_value", unique = true),
 				@Index(columnList = "cod_prod_mtda_attr")
 		}
 )

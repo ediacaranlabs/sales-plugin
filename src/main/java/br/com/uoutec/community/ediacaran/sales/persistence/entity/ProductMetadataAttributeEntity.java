@@ -27,7 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 @Table(
 		name="rw_product_metadata_attr",
 		indexes = {
-				@Index(columnList = "cod_prod_mtda_attr, cod_product_attr", unique = true),
+				@Index(columnList = "cod_product_metadata, cod_product_attr", unique = true),
 				@Index(columnList = "cod_product_metadata")
 		}
 )

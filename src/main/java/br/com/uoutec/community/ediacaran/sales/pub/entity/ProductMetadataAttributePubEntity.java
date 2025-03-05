@@ -323,15 +323,17 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 			for(ProductMetadataAttributeOptionPubEntity x: this.options) {
 				ProductMetadataAttributeOption e = x.rebuild(x.getProtectedID() != null, true, true);
 				
+				list.add(e);
+				
 				if(x.getProtectedID() != null) {
 					if(x.getDeleted() != null && x.getDeleted().booleanValue()) {
 						unregister.add(e);
 						continue;
 					}
 				}
-				
+
 				register.add(e);
-				list.add(e);
+				
 			}
 			
 			o.setOptions(list);

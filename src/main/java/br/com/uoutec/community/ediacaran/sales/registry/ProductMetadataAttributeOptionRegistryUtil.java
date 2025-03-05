@@ -1,7 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
@@ -29,6 +31,25 @@ public class ProductMetadataAttributeOptionRegistryUtil {
 		return entityAccess.getByProductMetadataAttribute(parent);
 	}
 	
+	public static void checkDuplicationCode(List<? extends ProductMetadataAttributeOption> list, 
+			ProductMetadataAttribute parent, ProductMetadataAttributeOptionEntityAccess entityAccess) throws ValidationException, EntityAccessException, OptionCodeDuplicatedProductRegistryException {
+		
+		Set<String> codes = new HashSet<>();
+		
+		for(ProductMetadataAttributeOption e: list) {
+			
+			String code = e.getValue().toLowerCase();
+			
+			if(codes.contains(code)) {
+				throw new OptionCodeDuplicatedProductRegistryException(parent.getCode() + "." + code);
+			}
+			
+			codes.add(code);
+		}
+		
+		
+	}
+	
 	public static void validate(ProductMetadataAttributeOption entity, ProductMetadataAttribute parent, ProductMetadataAttributeOptionEntityAccess entityAccess) throws ValidationException, EntityAccessException, OptionCodeDuplicatedProductRegistryException {
 		
 		if(entity.getProductMetadataAttribute() != parent.getId()) {
@@ -38,24 +59,19 @@ public class ProductMetadataAttributeOptionRegistryUtil {
 		if(entity.getId() <= 0){
 			ValidatorBean.validate(entity, saveValidations);
 			
-			if(entityAccess != null) {
-				ProductMetadataAttributeOption current = entityAccess.findByValue(entity.getValue(), parent);
-				
-				if(current != null) {
-					throw new OptionCodeDuplicatedProductRegistryException(parent.getName() + "." + entity.getDescription());
-				}
+		}
+		else {
+			ValidatorBean.validate(entity, updateValidations);
+		}
+
+		if(entityAccess != null) {
+			ProductMetadataAttributeOption current = entityAccess.findByValue(entity.getValue(), parent);
+			
+			if(current != null && entity.getId() != current.getId()) {
+				throw new OptionCodeDuplicatedProductRegistryException(parent.getCode() + "." + entity.getValue());
 			}
 		}
-		else {
-			ValidatorBean.validate(entity, updateValidations);
-		}
 		
-		if(entity.getId() <= 0){
-			ValidatorBean.validate(entity, saveValidations);
-		}
-		else {
-			ValidatorBean.validate(entity, updateValidations);
-		}
 	}
 	
 	/* - ------- ---------------------------- */

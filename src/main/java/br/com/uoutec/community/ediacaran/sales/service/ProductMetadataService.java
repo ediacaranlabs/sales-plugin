@@ -1,6 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,18 +39,23 @@ public class ProductMetadataService {
 			
 			ProductMetadataUpdate e = (ProductMetadataUpdate)metadata;
 			
-			e.setAttributes(null);
-			
-			productMetadataRegistry.registerProductMetadata(e);
-			
-			if(e.getRegisterAttributes() != null) {
-				registerProductMetadataAttributes(e.getRegisterAttributes(), e);
+			Map<String, ProductMetadataAttribute> attributes = e.getAttributes();
+			try {
+				e.setAttributes(null);
+				
+				productMetadataRegistry.registerProductMetadata(e);
+				
+				if(e.getRegisterAttributes() != null) {
+					registerProductMetadataAttributes(e.getRegisterAttributes(), e);
+				}
+				
+				if(e.getUnregisterAttributes() != null) {
+					unregisterProductMetadataAttributes(e.getUnregisterAttributes(), e);
+				}
 			}
-			
-			if(e.getUnregisterAttributes() != null) {
-				unregisterProductMetadataAttributes(e.getUnregisterAttributes(), e);
+			finally {
+				e.setAttributes(attributes);
 			}
-			
 		}
 		else {
 			productMetadataRegistry.registerProductMetadata(metadata);
@@ -62,17 +70,23 @@ public class ProductMetadataService {
 			
 			ProductMetadataUpdate e = (ProductMetadataUpdate)metadata;
 			
-			e.setAttributes(null);
+			Map<String, ProductMetadataAttribute> attributes = e.getAttributes();
+			try {
+				e.setAttributes(null);
 			
-			if(e.getRegisterAttributes() != null) {
-				unregisterProductMetadataAttributes(e.getRegisterAttributes(), e);
+				if(e.getRegisterAttributes() != null) {
+					unregisterProductMetadataAttributes(e.getRegisterAttributes(), e);
+				}
+				
+				if(e.getUnregisterAttributes() != null) {
+					unregisterProductMetadataAttributes(e.getUnregisterAttributes(), e);
+				}
+				
+				productMetadataRegistry.removeProductMetadata(e);
 			}
-			
-			if(e.getUnregisterAttributes() != null) {
-				unregisterProductMetadataAttributes(e.getUnregisterAttributes(), e);
+			finally {
+				e.setAttributes(attributes);
 			}
-			
-			productMetadataRegistry.removeProductMetadata(e);
 		}
 		else {
 			productMetadataRegistry.removeProductMetadata(metadata);
@@ -86,24 +100,56 @@ public class ProductMetadataService {
 	
 	private void registerProductMetadataAttributes(List<ProductMetadataAttributeUpdate> list, ProductMetadataUpdate metadata) throws ProductRegistryException {
 
+		List<List<ProductMetadataAttributeOption>> optionsCache = new ArrayList<>();
+
 		for(ProductMetadataAttributeUpdate e: list) {
+			optionsCache.add(e.getOptions());
 			e.setOptions(null);
 		}
 		
-		productMetadataRegistry.registerProductMetadataAttributes(list, metadata);
-		
-		for(ProductMetadataAttributeUpdate e: list) {
+		try {
+			productMetadataRegistry.registerProductMetadataAttributes(list, metadata);
 			
-			if(e.getRegisterOptions() != null) {
-				registerProductMetadataAttributeOptions(e.getRegisterOptions(), e);
+			for(ProductMetadataAttributeUpdate e: list) {
+				if(e.getRegisterOptions() != null) {
+					registerProductMetadataAttributeOptions(e.getRegisterOptions(), e);
+				}
+				
+				if(e.getUnregisterOptions() != null) {
+					unregisterProductMetadataAttributeOptions(e.getUnregisterOptions(), e);
+				}
 			}
-			
-			if(e.getUnregisterOptions() != null) {
-				unregisterProductMetadataAttributeOptions(e.getUnregisterOptions(), e);
+		}
+		finally {
+			int i = 0;
+			for(List<ProductMetadataAttributeOption> opts: optionsCache) {
+				list.get(i).setOptions(opts);
+				i++;
 			}
 			
 		}
 		
+		for(ProductMetadataAttributeUpdate e: list) {
+			
+			List<ProductMetadataAttributeOption> options = e.getOptions();
+			
+			try {
+				e.setOptions(null);
+				
+				productMetadataRegistry.registerProductMetadataAttributes(Arrays.asList(e), metadata);
+				
+				if(e.getRegisterOptions() != null) {
+					registerProductMetadataAttributeOptions(e.getRegisterOptions(), e);
+				}
+				
+				if(e.getUnregisterOptions() != null) {
+					unregisterProductMetadataAttributeOptions(e.getUnregisterOptions(), e);
+				}
+			}
+			finally {
+				e.setOptions(options);
+			}
+		}
 		
 	}
 

@@ -19,6 +19,9 @@
 		
 		// set product id
 		let $protectedID = $form.getField('product_metadata.protectedID');
+		if($protectedID.getValue() != '' && $protectedID.getValue() != '${vars.entity.protectedID}'){
+			alert("invalid product metadata ID!");
+		}
 		$protectedID.setValue('${vars.entity.protectedID}');
 		
 		
@@ -26,13 +29,24 @@
 		let $opt;
 		// set attribute id
 		<c:forEach items="${vars.attributes}" var="attribute" varStatus="attributeStep">
+		
 		$attr = $form.getField('product_metadata.attributes[${attributeStep.index}].protectedID');
+		
+		if($attr.getValue() != '' && $attr.getValue() != '${attribute.protectedID}'){
+			alert("invalid attribute ID: product_metadata.attributes[${attributeStep.index}]");
+		}
 		$attr.setValue('${attribute.protectedID}');
 		
 			//set opt id
 			<c:forEach items="${attribute.options}" var="option" varStatus="optionStep">
+			
 			$opt = $form.getField('product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}].protectedID');
+			
+			if($opt.getValue() != '' && $opt.getValue() != '${option.protectedID}'){
+				alert("invalid option ID: product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}]");
+			}
 			$opt.setValue('${option.protectedID}');
+			
 			</c:forEach>
 		
 		</c:forEach>
@@ -50,7 +64,9 @@
 			let $path = $att.getAttribute("group-path");
 			let $deleted = $form.getField($path + ".deleted");
 			
+			console.log("check attribute to remove: " + $path);
 			if($deleted.getValue()){
+				console.log("removed attribute: " + $path);
 				$att.remove();
 			}
 			else{
@@ -60,10 +76,13 @@
 				});
 				
 				for (let $opt of $opts){
-					let $path = $opt.getAttribute("group-path");
-					let $deleted = $form.getField($path + ".deleted");
+					$path = $opt.getAttribute("group-path");
+					$deleted = $form.getField($path + ".deleted");
+					
+					console.log("check option to remove: " + $path);
 					
 					if($deleted.getValue()){
+						console.log("removed option: " + $path);
 						$opt.remove();
 					}
 					

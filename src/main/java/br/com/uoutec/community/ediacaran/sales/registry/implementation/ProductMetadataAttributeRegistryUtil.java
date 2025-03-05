@@ -1,7 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
@@ -29,6 +31,25 @@ public class ProductMetadataAttributeRegistryUtil {
 	public static List<ProductMetadataAttribute> getByParent(ProductMetadata parent, ProductMetadataAttributeEntityAccess entityAccess) throws EntityAccessException {
 		return entityAccess.getByProductMetadata(parent);
 	}
+
+	public static void checkDuplicationCode(List<ProductMetadataAttribute> list, 
+			ProductMetadata parent, ProductMetadataAttributeEntityAccess entityAccess) throws ValidationException, EntityAccessException, AttributeCodeDuplicatedProductRegistryException {
+		
+		Set<String> codes = new HashSet<>();
+		
+		for(ProductMetadataAttribute e: list) {
+			
+			String code = e.getCode().toLowerCase();
+			
+			if(codes.contains(code)) {
+				throw new AttributeCodeDuplicatedProductRegistryException(code);
+			}
+			
+			codes.add(code);
+		}
+		
+		
+	}
 	
 	public static void validate(ProductMetadataAttribute entity, ProductMetadata parent, ProductMetadataAttributeEntityAccess entityAccess) throws ValidationException, EntityAccessException, AttributeCodeDuplicatedProductRegistryException {
 		
@@ -38,17 +59,17 @@ public class ProductMetadataAttributeRegistryUtil {
 		
 		if(entity.getId() <= 0){
 			ValidatorBean.validate(entity, saveValidations);
-			
-			if(entityAccess != null) {
-				ProductMetadataAttribute current = entityAccess.findByCode(entity.getCode(), parent);
-				
-				if(current != null) {
-					throw new AttributeCodeDuplicatedProductRegistryException(entity.getName());
-				}
-			}
 		}
 		else {
 			ValidatorBean.validate(entity, updateValidations);
+		}
+
+		if(entityAccess != null) {
+			ProductMetadataAttribute current = entityAccess.findByCode(entity.getCode(), parent);
+			
+			if(current != null && entity.getId() != current.getId()) {
+				throw new AttributeCodeDuplicatedProductRegistryException(entity.getCode());
+			}
 		}
 		
 	}

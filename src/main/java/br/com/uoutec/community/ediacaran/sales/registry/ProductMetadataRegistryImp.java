@@ -139,6 +139,8 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 				ProductMetadataAttributeRegistryUtil.validate(entity, parent, metadataentityAccess);
 			}
 			
+			ProductMetadataAttributeRegistryUtil.checkDuplicationCode(getDefaultProductMetadataAttributes(), parent, metadataentityAccess);
+			
 			for(ProductMetadataAttribute entity: attributes) {
 				ProductMetadataAttributeRegistryUtil.saveOrUpdate(entity, metadataentityAccess);
 			}
@@ -273,6 +275,8 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 			for(ProductMetadataAttributeOption entity: options) {
 				ProductMetadataAttributeOptionRegistryUtil.validate(entity, parent, productMetadataAttributeOptionEntityAccess);
 			}
+			
+			ProductMetadataAttributeOptionRegistryUtil.checkDuplicationCode(options, parent, productMetadataAttributeOptionEntityAccess);
 			
 			for(ProductMetadataAttributeOption entity: options) {
 				ProductMetadataAttributeOptionRegistryUtil.saveOrUpdate(entity, productMetadataAttributeOptionEntityAccess);

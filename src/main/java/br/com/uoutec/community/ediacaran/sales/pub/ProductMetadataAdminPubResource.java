@@ -155,8 +155,8 @@ public class ProductMetadataAdminPubResource {
 		}
 
 		try{
+			List<ProductMetadataAttribute> list = entity.getAttributeList();
 			productMetadataService.registerProductMetadata(entity);
-			List<ProductMetadataAttribute> list = productMetadataService.getAttributes(entity);
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);
 			map.put("attributes", list);

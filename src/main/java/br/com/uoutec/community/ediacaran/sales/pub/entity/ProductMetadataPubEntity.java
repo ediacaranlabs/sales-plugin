@@ -161,6 +161,8 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 			
 			for(ProductMetadataAttributePubEntity x: this.attributes) {
 				ProductMetadataAttributeUpdate xe = x.rebuild(x.getProtectedID() != null, true, true);
+
+				list.add(xe);
 				
 				if(x.getProtectedID() != null) {
 					if(x.getDeleted() != null && x.getDeleted().booleanValue()) {
@@ -168,9 +170,9 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 						continue;
 					}
 				}
-				
+
 				registerList.add(xe);
-				list.add(xe);
+				
 			}
 			o.setAttributes(list.stream()
 					.collect(Collectors.toMap(
