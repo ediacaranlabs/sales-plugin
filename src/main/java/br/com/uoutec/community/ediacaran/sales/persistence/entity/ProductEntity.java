@@ -2,8 +2,10 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -17,12 +19,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductVisibility;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
@@ -71,9 +73,8 @@ public class ProductEntity implements Serializable,PublicType{
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
-    @MapKey(name = "id.attributeID")
     @OneToMany(mappedBy = "product")
-	private Map<String, ProductAttributeValueEntity> attributes;
+	private List<ProductAttributeValueEntity> attributes;
 	
 	public ProductEntity(){
 	}
@@ -96,9 +97,10 @@ public class ProductEntity implements Serializable,PublicType{
 		}
 		
 		if(e.getAttributes() != null) {
-			this.attributes = new HashMap<>();
-			for(Entry<String, String> x: e.getAttributes().entrySet()) {
-				this.attributes.put(x.getKey(), new ProductAttributeValueEntity(this, x.getKey(), x.getValue()));
+			
+			this.attributes = new ArrayList<>();
+			for(Entry<String, ProductAttributeValue> x: e.getAttributes().entrySet()) {
+				this.attributes.add(new ProductAttributeValueEntity(x.getValue(), e));
 			}
 		}
 		
@@ -196,9 +198,9 @@ public class ProductEntity implements Serializable,PublicType{
 		}
 		
 		if(attributes != null) {
-			Map<String, String> attrs = new HashMap<>();
-			for(Entry<String, ProductAttributeValueEntity> x: attributes.entrySet()) {
-				attrs.put(x.getKey(), x.getValue().getValue());
+			Map<String, ProductAttributeValue> attrs = new HashMap<>();
+			for(ProductAttributeValueEntity x: this.attributes) {
+				attrs.put(x.getAttributeID(), x.toEntity());
 			}
 			e.setAttributes(attrs);
 		}

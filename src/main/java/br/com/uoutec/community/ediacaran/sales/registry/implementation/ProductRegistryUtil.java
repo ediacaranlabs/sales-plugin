@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
@@ -23,18 +24,18 @@ public class ProductRegistryUtil {
 		
 		ProductMetadata metadata = productMetadataEntityAccess.findById(product.getMetadata());
 		
-		Map<String,String> attrs = product.getAttributes();
+		Map<String,ProductAttributeValue> attrs = product.getAttributes();
 		
 		if(attrs != null) {
 			Map<String, ProductMetadataAttribute> md = metadata.getAttributes();
-			for(Entry<String, String> e: attrs.entrySet()) {
+			for(Entry<String, ProductAttributeValue> e: attrs.entrySet()) {
 				ProductMetadataAttribute pa = md.get(e.getKey());
 				
 				if(pa == null) {
 					continue;
 				}
 				
-				pa.validate(e.getValue());
+				pa.validate(e.getValue().getValue());
 			}
 		}
 	}

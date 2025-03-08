@@ -13,12 +13,12 @@ public class ProductAttributeValueEntityID implements Serializable{
 	@Column(name="cod_product", length=11)
 	private Integer productID;
 	
-	@Column(name="cod_attribute", length=32)
-	private String attributeID;
+	@Column(name="cod_prod_mtda_attr", length=11)
+	private Integer metadataAttributeID;
 
-	public ProductAttributeValueEntityID(Integer productID, String attributeID) {
+	public ProductAttributeValueEntityID(Integer productID, Integer metadataAttributeID) {
 		this.productID = productID;
-		this.attributeID = attributeID;
+		this.metadataAttributeID = metadataAttributeID;
 	}
 
 	public Integer getProductID() {
@@ -29,12 +29,13 @@ public class ProductAttributeValueEntityID implements Serializable{
 		this.productID = productID;
 	}
 
-	public String getAttributeID() {
-		return attributeID;
+	public Integer getMetadataAttributeID() {
+		return metadataAttributeID;
 	}
 
-	public void setAttributeID(String attributeID) {
-		this.attributeID = attributeID;
+	public void setMetadataAttributeID(Integer metadataAttributeID) {
+		this.metadataAttributeID = metadataAttributeID;
 	}
+
 	
 }

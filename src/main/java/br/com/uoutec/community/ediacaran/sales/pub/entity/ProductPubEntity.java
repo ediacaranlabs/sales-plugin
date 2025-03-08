@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,9 @@ import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
@@ -59,6 +63,9 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Enumerated(EnumerationType.STRING)
 	@NotNull(groups=DataValidation.class)
 	private String productType;
+
+	@NotNull(groups=DataValidation.class)
+	private Integer productMetadata;
 	
 	@NotNull(groups=DataValidation.class)
 	@Enumerated(EnumerationType.STRING)
@@ -80,6 +87,11 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductImagePubEntity> images;
+	
+	private Map<String, String> attributes;
+	
+	@NotNull(groups=DataValidation.class)
+	private Locale locale;
 	
 	@Constructor
 	public ProductPubEntity(){
@@ -242,6 +254,22 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
 		o.setTags(this.tagsString != null? StringUtil.toSet(this.tagsString, ",") : tags);
 		o.setShortDescription(this.shortDescription);
+		
+		if(this.attributes != null) {
+			
+			ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
+			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(this.productMetadata);
+			
+			List<ProductMetadataAttribute> metadataAttributes = productMetadata.getAttributeList();
+
+			for(ProductMetadataAttribute attr: metadataAttributes) {
+				String value = this.attributes.get(attr.getCode());
+				o.setAttribute(attr.getCode(), value);
+			}
+			
+		}
+		
+		
 	}
 
 	@Override

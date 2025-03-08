@@ -249,17 +249,61 @@ public class ProductMetadataAttribute {
 		this.suffix = suffix;
 	}
 
-	public void validate(String value) throws ValidationException {
+	public void validate(Object value) throws ValidationException {
 
-		if(value == null || value.isEmpty()) {
+		this.valueType.checkType(value);
+		
+		switch (valueType) {
+		case TEXT:
 			
-			if(!allowEmpty) {
-				throw new ValidationException(name + " is empty");
+			if(value == null || ((String)value).isEmpty()) {
+				
+				if(!allowEmpty) {
+					throw new ValidationException(name + " is empty");
+				}
+				
+				return;
 			}
 			
-			return;
+			if(minLength > 0 && ((String)value).length() < minLength) {
+				throw new ValidationException(name + " is invalid");
+			}
+			
+			if(maxLength > 0 && ((String)value).length() > maxLength) {
+				throw new ValidationException(name + " is invalid");
+			}
+			
+			if(regex != null && !((String)value).matches(regex)) {
+				throw new ValidationException(name + " is invalid");
+			}
+			
+			break;
+		case INTEGER:
+		case DECIMAL:
+			
+			if(value == null) {
+				
+				if(!allowEmpty) {
+					throw new ValidationException(name + " is empty");
+				}
+				
+				return;
+			}
+			
+			if(min != null && ((Number)value).doubleValue() < min) {
+				throw new ValidationException(name + " is invalid");
+			}
+			
+			if(max != null && ((Number)value).doubleValue() > max) {
+				throw new ValidationException(name + " is invalid");
+			}
+			
+		case DATE:
+		case DATE_TIME:
+		case TIME:
+			break;
 		}
-		
+
 		if(!options.isEmpty()) {
 			for(ProductMetadataAttributeOption op: options) {
 				if(value.equals(op.getValue())) {
@@ -271,26 +315,6 @@ public class ProductMetadataAttribute {
 			
 		}
 		
-		if(minLength > 0 && value.length() < minLength) {
-			throw new ValidationException(name + " is invalid");
-		}
-		
-		if(maxLength > 0 && value.length() > maxLength) {
-			throw new ValidationException(name + " is invalid");
-		}
-
-		if(min != null && ((Number)valueType.toObject(value, null)).doubleValue() < min) {
-			throw new ValidationException(name + " is invalid");
-		}
-		
-		if(max != null && ((Number)valueType.toObject(value, null)).doubleValue() > max) {
-			throw new ValidationException(name + " is invalid");
-		}
-		
-		if(regex != null && !value.matches(regex)) {
-			throw new ValidationException(name + " is invalid");
-		}
-
 	}
 	
 	@Override

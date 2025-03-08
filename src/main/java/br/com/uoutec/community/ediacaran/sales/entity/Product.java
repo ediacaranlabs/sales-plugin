@@ -16,6 +16,8 @@ import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
@@ -24,6 +26,7 @@ import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
+import br.com.uoutec.i18n.ValidationException;
 
 public class Product implements Serializable {
 
@@ -73,7 +76,7 @@ public class Product implements Serializable {
 
 	protected Set<String> tags;
 	
-	protected Map<String, String> attributes;
+	protected Map<String, ProductAttributeValue> attributes;
 	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
@@ -139,6 +142,7 @@ public class Product implements Serializable {
 
 	public void setMetadata(int metadata) {
 		this.metadata = metadata;
+		this.productMetadata = null;
 	}
 
 	public MeasurementUnit getMeasurementUnit() {
@@ -157,11 +161,11 @@ public class Product implements Serializable {
 		this.visibility = visibility;
 	}
 
-	public Map<String, String> getAttributes() {
+	public Map<String, ProductAttributeValue> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(Map<String, String> attributes) {
+	public void setAttributes(Map<String, ProductAttributeValue> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -219,6 +223,67 @@ public class Product implements Serializable {
 
 	public String getPublicID() {
 		return name == null? null : ProductUtil.getPublicID(this);
+	}
+	
+	/* metadata */
+	
+	private transient volatile ProductMetadata productMetadata;
+	
+
+	public Object getAttribute(String code) {
+		return this.attributes.get(code);
+	}
+
+	public void setAttribute(String code, String value) throws ProductRegistryException, ValidationException {
+		
+		ProductMetadata productMetadata = getProductMetadata();
+		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
+		
+		setAttribute(code, attr.getValueType().parse(value, null), attr);
+	}
+	
+	public void setAttribute(String code, String value, Locale locale) throws ProductRegistryException, ValidationException {
+		
+		ProductMetadata productMetadata = getProductMetadata();
+		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
+		
+		setAttribute(code, attr.getValueType().parse(value, locale), attr);
+	}
+
+	public void setAttribute(String code, Object value) throws ProductRegistryException, ValidationException {
+		
+		ProductMetadata productMetadata = getProductMetadata();
+		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
+		
+		setAttribute(code, value, attr);
+	}
+	
+	private void setAttribute(String code, Object value, ProductMetadataAttribute attr) throws ProductRegistryException, ValidationException {
+		
+		if(attr == null) {
+			throw new IllegalStateException(code);
+		}
+		
+		attr.validate(value);
+		
+		this.attributes.put(code, new ProductAttributeValue(id, code, attr.getValueType(), value));
+	}
+	
+	private ProductMetadata getProductMetadata() throws ProductRegistryException {
+		
+		if(this.productMetadata == null) {
+			
+			synchronized(this) {
+				
+				if(this.productMetadata == null) {
+					ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
+					this.productMetadata = productMetadataRegistry.findProductMetadataById(this.metadata);
+				}
+			}
+			
+		}
+		
+		return this.productMetadata;
 	}
 	
 }
