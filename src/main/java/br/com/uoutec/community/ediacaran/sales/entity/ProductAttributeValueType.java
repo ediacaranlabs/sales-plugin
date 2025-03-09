@@ -3,8 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
@@ -24,14 +22,6 @@ public enum ProductAttributeValueType {
 			}
 		}
 		
-		public Object toValue(Object value) {
-			return value;
-		}
-
-		public Object toPersistence(Object value) {
-			return value;
-		}
-
 		public Object parse(String value, Locale locale) {
 			return value;
 		}
@@ -49,14 +39,6 @@ public enum ProductAttributeValueType {
 			}
 		}
 		
-		public Object toValue(Object value) {
-			return ((Long)value).intValue();
-		}
-
-		public Object toPersistence(Object value) {
-			return ((Integer)value).longValue();
-		}
-
 		public Object parse(String value, Locale locale) {
 			return Integer.parseInt(value);
 		}
@@ -74,14 +56,6 @@ public enum ProductAttributeValueType {
 			}
 		}
 		
-		public Object toValue(Object value) {
-			return Double.longBitsToDouble((Long)value);
-		}
-
-		public Object toPersistence(Object value) {
-			return Double.doubleToRawLongBits(((Double)value));
-		}
-
 		public Object parse(String value, Locale locale) {
 			return Double.parseDouble(value);
 		}
@@ -99,14 +73,6 @@ public enum ProductAttributeValueType {
 			}
 		}
 		
-		public Object toValue(Object value) {
-			return LocalDateTime.ofEpochSecond((Long)value, 0, ZoneOffset.UTC).toLocalDate();
-		}
-
-		public Object toPersistence(Object value) {
-			return ((LocalDate)value).atTime(0,0).toEpochSecond(ZoneOffset.UTC);
-		}
-
 		public Object parse(String value, Locale locale) {
 			DateTimeFormatter formatter = 
 					DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
@@ -128,14 +94,6 @@ public enum ProductAttributeValueType {
 			}
 		}
 		
-		public Object toValue(Object value) {
-			return LocalDateTime.ofEpochSecond((Long)value, 0, ZoneOffset.UTC);
-		}
-
-		public Object toPersistence(Object value) {
-			return ((LocalDateTime)value).toEpochSecond(ZoneOffset.UTC); 		
-		}
-
 		public Object parse(String value, Locale locale) {
 			DateTimeFormatter formatter = 
 					DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
@@ -157,14 +115,6 @@ public enum ProductAttributeValueType {
 			}
 		}
 		
-		public Object toValue(Object value) {
-			return LocalDateTime.ofEpochSecond((Long)value, 0, ZoneOffset.UTC).toLocalTime();
-		}
-
-		public Object toPersistence(Object value) {
-			return ((LocalTime)value).atDate(LocalDate.of(2000, Month.JANUARY, 1)).toEpochSecond(ZoneOffset.UTC);
-		}
-
 		public Object parse(String value, Locale locale) {
 			DateTimeFormatter formatter = 
 					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
@@ -185,14 +135,6 @@ public enum ProductAttributeValueType {
 	public void checkType(Object value) {
 	}
 	
-	public Object toValue(Object value) {
-		return null;
-	}
-
-	public Object toPersistence(Object value) {
-		return null;
-	}
-
 	public Object parse(String value, Locale locale) {
 		return null;
 	}

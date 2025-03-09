@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class ProductSearch {
 
@@ -12,12 +13,22 @@ public class ProductSearch {
 
 	private BigDecimal maxCost;
 
+	private Map<Integer,ProductSearchAttributeFilter> filters;
+	
 	private String productType;
 	
 	private Integer page;
 	
 	private Integer resultPerPage;
 	
+	public Map<Integer, ProductSearchAttributeFilter> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(Map<Integer, ProductSearchAttributeFilter> filters) {
+		this.filters = filters;
+	}
+
 	public String getName() {
 		return name;
 	}
