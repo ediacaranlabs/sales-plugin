@@ -2,12 +2,14 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
@@ -40,6 +42,9 @@ public class ProductIndexEntity implements Serializable,PublicType{
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
 	
+    @OneToMany(mappedBy = "productIndex")
+	private List<ProductAttributeValueEntity> attributes;
+	
 	public ProductIndexEntity(){
 	}
 	
@@ -65,6 +70,62 @@ public class ProductIndexEntity implements Serializable,PublicType{
 			this.tags = this.tags.length() > 255? this.tags.substring(0, 253) : this.tags;
 		}
 		
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
+
+	public BigDecimal getCost() {
+		return cost;
+	}
+
+	public void setCost(BigDecimal cost) {
+		this.cost = cost;
+	}
+
+	public List<ProductAttributeValueEntity> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<ProductAttributeValueEntity> attributes) {
+		this.attributes = attributes;
 	}
 
 	public Product toEntity(){

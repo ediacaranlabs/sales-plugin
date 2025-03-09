@@ -36,6 +36,10 @@ public class ProductAttributeValueEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductEntity product;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
+	private ProductIndexEntity productIndex;
 	
 	@Column(name="cod_attribute", length=32)
 	private String attributeID;
@@ -55,6 +59,7 @@ public class ProductAttributeValueEntity implements Serializable {
 	
 	public ProductAttributeValueEntity(ProductAttributeValue e, Product product){
 		this.id = new ProductAttributeValueEntityID(product.getId(), e.getProductAttributeId());
+		this.attributeID = e.getProductAttributeCode();
 		this.product = new ProductEntity();
 		this.product.setId(product.getId());
 

@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class ProductSearchAttributeFilter {
@@ -32,6 +33,23 @@ public class ProductSearchAttributeFilter {
 
 	public void setValues(Set<Object> values) {
 		this.values = values;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(productAttribute, productMetadata);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductSearchAttributeFilter other = (ProductSearchAttributeFilter) obj;
+		return productAttribute == other.productAttribute && productMetadata == other.productMetadata;
 	}
 	
 }
