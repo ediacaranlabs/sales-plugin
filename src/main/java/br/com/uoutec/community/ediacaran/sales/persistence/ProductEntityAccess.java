@@ -28,7 +28,7 @@ public interface ProductEntityAccess {
 	
 	List<Product> getProductByType(ProductType serviceType) throws EntityAccessException;
 	
-	List<Product> searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException;
+	ProductEntitySearchResult searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException;
 	
 	void flush();
 	

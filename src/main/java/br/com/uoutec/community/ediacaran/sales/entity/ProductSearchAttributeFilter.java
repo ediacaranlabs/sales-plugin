@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.Objects;
-import java.util.Set;
 
 public class ProductSearchAttributeFilter {
 
@@ -9,7 +8,9 @@ public class ProductSearchAttributeFilter {
 	
 	private int productAttribute;
 	
-	private Set<Object> values;
+	private ProductAttributeValueType type;
+	
+	private Object value;
 
 	public int getProductMetadata() {
 		return productMetadata;
@@ -27,12 +28,20 @@ public class ProductSearchAttributeFilter {
 		this.productAttribute = productAttribute;
 	}
 
-	public Set<Object> getValues() {
-		return values;
+	public Object getValue() {
+		return value;
 	}
 
-	public void setValues(Set<Object> values) {
-		this.values = values;
+	public void setValue(Object value) {
+		this.value = value;
+	}
+
+	public ProductAttributeValueType getType() {
+		return type;
+	}
+
+	public void setType(ProductAttributeValueType type) {
+		this.type = type;
 	}
 
 	@Override

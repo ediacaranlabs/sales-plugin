@@ -43,7 +43,7 @@ public class ProductIndexEntity implements Serializable,PublicType{
 	private BigDecimal cost;
 	
     @OneToMany(mappedBy = "productIndex")
-	private List<ProductAttributeValueEntity> attributes;
+	private List<ProductAttributeValueIndexEntity> attributes;
 	
 	public ProductIndexEntity(){
 	}
@@ -120,11 +120,11 @@ public class ProductIndexEntity implements Serializable,PublicType{
 		this.cost = cost;
 	}
 
-	public List<ProductAttributeValueEntity> getAttributes() {
+	public List<ProductAttributeValueIndexEntity> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<ProductAttributeValueEntity> attributes) {
+	public void setAttributes(List<ProductAttributeValueIndexEntity> attributes) {
 		this.attributes = attributes;
 	}
 
