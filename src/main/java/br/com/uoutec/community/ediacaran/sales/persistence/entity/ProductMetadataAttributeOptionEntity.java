@@ -6,6 +6,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,9 +35,6 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="cod_option", length=11)
 	private Integer id;
-	
-	@Column(name="dsc_value", length=128)
-	private String value;
 
 	@ManyToOne
 	@JoinColumn(name = "cod_prod_mtda_attr")
@@ -43,18 +42,52 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 	
 	@Column(name="dsc_description", length=256)
 	private String description;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="set_type", length=32)
+	private ProductAttributeValueEntityType type;
+	
+	@Column(name="vlr_value")
+	private Long number;
+
+	@Column(name="dsc_value", length=32)
+	private String value;
 	
 	public ProductMetadataAttributeOptionEntity() {
 	}
 	
-	public ProductMetadataAttributeOptionEntity(ProductMetadataAttributeOption e) {
+	public ProductMetadataAttributeOptionEntity(ProductMetadataAttributeOption e, ProductMetadataAttributeEntity productAttribute) {
 		this.id = e.getId() == 0? null : e.getId();
 		this.description = e.getDescription();
-		this.value = e.getValue();
-		if(e.getProductMetadataAttribute() > 0) {
-			this.productAttribute = new ProductMetadataAttributeEntity();
-			this.productAttribute.setId(e.getProductMetadataAttribute());
-		}
+		this.productAttribute = productAttribute;
+		
+		switch (productAttribute.getValueType()) {
+		case TEXT:
+			this.value = (String)ProductAttributeValueEntityType.TEXT.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.TEXT;
+			break;
+		case INTEGER:
+			this.number = (Long)ProductAttributeValueEntityType.INTEGER.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.INTEGER;
+			break;
+		case DECIMAL:
+			this.number = (Long)ProductAttributeValueEntityType.DECIMAL.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.DECIMAL;
+			break;
+		case DATE:
+			this.number = (Long)ProductAttributeValueEntityType.DATE.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.DATE;
+			break;
+		case DATE_TIME:
+			this.number = (Long)ProductAttributeValueEntityType.DATE_TIME.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.DATE_TIME;
+			break;
+		case TIME:
+			this.number = (Long)ProductAttributeValueEntityType.TIME.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.TIME;
+			break;
+		}		
+		
 	}
 
 	public Integer getId() {
@@ -105,6 +138,31 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 		if(this.productAttribute != null){
 			e.setProductMetadataAttribute(this.productAttribute.getId());
 		}
+		
+		Object val = null;
+		
+		switch (this.type) {
+		case TEXT:
+			val = ProductAttributeValueEntityType.TEXT.toValue(this.value);
+			break;
+		case INTEGER:
+			val = ProductAttributeValueEntityType.INTEGER.toValue(this.number);
+			break;
+		case DECIMAL:
+			val = ProductAttributeValueEntityType.DECIMAL.toValue(this.number);
+			break;
+		case DATE:
+			val = ProductAttributeValueEntityType.DATE.toValue(this.number);
+			break;
+		case DATE_TIME:
+			val = ProductAttributeValueEntityType.DATE_TIME.toValue(this.number);
+			break;
+		case TIME:
+			val = ProductAttributeValueEntityType.TIME.toValue(this.number);
+			break;
+		}		
+
+		e.setValue(val);
 		
 		return e;
 	}

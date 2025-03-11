@@ -123,7 +123,7 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		if(e.getOptions() != null) {
 			this.options = new ArrayList<>();
 			for(ProductMetadataAttributeOption x: e.getOptions()) {
-				this.options.add(new ProductMetadataAttributeOptionEntity(x));
+				this.options.add(new ProductMetadataAttributeOptionEntity(x, this));
 			}
 		}
 	}

@@ -80,7 +80,8 @@ public class ProductAttributeValueEntity implements Serializable {
 			this.number = (Long)ProductAttributeValueEntityType.TIME.parse(value);
 			this.type = ProductAttributeValueEntityType.TIME;
 			break;
-		}		
+		}
+		
 	}
 
 	public ProductAttributeValueEntityID getId() {
