@@ -100,8 +100,11 @@ public class ProductEntity implements Serializable,PublicType{
 			
 			this.attributes = new ArrayList<>();
 			for(Entry<String, ProductAttributeValue> x: e.getAttributes().entrySet()) {
-				this.attributes.add(new ProductAttributeValueEntity(x.getValue(), e));
+				for(Object value: x.getValue().getValues()) {
+					this.attributes.add(new ProductAttributeValueEntity(value, x.getValue(), e));
+				}
 			}
+			
 		}
 		
 	}
@@ -199,9 +202,21 @@ public class ProductEntity implements Serializable,PublicType{
 		
 		if(attributes != null) {
 			Map<String, ProductAttributeValue> attrs = new HashMap<>();
+			
 			for(ProductAttributeValueEntity x: this.attributes) {
-				attrs.put(x.getProductAttributeCode(), x.toEntity());
+				
+				ProductAttributeValue att = attrs.get(x.getProductAttributeCode());
+				
+				if(att == null) {
+					att = x.toEntity();
+					attrs.put(x.getProductAttributeCode(), att);
+				}
+				else {
+					att.addValue(x.parseValue());
+				}
+				
 			}
+			
 			e.setAttributes(attrs);
 		}
 		return e;

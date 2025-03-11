@@ -1,6 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProductAttributeValue {
 
@@ -10,16 +13,16 @@ public class ProductAttributeValue {
 	
 	private String productAttributeCode;
 	
-	private Object value;
+	private Set<Object> values;
 
 	public ProductAttributeValue() {
 	}
 
-	public ProductAttributeValue(int productAttributeId, String productAttributeCode, ProductAttributeValueType type, Object value) {
+	public ProductAttributeValue(int productAttributeId, String productAttributeCode, ProductAttributeValueType type, Set<Object> values) {
 		this.productAttributeId = productAttributeId;
 		this.productAttributeCode = productAttributeCode;
 		this.type = type;
-		this.value = value;
+		this.values = values;
 	}
 
 	public void setType(ProductAttributeValueType type) {
@@ -47,11 +50,19 @@ public class ProductAttributeValue {
 	}
 
 	public Object getValue() {
-		return value;
+		return values.isEmpty()? null : values.iterator().next();
 	}
 
-	public void setValue(Object value) {
-		this.value = value;
+	public Object[] getValues() {
+		return values.stream().toArray(Object[]::new);
+	}
+
+	public void addValue(Object value) {
+		this.values.add(value);
+	}
+	
+	public void setValue(Object ... value) {
+		this.values = Arrays.stream(value).collect(Collectors.toSet());
 	}
 
 	@Override

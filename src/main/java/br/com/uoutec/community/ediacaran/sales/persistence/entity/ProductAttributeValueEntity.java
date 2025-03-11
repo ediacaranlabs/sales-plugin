@@ -46,41 +46,38 @@ public class ProductAttributeValueEntity implements Serializable {
 	@Column(name="vlr_value")
 	private Long number;
 	
-	@Column(name="dsc_value", length=32)
-	private String value;
-	
 	public ProductAttributeValueEntity(){
 	}
 	
-	public ProductAttributeValueEntity(ProductAttributeValue e, Product product){
-		this.id = new ProductAttributeValueEntityID(product.getId(), product.getMetadata(), e.getProductAttributeId());
+	public ProductAttributeValueEntity(Object value, ProductAttributeValue e, Product product){
+		this.id = new ProductAttributeValueEntityID(e.getType().toString(value, null), e.getProductAttributeId(), product.getId());
 		this.productAttributeCode = e.getProductAttributeCode();
 		this.product = new ProductEntity();
 		this.product.setId(product.getId());
 		
 		switch (e.getType()) {
 		case TEXT:
-			this.value = (String)ProductAttributeValueEntityType.TEXT.parse(e.getValue());
+			//this.value = (String)ProductAttributeValueEntityType.TEXT.parse(e.getValue()); // PK
 			this.type = ProductAttributeValueEntityType.TEXT;
 			break;
 		case INTEGER:
-			this.number = (Long)ProductAttributeValueEntityType.INTEGER.parse(e.getValue());
+			this.number = (Long)ProductAttributeValueEntityType.INTEGER.parse(value);
 			this.type = ProductAttributeValueEntityType.INTEGER;
 			break;
 		case DECIMAL:
-			this.number = (Long)ProductAttributeValueEntityType.DECIMAL.parse(e.getValue());
+			this.number = (Long)ProductAttributeValueEntityType.DECIMAL.parse(value);
 			this.type = ProductAttributeValueEntityType.DECIMAL;
 			break;
 		case DATE:
-			this.number = (Long)ProductAttributeValueEntityType.DATE.parse(e.getValue());
+			this.number = (Long)ProductAttributeValueEntityType.DATE.parse(value);
 			this.type = ProductAttributeValueEntityType.DATE;
 			break;
 		case DATE_TIME:
-			this.number = (Long)ProductAttributeValueEntityType.DATE_TIME.parse(e.getValue());
+			this.number = (Long)ProductAttributeValueEntityType.DATE_TIME.parse(value);
 			this.type = ProductAttributeValueEntityType.DATE_TIME;
 			break;
 		case TIME:
-			this.number = (Long)ProductAttributeValueEntityType.TIME.parse(e.getValue());
+			this.number = (Long)ProductAttributeValueEntityType.TIME.parse(value);
 			this.type = ProductAttributeValueEntityType.TIME;
 			break;
 		}		
@@ -102,14 +99,6 @@ public class ProductAttributeValueEntity implements Serializable {
 		this.product = product;
 	}
 
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
 	public ProductIndexEntity getProductIndex() {
 		return productIndex;
 	}
@@ -142,6 +131,25 @@ public class ProductAttributeValueEntity implements Serializable {
 		this.number = number;
 	}
 
+	public Object parseValue() {
+		switch (this.type) {
+		case TEXT:
+			return ProductAttributeValueEntityType.TEXT.toValue(this.id.getValue());
+		case INTEGER:
+			return ProductAttributeValueEntityType.INTEGER.toValue(this.number);
+		case DECIMAL:
+			return ProductAttributeValueEntityType.DECIMAL.toValue(this.number);
+		case DATE:
+			return ProductAttributeValueEntityType.DATE.toValue(this.number);
+		case DATE_TIME:
+			return ProductAttributeValueEntityType.DATE_TIME.toValue(this.number);
+		case TIME:
+			return ProductAttributeValueEntityType.TIME.toValue(this.number);
+		}		
+
+		return null;
+	}
+	
 	public ProductAttributeValue toEntity() {
 		return toEntity(null);
 	}
@@ -160,27 +168,27 @@ public class ProductAttributeValueEntity implements Serializable {
 		
 		switch (this.type) {
 		case TEXT:
-			val = (String)ProductAttributeValueEntityType.TEXT.toValue(e.getValue());
+			val = ProductAttributeValueEntityType.TEXT.toValue(this.id.getValue());
 			t = ProductAttributeValueType.TEXT;
 			break;
 		case INTEGER:
-			val = (String)ProductAttributeValueEntityType.INTEGER.toValue(e.getValue());
+			val = ProductAttributeValueEntityType.INTEGER.toValue(this.number);
 			t = ProductAttributeValueType.INTEGER;
 			break;
 		case DECIMAL:
-			val = (String)ProductAttributeValueEntityType.DECIMAL.toValue(e.getValue());
+			val = ProductAttributeValueEntityType.DECIMAL.toValue(this.number);
 			t = ProductAttributeValueType.DECIMAL;
 			break;
 		case DATE:
-			val = (String)ProductAttributeValueEntityType.DATE.toValue(e.getValue());
+			val = ProductAttributeValueEntityType.DATE.toValue(this.number);
 			t = ProductAttributeValueType.DATE;
 			break;
 		case DATE_TIME:
-			val = (String)ProductAttributeValueEntityType.DATE_TIME.toValue(e.getValue());
+			val = ProductAttributeValueEntityType.DATE_TIME.toValue(this.number);
 			t = ProductAttributeValueType.DATE_TIME;
 			break;
 		case TIME:
-			val = (String)ProductAttributeValueEntityType.TIME.toValue(e.getValue());
+			val = ProductAttributeValueEntityType.TIME.toValue(this.number);
 			t = ProductAttributeValueType.TIME;
 			break;
 		}		
