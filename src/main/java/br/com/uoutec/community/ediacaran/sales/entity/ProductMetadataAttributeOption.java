@@ -23,9 +23,7 @@ public class ProductMetadataAttributeOption {
 	private int productMetadataAttribute;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
-	@Length(max = 128, groups = DataValidation.class)
-	private String value;
+	private Object value;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
@@ -52,11 +50,11 @@ public class ProductMetadataAttributeOption {
 		this.id = id;
 	}
 
-	public String getValue() {
+	public Object getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 

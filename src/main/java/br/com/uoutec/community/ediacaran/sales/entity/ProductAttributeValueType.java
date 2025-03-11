@@ -117,13 +117,13 @@ public enum ProductAttributeValueType {
 		
 		public Object parse(String value, Locale locale) {
 			DateTimeFormatter formatter = 
-					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
+					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? Locale.getDefault() : locale);
 			return formatter.parse(value);
 		}
 
 		public String toString(Object value, Locale locale) {
 			DateTimeFormatter formatter = 
-					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
+					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? Locale.getDefault() : locale);
 			return formatter.format((LocalDate)value);
 		}
 		

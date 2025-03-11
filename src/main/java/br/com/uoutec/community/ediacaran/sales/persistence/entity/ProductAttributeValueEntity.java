@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -39,24 +38,52 @@ public class ProductAttributeValueEntity implements Serializable {
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_type", length=32)
-	private ProductAttributeValueType type;
+	private ProductAttributeValueEntityType type;
 	
 	@Column(name="cod_attribute", length=32)
-	private String attributeID;
+	private String productAttributeCode;
 	
-	@Column(name="dsc_value", length=128)
+	@Column(name="vlr_value")
+	private Long number;
+	
+	@Column(name="dsc_value", length=32)
 	private String value;
 	
 	public ProductAttributeValueEntity(){
 	}
 	
 	public ProductAttributeValueEntity(ProductAttributeValue e, Product product){
-		this.id = new ProductAttributeValueEntityID(product.getId(), e.getProductAttributeId());
-		this.attributeID = e.getProductAttributeCode();
-		this.type = e.getType();
+		this.id = new ProductAttributeValueEntityID(product.getId(), product.getMetadata(), e.getProductAttributeId());
+		this.productAttributeCode = e.getProductAttributeCode();
 		this.product = new ProductEntity();
 		this.product.setId(product.getId());
-		this.value = e.getValue() == null? null : e.getType().toString(e.getValue(), Locale.US);
+		
+		switch (e.getType()) {
+		case TEXT:
+			this.value = (String)ProductAttributeValueEntityType.TEXT.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.TEXT;
+			break;
+		case INTEGER:
+			this.number = (Long)ProductAttributeValueEntityType.INTEGER.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.INTEGER;
+			break;
+		case DECIMAL:
+			this.number = (Long)ProductAttributeValueEntityType.DECIMAL.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.DECIMAL;
+			break;
+		case DATE:
+			this.number = (Long)ProductAttributeValueEntityType.DATE.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.DATE;
+			break;
+		case DATE_TIME:
+			this.number = (Long)ProductAttributeValueEntityType.DATE_TIME.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.DATE_TIME;
+			break;
+		case TIME:
+			this.number = (Long)ProductAttributeValueEntityType.TIME.parse(e.getValue());
+			this.type = ProductAttributeValueEntityType.TIME;
+			break;
+		}		
 	}
 
 	public ProductAttributeValueEntityID getId() {
@@ -83,14 +110,6 @@ public class ProductAttributeValueEntity implements Serializable {
 		this.value = value;
 	}
 	
-	public String getAttributeID() {
-		return attributeID;
-	}
-
-	public void setAttributeID(String attributeID) {
-		this.attributeID = attributeID;
-	}
-
 	public ProductIndexEntity getProductIndex() {
 		return productIndex;
 	}
@@ -99,12 +118,28 @@ public class ProductAttributeValueEntity implements Serializable {
 		this.productIndex = productIndex;
 	}
 
-	public ProductAttributeValueType getType() {
+	public ProductAttributeValueEntityType getType() {
 		return type;
 	}
 
-	public void setType(ProductAttributeValueType type) {
+	public void setType(ProductAttributeValueEntityType type) {
 		this.type = type;
+	}
+
+	public String getProductAttributeCode() {
+		return productAttributeCode;
+	}
+
+	public void setProductAttributeCode(String productAttributeCode) {
+		this.productAttributeCode = productAttributeCode;
+	}
+
+	public Long getNumber() {
+		return number;
+	}
+
+	public void setNumber(Long number) {
+		this.number = number;
 	}
 
 	public ProductAttributeValue toEntity() {
@@ -117,11 +152,42 @@ public class ProductAttributeValueEntity implements Serializable {
 			e = new ProductAttributeValue();
 		}
 		
-		e.setProductAttributeCode(this.attributeID);
-		e.setProductAttributeId(id.getMetadataAttributeID());
+		e.setProductAttributeCode(this.productAttributeCode);
+		e.setProductAttributeId(id.getProductMetadataAttributeID());
+		
+		Object val = null;
+		ProductAttributeValueType t = null;
+		
+		switch (this.type) {
+		case TEXT:
+			val = (String)ProductAttributeValueEntityType.TEXT.toValue(e.getValue());
+			t = ProductAttributeValueType.TEXT;
+			break;
+		case INTEGER:
+			val = (String)ProductAttributeValueEntityType.INTEGER.toValue(e.getValue());
+			t = ProductAttributeValueType.INTEGER;
+			break;
+		case DECIMAL:
+			val = (String)ProductAttributeValueEntityType.DECIMAL.toValue(e.getValue());
+			t = ProductAttributeValueType.DECIMAL;
+			break;
+		case DATE:
+			val = (String)ProductAttributeValueEntityType.DATE.toValue(e.getValue());
+			t = ProductAttributeValueType.DATE;
+			break;
+		case DATE_TIME:
+			val = (String)ProductAttributeValueEntityType.DATE_TIME.toValue(e.getValue());
+			t = ProductAttributeValueType.DATE_TIME;
+			break;
+		case TIME:
+			val = (String)ProductAttributeValueEntityType.TIME.toValue(e.getValue());
+			t = ProductAttributeValueType.TIME;
+			break;
+		}		
 
-		e.setType(this.type);
-		e.setValue(this.value == null? null : this.type.parse(value, Locale.US));
+		e.setType(t);
+		e.setValue(val);
+				
 		
 		return e;
 	}

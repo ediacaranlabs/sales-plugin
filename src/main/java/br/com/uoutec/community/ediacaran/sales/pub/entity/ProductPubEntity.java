@@ -264,7 +264,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 			for(ProductMetadataAttribute attr: metadataAttributes) {
 				String value = this.attributes.get(attr.getCode());
-				o.setAttribute(attr.getCode(), value);
+				o.setAttribute(attr.getCode(), value, locale);
 			}
 			
 		}

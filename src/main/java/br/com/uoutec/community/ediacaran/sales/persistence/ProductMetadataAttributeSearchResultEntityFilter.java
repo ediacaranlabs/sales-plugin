@@ -8,7 +8,7 @@ public class ProductMetadataAttributeSearchResultEntityFilter {
 
 	private ProductMetadataAttribute productMetadataAttribute;
 	
-	private Map<String,Object> options;
+	private Map<Object,ProductMetadataAttributeSearchResultOptionEntityFilter> options;
 
 	public ProductMetadataAttribute getProductMetadataAttribute() {
 		return productMetadataAttribute;
@@ -18,11 +18,11 @@ public class ProductMetadataAttributeSearchResultEntityFilter {
 		this.productMetadataAttribute = productMetadataAttribute;
 	}
 
-	public Map<String, Object> getOptions() {
+	public Map<Object, ProductMetadataAttributeSearchResultOptionEntityFilter> getOptions() {
 		return options;
 	}
 
-	public void setOptions(Map<String, Object> options) {
+	public void setOptions(Map<Object, ProductMetadataAttributeSearchResultOptionEntityFilter> options) {
 		this.options = options;
 	}
 

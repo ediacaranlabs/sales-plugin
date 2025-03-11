@@ -305,14 +305,12 @@ public class ProductMetadataAttribute {
 		}
 
 		if(!options.isEmpty()) {
-			for(ProductMetadataAttributeOption op: options) {
-				if(value.equals(op.getValue())) {
+			for(ProductMetadataAttributeOption o: options) {
+				if(o.getValue().equals(value)) {
 					return;
 				}
 			}
-			
 			throw new ValidationException(name + " is invalid");
-			
 		}
 		
 	}

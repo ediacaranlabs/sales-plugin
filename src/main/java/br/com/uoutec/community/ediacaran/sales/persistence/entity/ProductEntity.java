@@ -200,7 +200,7 @@ public class ProductEntity implements Serializable,PublicType{
 		if(attributes != null) {
 			Map<String, ProductAttributeValue> attrs = new HashMap<>();
 			for(ProductAttributeValueEntity x: this.attributes) {
-				attrs.put(x.getAttributeID(), x.toEntity());
+				attrs.put(x.getProductAttributeCode(), x.toEntity());
 			}
 			e.setAttributes(attrs);
 		}
