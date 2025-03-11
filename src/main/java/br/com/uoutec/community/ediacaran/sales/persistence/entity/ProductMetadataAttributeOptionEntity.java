@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 
 @Entity
@@ -56,12 +57,16 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 	public ProductMetadataAttributeOptionEntity() {
 	}
 	
-	public ProductMetadataAttributeOptionEntity(ProductMetadataAttributeOption e, ProductMetadataAttributeEntity productAttribute) {
+	public ProductMetadataAttributeOptionEntity(ProductMetadataAttributeOption e) {
 		this.id = e.getId() == 0? null : e.getId();
 		this.description = e.getDescription();
-		this.productAttribute = productAttribute;
 		
-		switch (productAttribute.getValueType()) {
+		if(e.getProductMetadataAttribute() > 0) {
+			this.productAttribute = new ProductMetadataAttributeEntity();
+			this.productAttribute.setId(e.getProductMetadataAttribute());
+		}
+		
+		switch (e.getValueType()) {
 		case TEXT:
 			this.value = (String)ProductAttributeValueEntityType.TEXT.parse(e.getValue());
 			this.type = ProductAttributeValueEntityType.TEXT;
@@ -140,28 +145,36 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 		}
 		
 		Object val = null;
-		
+		ProductAttributeValueType t = null;
 		switch (this.type) {
 		case TEXT:
 			val = ProductAttributeValueEntityType.TEXT.toValue(this.value);
+			t = ProductAttributeValueType.TEXT;
 			break;
 		case INTEGER:
 			val = ProductAttributeValueEntityType.INTEGER.toValue(this.number);
+			t = ProductAttributeValueType.INTEGER;
 			break;
 		case DECIMAL:
 			val = ProductAttributeValueEntityType.DECIMAL.toValue(this.number);
+			t = ProductAttributeValueType.DECIMAL;
 			break;
 		case DATE:
 			val = ProductAttributeValueEntityType.DATE.toValue(this.number);
+			t = ProductAttributeValueType.DATE;
 			break;
 		case DATE_TIME:
 			val = ProductAttributeValueEntityType.DATE_TIME.toValue(this.number);
+			t = ProductAttributeValueType.DATE_TIME;
 			break;
 		case TIME:
 			val = ProductAttributeValueEntityType.TIME.toValue(this.number);
+			t = ProductAttributeValueType.TIME;
 			break;
 		}		
 
+		e.setValueType(t);
+		e.setValueType(null);
 		e.setValue(val);
 		
 		return e;

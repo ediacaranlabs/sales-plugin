@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -266,7 +267,13 @@ public class Product implements Serializable {
 		
 		attr.validate(value);
 		
-		this.attributes.put(code, new ProductAttributeValue(id, code, attr.getValueType(), value));
+		ProductAttributeValue v = this.attributes.get(code);
+		if(v == null) {
+			v = new ProductAttributeValue(id, code, attr.getValueType(), new HashSet<>());
+			this.attributes.put(code, v);
+		}
+		v.addValue(value);
+		
 	}
 	
 	private ProductMetadata getProductMetadata() throws ProductRegistryException {

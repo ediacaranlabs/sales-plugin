@@ -38,7 +38,7 @@ public class ProductMetadataAttributeOptionRegistryUtil {
 		
 		for(ProductMetadataAttributeOption e: list) {
 			
-			String code = e.getValue().toLowerCase();
+			String code = e.getValueType().toString(e.getValue(), null).toLowerCase();
 			
 			if(codes.contains(code)) {
 				throw new OptionCodeDuplicatedProductRegistryException(parent.getCode() + "." + code);

@@ -23,6 +23,9 @@ public class ProductMetadataAttributeOption {
 	private int productMetadataAttribute;
 	
 	@NotNull(groups = DataValidation.class)
+	private ProductAttributeValueType valueType;
+	
+	@NotNull(groups = DataValidation.class)
 	private Object value;
 	
 	@NotNull(groups = DataValidation.class)
@@ -48,6 +51,14 @@ public class ProductMetadataAttributeOption {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public ProductAttributeValueType getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(ProductAttributeValueType valueType) {
+		this.valueType = valueType;
 	}
 
 	public Object getValue() {
