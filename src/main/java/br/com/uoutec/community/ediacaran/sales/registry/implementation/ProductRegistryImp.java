@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductImageEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
@@ -41,6 +42,9 @@ public class ProductRegistryImp
 	private ProductImageEntityAccess imageEntityAccess;
 	
 	@Inject
+	private ProductIndexEntityAccess productIndexEntityAccess;
+	
+	@Inject
 	private ObjectsTemplateManager objectsManager;
 	
 	@Transactional
@@ -52,7 +56,7 @@ public class ProductRegistryImp
 		try{
 			ProductRegistryUtil.validate(entity, productMetadataEntityAccess);
 			ProductRegistryUtil.saveOrUpdate(entity, entityAccess);
-			ProductRegistryUtil.updateIndex(entity, entityAccess);
+			ProductRegistryUtil.updateIndex(entity, productIndexEntityAccess);
 			ProductRegistryUtil.sendToRepository(entityAccess);
 			ProductRegistryUtil.persistProductImage(entity, objectsManager);
 		}
@@ -72,6 +76,7 @@ public class ProductRegistryImp
 			Product actualEntity = ProductRegistryUtil.getActualProduct(entity, entityAccess, objectsManager);
 			ProductRegistryUtil.deleteProductImage(actualEntity, objectsManager);
 			ProductRegistryUtil.delete(actualEntity, entityAccess);
+			ProductRegistryUtil.deleteIndex(actualEntity, productIndexEntityAccess);
 			ProductRegistryUtil.sendToRepository(entityAccess);
 		}
 		catch(Throwable e){

@@ -10,6 +10,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
@@ -106,13 +107,21 @@ public class ProductRegistryUtil {
 		}
 	}
 	
-	public static void updateIndex(Product product, ProductEntityAccess entityAccess) throws EntityAccessException {
+	public static void updateIndex(Product product, ProductIndexEntityAccess entityAccess) throws EntityAccessException {
 		
-		if(entityAccess.ifIndexExist(product)) {
-			entityAccess.updateIndex(product);
+		if(entityAccess.findById(product.getId()) != null) {
+			entityAccess.update(product);
 		}
 		else {
-			entityAccess.saveIndex(product);
+			entityAccess.save(product);
+		}
+		
+	}
+
+	public static void deleteIndex(Product product, ProductIndexEntityAccess entityAccess) throws EntityAccessException {
+		
+		if(entityAccess.findById(product.getId()) != null) {
+			entityAccess.delete(product);
 		}
 		
 	}
