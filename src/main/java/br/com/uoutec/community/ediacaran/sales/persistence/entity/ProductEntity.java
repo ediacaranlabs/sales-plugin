@@ -173,6 +173,38 @@ public class ProductEntity implements Serializable,PublicType{
 		this.currency = currency;
 	}
 
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
+	public Integer getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Integer metadata) {
+		this.metadata = metadata;
+	}
+
+	public ProductVisibility getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(ProductVisibility visibility) {
+		this.visibility = visibility;
+	}
+
+	public List<ProductAttributeValueEntity> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<ProductAttributeValueEntity> attributes) {
+		this.attributes = attributes;
+	}
+
 	public Product toEntity(){
 		return toEntity(null);
 	}

@@ -27,6 +27,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOp
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchAttributeFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityID;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductEntity;
@@ -47,6 +49,82 @@ public class ProductEntityAccessImp
 		super(entityManager);
 	}
 	
+	public void save(Product value) throws EntityAccessException {
+		try{
+			ProductIndexEntity pEntity = new ProductIndexEntity(value);
+			entityManager.persist(pEntity);
+			entityManager.flush();
+			
+			if(pEntity.getAttributes() != null) {
+				for(ProductAttributeValueIndexEntity e: pEntity.getAttributes()) {
+					entityManager.persist(e);
+				}
+			}
+			
+			pEntity.toEntity(value);
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+
+	public void update(Product value) throws EntityAccessException {
+		try{
+			ProductEntity pEntity = new ProductEntity(value);
+			
+			pEntity = (ProductEntity)entityManager.merge(pEntity);
+			
+			if(pEntity.getAttributes() != null) {
+				
+				for(ProductAttributeValueEntity e: pEntity.getAttributes()) {
+					if(entityManager.find(ProductAttributeValueIndexEntity.class, e.getId()) == null) {
+						entityManager.persist(e);
+					}
+					else {
+						e = entityManager.merge(e);
+					}
+				}
+				
+				entityManager.flush();
+				
+				Map<ProductAttributeValueEntityID, ProductAttributeValueEntity> attrsMap = 
+						pEntity.getAttributes().stream()
+								.collect(Collectors.toMap((e)->e.getId(), (e)->e));
+				
+				ProductEntity actualEntity = entityManager.find(ProductEntity.class, value.getId());
+				
+				for(ProductAttributeValueEntity e: actualEntity.getAttributes()) {
+					if(!attrsMap.containsKey(e.getId())) {
+						entityManager.remove(e);
+					}
+				}
+			}
+			
+			entityManager.flush();
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}
+
+	public void delete(Product value) throws EntityAccessException {
+		try{
+			ProductEntity pEntity = entityManager.find(ProductEntity.class, value.getId());
+			
+			if(pEntity != null) {
+				for(ProductAttributeValueEntity e: pEntity.getAttributes()) {
+					entityManager.remove(e);
+				}
+				
+				entityManager.remove(pEntity);
+			}
+			
+			entityManager.flush();
+    	}
+    	catch(Throwable e){
+    		throw new EntityAccessException(e);
+    	}
+	}	
 	public ProductEntitySearchResult searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException {
 		
 		try {
