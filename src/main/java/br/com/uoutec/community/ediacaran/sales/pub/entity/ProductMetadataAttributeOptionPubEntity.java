@@ -10,6 +10,7 @@ import org.brandao.brutos.annotation.Transient;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
@@ -36,13 +37,21 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Length(max = 128, groups = DataValidation.class)
 	private String value;
-	
+
+	@NotNull
+	@Transient
+	private ProductAttributeValueType valueType;
+
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Length(max = 256, groups = DataValidation.class)
 	private String description;
 
 	private Boolean deleted;
+
+	@Transient
+	@NotNull(groups=DataValidation.class)
+	private Locale locale;
 	
 	@Constructor
 	public ProductMetadataAttributeOptionPubEntity(){
@@ -51,11 +60,11 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	public ProductMetadataAttributeOptionPubEntity(ProductMetadataAttributeOption e, Locale locale){
 		this.description = e.getDescription();
 		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
-		this.value = e.getValue() == null? null : e.get;
+		this.value = e.getValue() == null? null : e.getValueType().toString(e, locale);
+		this.valueType = e.getValueType();
 		this.id = e.getId();
 		this.productMetadataAttribute = e.getProductMetadataAttribute();
 	}
-
 
 	public Integer getId() {
 		return id;
@@ -105,6 +114,22 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 		this.deleted = deleted;
 	}
 
+	public ProductAttributeValueType getValueType() {
+		return valueType;
+	}
+
+	public void setValueType(ProductAttributeValueType valueType) {
+		this.valueType = valueType;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 	@Override
 	protected void preRebuild(ProductMetadataAttributeOption instance, boolean reload, boolean override, boolean validate) {
 		
@@ -144,8 +169,9 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	protected void copyTo(ProductMetadataAttributeOption o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
-		o.setValue(this.value);
+		o.setValue(this.value == null? null : valueType.parse(this.value, this.locale));
 		o.setProductMetadataAttribute(this.productMetadataAttribute == null? 0 : this.productMetadataAttribute.intValue());
+		o.setValueType(this.valueType);
 	}
 
 	@Override

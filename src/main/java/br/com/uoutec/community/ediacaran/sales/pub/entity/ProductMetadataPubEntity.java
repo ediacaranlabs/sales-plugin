@@ -45,12 +45,16 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 	private Image thumbnail;
 
 	@NotNull(groups=DataValidation.class)
-	@Size(min=3, max = 256,groups=DataValidation.class)
+	@Size(min=3, max = 256, groups=DataValidation.class)
 	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
 	private String description;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductMetadataAttributePubEntity> attributes;
+	
+	@Transient
+	@NotNull(groups=DataValidation.class)
+	private Locale locale;
 	
 	@Constructor
 	public ProductMetadataPubEntity(){
@@ -61,7 +65,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 		this.id = e.getId();
 		this.name = e.getName();
 		this.protectedID = e.getProtectedID();
-		
+		this.locale = locale;
 		if(e.getAttributes() != null) {
 			this.attributes = new ArrayList<>();
 			for(ProductMetadataAttribute x: e.getAttributes().values()) {
@@ -118,6 +122,14 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 		this.attributes = attributes;
 	}
 
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 	@Override
 	protected void preRebuild(ProductMetadataUpdate instance, boolean reload, boolean override, boolean validate) {
 		try {
@@ -160,6 +172,8 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 			List<ProductMetadataAttributeUpdate> unregisterList = new ArrayList<>();
 			
 			for(ProductMetadataAttributePubEntity x: this.attributes) {
+				
+				x.setLocale(this.locale);
 				ProductMetadataAttributeUpdate xe = x.rebuild(x.getProtectedID() != null, true, true);
 
 				list.add(xe);

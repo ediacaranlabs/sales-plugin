@@ -140,13 +140,13 @@ public class ProductEntityAccessImp
 			    	count++;
 		    	}
 		    	
-		    	ProductMetadataSearchResultEntityFilter group = productGroupFilter.get(e.getId().getProductMetadataID());
+		    	ProductMetadataSearchResultEntityFilter group = productGroupFilter.get(e.getProductMetadataID());
 		    	
 		    	if(group == null) {
 		    		group = new ProductMetadataSearchResultEntityFilter();
 		    		group.setFilters(new HashMap<>());
 		    		group.setProductMetadata(e.getProductMetadata().toEntity());
-		    		productGroupFilter.put(e.getId().getProductMetadataID(), group);
+		    		productGroupFilter.put(e.getProductMetadataID(), group);
 		    	}
 		    	
 		    	ProductMetadataAttributeSearchResultEntityFilter filter = group.getFilters().get(e.getId().getProductMetadataAttributeID());

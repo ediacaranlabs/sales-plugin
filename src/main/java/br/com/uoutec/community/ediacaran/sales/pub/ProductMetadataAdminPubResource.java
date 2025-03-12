@@ -108,6 +108,9 @@ public class ProductMetadataAdminPubResource {
 		
 		ProductMetadata entity;
 		try{
+			if(productMetadataPubEntity != null) {
+				productMetadataPubEntity.setLocale(locale);
+			}
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, false, true);
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);
@@ -142,6 +145,9 @@ public class ProductMetadataAdminPubResource {
 
 		ProductMetadataUpdate entity;
 		try{
+			if(productMetadataPubEntity != null) {
+				productMetadataPubEntity.setLocale(locale);
+			}
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
 		}
 		catch(Throwable ex){
@@ -206,6 +212,9 @@ public class ProductMetadataAdminPubResource {
 		
 		ProductMetadata entity;
 		try{
+			if(productMetadataPubEntity != null) {
+				productMetadataPubEntity.setLocale(locale);
+			}
 			entity = productMetadataPubEntity.rebuild(true, false, true);
 		}
 		catch(Throwable ex){

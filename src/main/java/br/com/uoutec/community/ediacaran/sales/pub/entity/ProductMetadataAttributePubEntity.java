@@ -81,6 +81,10 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductMetadataAttributeOptionPubEntity> options;
 	
+	@Transient
+	@NotNull(groups=DataValidation.class)
+	private Locale locale;
+	
 	@Constructor
 	public ProductMetadataAttributePubEntity(){
 	}
@@ -259,6 +263,14 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		this.options = options;
 	}
 
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 	@Override
 	protected void preRebuild(ProductMetadataAttributeUpdate instance, boolean reload, boolean override, boolean validate) {
 		
@@ -321,6 +333,9 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 			List<ProductMetadataAttributeOption> unregister = new ArrayList<>();
 			
 			for(ProductMetadataAttributeOptionPubEntity x: this.options) {
+				
+				x.setValueType(this.valueType);
+				x.setLocale(this.locale);
 				ProductMetadataAttributeOption e = x.rebuild(x.getProtectedID() != null, true, true);
 				
 				list.add(e);
