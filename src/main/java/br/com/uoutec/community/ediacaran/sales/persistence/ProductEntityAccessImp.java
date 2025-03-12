@@ -46,46 +46,6 @@ public class ProductEntityAccessImp
 	public ProductEntityAccessImp(EntityManager entityManager) {
 		super(entityManager);
 	}
-
-	public void saveIndex(Product value) throws EntityAccessException {
-		try{
-			ProductIndexEntity pEntity = new ProductIndexEntity(value);
-			entityManager.persist(pEntity);
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-
-	public void updateIndex(Product value) throws EntityAccessException {
-		try{
-			ProductIndexEntity pEntity = new ProductIndexEntity(value);
-			entityManager.merge(pEntity);
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-
-	public void deleteIndex(Product value) throws EntityAccessException {
-		try{
-			ProductIndexEntity pEntity = new ProductIndexEntity(value);
-			entityManager.remove(pEntity);
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-
-	public boolean ifIndexExist(Product value) throws EntityAccessException {
-		try{
-			Object o = entityManager.find(ProductIndexEntity.class, value.getId());
-			return o != null;
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
 	
 	public ProductEntitySearchResult searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException {
 		
