@@ -18,6 +18,7 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductMetadataAttributeOptionEntity;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -68,7 +69,7 @@ public class ProductMetadataAttributeOptionEntityAccessImp
 	}
 
 	@Override
-	public ProductMetadataAttributeOption findByValue(String value, ProductMetadataAttribute parent) throws EntityAccessException{
+	public ProductMetadataAttributeOption findByValue(Object value, ProductMetadataAttribute parent) throws EntityAccessException{
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -81,7 +82,17 @@ public class ProductMetadataAttributeOptionEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 
 	    	and.add(builder.equal(join.get("id"), parent.getId()));
-	    	and.add(builder.equal(from.get("value"), value));
+	    	
+	    	
+	    	ProductAttributeValueEntityType type = ProductAttributeValueEntityType.valueOf(parent.getValueType().name());
+	    	value = type.toValue(value);
+	    	
+	    	if(value instanceof Long) {
+		    	and.add(builder.equal(from.get("number"), value));
+	    	}
+	    	else {
+	    		and.add(builder.equal(from.get("value"), value));
+	    	}
 		    
 		    if(!and.isEmpty()) {
 			    criteria.where(
