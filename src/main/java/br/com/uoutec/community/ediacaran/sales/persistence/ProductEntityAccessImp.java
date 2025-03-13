@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -36,6 +37,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductIndexEn
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.persistence.EntityAccessException;
 
+@RequestScoped
 public class ProductEntityAccessImp 
 	extends AbstractEntityAccess<Product, ProductEntity>
 	implements ProductEntityAccess{
@@ -305,7 +307,7 @@ public class ProductEntityAccessImp
 	private void addFilters(Map<Integer, Set<ProductSearchAttributeFilter>> groups, 
 			From<ProductAttributeValueIndexEntity, ProductAttributeValueIndexEntity> from, CriteriaBuilder builder, List<Predicate> and) {
 		
-		In<Integer> productAttributeIn = builder.in(from.get("productAttribute"));
+		In<Integer> productAttributeIn = builder.in(from.get("id.productMetadataAttributeID"));
 		for(Integer attributeID: groups.keySet()) {
 			productAttributeIn.value(attributeID);
 		}
