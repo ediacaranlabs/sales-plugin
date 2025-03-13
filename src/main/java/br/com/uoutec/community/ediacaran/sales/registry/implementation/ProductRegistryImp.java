@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntitySearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductImageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
@@ -126,15 +127,18 @@ public class ProductRegistryImp
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<Product> list = entityAccess.searchProduct(value, firstResult, maxResults);
+			ProductEntitySearchResult searchResult = entityAccess.searchProduct(value, firstResult, maxResults);
+			
 			List<Product> products = new ArrayList<>();
 			
-			for(Product e: list) {
+			for(Product e: searchResult.getItens()) {
 				e = entityAccess.findById(e.getId());
 				products.add(e);
 			}
 			
-			return new ProductSearchResult(products.size() > maxItens, -1, page, products.size() > maxItens? products.subList(0, maxItens -1) : products);
+			searchResult.setItens(products);
+			return searchResult.toEntity();
+			//return new ProductSearchResult(products.size() > maxItens, -1, page, products.size() > maxItens? products.subList(0, maxItens -1) : products);
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);

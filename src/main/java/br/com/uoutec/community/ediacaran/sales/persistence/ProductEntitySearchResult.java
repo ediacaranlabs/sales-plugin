@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 
 public class ProductEntitySearchResult {
 
@@ -30,4 +31,9 @@ public class ProductEntitySearchResult {
 		this.filters = filters;
 	}
 	
+	public ProductSearchResult toEntity() {
+		ProductSearchResult e = new ProductSearchResult();
+		
+		return e;
+	}
 }

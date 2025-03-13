@@ -3,8 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.util.List;
 
-import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataSearchResultEntityFilter;
-
 public class ProductSearchResult implements Serializable{
 
 	private static final long serialVersionUID = 946881672430631849L;
@@ -15,14 +13,14 @@ public class ProductSearchResult implements Serializable{
 	
 	private int page;
 	
-	private List<ProductMetadataSearchResultEntityFilter> filters;
+	private List<ProductMetadataSearchResultFilter> filters;
 	
 	private List<Product> itens;
 
 	public ProductSearchResult() {
 	}
 	
-	public ProductSearchResult(boolean hasNextPage, int maxPages, int page, List<Product> itens, List<ProductMetadataSearchResultEntityFilter> filters) {
+	public ProductSearchResult(boolean hasNextPage, int maxPages, int page, List<Product> itens, List<ProductMetadataSearchResultFilter> filters) {
 		this.hasNextPage = hasNextPage;
 		this.maxPages = maxPages;
 		this.page = page;
@@ -30,11 +28,11 @@ public class ProductSearchResult implements Serializable{
 		this.filters = filters;
 	}
 
-	public List<ProductMetadataSearchResultEntityFilter> getFilters() {
+	public List<ProductMetadataSearchResultFilter> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(List<ProductMetadataSearchResultEntityFilter> filters) {
+	public void setFilters(List<ProductMetadataSearchResultFilter> filters) {
 		this.filters = filters;
 	}
 
