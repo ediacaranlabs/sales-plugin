@@ -31,9 +31,13 @@ public class ProductEntitySearchResult {
 		this.filters = filters;
 	}
 	
-	public ProductSearchResult toEntity() {
+	public ProductSearchResult toEntity(int maxItens, int maxPages, int page) {
 		ProductSearchResult e = new ProductSearchResult();
-		
+		e.setHasNextPage(itens.size() > maxItens);
+		e.setMaxPages(maxPages);
+		e.setPage(page);
+		e.setItens(itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+
 		return e;
 	}
 }

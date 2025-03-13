@@ -137,7 +137,7 @@ public class ProductRegistryImp
 			}
 			
 			searchResult.setItens(products);
-			return searchResult.toEntity();
+			return searchResult.toEntity(maxItens, -1, page);
 			//return new ProductSearchResult(products.size() > maxItens, -1, page, products.size() > maxItens? products.subList(0, maxItens -1) : products);
 		}
 		catch(Throwable e){
