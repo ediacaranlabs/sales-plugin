@@ -1,11 +1,20 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.resource.spi.IllegalStateException;
 import javax.validation.constraints.Max;
 
+import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.MappingTypes;
+import org.brandao.brutos.annotation.Transient;
+
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
@@ -24,9 +33,15 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 	
 	private Integer page;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
+	private List<ProductSearchFilterPubEntity> filters;
+	
 	@Max(100)
 	private Integer resultPerPage;
 
+	@Transient
+	private Locale locale;
+	
 	@Override
 	protected boolean isEqualId(ProductSearch instance) throws Throwable {
 		return false;
@@ -61,6 +76,15 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 		o.setPage(page);
 		o.setProductType(this.productType);
 		o.setResultPerPage(resultPerPage);
+		
+		if(this.filters != null) {
+			Set<ProductSearchFilter> set = new HashSet<>();
+			for(ProductSearchFilterPubEntity x: this.filters) {
+				x.setLocale(locale);
+				set.add(x.rebuild(true, true, true));
+			}
+			o.setFilters(set);
+		}
 	}
 
 	public String getName() {
@@ -117,6 +141,22 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 
 	public void setResultPerPage(Integer resultPerPage) {
 		this.resultPerPage = resultPerPage;
+	}
+
+	public List<ProductSearchFilterPubEntity> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(List<ProductSearchFilterPubEntity> filters) {
+		this.filters = filters;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 	
 }

@@ -1,12 +1,13 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class ProductSearchAttributeFilter {
 
 	private ProductMetadataAttribute productMetadataAttribute;
 	
-	private Object value;
+	private Set<Object> value;
 
 	public ProductMetadataAttribute getProductMetadataAttribute() {
 		return productMetadataAttribute;
@@ -16,11 +17,11 @@ public class ProductSearchAttributeFilter {
 		this.productMetadataAttribute = productMetadataAttribute;
 	}
 
-	public Object getValue() {
+	public Set<Object> getValue() {
 		return value;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(Set<Object> value) {
 		this.value = value;
 	}
 

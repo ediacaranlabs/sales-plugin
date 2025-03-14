@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -10,7 +11,6 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchAttributeFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
@@ -32,6 +32,9 @@ public class ProductSearchFilterPubEntity extends AbstractPubEntity<ProductSearc
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductSearchAttributeFilterPubEntity> filters;
+	
+	@Transient
+	private Locale locale;
 	
 	@Override
 	protected void preRebuild(ProductSearchFilter instance, boolean reload, boolean override, boolean validate) {
@@ -79,10 +82,43 @@ public class ProductSearchFilterPubEntity extends AbstractPubEntity<ProductSearc
 		if(this.filters != null) {
 			Set<ProductSearchAttributeFilter> attributeFilters = new HashSet<>();
 			for(ProductSearchAttributeFilterPubEntity x: this.filters) {
+				x.setLocale(locale);
 				attributeFilters.add(x.rebuild(true,true,true));
 			}
 		}
 		
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getProtectedID() {
+		return protectedID;
+	}
+
+	public void setProtectedID(String protectedID) {
+		this.protectedID = protectedID;
+	}
+
+	public List<ProductSearchAttributeFilterPubEntity> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(List<ProductSearchAttributeFilterPubEntity> filters) {
+		this.filters = filters;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 	
 }
