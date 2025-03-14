@@ -4,28 +4,16 @@ import java.util.Objects;
 
 public class ProductSearchAttributeFilter {
 
-	private int productMetadata;
-	
-	private int productAttribute;
-	
-	private ProductAttributeValueType type;
+	private ProductMetadataAttribute productMetadataAttribute;
 	
 	private Object value;
 
-	public int getProductMetadata() {
-		return productMetadata;
+	public ProductMetadataAttribute getProductMetadataAttribute() {
+		return productMetadataAttribute;
 	}
 
-	public void setProductMetadata(int productMetadata) {
-		this.productMetadata = productMetadata;
-	}
-
-	public int getProductAttribute() {
-		return productAttribute;
-	}
-
-	public void setProductAttribute(int productAttribute) {
-		this.productAttribute = productAttribute;
+	public void setProductMetadataAttribute(ProductMetadataAttribute productMetadataAttribute) {
+		this.productMetadataAttribute = productMetadataAttribute;
 	}
 
 	public Object getValue() {
@@ -36,17 +24,9 @@ public class ProductSearchAttributeFilter {
 		this.value = value;
 	}
 
-	public ProductAttributeValueType getType() {
-		return type;
-	}
-
-	public void setType(ProductAttributeValueType type) {
-		this.type = type;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(productAttribute, productMetadata);
+		return Objects.hash(productMetadataAttribute, value);
 	}
 
 	@Override
@@ -58,7 +38,8 @@ public class ProductSearchAttributeFilter {
 		if (getClass() != obj.getClass())
 			return false;
 		ProductSearchAttributeFilter other = (ProductSearchAttributeFilter) obj;
-		return productAttribute == other.productAttribute && productMetadata == other.productMetadata;
+		return Objects.equals(productMetadataAttribute, other.productMetadataAttribute)
+				&& Objects.equals(value, other.value);
 	}
 	
 }

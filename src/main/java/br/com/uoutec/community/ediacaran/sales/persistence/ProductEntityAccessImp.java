@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,9 +23,11 @@ import javax.persistence.criteria.Root;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchAttributeFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityID;
@@ -130,8 +131,6 @@ public class ProductEntityAccessImp
 	public ProductEntitySearchResult searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException {
 		
 		try {
-			Map<Integer, Set<ProductSearchAttributeFilter>> groups = groupFilters(value.getFilters());
-			
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    List<Predicate> and = new ArrayList<Predicate>();
 		    CriteriaQuery<ProductAttributeValueIndexEntity> criteria = builder.createQuery(ProductAttributeValueIndexEntity.class);
@@ -140,8 +139,8 @@ public class ProductEntityAccessImp
 
 		    addGenericfilter(value, and, builder, from);
 
-		    if(!groups.isEmpty()) {
-			    addFilters(groups, root, builder, and);
+		    if(value.getFilters() != null && !value.getFilters().isEmpty()) {
+			    addFilters(value.getFilters(), root, builder, and);
 		    }
 		    
 		    criteria.select(from);
@@ -304,57 +303,47 @@ public class ProductEntityAccessImp
 
 	}
 	
-	private void addFilters(Map<Integer, Set<ProductSearchAttributeFilter>> groups, 
+	private void addFilters(Set<ProductSearchFilter> productFilters, 
 			From<ProductAttributeValueIndexEntity, ProductAttributeValueIndexEntity> from, CriteriaBuilder builder, List<Predicate> and) {
 		
+		Set<ProductSearchAttributeFilter> filters = new HashSet<>();
+		productFilters.stream()
+			.map((e)->e.getAttributeFilters())
+			.forEach((e)->filters.addAll(e));
+		
 		In<Integer> productAttributeIn = builder.in(from.get("id.productMetadataAttributeID"));
-		for(Integer attributeID: groups.keySet()) {
-			productAttributeIn.value(attributeID);
+		
+		for(ProductSearchAttributeFilter attr: filters) {
+			productAttributeIn.value(attr.getProductMetadataAttribute().getId());
 		}
 		
 		and.add(productAttributeIn);
 		
-		List<Predicate> filtersProduct = new ArrayList<>();
+		List<Predicate> productFiltersAnd = new ArrayList<>();
 		
-	    for(Entry<Integer, Set<ProductSearchAttributeFilter>> filters: groups.entrySet()) {
-	    	
-			List<Predicate> filtersAnd = new ArrayList<>();
+		for(ProductSearchFilter filter: productFilters) {
 			
-	    	for(ProductSearchAttributeFilter f: filters.getValue()) {
+			List<Predicate> productAttributeFiltersAnd = new ArrayList<>();
+			
+    		productAttributeFiltersAnd.add(builder.equal(from.get("productMetadataID"), filter.getProductMetadata().getId()));
+    		
+			for(ProductSearchAttributeFilter attrFilter: filter.getAttributeFilters()) {
+
+				ProductMetadataAttribute productMetadataAttribute = attrFilter.getProductMetadataAttribute();
+	    		ProductAttributeValueEntityType entityType = ProductAttributeValueEntityType.valueOf(productMetadataAttribute.getName());
+
+	    		productAttributeFiltersAnd.add(builder.and(
+	    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
+	    				builder.equal(from.get("value"), entityType.toValue(attrFilter.getValue()))
+				));
 	    		
-	    		List<Predicate> localEnds = new ArrayList<>();
-	    		
-	    		localEnds.add(builder.equal(from.get("id.metadataAttributeID"), f.getProductMetadata()));
-	    		localEnds.add(builder.equal(from.get("id.metadataAttributeID"), f.getProductAttribute()));
-	    		
-	    		switch (f.getType()) {
-	    		case TEXT:
-	    			localEnds.add(builder.equal(from.get("value"), ProductAttributeValueEntityType.TEXT.toValue(f.getValue())));
-	    			break;
-	    		case INTEGER:
-	    			localEnds.add(builder.equal(from.get("number"), ProductAttributeValueEntityType.INTEGER.toValue(f.getValue())));
-	    			break;
-	    		case DECIMAL:
-	    			localEnds.add(builder.equal(from.get("number"), ProductAttributeValueEntityType.DECIMAL.toValue(f.getValue())));
-	    			break;
-	    		case DATE:
-	    			localEnds.add(builder.equal(from.get("number"), ProductAttributeValueEntityType.DATE.toValue(f.getValue())));
-	    			break;
-	    		case DATE_TIME:
-	    			localEnds.add(builder.equal(from.get("number"), ProductAttributeValueEntityType.DATE_TIME.toValue(f.getValue())));
-	    			break;
-	    		case TIME:
-	    			localEnds.add(builder.equal(from.get("number"), ProductAttributeValueEntityType.TIME.toValue(f.getValue())));
-	    			break;
-	    		}		
-	    		
-	    		filtersAnd.add(builder.and(localEnds.stream().toArray(Predicate[]::new)));
-	    	}
-	    	
-	    	filtersProduct.add(builder.and(filtersAnd.stream().toArray(Predicate[]::new)));
-	    }
+			}
+			
+			productFiltersAnd.add(builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new)));
+			
+		}
 		
-	    and.add(builder.or(filtersProduct.stream().toArray(Predicate[]::new)));
+		and.add(builder.and(productFiltersAnd.stream().toArray(Predicate[]::new)));
 	    
 	}
 	
@@ -389,16 +378,6 @@ public class ProductEntityAccessImp
 	    }
 		
 	}
-	
-	private Map<Integer, Set<ProductSearchAttributeFilter>> groupFilters(Set<ProductSearchAttributeFilter> filters){
-		
-		Map<Integer, Set<ProductSearchAttributeFilter>> filtersGroup = 
-				filters.stream()
-				.collect(Collectors.groupingBy(ProductSearchAttributeFilter::getProductMetadata, Collectors.toSet()));
-		
-		return filtersGroup;
-	}
-	
 	
 	@Override
 	protected ProductEntity toPersistenceEntity(Product entity)

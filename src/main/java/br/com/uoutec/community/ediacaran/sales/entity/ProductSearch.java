@@ -13,7 +13,7 @@ public class ProductSearch {
 
 	private BigDecimal maxCost;
 
-	private Set<ProductSearchAttributeFilter> filters;
+	private Set<ProductSearchFilter> filters;
 	
 	private String productType;
 	
@@ -21,11 +21,11 @@ public class ProductSearch {
 	
 	private Integer resultPerPage;
 	
-	public Set<ProductSearchAttributeFilter> getFilters() {
+	public Set<ProductSearchFilter> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(Set<ProductSearchAttributeFilter> filters) {
+	public void setFilters(Set<ProductSearchFilter> filters) {
 		this.filters = filters;
 	}
 
