@@ -6,8 +6,8 @@ import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeSearchResultFilter;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeSearchResultOptionFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultOptionFilter;
 
 public class ProductMetadataAttributeSearchResultEntityFilter {
 
@@ -32,14 +32,14 @@ public class ProductMetadataAttributeSearchResultEntityFilter {
 	}
 
 
-	public ProductMetadataAttributeSearchResultFilter toEntity() {
-		ProductMetadataAttributeSearchResultFilter e = new ProductMetadataAttributeSearchResultFilter();
+	public ProductAttributeSearchResultFilter toEntity() {
+		ProductAttributeSearchResultFilter e = new ProductAttributeSearchResultFilter();
 		e.setMultiselect(productMetadataAttribute.getType() == ProductAttributeType.MULTISELECT || productMetadataAttribute.getType() == ProductAttributeType.MULTISELECT_LIST);
 		e.setProductMetadataAttribute(productMetadataAttribute.getId());
 		e.setTitle(productMetadataAttribute.getName());
 		
 		if(productMetadataAttribute.getOptions() != null) {
-			List<ProductMetadataAttributeSearchResultOptionFilter> list = new ArrayList<>();
+			List<ProductAttributeSearchResultOptionFilter> list = new ArrayList<>();
 			for(ProductMetadataAttributeSearchResultOptionEntityFilter o: options.values()) {
 				list.add(o.toEntity());
 			}

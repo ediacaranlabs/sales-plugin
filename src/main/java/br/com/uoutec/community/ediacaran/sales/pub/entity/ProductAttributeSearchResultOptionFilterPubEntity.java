@@ -8,13 +8,13 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeSearchResultOptionFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultOptionFilter;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 import br.com.uoutec.pub.entity.IdValidation;
 
-public class ProductMetadataAttributeSearchResultOptionFilterPubEntity 
-	extends AbstractPubEntity<ProductMetadataAttributeSearchResultOptionFilter>{
+public class ProductAttributeSearchResultOptionFilterPubEntity 
+	extends AbstractPubEntity<ProductAttributeSearchResultOptionFilter>{
 
 	private static final long serialVersionUID = 156435810866580706L;
 
@@ -31,10 +31,10 @@ public class ProductMetadataAttributeSearchResultOptionFilterPubEntity
 	private ProductAttributeValueType type;
 	
 	@Constructor
-	public ProductMetadataAttributeSearchResultOptionFilterPubEntity() {
+	public ProductAttributeSearchResultOptionFilterPubEntity() {
 	}
 	
-	public ProductMetadataAttributeSearchResultOptionFilterPubEntity(ProductMetadataAttributeSearchResultOptionFilter e, Locale locale) {
+	public ProductAttributeSearchResultOptionFilterPubEntity(ProductAttributeSearchResultOptionFilter e, Locale locale) {
 		this.description = e.getDescription();
 		this.id = e.getOptionId() <= 0? null : e.getOptionId();
 		this.protectedID = SecretUtil.toProtectedID(String.valueOf(e.getOptionId()));
@@ -43,7 +43,7 @@ public class ProductMetadataAttributeSearchResultOptionFilterPubEntity
 	}
 
 	@Override
-	protected void preRebuild(ProductMetadataAttributeSearchResultOptionFilter instance, boolean reload, boolean override, boolean validate) {
+	protected void preRebuild(ProductAttributeSearchResultOptionFilter instance, boolean reload, boolean override, boolean validate) {
 		try {
 			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
 		}
@@ -53,17 +53,17 @@ public class ProductMetadataAttributeSearchResultOptionFilterPubEntity
 	}
 	
 	@Override
-	protected boolean isEqualId(ProductMetadataAttributeSearchResultOptionFilter instance) throws Throwable {
+	protected boolean isEqualId(ProductAttributeSearchResultOptionFilter instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected boolean hasId(ProductMetadataAttributeSearchResultOptionFilter instance) throws Throwable {
+	protected boolean hasId(ProductAttributeSearchResultOptionFilter instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected ProductMetadataAttributeSearchResultOptionFilter reloadEntity() throws Throwable {
+	protected ProductAttributeSearchResultOptionFilter reloadEntity() throws Throwable {
 		return null;
 	}
 
@@ -73,16 +73,12 @@ public class ProductMetadataAttributeSearchResultOptionFilterPubEntity
 	}
 
 	@Override
-	protected ProductMetadataAttributeSearchResultOptionFilter createNewInstance() throws Throwable {
-		return new ProductMetadataAttributeSearchResultOptionFilter();
+	protected ProductAttributeSearchResultOptionFilter createNewInstance() throws Throwable {
+		throw new IllegalStateException();
 	}
 
 	@Override
-	protected void copyTo(ProductMetadataAttributeSearchResultOptionFilter o, boolean reload, boolean override, boolean validate) throws Throwable {
-		o.setDescription(this.description);
-		o.setOptionId(this.id == null? 0 : this.id.intValue());
-		o.setType(this.type);
-		o.setValue(this.value);
+	protected void copyTo(ProductAttributeSearchResultOptionFilter o, boolean reload, boolean override, boolean validate) throws Throwable {
 	}
 
 	public String getProtectedID() {

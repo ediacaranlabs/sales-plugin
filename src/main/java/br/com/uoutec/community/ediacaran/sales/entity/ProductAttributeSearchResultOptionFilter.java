@@ -1,6 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
-public class ProductMetadataAttributeSearchResultOptionFilter {
+public class ProductAttributeSearchResultOptionFilter {
 
 	private int optionId;
 	

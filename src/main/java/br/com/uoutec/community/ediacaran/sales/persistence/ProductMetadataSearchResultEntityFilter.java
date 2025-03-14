@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeSearchResultFilter;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResultFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResultFilter;
 
 public class ProductMetadataSearchResultEntityFilter {
 
@@ -30,14 +30,14 @@ public class ProductMetadataSearchResultEntityFilter {
 		this.filters = filters;
 	}
 
-	public ProductMetadataSearchResultFilter toEntity() {
+	public ProductSearchResultFilter toEntity() {
 		
-		ProductMetadataSearchResultFilter e = new ProductMetadataSearchResultFilter();
+		ProductSearchResultFilter e = new ProductSearchResultFilter();
 		e.setProductMetadata(productMetadata.getId());
 		e.setTitle(productMetadata.getName());
 		
 		if(filters != null) {
-			List<ProductMetadataAttributeSearchResultFilter> filters = new ArrayList<>();
+			List<ProductAttributeSearchResultFilter> filters = new ArrayList<>();
 			for(ProductMetadataAttributeSearchResultEntityFilter f: this.filters.values()) {
 				filters.add(f.toEntity());
 			}

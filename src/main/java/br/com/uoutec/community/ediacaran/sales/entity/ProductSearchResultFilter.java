@@ -2,13 +2,13 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.List;
 
-public class ProductMetadataSearchResultFilter {
+public class ProductSearchResultFilter {
 
 	private String title;
 	
 	private int productMetadata;
 	
-	private List<ProductMetadataAttributeSearchResultFilter> filters;
+	private List<ProductAttributeSearchResultFilter> filters;
 
 	public String getTitle() {
 		return title;
@@ -26,11 +26,11 @@ public class ProductMetadataSearchResultFilter {
 		this.productMetadata = productMetadata;
 	}
 
-	public List<ProductMetadataAttributeSearchResultFilter> getFilters() {
+	public List<ProductAttributeSearchResultFilter> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(List<ProductMetadataAttributeSearchResultFilter> filters) {
+	public void setFilters(List<ProductAttributeSearchResultFilter> filters) {
 		this.filters = filters;
 	}
 	

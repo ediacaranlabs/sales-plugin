@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeSearchResultOptionFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultOptionFilter;
 
 public class ProductMetadataAttributeSearchResultOptionEntityFilter {
 
@@ -15,8 +15,8 @@ public class ProductMetadataAttributeSearchResultOptionEntityFilter {
 		this.option = option;
 	}
 
-	public ProductMetadataAttributeSearchResultOptionFilter toEntity() {
-		ProductMetadataAttributeSearchResultOptionFilter e = new ProductMetadataAttributeSearchResultOptionFilter();
+	public ProductAttributeSearchResultOptionFilter toEntity() {
+		ProductAttributeSearchResultOptionFilter e = new ProductAttributeSearchResultOptionFilter();
 		e.setDescription(option.getDescription());
 		e.setOptionId(option.getId());
 		e.setValue(option.getValue());

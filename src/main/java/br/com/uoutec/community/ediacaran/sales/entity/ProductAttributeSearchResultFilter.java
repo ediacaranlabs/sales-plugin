@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.List;
 
-public class ProductMetadataAttributeSearchResultFilter {
+public class ProductAttributeSearchResultFilter {
 
 	private String title;
 	
@@ -10,7 +10,7 @@ public class ProductMetadataAttributeSearchResultFilter {
 	
 	private boolean multiselect;
 	
-	private List<ProductMetadataAttributeSearchResultOptionFilter> options;
+	private List<ProductAttributeSearchResultOptionFilter> options;
 
 	public String getTitle() {
 		return title;
@@ -36,11 +36,11 @@ public class ProductMetadataAttributeSearchResultFilter {
 		this.multiselect = multiselect;
 	}
 
-	public List<ProductMetadataAttributeSearchResultOptionFilter> getOptions() {
+	public List<ProductAttributeSearchResultOptionFilter> getOptions() {
 		return options;
 	}
 
-	public void setOptions(List<ProductMetadataAttributeSearchResultOptionFilter> options) {
+	public void setOptions(List<ProductAttributeSearchResultOptionFilter> options) {
 		this.options = options;
 	}
 

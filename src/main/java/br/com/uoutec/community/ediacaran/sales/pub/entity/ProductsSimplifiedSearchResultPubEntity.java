@@ -9,7 +9,7 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResultFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResultFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -28,7 +28,7 @@ public class ProductsSimplifiedSearchResultPubEntity
 	private List<ProductSimplifiedSearchResultPubEntity> itens;
 
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ProductMetadataSearchResultFilterPubEntity> filters;
+	private List<ProductSearchResultFilterPubEntity> filters;
 	
 	@Constructor
 	public ProductsSimplifiedSearchResultPubEntity() {
@@ -48,8 +48,8 @@ public class ProductsSimplifiedSearchResultPubEntity
 		
 		if(e.getFilters() != null) {
 			this.filters = new ArrayList<>();
-			for(ProductMetadataSearchResultFilter x: e.getFilters()) {
-				this.filters.add(new ProductMetadataSearchResultFilterPubEntity(x, locale));
+			for(ProductSearchResultFilter x: e.getFilters()) {
+				this.filters.add(new ProductSearchResultFilterPubEntity(x, locale));
 			}
 		}
 	}

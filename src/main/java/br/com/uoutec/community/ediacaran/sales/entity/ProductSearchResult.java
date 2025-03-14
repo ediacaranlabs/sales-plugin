@@ -13,14 +13,14 @@ public class ProductSearchResult implements Serializable{
 	
 	private int page;
 	
-	private List<ProductMetadataSearchResultFilter> filters;
+	private List<ProductSearchResultFilter> filters;
 	
 	private List<Product> itens;
 
 	public ProductSearchResult() {
 	}
 	
-	public ProductSearchResult(boolean hasNextPage, int maxPages, int page, List<Product> itens, List<ProductMetadataSearchResultFilter> filters) {
+	public ProductSearchResult(boolean hasNextPage, int maxPages, int page, List<Product> itens, List<ProductSearchResultFilter> filters) {
 		this.hasNextPage = hasNextPage;
 		this.maxPages = maxPages;
 		this.page = page;
@@ -28,11 +28,11 @@ public class ProductSearchResult implements Serializable{
 		this.filters = filters;
 	}
 
-	public List<ProductMetadataSearchResultFilter> getFilters() {
+	public List<ProductSearchResultFilter> getFilters() {
 		return filters;
 	}
 
-	public void setFilters(List<ProductMetadataSearchResultFilter> filters) {
+	public void setFilters(List<ProductSearchResultFilter> filters) {
 		this.filters = filters;
 	}
 

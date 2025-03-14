@@ -328,28 +328,75 @@ public class ProductEntityAccessImp
 				ProductMetadataAttribute productMetadataAttribute = attrFilter.getProductMetadataAttribute();
 	    		ProductAttributeValueEntityType entityType = ProductAttributeValueEntityType.valueOf(productMetadataAttribute.getName());
 
-	    		productAttributeFiltersAnd.add(builder.and(
-	    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
-	    				builder.equal(from.get("value"), entityType.toValue(attrFilter.getValue()))
-				));
+	    		Set<Object> vals = attrFilter.getValue();
+	    		
+	    		if(vals.size() == 1) {
+	    			
+	    			if(entityType == ProductAttributeValueEntityType.TEXT) {
+			    		productAttributeFiltersAnd.add(
+			    				builder.and(
+				    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
+				    				builder.equal(from.get("value"), entityType.toValue(vals.iterator().next()))
+	    						)
+	    				);
+	    			}
+	    			else {
+			    		productAttributeFiltersAnd.add(
+			    				builder.and(
+				    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
+				    				builder.equal(from.get("number"), entityType.toValue(vals.iterator().next()))
+	    						)
+			    		);
+	    			}
+	    			
+	    		}
+	    		else
+	    		if(vals.size() > 1){
+	    			
+	    			In<Object> optionsIn;
+	    			
+	    			if(entityType == ProductAttributeValueEntityType.TEXT) {
+		    			optionsIn = builder.in(from.get("value"));
+	    			}
+	    			else {
+		    			optionsIn = builder.in(from.get("number"));
+	    			}
+	    			
+	    			for(Object v: vals) {
+	    				optionsIn.value(entityType.toValue(v));
+	    				
+	    			}
+
+		    		productAttributeFiltersAnd.add(
+		    				builder.and(
+			    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
+			    				optionsIn
+    						)
+    				);
+	    			
+	    		}
 	    		
 			}
 			
-			productFiltersOr.add(
-					builder.and(
-							builder.equal(from.get("productMetadataID"), filter.getProductMetadata().getId()),
-							builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new))
-					)
-			);
+			if(!productAttributeFiltersAnd.isEmpty()) {
+				productFiltersOr.add(
+						builder.and(
+								builder.equal(from.get("productMetadataID"), filter.getProductMetadata().getId()),
+								builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new))
+						)
+				);
+			}
 			
 		}
 		
-		and.add(
-			builder.and(
-				productAttributeIn, 
-				builder.or(productFiltersOr.stream().toArray(Predicate[]::new))
-			)
-		);
+		if(!productFiltersOr.isEmpty()) {
+			and.add(
+				builder.and(
+					productAttributeIn, 
+					builder.or(productFiltersOr.stream().toArray(Predicate[]::new))
+				)
+			);
+		}
 	    
 	}
 	
