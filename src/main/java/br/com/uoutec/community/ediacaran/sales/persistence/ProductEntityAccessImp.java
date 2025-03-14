@@ -317,16 +317,12 @@ public class ProductEntityAccessImp
 			productAttributeIn.value(attr.getProductMetadataAttribute().getId());
 		}
 		
-		and.add(productAttributeIn);
-		
-		List<Predicate> productFiltersAnd = new ArrayList<>();
+		List<Predicate> productFiltersOr = new ArrayList<>();
 		
 		for(ProductSearchFilter filter: productFilters) {
 			
 			List<Predicate> productAttributeFiltersAnd = new ArrayList<>();
 			
-    		productAttributeFiltersAnd.add(builder.equal(from.get("productMetadataID"), filter.getProductMetadata().getId()));
-    		
 			for(ProductSearchAttributeFilter attrFilter: filter.getAttributeFilters()) {
 
 				ProductMetadataAttribute productMetadataAttribute = attrFilter.getProductMetadataAttribute();
@@ -339,11 +335,21 @@ public class ProductEntityAccessImp
 	    		
 			}
 			
-			productFiltersAnd.add(builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new)));
+			productFiltersOr.add(
+					builder.and(
+							builder.equal(from.get("productMetadataID"), filter.getProductMetadata().getId()),
+							builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new))
+					)
+			);
 			
 		}
 		
-		and.add(builder.and(productFiltersAnd.stream().toArray(Predicate[]::new)));
+		and.add(
+			builder.and(
+				productAttributeIn, 
+				builder.or(productFiltersOr.stream().toArray(Predicate[]::new))
+			)
+		);
 	    
 	}
 	
