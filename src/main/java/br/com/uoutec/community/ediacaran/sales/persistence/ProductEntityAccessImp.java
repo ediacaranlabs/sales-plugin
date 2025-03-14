@@ -18,6 +18,7 @@ import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -54,12 +55,14 @@ public class ProductEntityAccessImp
 	
 	public void save(Product value) throws EntityAccessException {
 		try{
-			ProductIndexEntity pEntity = new ProductIndexEntity(value);
+			ProductEntity pEntity = new ProductEntity(value);
 			entityManager.persist(pEntity);
 			entityManager.flush();
 			
 			if(pEntity.getAttributes() != null) {
-				for(ProductAttributeValueIndexEntity e: pEntity.getAttributes()) {
+				for(ProductAttributeValueEntity e: pEntity.getAttributes()) {
+					e.getId().setProductID(pEntity.getId());
+					e.setProduct(pEntity);
 					entityManager.persist(e);
 				}
 			}
@@ -127,7 +130,8 @@ public class ProductEntityAccessImp
     	catch(Throwable e){
     		throw new EntityAccessException(e);
     	}
-	}	
+	}
+	
 	public ProductEntitySearchResult searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException {
 		
 		try {
@@ -135,7 +139,7 @@ public class ProductEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 		    CriteriaQuery<ProductAttributeValueIndexEntity> criteria = builder.createQuery(ProductAttributeValueIndexEntity.class);
 		    Root<ProductAttributeValueIndexEntity> root = criteria.from(ProductAttributeValueIndexEntity.class);
-		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> from = root.join("productIndex");	
+		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> from = root.join("productIndex", JoinType.LEFT);	
 
 		    addGenericfilter(value, and, builder, from);
 

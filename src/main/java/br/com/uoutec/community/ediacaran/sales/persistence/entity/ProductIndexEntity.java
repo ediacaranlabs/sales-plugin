@@ -2,7 +2,9 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
@@ -70,6 +73,20 @@ public class ProductIndexEntity implements Serializable,PublicType{
 			this.tags = this.tags.length() > 255? this.tags.substring(0, 253) : this.tags;
 		}
 		
+		if(e.getAttributes() != null) {
+			this.attributes = new ArrayList<>();
+			for(ProductAttributeValue x: e.getAttributes().values()) {
+				
+				Set<Object> values = x.getSetValues();
+				
+				if(values != null) {
+					for(Object v: values) {
+						this.attributes.add(new ProductAttributeValueIndexEntity(v, x, e));
+					}
+				}
+				
+			}
+		}
 	}
 
 	public Integer getId() {

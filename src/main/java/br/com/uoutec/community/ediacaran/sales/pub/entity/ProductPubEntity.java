@@ -90,6 +90,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	
 	private Map<String, String> attributes;
 	
+	@Transient
 	@NotNull(groups=DataValidation.class)
 	private Locale locale;
 	

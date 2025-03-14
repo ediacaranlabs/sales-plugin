@@ -94,7 +94,7 @@ public class ProductRegistryUtil {
 	}
 
 	public static void save(Product product, ProductEntityAccess entityAccess) throws EntityAccessException {
-		entityAccess.save(product);	
+		entityAccess.save(product);
 	}
 
 	public static void update(Product product, ProductEntityAccess entityAccess) throws EntityAccessException {

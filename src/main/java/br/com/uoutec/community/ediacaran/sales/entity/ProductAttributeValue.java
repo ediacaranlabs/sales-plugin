@@ -50,13 +50,17 @@ public class ProductAttributeValue {
 	}
 
 	public Object getValue() {
-		return values.isEmpty()? null : values.iterator().next();
+		return values == null || values.isEmpty()? null : values.iterator().next();
 	}
 
 	public Object[] getValues() {
-		return values.stream().toArray(Object[]::new);
+		return values == null? null : values.stream().toArray(Object[]::new);
 	}
 
+	public Set<Object> getSetValues() {
+		return values == null? null : values.stream().collect(Collectors.toSet());
+	}
+	
 	public void addValue(Object value) {
 		this.values.add(value);
 	}
