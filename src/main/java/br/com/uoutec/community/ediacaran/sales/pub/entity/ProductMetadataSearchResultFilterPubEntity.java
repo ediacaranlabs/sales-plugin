@@ -2,28 +2,62 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import javax.validation.constraints.NotNull;
 
 import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeSearchResultFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResultFilter;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
+import br.com.uoutec.pub.entity.IdValidation;
 
 public class ProductMetadataSearchResultFilterPubEntity extends AbstractPubEntity<ProductMetadataSearchResultFilter> {
 
 	private static final long serialVersionUID = -6012143443265870176L;
 
 	@Transient
-	private Integer productMetadata;
+	private Integer id;
 
+	@NotNull(groups = IdValidation.class)
 	private String protectedID;
 	
 	private String title;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductMetadataAttributeSearchResultFilterPubEntity> filters;
+
+	@Constructor
+	public ProductMetadataSearchResultFilterPubEntity() {
+	}
+	
+	public ProductMetadataSearchResultFilterPubEntity(ProductMetadataSearchResultFilter e, Locale locale) {
+		this.id = e.getProductMetadata();
+		this.protectedID = SecretUtil.toProtectedID(String.valueOf(e.getProductMetadata()));
+		this.title = e.getTitle();
+		
+		if(e.getFilters() != null) {
+			this.filters = new ArrayList<>();
+			for(ProductMetadataAttributeSearchResultFilter x: e.getFilters()) {
+				this.filters.add(new ProductMetadataAttributeSearchResultFilterPubEntity(x, locale));
+			}
+		}
+	}
+	
+	@Override
+	protected void preRebuild(ProductMetadataSearchResultFilter instance, boolean reload, boolean override, boolean validate) {
+		try {
+			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
+		}
+		catch(Throwable ex){
+			this.id = 0;
+		}
+	}
 	
 	@Override
 	protected boolean isEqualId(ProductMetadataSearchResultFilter instance) throws Throwable {
@@ -52,7 +86,7 @@ public class ProductMetadataSearchResultFilterPubEntity extends AbstractPubEntit
 
 	@Override
 	protected void copyTo(ProductMetadataSearchResultFilter o, boolean reload, boolean override, boolean validate) throws Throwable {
-		o.setProductMetadata(this.productMetadata);
+		o.setProductMetadata(this.id);
 		o.setTitle(this.title);
 		
 		if(this.filters != null) {
@@ -64,12 +98,12 @@ public class ProductMetadataSearchResultFilterPubEntity extends AbstractPubEntit
 		}
 	}
 
-	public Integer getProductMetadata() {
-		return productMetadata;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setProductMetadata(Integer productMetadata) {
-		this.productMetadata = productMetadata;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getProtectedID() {

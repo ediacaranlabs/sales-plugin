@@ -9,10 +9,12 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResultFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class ProductsSimplifiedSearchResultPubEntity extends AbstractPubEntity<ProductSearchResult> {
+public class ProductsSimplifiedSearchResultPubEntity 
+	extends AbstractPubEntity<ProductSearchResult> {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
@@ -25,6 +27,9 @@ public class ProductsSimplifiedSearchResultPubEntity extends AbstractPubEntity<P
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductSimplifiedSearchResultPubEntity> itens;
 
+	@Basic(mappingType = MappingTypes.OBJECT)
+	private List<ProductMetadataSearchResultFilterPubEntity> filters;
+	
 	@Constructor
 	public ProductsSimplifiedSearchResultPubEntity() {
 	}
@@ -33,10 +38,18 @@ public class ProductsSimplifiedSearchResultPubEntity extends AbstractPubEntity<P
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.isHasNextPage();
-		this.itens = new ArrayList<>();
+		
 		if(e.getItens() != null) {
+			this.itens = new ArrayList<>();
 			for(Product p: e.getItens()) {
 				itens.add(new ProductSimplifiedSearchResultPubEntity(p, locale));
+			}
+		}
+		
+		if(e.getFilters() != null) {
+			this.filters = new ArrayList<>();
+			for(ProductMetadataSearchResultFilter x: e.getFilters()) {
+				this.filters.add(new ProductMetadataSearchResultFilterPubEntity(x, locale));
 			}
 		}
 	}
