@@ -18,7 +18,6 @@ import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -139,7 +138,7 @@ public class ProductEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 		    CriteriaQuery<ProductAttributeValueIndexEntity> criteria = builder.createQuery(ProductAttributeValueIndexEntity.class);
 		    Root<ProductAttributeValueIndexEntity> root = criteria.from(ProductAttributeValueIndexEntity.class);
-		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> from = root.join("productIndex", JoinType.LEFT);	
+		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> from = root.join("productIndex");	
 
 		    addGenericfilter(value, and, builder, from);
 

@@ -83,6 +83,9 @@ public class ProductMetadataAttribute {
 	}
 
 	public void setId(int id) {
+		if(this.id != 0) {
+			throw new IllegalStateException("id");
+		}
 		this.id = id;
 	}
 
