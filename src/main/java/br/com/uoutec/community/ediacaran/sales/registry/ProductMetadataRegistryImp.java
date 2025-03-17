@@ -185,7 +185,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		
 		try {
 			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
-			Integer id = pluginType.getConfiguration().getInt("defaultProductMetadata");
+			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
 			if(id != null) {
 				defaultProductMetadata = entityAccess.findById(id);
 			}
