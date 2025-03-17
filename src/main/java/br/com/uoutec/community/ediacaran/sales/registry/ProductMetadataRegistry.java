@@ -19,6 +19,8 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	void removeProductMetadata(ProductMetadata entity) throws ProductRegistryException;
 	
 	ProductMetadata findProductMetadataById(int id) throws ProductRegistryException;
+
+	ProductMetadata getDefaultProductMetadata() throws ProductRegistryException;
 	
 	ProductMetadataSearchResult search(ProductMetadataSearch value)	throws ProductRegistryException;
 
@@ -35,8 +37,6 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	void removeDefaultProductMetadataAttribute(String code) throws ProductRegistryException;
 	
 	List<ProductMetadataAttribute> getProductMetadataAttributes(ProductMetadata parent)	throws ProductRegistryException;
-	
-	List<ProductMetadataAttribute> getDefaultProductMetadataAttributes() throws ProductRegistryException;
 	
 	/* options */
 	

@@ -230,6 +230,7 @@ public class Product implements Serializable {
 	
 	private transient volatile ProductMetadata productMetadata;
 	
+	private transient volatile ProductMetadata defaultProductMetadata;
 
 	public Object getAttribute(String code) {
 		return this.attributes.get(code);
@@ -247,6 +248,10 @@ public class Product implements Serializable {
 		
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
+		
+		if(attr == null && defaultProductMetadata != null) {
+			attr = defaultProductMetadata.getAttributes().get(code);
+		}
 		
 		setAttribute(code, attr.getValueType().parse(value, locale), attr);
 	}
@@ -269,7 +274,7 @@ public class Product implements Serializable {
 		
 		ProductAttributeValue v = this.attributes.get(code);
 		if(v == null) {
-			v = new ProductAttributeValue(id, code, attr.getValueType(), new HashSet<>());
+			v = new ProductAttributeValue(id, code, attr.getProductMetadata(), attr.getValueType(), new HashSet<>());
 			this.attributes.put(code, v);
 		}
 		v.addValue(value);
@@ -285,6 +290,7 @@ public class Product implements Serializable {
 				if(this.productMetadata == null) {
 					ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 					this.productMetadata = productMetadataRegistry.findProductMetadataById(this.metadata);
+					this.defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 				}
 			}
 			

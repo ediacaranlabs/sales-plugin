@@ -10,16 +10,19 @@ public class ProductAttributeValue {
 	private ProductAttributeValueType type;
 	
 	private int productAttributeId;
-	
+
 	private String productAttributeCode;
+	
+	private int productMetadataId;
 	
 	private Set<Object> values;
 
 	public ProductAttributeValue() {
 	}
 
-	public ProductAttributeValue(int productAttributeId, String productAttributeCode, ProductAttributeValueType type, Set<Object> values) {
+	public ProductAttributeValue(int productAttributeId, String productAttributeCode, int productMetadataId, ProductAttributeValueType type, Set<Object> values) {
 		this.productAttributeId = productAttributeId;
+		this.productMetadataId = productMetadataId;
 		this.productAttributeCode = productAttributeCode;
 		this.type = type;
 		this.values = values;
@@ -47,6 +50,14 @@ public class ProductAttributeValue {
 
 	public ProductAttributeValueType getType() {
 		return type;
+	}
+
+	public int getProductMetadataId() {
+		return productMetadataId;
+	}
+
+	public void setProductMetadataId(int productMetadataId) {
+		this.productMetadataId = productMetadataId;
 	}
 
 	public Object getValue() {

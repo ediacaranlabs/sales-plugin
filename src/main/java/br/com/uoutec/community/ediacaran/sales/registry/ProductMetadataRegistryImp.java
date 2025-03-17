@@ -1,16 +1,14 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
+import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
@@ -23,11 +21,17 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttrib
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataAttributeRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataRegistryUtil;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
+import br.com.uoutec.ediacaran.core.plugins.PluginType;
 
 @Singleton
 public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 
-	private  Map<String, ProductMetadataAttribute> attributes;
+	private ProductMetadata defaultProductMetadata;
+	
+	private volatile boolean loadedDefaultProductMetadata;
+	
+	private volatile long nextLoadedDefaultProductMetadata = -1;
 	
 	@Inject
 	private ProductMetadataEntityAccess entityAccess;
@@ -39,7 +43,8 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	private ProductMetadataAttributeOptionEntityAccess productMetadataAttributeOptionEntityAccess;
 	
 	public ProductMetadataRegistryImp() {
-		this.attributes = new HashMap<>();
+		this.defaultProductMetadata = null;
+		this.loadedDefaultProductMetadata = false;
 	}
 	
 	@Override
@@ -128,6 +133,8 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRegisterPermission());
 		
+		ProductMetadata defaultProductMetadata = getDefaultProductMetadata();
+		
 		try {
 			for(ProductMetadataAttribute entity: attributes) {
 				if(entity.getProductMetadata() <= 0) {
@@ -139,7 +146,9 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 				ProductMetadataAttributeRegistryUtil.validate(entity, parent, metadataentityAccess);
 			}
 			
-			ProductMetadataAttributeRegistryUtil.checkDuplicationCode(getDefaultProductMetadataAttributes(), parent, metadataentityAccess);
+			if(defaultProductMetadata != null) {
+				ProductMetadataAttributeRegistryUtil.checkDuplicationCode(defaultProductMetadata.getAttributeList(), parent, metadataentityAccess);
+			}
 			
 			for(ProductMetadataAttribute entity: attributes) {
 				ProductMetadataAttributeRegistryUtil.saveOrUpdate(entity, metadataentityAccess);
@@ -156,36 +165,50 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 
 	@Override
+	public ProductMetadata getDefaultProductMetadata() throws ProductRegistryException{
+		
+		long currentTime = SystemProperties.currentTimeMillis();
+		if(currentTime > nextLoadedDefaultProductMetadata || !loadedDefaultProductMetadata) {
+			loadDefaultProductMetadata();
+		}
+		
+		return defaultProductMetadata;
+	}
+
+	public synchronized void loadDefaultProductMetadata() throws ProductRegistryException{
+		
+		long currentTime = SystemProperties.currentTimeMillis();
+		
+		if(currentTime > nextLoadedDefaultProductMetadata && loadedDefaultProductMetadata) {
+			return;
+		}
+		
+		try {
+			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
+			Integer id = pluginType.getConfiguration().getInt("defaultProductMetadata");
+			if(id != null) {
+				defaultProductMetadata = entityAccess.findById(id);
+			}
+			this.nextLoadedDefaultProductMetadata = currentTime + 10000; // TODO: update
+			this.loadedDefaultProductMetadata = true;
+		}
+		catch(Throwable ex) {
+			throw new ProductRegistryException(ex);
+		}
+		
+	}
+	
+	@Override
 	public void registerDefaultProductMetadataAttribute(ProductMetadataAttribute entity) throws ProductRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRegisterPermission());
 		
-		try {
-			ProductMetadataAttributeRegistryUtil.validate(entity, null, null);
-			
-			ProductMetadataAttribute e = new ProductMetadataAttribute();
-			e.setAllowEmpty(entity.isAllowEmpty());
-			e.setCode(entity.getCode());
-			e.setDescription(entity.getDescription());
-			e.setId(-1);
-			e.setMax(entity.getMax());
-			e.setMaxLength(entity.getMaxLength());
-			e.setMin(entity.getMin());
-			e.setMinLength(entity.getMinLength());
-			e.setName(entity.getName());
-			e.setOptions(Collections.unmodifiableList(entity.getOptions() == null? new ArrayList<>() : entity.getOptions()));
-			e.setOrder(entity.getOrder());
-			e.setProductMetadata(entity.getProductMetadata());
-			e.setRegex(entity.getRegex());
-			e.setRows(entity.getRows());
-			e.setType(entity.getType());
-			e.setValueType(entity.getValueType());
-			
-			attributes.put(entity.getCode(), e);
+		ProductMetadata defaultMetadata = getDefaultProductMetadata();
+		
+		if(defaultMetadata != null) {
+			registerProductMetadataAttributes(Arrays.asList(entity), defaultMetadata);
 		}
-		catch(Throwable e){
-			throw new ProductRegistryException(e);
-		}
+		
 	}
 	
 	@Override
@@ -213,8 +236,23 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	public void removeDefaultProductMetadataAttribute(String code) throws ProductRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getRemovePermission());
+
+		ProductMetadata defaultMetadata = getDefaultProductMetadata();
 		
-		attributes.remove(code);
+		if(defaultMetadata == null) {
+			return;
+		}
+		
+		ProductMetadataAttribute attr;
+		try {
+			attr = metadataentityAccess.findByCode(code, defaultMetadata);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+		
+		removeProductMetadataAttributes(Arrays.asList(attr), defaultMetadata);
+		
 	}
 	
 	@Override
@@ -232,15 +270,6 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		}
 	}
 
-	@Override
-	@ActivateRequestContext
-	public List<ProductMetadataAttribute> getDefaultProductMetadataAttributes()	throws ProductRegistryException {
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getListPermission());
-		
-		return new ArrayList<>(attributes.values());
-	}
-	
 	/* options */
 	
 	@Override
