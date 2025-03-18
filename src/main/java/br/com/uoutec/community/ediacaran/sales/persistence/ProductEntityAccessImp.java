@@ -138,15 +138,15 @@ public class ProductEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 		    CriteriaQuery<ProductAttributeValueIndexEntity> criteria = builder.createQuery(ProductAttributeValueIndexEntity.class);
 		    Root<ProductAttributeValueIndexEntity> root = criteria.from(ProductAttributeValueIndexEntity.class);
-		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> from = root.join("productIndex");	
+		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> productIndex = root.join("productIndex");	
 
-		    addGenericfilter(value, and, builder, from);
+		    addGenericfilter(value, and, builder, productIndex);
 
 		    if(value.getFilters() != null && !value.getFilters().isEmpty()) {
 			    addFilters(value.getFilters(), root, builder, and);
 		    }
 		    
-		    criteria.select(from);
+		    criteria.select(root);
 		    
 		    if(!and.isEmpty()) {
 			    criteria.where(
@@ -158,7 +158,7 @@ public class ProductEntityAccessImp
 		    
 	    	List<javax.persistence.criteria.Order> orderList = 
 	    			new ArrayList<javax.persistence.criteria.Order>();
-	    	orderList.add(builder.asc(from.get("name")));
+	    	orderList.add(builder.asc(productIndex.get("name")));
 	    	
 		    TypedQuery<ProductAttributeValueIndexEntity> typed = entityManager.createQuery(criteria);
 

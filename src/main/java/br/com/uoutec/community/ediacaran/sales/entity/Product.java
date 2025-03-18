@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -231,12 +230,6 @@ public class Product implements Serializable {
 		return name == null? null : ProductUtil.getPublicID(this);
 	}
 	
-	/* metadata */
-	
-	private transient volatile ProductMetadata productMetadata;
-	
-	private transient volatile ProductMetadata defaultProductMetadata;
-
 	public Object getAttribute(String code) {
 		return this.attributes.get(code);
 	}
@@ -246,8 +239,18 @@ public class Product implements Serializable {
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
 		
-		if(attr == null && defaultProductMetadata != null) {
-			attr = defaultProductMetadata.getAttributes().get(code);
+		if(attr == null) {
+			
+			productMetadata = getDefaultProductMetadata();
+			
+			if(productMetadata != null) {
+				attr = productMetadata.getAttributes().get(code);
+			}
+			
+		}
+		
+		if(attr == null) {
+			throw new IllegalStateException(code);
 		}
 		
 		setAttribute(code, attr.getValueType().parse(value, null), attr);
@@ -258,8 +261,18 @@ public class Product implements Serializable {
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
 		
-		if(attr == null && defaultProductMetadata != null) {
-			attr = defaultProductMetadata.getAttributes().get(code);
+		if(attr == null) {
+			
+			productMetadata = getDefaultProductMetadata();
+			
+			if(productMetadata != null) {
+				attr = productMetadata.getAttributes().get(code);
+			}
+			
+		}
+		
+		if(attr == null) {
+			throw new IllegalStateException(code);
 		}
 		
 		setAttribute(code, attr.getValueType().parse(value, locale), attr);
@@ -270,8 +283,18 @@ public class Product implements Serializable {
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
 		
-		if(attr == null && defaultProductMetadata != null) {
-			attr = defaultProductMetadata.getAttributes().get(code);
+		if(attr == null) {
+			
+			productMetadata = getDefaultProductMetadata();
+			
+			if(productMetadata != null) {
+				attr = productMetadata.getAttributes().get(code);
+			}
+			
+		}
+		
+		if(attr == null) {
+			throw new IllegalStateException(code);
 		}
 		
 		setAttribute(code, value, attr);
@@ -287,29 +310,44 @@ public class Product implements Serializable {
 		
 		ProductAttributeValue v = this.attributes.get(code);
 		if(v == null) {
-			v = new ProductAttributeValue(id, code, attr.getProductMetadata(), attr.getValueType(), new HashSet<>());
+			v = new ProductAttributeValue(attr);
 			this.attributes.put(code, v);
 		}
 		v.addValue(value);
 		
 	}
 	
+	private ProductMetadata getDefaultProductMetadata() throws ProductRegistryException {
+		
+		if(this.productMetadata == null) {
+			loadMetadata();			
+		}
+		
+		return this.defaultProductMetadata;
+	}
+	
 	private ProductMetadata getProductMetadata() throws ProductRegistryException {
 		
 		if(this.productMetadata == null) {
-			
-			synchronized(this) {
-				
-				if(this.productMetadata == null) {
-					ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
-					this.productMetadata = productMetadataRegistry.findProductMetadataById(this.metadata);
-					this.defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
-				}
-			}
-			
+			loadMetadata();			
 		}
 		
 		return this.productMetadata;
 	}
 	
+	/* metadata */
+	
+	private transient volatile ProductMetadata productMetadata;
+	
+	private transient volatile ProductMetadata defaultProductMetadata;
+	
+	private synchronized void loadMetadata() throws ProductRegistryException {
+		
+		if(this.productMetadata == null) {
+			ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
+			this.productMetadata = productMetadataRegistry.findProductMetadataById(this.metadata);
+			this.defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
+		}
+		
+	}
 }

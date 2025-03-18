@@ -71,8 +71,8 @@ public class ProductAttributeValueIndexEntity implements Serializable {
 		this.productIndex.setId(product.getId());
 		
 		this.productMetadata = new ProductMetadataEntity();
-		this.productMetadata.setId(product.getMetadata());
-		this.productMetadataID = product.getMetadata();
+		this.productMetadata.setId(e.getProductMetadataId());
+		this.productMetadataID = e.getProductMetadataId();
 		
 		this.attributeMetadata = new ProductMetadataAttributeEntity();
 		this.attributeMetadata.setId(e.getProductAttributeId());

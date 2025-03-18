@@ -44,8 +44,11 @@ public class ProductMetadataAttributeEntity implements Serializable{
 	@Column(name="cod_product_attr", length=32)
 	private String code;
 	
+	@Column(name = "cod_product_metadata")
+	private Integer productMetadataID;
+
 	@ManyToOne
-	@JoinColumn(name = "cod_product_metadata")
+	@JoinColumn(name = "cod_product_metadata", insertable = false, updatable = false)
 	private ProductMetadataEntity productMetadata;
 	
 	@Column(name="dsc_name", length=128)
@@ -109,12 +112,14 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		this.order = e.getOrder();
 		this.prefix = e.getPrefix();
 		this.suffix = e.getSuffix();
-		
+		this.productMetadataID = e.getProductMetadata();
+		/*
 		if(e.getProductMetadata() > 0) {
 			this.productMetadata = new ProductMetadataEntity();
 			this.productMetadata.setId(e.getProductMetadata());
 		}
-
+		*/
+		
 		this.regex = e.getRegex();
 		this.rows = e.getRows();
 		this.type = e.getType();
@@ -154,6 +159,7 @@ public class ProductMetadataAttributeEntity implements Serializable{
 
 	public void setProductMetadata(ProductMetadataEntity productMetadata) {
 		this.productMetadata = productMetadata;
+		this.productMetadataID = productMetadata.getId();
 	}
 
 	public String getName() {
@@ -162,6 +168,30 @@ public class ProductMetadataAttributeEntity implements Serializable{
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getProductMetadataID() {
+		return productMetadataID;
+	}
+
+	public void setProductMetadataID(Integer productMetadataID) {
+		this.productMetadataID = productMetadataID;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
 	}
 
 	public ProductAttributeType getType() {
@@ -285,6 +315,7 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		e.setValueType(this.valueType);
 		e.setPrefix(this.prefix);
 		e.setSuffix(this.suffix);
+		e.setProductMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
 		
 		if(this.productMetadata != null){
 			e.setProductMetadata(this.productMetadata.getId());

@@ -36,6 +36,9 @@ public class ProductAttributeValueEntity implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductIndexEntity productIndex;
+
+	@Column(name="cod_product_metadata", length=11)
+	private Integer productMetadataID;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_type", length=32)
@@ -53,7 +56,7 @@ public class ProductAttributeValueEntity implements Serializable {
 	public ProductAttributeValueEntity(Object value, ProductAttributeValue e, Product product){
 		this.id = new ProductAttributeValueEntityID(e.getType().toString(value, null), e.getProductAttributeId(), product.getId());
 		this.productAttributeCode = e.getProductAttributeCode();
-		
+		this.productMetadataID = e.getProductMetadataId();
 		//this.product = new ProductEntity();
 		//this.product.setId(product.getId());
 		
@@ -168,6 +171,7 @@ public class ProductAttributeValueEntity implements Serializable {
 		
 		e.setProductAttributeCode(this.productAttributeCode);
 		e.setProductAttributeId(id.getProductMetadataAttributeID());
+		e.setProductMetadataId(this.productMetadataID == null? null : this.productMetadataID.intValue());
 		
 		Object val = null;
 		ProductAttributeValueType t = null;

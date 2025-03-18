@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,12 +21,12 @@ public class ProductAttributeValue {
 	public ProductAttributeValue() {
 	}
 
-	public ProductAttributeValue(int productAttributeId, String productAttributeCode, int productMetadataId, ProductAttributeValueType type, Set<Object> values) {
-		this.productAttributeId = productAttributeId;
-		this.productMetadataId = productMetadataId;
-		this.productAttributeCode = productAttributeCode;
-		this.type = type;
-		this.values = values;
+	public ProductAttributeValue(ProductMetadataAttribute productMetadataAttribute) {
+		this.productAttributeId = productMetadataAttribute.getId();
+		this.productMetadataId = productMetadataAttribute.getProductMetadata();
+		this.productAttributeCode = productMetadataAttribute.getCode();
+		this.type = productMetadataAttribute.getValueType();
+		this.values = new HashSet<>();
 	}
 
 	public void setType(ProductAttributeValueType type) {
