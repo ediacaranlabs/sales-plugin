@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,12 +18,11 @@ import javax.persistence.Table;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
-import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
 @Table(name="rw_product_index")
-@EntityListeners(ProductEntityListener.class)
-public class ProductIndexEntity implements Serializable,PublicType{
+@EntityListeners(ProductIndexEntityListener.class)
+public class ProductIndexEntity implements Serializable {
 
 	private static final long serialVersionUID = 7360107228997614767L;
 
@@ -81,7 +81,8 @@ public class ProductIndexEntity implements Serializable,PublicType{
 				
 				if(values != null) {
 					for(Object v: values) {
-						this.attributes.add(new ProductAttributeValueIndexEntity(v, x, e));
+						ProductAttributeValueIndexEntity k = new ProductAttributeValueIndexEntity(v, x, e);
+						this.attributes.add(k);
 					}
 				}
 				
@@ -159,4 +160,22 @@ public class ProductIndexEntity implements Serializable,PublicType{
 		
 		return e;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductIndexEntity other = (ProductIndexEntity) obj;
+		return Objects.equals(id, other.id);
+	}
+	
 }

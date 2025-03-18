@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class ProductAttributeValueEntity implements Serializable {
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductEntity product;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductIndexEntity productIndex;
 	
@@ -52,8 +53,12 @@ public class ProductAttributeValueEntity implements Serializable {
 	public ProductAttributeValueEntity(Object value, ProductAttributeValue e, Product product){
 		this.id = new ProductAttributeValueEntityID(e.getType().toString(value, null), e.getProductAttributeId(), product.getId());
 		this.productAttributeCode = e.getProductAttributeCode();
-		this.product = new ProductEntity();
-		this.product.setId(product.getId());
+		
+		//this.product = new ProductEntity();
+		//this.product.setId(product.getId());
+		
+		//this.productIndex = new ProductIndexEntity();
+		//this.productIndex.setId(product.getId());
 		
 		switch (e.getType()) {
 		case TEXT:

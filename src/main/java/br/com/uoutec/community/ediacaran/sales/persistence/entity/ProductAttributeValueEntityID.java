@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -52,6 +53,23 @@ public class ProductAttributeValueEntityID implements Serializable{
 		this.productMetadataAttributeID = productMetadataAttributeID;
 	}
 
-	
+	@Override
+	public int hashCode() {
+		return Objects.hash(productID, productMetadataAttributeID, value);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductAttributeValueEntityID other = (ProductAttributeValueEntityID) obj;
+		return Objects.equals(productID, other.productID)
+				&& Objects.equals(productMetadataAttributeID, other.productMetadataAttributeID)
+				&& Objects.equals(value, other.value);
+	}
 	
 }

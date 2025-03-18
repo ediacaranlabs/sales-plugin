@@ -31,6 +31,7 @@ public class ProductIndexEntityAccessImp
 		try{
 			ProductIndexEntity pEntity = new ProductIndexEntity(value);
 			entityManager.persist(pEntity);
+			entityManager.flush();
 			
 			if(pEntity.getAttributes() != null) {
 				for(ProductAttributeValueIndexEntity e: pEntity.getAttributes()) {

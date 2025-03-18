@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -78,6 +79,10 @@ public class Product implements Serializable {
 	protected Set<String> tags;
 	
 	protected Map<String, ProductAttributeValue> attributes;
+	
+	public Product() {
+		this.attributes = new HashMap<>();
+	}
 	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
@@ -241,6 +246,10 @@ public class Product implements Serializable {
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
 		
+		if(attr == null && defaultProductMetadata != null) {
+			attr = defaultProductMetadata.getAttributes().get(code);
+		}
+		
 		setAttribute(code, attr.getValueType().parse(value, null), attr);
 	}
 	
@@ -260,6 +269,10 @@ public class Product implements Serializable {
 		
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
+		
+		if(attr == null && defaultProductMetadata != null) {
+			attr = defaultProductMetadata.getAttributes().get(code);
+		}
 		
 		setAttribute(code, value, attr);
 	}
