@@ -23,6 +23,7 @@ import javax.persistence.criteria.Root;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
@@ -201,18 +202,25 @@ public class ProductEntityAccessImp
 		    	}
 		    	
 		    	
+		    	Object v = e.parseValue();
+		    	
 		    	if(!filter.getProductMetadataAttribute().getOptions().isEmpty()) {
-			    	Object v = e.parseValue();
-			    	
 			    	List<ProductMetadataAttributeOption> opts = filter.getProductMetadataAttribute().getOptions();
 			    	
 			    	for(ProductMetadataAttributeOption o: opts) {
 			    		if(v.equals(o.getValue())) {
-			    			ProductMetadataAttributeSearchResultOptionEntityFilter op = new ProductMetadataAttributeSearchResultOptionEntityFilter();
-			    			op.setOption(o);
+			    			ProductMetadataAttributeSearchResultOptionEntityFilter op = 
+			    					new ProductMetadataAttributeSearchResultOptionEntityFilter(o);
 			    			filter.getOptions().put(v, op);
 			    		}
 			    	}
+		    	}
+		    	else {
+		    		String description = e.getId().getValue();
+		    		ProductAttributeValueType type = filter.getProductMetadataAttribute().getValueType();
+		    		ProductMetadataAttributeSearchResultOptionEntityFilter op = 
+		    				new ProductMetadataAttributeSearchResultOptionEntityFilter(v, description, type);
+	    			filter.getOptions().put(v, op);
 		    	}
 		    	
 		    }

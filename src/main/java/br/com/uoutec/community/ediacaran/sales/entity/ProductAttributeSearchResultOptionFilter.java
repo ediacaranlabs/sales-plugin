@@ -2,22 +2,12 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 public class ProductAttributeSearchResultOptionFilter {
 
-	private int optionId;
-	
 	private Object value;
 	
 	private String description;
 
 	private ProductAttributeValueType type;
 	
-	public int getOptionId() {
-		return optionId;
-	}
-
-	public void setOptionId(int optionId) {
-		this.optionId = optionId;
-	}
-
 	public Object getValue() {
 		return value;
 	}

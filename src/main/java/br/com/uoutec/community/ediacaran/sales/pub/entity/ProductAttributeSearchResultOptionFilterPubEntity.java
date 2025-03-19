@@ -2,29 +2,26 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.Locale;
 
-import javax.validation.constraints.NotNull;
-
 import org.brandao.brutos.annotation.Constructor;
-import org.brandao.brutos.annotation.Transient;
 
-import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultOptionFilter;
-import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
-import br.com.uoutec.pub.entity.IdValidation;
 
 public class ProductAttributeSearchResultOptionFilterPubEntity 
 	extends AbstractPubEntity<ProductAttributeSearchResultOptionFilter>{
 
 	private static final long serialVersionUID = 156435810866580706L;
 
+	/*
 	@Transient
 	private Integer id;
 	
 	@NotNull(groups = IdValidation.class)
 	private String protectedID;
+	*/
 	
-	private Object value;
+	private String value;
 	
 	private String description;
 
@@ -36,12 +33,13 @@ public class ProductAttributeSearchResultOptionFilterPubEntity
 	
 	public ProductAttributeSearchResultOptionFilterPubEntity(ProductAttributeSearchResultOptionFilter e, Locale locale) {
 		this.description = e.getDescription();
-		this.id = e.getOptionId() <= 0? null : e.getOptionId();
-		this.protectedID = SecretUtil.toProtectedID(String.valueOf(e.getOptionId()));
+		//this.id = e.getOptionId() <= 0? null : e.getOptionId();
+		//this.protectedID = SecretUtil.toProtectedID(String.valueOf(e.getOptionId()));
 		this.type = e.getType();
 		this.value = e.getType().toString(e.getValue(), locale);
 	}
 
+	/*
 	@Override
 	protected void preRebuild(ProductAttributeSearchResultOptionFilter instance, boolean reload, boolean override, boolean validate) {
 		try {
@@ -51,6 +49,7 @@ public class ProductAttributeSearchResultOptionFilterPubEntity
 			this.id = 0;
 		}
 	}
+	*/
 	
 	@Override
 	protected boolean isEqualId(ProductAttributeSearchResultOptionFilter instance) throws Throwable {
@@ -81,27 +80,11 @@ public class ProductAttributeSearchResultOptionFilterPubEntity
 	protected void copyTo(ProductAttributeSearchResultOptionFilter o, boolean reload, boolean override, boolean validate) throws Throwable {
 	}
 
-	public String getProtectedID() {
-		return protectedID;
-	}
-
-	public void setProtectedID(String protectedID) {
-		this.protectedID = protectedID;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 

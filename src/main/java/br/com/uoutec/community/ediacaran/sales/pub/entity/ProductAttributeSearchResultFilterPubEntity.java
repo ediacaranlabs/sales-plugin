@@ -6,7 +6,9 @@ import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 
+import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
+import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultFilter;
@@ -30,6 +32,7 @@ public class ProductAttributeSearchResultFilterPubEntity
 	
 	private Boolean multiselect;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductAttributeSearchResultOptionFilterPubEntity> options;
 	
 	@Constructor

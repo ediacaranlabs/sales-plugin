@@ -86,6 +86,7 @@ public class ProductPubResource {
 			return handler.getProductViewer().searchProduct(productSearch, locale);
 		}
 		catch(Throwable ex) {
+			ex.printStackTrace();
 			return null;
 		}
 		
