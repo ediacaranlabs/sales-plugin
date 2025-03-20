@@ -50,7 +50,9 @@
 	</section>
 
 	<ec:sidebar-group id="pageBody" show="false">
-		<ec:sidebar id="filters">
+		<ec:sidebar>
+			<ec:body id="filters">
+			</ec:body>
 		</ec:sidebar>
 		<ec:sidebar-content>
 			<ec:body id="content-body">
