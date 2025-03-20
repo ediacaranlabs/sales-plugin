@@ -49,82 +49,118 @@
 		</ed:container>
 	</section>
 
-	<section class="content">
-		<ed:container>
-		<ed:row>
-			<ed:col size="12">
-				<ec:data-table id="search_form" action="${plugins.ediacaran.sales.web_path}/products/search">
-					<!-- start search form  -->
-					<ed:row>
-						<ed:col size="12">
-							<ec:field-group>
-								<ec:textfield 
-									name="text" 
-									placeholder="#{search.placeholder}" 
-									value="${text}"
-									bundle="${messages}"/>
-								<ec:append-field>
-									<ec:button 
-										actionType="submit" 
-										icon="search" 
-										label="#{search.button}"
-										bundle="${messages}"/>
-								</ec:append-field>
-							</ec:field-group>
-						</ed:col>
-					</ed:row>
-					<!-- end search form  -->
-					<!-- start search result  -->
-					<ec:data-result var="response">
-						<ed:row>
-							<ec:forEach items="!{response.itens}" var="item">
-								<ed:col size="3">
-									<ec:box>
-										<ec:box-body>
-											<ed:row style="form">
-												<ed:col size="12">
-													<a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">
-													<ec:if test="!{item.thumbnail == null}">
-														<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid"/>
-													</ec:if>
-													<ec:if test="!{item.thumbnail != null}">
-														<ec:image src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" style="fluid"/>
-													</ec:if>
-													</a>
-												</ed:col>
-											</ed:row>
-											<ed:row>
-												<ed:col size="12">
-													<h5>!{item.name}</h5><br>
-													<b>!{item.cost}</b><br>
-													!{item.shortDescription}<br>
-												</ed:col>
-											</ed:row>
-											<ed:row>
-												<ed:col size="12">
-													<ec:button 
-														label="#{result.add_cart.label}" 
-														align="right"
-														bundle="${messages}">
-														<ec:event type="click">
-															location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{item.protectedID}'; 
-														</ec:event>
-													</ec:button>
-												</ed:col>
-											</ed:row>
-										</ec:box-body>
-									</ec:box>
-								</ed:col>
-							</ec:forEach>
-						</ed:row>
-					</ec:data-result>
-					<!-- end search result  -->
-				</ec:data-table>
-			</ed:col>
-		</ed:row>
-		</ed:container>
-	</section>
+	<ec:sidebar-group id="pageBody" show="false">
+		<ec:sidebar id="filters">
+		</ec:sidebar>
+		<ec:sidebar-content>
+			<ec:body id="content-body">
+    			<ed:container>
+    				<ed:row>
+    					<ed:col>
+							<ec:data-table id="search_form" action="${plugins.ediacaran.sales.web_path}/products/search">
+								<!-- start search form  -->
+								<ed:row>
+									<ed:col size="12">
+										<ec:field-group>
+											<ec:textfield 
+												name="text" 
+												placeholder="#{search.placeholder}" 
+												value="${text}"
+												bundle="${messages}"/>
+											<ec:append-field>
+												<ec:button 
+													actionType="submit" 
+													icon="search" 
+													label="#{search.button}"
+													bundle="${messages}"/>
+											</ec:append-field>
+										</ec:field-group>
+									</ed:col>
+								</ed:row>
+			    				<ed:row>
+			    					<ed:col>
+						 				<ec:menu-toggler menuID="pageBody">
+											<ec:icon icon="bars" size="1" />
+										</ec:menu-toggler>
+			    					</ed:col>
+			    				</ed:row>
+								<!-- end search form  -->
+								<!-- start search result  -->
+								<ec:data-result var="response">
+									<ed:row>
+										<script type="text/javascript">
+											var $tmpObjStr = '!{JSON.stringify(response.filters)}';
+											var $tmpObj = JSON.parse($tmpObjStr);
+											console.log($tmpObj);
+											var $tmp = $.AppContext.utils.applyTemplate("filterTemplate", JSON.parse($tmpObjStr));
+											$.AppContext.utils.content.update("filters", $tmp);
+										</script>
+										<ec:forEach items="!{response.itens}" var="item">
+											<ed:col size="3">
+												<ec:box>
+													<ec:box-body>
+														<ed:row style="form">
+															<ed:col size="12">
+																<a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">
+																<ec:if test="!{item.thumbnail == null}">
+																	<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid"/>
+																</ec:if>
+																<ec:if test="!{item.thumbnail != null}">
+																	<ec:image src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" style="fluid"/>
+																</ec:if>
+																</a>
+															</ed:col>
+														</ed:row>
+														<ed:row>
+															<ed:col size="12">
+																<h5>!{item.name}</h5><br>
+																<b>!{item.cost}</b><br>
+																!{item.shortDescription}<br>
+															</ed:col>
+														</ed:row>
+														<ed:row>
+															<ed:col size="12">
+																<ec:button 
+																	label="#{result.add_cart.label}" 
+																	align="right"
+																	bundle="${messages}">
+																	<ec:event type="click">
+																		location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{item.protectedID}'; 
+																	</ec:event>
+																</ec:button>
+															</ed:col>
+														</ed:row>
+													</ec:box-body>
+												</ec:box>
+											</ed:col>
+										</ec:forEach>
+									</ed:row>
+								</ec:data-result>
+								<!-- end search result  -->
+							</ec:data-table>
+    					</ed:col>
+    				</ed:row>
+				</ed:container>
+			</ec:body>		
+		</ec:sidebar-content>		
+	</ec:sidebar-group>
 
+	<ec:template var="filtersGroup" id="filterTemplate">
+		<ec:forEach items="!{filtersGroup}" var="group">
+			<ec:box>
+				<ec:box-header>!{group.title}</ec:box-header>
+				<ec:box-body>
+					<ec:forEach items="!{group.filters}" var="filter">
+						<h5>!{filter.title}</h5>
+						<ec:forEach items="!{filter.options}" var="option">
+							<ec:checkbox label="!{option.description}" name="option" value="!{option.value}"/>
+						</ec:forEach>
+					</ec:forEach>
+				</ec:box-body>
+			</ec:box>
+		</ec:forEach>	
+	</ec:template>
+	
 	<ec:include uri="/includes/footer.jsp"/>
  
 </body>
