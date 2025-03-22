@@ -326,7 +326,9 @@ public class ProductEntityAccessImp
 		In<Integer> productAttributeIn = builder.in(from.get("id").get("productMetadataAttributeID"));
 		
 		for(ProductSearchAttributeFilter attr: filters) {
-			productAttributeIn.value(attr.getProductMetadataAttribute().getId());
+			if(attr.getValue() != null && !attr.getValue().isEmpty()) {
+				productAttributeIn.value(attr.getProductMetadataAttribute().getId());
+			}
 		}
 		
 		List<Predicate> productFiltersOr = new ArrayList<>();
@@ -342,20 +344,24 @@ public class ProductEntityAccessImp
 
 	    		Set<Object> vals = attrFilter.getValue();
 	    		
+	    		if(vals == null || vals.isEmpty()) {
+	    			continue;
+	    		}
+	    		
 	    		if(vals.size() == 1) {
 	    			
 	    			if(entityType == ProductAttributeValueEntityType.TEXT) {
 			    		productAttributeFiltersAnd.add(
 			    				builder.and(
-				    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
-				    				builder.equal(from.get("value"), entityType.toValue(vals.iterator().next()))
+				    				builder.equal(from.get("id").get("productMetadataAttributeID"), productMetadataAttribute.getId()),
+				    				builder.equal(from.get("id").get("value"), entityType.toValue(vals.iterator().next()))
 	    						)
 	    				);
 	    			}
 	    			else {
 			    		productAttributeFiltersAnd.add(
 			    				builder.and(
-				    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
+				    				builder.equal(from.get("id").get("productMetadataAttributeID"), productMetadataAttribute.getId()),
 				    				builder.equal(from.get("number"), entityType.toValue(vals.iterator().next()))
 	    						)
 			    		);
@@ -368,7 +374,7 @@ public class ProductEntityAccessImp
 	    			In<Object> optionsIn;
 	    			
 	    			if(entityType == ProductAttributeValueEntityType.TEXT) {
-		    			optionsIn = builder.in(from.get("value"));
+		    			optionsIn = builder.in(from.get("id").get("value"));
 	    			}
 	    			else {
 		    			optionsIn = builder.in(from.get("number"));
@@ -381,7 +387,7 @@ public class ProductEntityAccessImp
 
 		    		productAttributeFiltersAnd.add(
 		    				builder.and(
-			    				builder.equal(from.get("id.metadataAttributeID"), productMetadataAttribute.getId()),
+			    				builder.equal(from.get("id").get("productMetadataAttributeID"), productMetadataAttribute.getId()),
 			    				optionsIn
     						)
     				);
