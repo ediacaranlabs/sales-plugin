@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -27,7 +28,7 @@ public class ProductSearchAttributeFilterPubEntity
 	@NotNull(groups = IdValidation.class)
 	private String protectedID;
 
-	private Set<String> values;
+	private List<String> values;
 	
 	@Transient
 	private Locale locale;
@@ -104,11 +105,11 @@ public class ProductSearchAttributeFilterPubEntity
 		this.protectedID = protectedID;
 	}
 
-	public Set<String> getValues() {
+	public List<String> getValues() {
 		return values;
 	}
 
-	public void setValues(Set<String> values) {
+	public void setValues(List<String> values) {
 		this.values = values;
 	}
 

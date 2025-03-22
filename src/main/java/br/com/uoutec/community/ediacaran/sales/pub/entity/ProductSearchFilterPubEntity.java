@@ -85,6 +85,7 @@ public class ProductSearchFilterPubEntity extends AbstractPubEntity<ProductSearc
 				x.setLocale(locale);
 				attributeFilters.add(x.rebuild(true,true,true));
 			}
+			o.setAttributeFilters(attributeFilters);
 		}
 		
 	}

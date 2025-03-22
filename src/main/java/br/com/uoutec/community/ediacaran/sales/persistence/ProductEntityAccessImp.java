@@ -320,9 +320,10 @@ public class ProductEntityAccessImp
 		Set<ProductSearchAttributeFilter> filters = new HashSet<>();
 		productFilters.stream()
 			.map((e)->e.getAttributeFilters())
+			.filter((e)->e != null)
 			.forEach((e)->filters.addAll(e));
 		
-		In<Integer> productAttributeIn = builder.in(from.get("id.productMetadataAttributeID"));
+		In<Integer> productAttributeIn = builder.in(from.get("id").get("productMetadataAttributeID"));
 		
 		for(ProductSearchAttributeFilter attr: filters) {
 			productAttributeIn.value(attr.getProductMetadataAttribute().getId());
@@ -337,7 +338,7 @@ public class ProductEntityAccessImp
 			for(ProductSearchAttributeFilter attrFilter: filter.getAttributeFilters()) {
 
 				ProductMetadataAttribute productMetadataAttribute = attrFilter.getProductMetadataAttribute();
-	    		ProductAttributeValueEntityType entityType = ProductAttributeValueEntityType.valueOf(productMetadataAttribute.getName());
+	    		ProductAttributeValueEntityType entityType = ProductAttributeValueEntityType.valueOf(productMetadataAttribute.getValueType().name());
 
 	    		Set<Object> vals = attrFilter.getValue();
 	    		
