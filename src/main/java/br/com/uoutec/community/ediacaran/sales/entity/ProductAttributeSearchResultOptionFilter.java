@@ -8,6 +8,8 @@ public class ProductAttributeSearchResultOptionFilter {
 
 	private ProductAttributeValueType type;
 	
+	private boolean selected;
+	
 	public Object getValue() {
 		return value;
 	}
@@ -30,6 +32,14 @@ public class ProductAttributeSearchResultOptionFilter {
 
 	public void setType(ProductAttributeValueType type) {
 		this.type = type;
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 	
 }

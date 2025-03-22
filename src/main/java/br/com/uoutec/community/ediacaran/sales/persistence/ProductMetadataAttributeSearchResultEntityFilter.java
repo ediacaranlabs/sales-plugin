@@ -31,18 +31,23 @@ public class ProductMetadataAttributeSearchResultEntityFilter {
 		this.options = options;
 	}
 
-
+	public boolean isMultiselect() {
+		return productMetadataAttribute.getType() == ProductAttributeType.MULTISELECT || productMetadataAttribute.getType() == ProductAttributeType.MULTISELECT_LIST;
+	}
+	
 	public ProductAttributeSearchResultFilter toEntity() {
 		ProductAttributeSearchResultFilter e = new ProductAttributeSearchResultFilter();
-		e.setMultiselect(productMetadataAttribute.getType() == ProductAttributeType.MULTISELECT || productMetadataAttribute.getType() == ProductAttributeType.MULTISELECT_LIST);
+		e.setMultiselect(this.isMultiselect());
 		e.setProductMetadataAttribute(productMetadataAttribute.getId());
 		e.setTitle(productMetadataAttribute.getName());
 		
 		if(productMetadataAttribute.getOptions() != null) {
 			List<ProductAttributeSearchResultOptionFilter> list = new ArrayList<>();
+			
 			for(ProductMetadataAttributeSearchResultOptionEntityFilter o: options.values()) {
 				list.add(o.toEntity());
 			}
+			
 			e.setOptions(list);
 		}
 		return e;

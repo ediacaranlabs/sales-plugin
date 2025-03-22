@@ -92,6 +92,7 @@ public class ProductMetadataEntityAccessImp
 						for(ProductMetadataAttributeOptionEntity x: list2) {
 							x.setProductAttribute(e);
 							entityManager.persist(x);
+							entityManager.flush();
 						}
 					}
 					

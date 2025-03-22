@@ -12,6 +12,8 @@ public class ProductMetadataAttributeSearchResultOptionEntityFilter {
 	
 	private Object value;
 	
+	private boolean selected;
+	
 	private ProductAttributeValueType type;
 	
 	public ProductMetadataAttributeSearchResultOptionEntityFilter(ProductMetadataAttributeOption option) {
@@ -21,12 +23,21 @@ public class ProductMetadataAttributeSearchResultOptionEntityFilter {
 		this.value = option.getValue();
 	}
 
-	public ProductMetadataAttributeSearchResultOptionEntityFilter(Object value, String description, ProductAttributeValueType type) {
+	public ProductMetadataAttributeSearchResultOptionEntityFilter(Object value, String description, ProductAttributeValueType type, boolean selected) {
 		this.description = description;
 		this.type = type;
 		this.value = value;
+		this.selected = selected;
 	}
 	
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
 	public ProductMetadataAttributeOption getOption() {
 		return option;
 	}
@@ -65,6 +76,7 @@ public class ProductMetadataAttributeSearchResultOptionEntityFilter {
 		e.setDescription(this.description);
 		e.setType(this.type);
 		e.setValue(this.value);
+		e.setSelected(this.selected);
 		
 		return e;
 	}

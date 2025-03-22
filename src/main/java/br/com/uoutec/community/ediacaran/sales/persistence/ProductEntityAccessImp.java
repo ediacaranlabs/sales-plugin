@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -167,6 +168,8 @@ public class ProductEntityAccessImp
 		    List<ProductAttributeValueIndexEntity> list = (List<ProductAttributeValueIndexEntity>)typed.getResultList();
 		    Set<Integer> idCache = new HashSet<>();
 		    List<Integer> ids = new ArrayList<>();
+		    Set<AttributeFilter> filtersSet = productFilterToFilterSet(value);
+		    
 		    int count = 0;
 		    
 		    Map<Integer,ProductMetadataSearchResultEntityFilter> productGroupFilter = new HashMap<>();
@@ -204,23 +207,37 @@ public class ProductEntityAccessImp
 		    	
 		    	Object v = e.parseValue();
 		    	
-		    	if(!filter.getProductMetadataAttribute().getOptions().isEmpty()) {
-			    	List<ProductMetadataAttributeOption> opts = filter.getProductMetadataAttribute().getOptions();
-			    	
-			    	for(ProductMetadataAttributeOption o: opts) {
-			    		if(v.equals(o.getValue())) {
-			    			ProductMetadataAttributeSearchResultOptionEntityFilter op = 
-			    					new ProductMetadataAttributeSearchResultOptionEntityFilter(o);
-			    			filter.getOptions().put(v, op);
-			    		}
+		    	if(!filter.getOptions().containsKey(v)) {
+		    		
+			    	if(!filter.getProductMetadataAttribute().getOptions().isEmpty()) {
+			    		
+				    	List<ProductMetadataAttributeOption> opts = filter.getProductMetadataAttribute().getOptions();
+				    	
+				    	for(ProductMetadataAttributeOption o: opts) {
+				    		if(v.equals(o.getValue())) {
+				    			ProductMetadataAttributeSearchResultOptionEntityFilter op = 
+				    					new ProductMetadataAttributeSearchResultOptionEntityFilter(o);
+				    			
+				    			op.setSelected(filtersSet.contains(new AttributeFilter(filter.getProductMetadataAttribute().getId(), v)));
+				    			
+				    			filter.getOptions().put(v, op);
+				    		}
+				    	}
+				    	
 			    	}
-		    	}
-		    	else {
-		    		String description = e.getId().getValue();
-		    		ProductAttributeValueType type = filter.getProductMetadataAttribute().getValueType();
-		    		ProductMetadataAttributeSearchResultOptionEntityFilter op = 
-		    				new ProductMetadataAttributeSearchResultOptionEntityFilter(v, description, type);
-	    			filter.getOptions().put(v, op);
+			    	else {
+			    		
+			    		String description = e.getId().getValue();
+			    		ProductAttributeValueType type = filter.getProductMetadataAttribute().getValueType();
+			    		ProductMetadataAttributeSearchResultOptionEntityFilter op = 
+			    				new ProductMetadataAttributeSearchResultOptionEntityFilter(v, description, type, false);
+			    		
+		    			op.setSelected(filtersSet.contains(new AttributeFilter(filter.getProductMetadataAttribute().getId(), v)));
+			    		
+		    			filter.getOptions().put(v, op);
+		    			
+			    	}
+			    	
 		    	}
 		    	
 		    }
@@ -447,6 +464,70 @@ public class ProductEntityAccessImp
 	    if(value.getProductType() != null) {
 		    and.add(builder.equal(from.get("productType"), value.getProductType()));
 	    }
+		
+	}
+	
+	private Set<AttributeFilter> productFilterToFilterSet(ProductSearch productSearch){
+		Set<AttributeFilter> result = new HashSet<>();
+		
+		Set<ProductSearchFilter> filters = productSearch.getFilters();
+		
+		if(filters == null) {
+			return result;
+		}
+		
+		for(ProductSearchFilter filter: filters) {
+			Set<ProductSearchAttributeFilter> attrFilters = filter.getAttributeFilters();
+			
+			if(attrFilters == null) {
+				continue;
+			}
+			
+			for(ProductSearchAttributeFilter attrFilter: attrFilters) {
+				Set<Object> values = attrFilter.getValue();
+				
+				if(values == null) {
+					continue;
+				}
+				
+				for(Object value: values) {
+					result.add(new AttributeFilter(attrFilter.getProductMetadataAttribute().getId(), value));
+				}
+				
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	private static class AttributeFilter {
+		
+		public Object value;
+		
+		public int id;
+		
+		public AttributeFilter(int id, Object value) {
+			this.id = id;
+			this.value = value;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(id, value);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			AttributeFilter other = (AttributeFilter) obj;
+			return id == other.id && Objects.equals(value, other.value);
+		}
 		
 	}
 	

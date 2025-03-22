@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -18,10 +17,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 
 @Entity
 @Table(
@@ -93,7 +92,8 @@ public class ProductMetadataAttributeEntity implements Serializable{
 	@Column(name="vlr_order", length = 3)
 	private Short order;
 
-	@OneToMany(mappedBy = "productAttribute", cascade = CascadeType.REFRESH)
+	//@OneToMany(mappedBy = "productAttribute", cascade = CascadeType.REFRESH)
+	@OneToMany(mappedBy = "productAttribute")
 	private List<ProductMetadataAttributeOptionEntity> options;
 	
 	public ProductMetadataAttributeEntity() {

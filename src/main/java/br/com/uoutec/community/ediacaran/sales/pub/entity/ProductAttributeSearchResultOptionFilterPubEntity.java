@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.Locale;
 
 import org.brandao.brutos.annotation.Constructor;
+import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultOptionFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
@@ -25,7 +26,10 @@ public class ProductAttributeSearchResultOptionFilterPubEntity
 	
 	private String description;
 
+	@Transient
 	private ProductAttributeValueType type;
+	
+	private Boolean selected;
 	
 	@Constructor
 	public ProductAttributeSearchResultOptionFilterPubEntity() {
@@ -35,6 +39,7 @@ public class ProductAttributeSearchResultOptionFilterPubEntity
 		this.description = e.getDescription();
 		//this.id = e.getOptionId() <= 0? null : e.getOptionId();
 		//this.protectedID = SecretUtil.toProtectedID(String.valueOf(e.getOptionId()));
+		this.selected = e.isSelected();
 		this.type = e.getType();
 		this.value = e.getType().toString(e.getValue(), locale);
 	}
@@ -102,6 +107,14 @@ public class ProductAttributeSearchResultOptionFilterPubEntity
 
 	public void setType(ProductAttributeValueType type) {
 		this.type = type;
+	}
+
+	public Boolean getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Boolean selected) {
+		this.selected = selected;
 	}
 	
 }

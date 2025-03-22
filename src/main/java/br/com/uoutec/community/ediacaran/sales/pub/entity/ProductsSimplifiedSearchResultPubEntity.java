@@ -45,13 +45,14 @@ public class ProductsSimplifiedSearchResultPubEntity
 				itens.add(new ProductSimplifiedSearchResultPubEntity(p, locale));
 			}
 		}
-		
+
 		if(e.getFilters() != null) {
 			this.filters = new ArrayList<>();
 			for(ProductSearchResultFilter x: e.getFilters()) {
 				this.filters.add(new ProductSearchResultFilterPubEntity(x, locale));
 			}
 		}
+
 	}
 
 	@Override
