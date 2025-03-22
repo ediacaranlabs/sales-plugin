@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeSearchResultOptionFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 
 public class ProductMetadataAttributeSearchResultEntityFilter {
 
@@ -41,8 +41,23 @@ public class ProductMetadataAttributeSearchResultEntityFilter {
 		e.setProductMetadataAttribute(productMetadataAttribute.getId());
 		e.setTitle(productMetadataAttribute.getName());
 		
-		if(productMetadataAttribute.getOptions() != null) {
-			List<ProductAttributeSearchResultOptionFilter> list = new ArrayList<>();
+		List<ProductAttributeSearchResultOptionFilter> list = new ArrayList<>();
+
+		/*
+		List<ProductMetadataAttributeOption> optList = productMetadataAttribute.getOptions();
+		
+		if(optList != null) {
+			for(ProductMetadataAttributeOption o: optList) {
+				if(options == null || !options.containsKey(o.getValue())) {
+					ProductMetadataAttributeSearchResultOptionEntityFilter tmp = new ProductMetadataAttributeSearchResultOptionEntityFilter(o);
+					tmp.setSelected(false);
+					list.add(tmp.toEntity());
+				}
+			}
+		}
+		*/
+		
+		if(options != null) {
 			
 			for(ProductMetadataAttributeSearchResultOptionEntityFilter o: options.values()) {
 				list.add(o.toEntity());
@@ -50,6 +65,7 @@ public class ProductMetadataAttributeSearchResultEntityFilter {
 			
 			e.setOptions(list);
 		}
+		
 		return e;
 	}
 	

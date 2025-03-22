@@ -36,9 +36,10 @@ public class ProductMetadataAttributeOption {
 	public ProductMetadataAttributeOption() {
 	}
 	
-	public ProductMetadataAttributeOption(String value, String description) {
+	public ProductMetadataAttributeOption(Object value, String description, ProductAttributeValueType valueType) {
 		this.value = value;
 		this.description = description;
+		this.valueType = valueType;
 	}
 
 	public String getProtectedID() {

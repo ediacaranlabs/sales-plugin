@@ -60,7 +60,7 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 	public ProductMetadataAttributeOptionEntity(ProductMetadataAttributeOption e) {
 		this.id = e.getId() == 0? null : e.getId();
 		this.description = e.getDescription();
-		
+
 		if(e.getProductMetadataAttribute() > 0) {
 			this.productAttribute = new ProductMetadataAttributeEntity();
 			this.productAttribute.setId(e.getProductMetadataAttribute());
@@ -174,7 +174,6 @@ public class ProductMetadataAttributeOptionEntity implements Serializable{
 		}		
 
 		e.setValueType(t);
-		e.setValueType(null);
 		e.setValue(val);
 		
 		return e;

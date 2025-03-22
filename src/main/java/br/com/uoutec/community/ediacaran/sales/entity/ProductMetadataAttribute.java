@@ -168,7 +168,7 @@ public class ProductMetadataAttribute {
 		return options;
 	}
 
-	private volatile boolean optionsLoaded = false;
+	protected volatile boolean optionsLoaded = false;
 	
 	private synchronized void loadOptions() {
 		

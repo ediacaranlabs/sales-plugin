@@ -24,14 +24,19 @@
 	background-color: #fcfcfc;
 }
 
-.sidebar-group .sidebar {
-	width: 200px;
+#pageBody{
+	min-height: 600px;
 }
 
 .sidebar-group .sidebar {
 	width: 200px;
 }
 
+@media screen and (min-width: 1200px) {
+    .sidebar-group .sidebar-content {
+        margin-left: 200px;
+    }
+}
 .filter_group .card-body {
 	max-height: 300px;
 	overflow-y: auto;
@@ -145,17 +150,19 @@
 													var $tmpObj = JSON.parse($tmpObjStr);
 													var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
 													var $pageBody = $.AppContext.utils.getById('pageBody');
-													
+
 													if($tmpObj.length > 0){
 														var $tmp = $.AppContext.utils.applyTemplate("filterTemplate", JSON.parse($tmpObjStr));
 														$.AppContext.utils.content.update("detachedFilters", $tmp);
 														$filter_toggler.setVisible(true);
 														$pageBody.addClass('show');
 													}
+													/*
 													else{
 														$pageBody.removeClass('show');
 														$filter_toggler.setVisible(false);
 													}
+													*/
 													
 												</script>
 												<ec:forEach items="!{response.itens}" var="item">
