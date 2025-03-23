@@ -252,6 +252,13 @@ public class ProductMetadataAttribute {
 		this.suffix = suffix;
 	}
 
+	public boolean isMultiselect() {
+		return 
+				ProductAttributeValueType.TEXT == this.valueType || 
+				ProductAttributeType.MULTISELECT == this.type || 
+				ProductAttributeType.MULTISELECT_LIST == this.type;
+	}
+	
 	public void validate(Object value) throws ValidationException {
 
 		this.valueType.checkType(value);

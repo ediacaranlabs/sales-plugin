@@ -141,12 +141,16 @@ public class ProductEntityAccessImp
 		    CriteriaQuery<ProductAttributeValueIndexEntity> criteria = builder.createQuery(ProductAttributeValueIndexEntity.class);
 		    Root<ProductAttributeValueIndexEntity> root = criteria.from(ProductAttributeValueIndexEntity.class);
 		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> productIndex = root.join("productIndex");	
-		    Join<ProductAttributeValueIndexEntity, ProductIndexEntity> attributes = productIndex.joinList("attributes");	
+		    //Join<ProductAttributeValueIndexEntity, ProductIndexEntity> attributes = productIndex.joinList("attributes");	
 
 		    addGenericfilter(value, and, builder, productIndex);
 
 		    if(value.getFilters() != null && !value.getFilters().isEmpty()) {
-			    addFilters(value.getFilters(), attributes, builder, and);
+			    //addFilters(value.getFilters(), attributes, builder, and);
+		    	Predicate predicate = ProductIndexUtil.addFilters(value.getFilters(), productIndex, builder);
+		    	if(predicate != null) {
+		    		and.add(predicate);
+		    	}
 		    }
 		    
 		    criteria.select(root);

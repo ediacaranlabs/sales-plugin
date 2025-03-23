@@ -230,12 +230,22 @@
 						<span class="filter_title">!{filter.title}</span>
 						<ec:forEach items="!{filter.options}" var="option">
 							<span class="filter_option">
-								<ec:checkbox label="!{option.description}" name="values" selected="!{option.selected}" value="!{option.value}">
-									<ec:event type="click">
-										var $form = $.AppContext.utils.getById('search_form');
-										$form.submit();
-									</ec:event>
-								</ec:checkbox>
+								<ec:if test="!{filter.multiselect}">
+									<ec:checkbox label="!{option.description}" name="values" selected="!{option.selected}" value="!{option.value}">
+										<ec:event type="click">
+											var $form = $.AppContext.utils.getById('search_form');
+											$form.submit();
+										</ec:event>
+									</ec:checkbox>
+								</ec:if>
+								<ec:if test="!{!filter.multiselect}">
+									<ec:radio label="!{option.description}" name="value" selected="!{option.selected}" value="!{option.value}">
+										<ec:event type="click">
+											var $form = $.AppContext.utils.getById('search_form');
+											$form.submit();
+										</ec:event>
+									</ec:radio>
+								</ec:if>
 							</span>
 						</ec:forEach>
 					</span>

@@ -28,6 +28,8 @@ public class ProductSearchAttributeFilterPubEntity
 	@NotNull(groups = IdValidation.class)
 	private String protectedID;
 
+	private String value;
+	
 	private List<String> values;
 	
 	@Transient
@@ -77,16 +79,21 @@ public class ProductSearchAttributeFilterPubEntity
 	protected void copyTo(ProductSearchAttributeFilter o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 
+		Set<Object> vals = new HashSet<>();
+		
 		if(values != null) {
-			Set<Object> vals = new HashSet<>();
-			
 			for(String v: this.values) {
 				vals.add(o.getProductMetadataAttribute().getValueType().parse(v, locale));
 			}
-			
-			o.setValue(vals);
+		}
+
+		if(value != null) {
+			vals.add(o.getProductMetadataAttribute().getValueType().parse(value, locale));
 		}
 		
+		if(!vals.isEmpty()) {
+			o.setValue(vals);
+		}
 	}
 
 	public Integer getId() {
@@ -119,6 +126,14 @@ public class ProductSearchAttributeFilterPubEntity
 
 	public void setLocale(Locale locale) {
 		this.locale = locale;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
 }
