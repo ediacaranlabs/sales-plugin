@@ -228,6 +228,32 @@
 					<span formgroup="filters" formgrouptype="index" class="filter">
 						<input type="hidden" name="protectedID" value="!{filter.protectedID}">
 						<span class="filter_title">!{filter.title}</span>
+						
+						<ec:if test="!{!filter.multiselect && filter.options.length == 1 && filter.options[0].selected}">
+							<span class="filter_option">
+								<a href="#" id="clear_!{filter.protectedID}"><br>&lt; Clear</a>
+								<ec:event type="click" componentName="clear_!{filter.protectedID}">
+									var $f =  $.AppContext.utils.getById('clear_option_!{filter.protectedID}');
+									var $form = $.AppContext.utils.getById('search_form');
+									
+									$form.updateFieldIndex();
+									$form.updateFieldNames();
+									
+									$f = $form.getField($f.getAttribute('name'));
+									$f.setValue("");
+									$form.submit();
+								</ec:event>
+								<span style="display: none">
+									<ec:radio id="clear_option_!{filter.protectedID}" label="Clear" name="value" value="">
+										<ec:event type="click">
+											var $form = $.AppContext.utils.getById('search_form');
+											$form.submit();
+										</ec:event>
+									</ec:radio>
+								</span>
+							</span>
+						</ec:if>
+						
 						<ec:forEach items="!{filter.options}" var="option">
 							<span class="filter_option">
 								<ec:if test="!{filter.multiselect}">

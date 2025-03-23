@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
@@ -25,7 +24,6 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchAttributeFilter;
@@ -33,7 +31,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityID;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductIndexEntity;
@@ -336,6 +333,7 @@ public class ProductEntityAccessImp
 
 	}
 	
+	/*
 	private void addFilters(Set<ProductSearchFilter> productFilters, 
 			From<ProductAttributeValueIndexEntity, ProductIndexEntity> from, CriteriaBuilder builder, List<Predicate> and) {
 		
@@ -441,6 +439,7 @@ public class ProductEntityAccessImp
 		}
 	    
 	}
+	*/
 	
 	private void addGenericfilter(ProductSearch value, List<Predicate> and, CriteriaBuilder builder, From<ProductIndexEntity, ProductAttributeValueIndexEntity> from) {
 		
