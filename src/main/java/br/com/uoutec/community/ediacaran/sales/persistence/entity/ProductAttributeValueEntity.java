@@ -37,6 +37,12 @@ public class ProductAttributeValueEntity implements Serializable {
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductIndexEntity productIndex;
 
+	/*
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cod_prod_mtda_attr", insertable = false, updatable = false)
+	private ProductAttributeValueIndexEntity productAttributeValueIndexEntity;
+	*/
+	
 	@Column(name="cod_product_metadata", length=11)
 	private Integer productMetadataID;
 	

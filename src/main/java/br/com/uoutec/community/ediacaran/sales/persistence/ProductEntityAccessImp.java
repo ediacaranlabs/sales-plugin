@@ -141,11 +141,12 @@ public class ProductEntityAccessImp
 		    CriteriaQuery<ProductAttributeValueIndexEntity> criteria = builder.createQuery(ProductAttributeValueIndexEntity.class);
 		    Root<ProductAttributeValueIndexEntity> root = criteria.from(ProductAttributeValueIndexEntity.class);
 		    Join<ProductIndexEntity, ProductAttributeValueIndexEntity> productIndex = root.join("productIndex");	
+		    Join<ProductAttributeValueIndexEntity, ProductIndexEntity> attributes = productIndex.joinList("attributes");	
 
 		    addGenericfilter(value, and, builder, productIndex);
 
 		    if(value.getFilters() != null && !value.getFilters().isEmpty()) {
-			    addFilters(value.getFilters(), root, builder, and);
+			    addFilters(value.getFilters(), attributes, builder, and);
 		    }
 		    
 		    criteria.select(root);
@@ -332,7 +333,7 @@ public class ProductEntityAccessImp
 	}
 	
 	private void addFilters(Set<ProductSearchFilter> productFilters, 
-			From<ProductAttributeValueIndexEntity, ProductAttributeValueIndexEntity> from, CriteriaBuilder builder, List<Predicate> and) {
+			From<ProductAttributeValueIndexEntity, ProductIndexEntity> from, CriteriaBuilder builder, List<Predicate> and) {
 		
 		Set<ProductSearchAttributeFilter> filters = new HashSet<>();
 		productFilters.stream()
@@ -417,7 +418,8 @@ public class ProductEntityAccessImp
 				productFiltersOr.add(
 						builder.and(
 								builder.equal(from.get("productMetadataID"), filter.getProductMetadata().getId()),
-								builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new))
+								//builder.and(productAttributeFiltersAnd.stream().toArray(Predicate[]::new))
+								builder.or(productAttributeFiltersAnd.stream().toArray(Predicate[]::new))
 						)
 				);
 			}
@@ -429,6 +431,7 @@ public class ProductEntityAccessImp
 				builder.and(
 					productAttributeIn, 
 					builder.or(productFiltersOr.stream().toArray(Predicate[]::new))
+					//builder.and(productFiltersOr.stream().toArray(Predicate[]::new))
 				)
 			);
 		}
