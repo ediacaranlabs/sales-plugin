@@ -159,17 +159,10 @@
 														$filter_toggler.setVisible(true);
 														$pageBody.addClass('show');
 													}
-													
-													var $form = $.AppContext.utils.getById('search_form');
-													$form.updateFieldIndex();
-													$form.updateFieldNames();
-													
-													/*
 													else{
 														$pageBody.removeClass('show');
 														$filter_toggler.setVisible(false);
 													}
-													*/
 													
 												</script>
 												<ec:forEach items="!{response.itens}" var="item">

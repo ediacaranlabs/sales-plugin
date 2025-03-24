@@ -52,7 +52,7 @@ public class ProductsSimplifiedSearchResultPubEntity
 				this.filters.add(new ProductSearchResultFilterPubEntity(x, locale));
 			}
 		}
-
+		
 	}
 
 	@Override

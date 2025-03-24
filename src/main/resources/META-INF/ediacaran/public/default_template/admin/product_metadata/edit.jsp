@@ -115,7 +115,7 @@
 									<ed:col id="attrArea">
 										<c:forEach items="${vars.entity.attributeList}" var="attribute">
 											<c:set var="attribute" value="${attribute}" scope="request"/>
-											<jsp:include page="attribute.jsp"/>
+											<jsp:include page="attribute_server.jsp"/>
 										</c:forEach>
 									</ed:col>
 								</ed:row>
@@ -155,10 +155,10 @@
 				    
 <ec:template id="metadata_attribute" var="attribute">
 	<c:remove var="attribute" scope="request"/>
-	<jsp:include page="attribute.jsp"/>
+	<jsp:include page="attribute_client.jsp"/>
 </ec:template>
 
 <ec:template id="option_attribute" var="option">
 	<c:remove var="option" scope="request"/>
-	<jsp:include page="option.jsp"/>
+	<jsp:include page="option_client.jsp"/>
 </ec:template>
