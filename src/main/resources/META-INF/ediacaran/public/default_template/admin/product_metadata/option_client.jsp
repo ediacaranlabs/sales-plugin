@@ -54,7 +54,7 @@
 								
 							</ec:field-validator>
 						</ec:textfield>
-						
+					</ec:if>
 					<ec:if test="!{option.valueType == 'DATE'}">
 						<ec:datefield 
 							name="value" 
