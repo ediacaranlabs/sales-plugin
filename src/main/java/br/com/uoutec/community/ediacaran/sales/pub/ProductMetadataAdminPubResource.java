@@ -90,6 +90,7 @@ public class ProductMetadataAdminPubResource {
 			throw ex;
 		}
 		catch(Throwable ex) {
+			ex.printStackTrace();
 			return null;
 		}
 		

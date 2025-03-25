@@ -13,32 +13,96 @@
 			<input type="hidden" name="protectedID" value="${option.protectedID}">
 			<ed:row>
 				<ed:col size="6" classStyle="form-group has-feedback">
-					<ec:textfield 
-						name="value" 
-						value="${option.value}"
-						placeholder="#{form.option.value.placeholder}"
-						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
-						bundle="${messages}">
-						<ec:field-validator>
-							<ec:field-validator-rule 
-								name="notEmpty" 
-								message="#{form.option.value.validation.notEmpty}" 
-								bundle="${messages}"/>
-							<ec:field-validator-rule 
-								name="regexp"
-								message="#{form.option.value.validation.regexp}"
-								bundle="${messages}">
-								<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
-							</ec:field-validator-rule>
-							<ec:field-validator-rule 
-								name="stringLength" 
-								message="#{form.option.value.validation.stringLength}" 
-								bundle="${messages}">
-									<ec:field-validator-param name="min">1</ec:field-validator-param>
-									<ec:field-validator-param name="max">128</ec:field-validator-param>
-							</ec:field-validator-rule>
-						</ec:field-validator>
-					</ec:textfield>
+					<ec:if test="!{option.valueType == 'TEXT' || option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
+						<ec:textfield 
+							name="value" 
+							value="${option.value}"
+							placeholder="#{form.option.value.placeholder}"
+							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
+							bundle="${messages}">
+							<ec:field-validator>
+							
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="#{form.option.value.validation.notEmpty}" 
+									bundle="${messages}"/>
+									
+								<ec:if test="!{option.valueType == 'TEXT'}">
+									<ec:field-validator-rule 
+										name="regexp"
+										message="#{form.option.value.validation.regexp}"
+										bundle="${messages}">
+										<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+									</ec:field-validator-rule>
+									<ec:field-validator-rule 
+										name="stringLength" 
+										message="#{form.option.value.validation.stringLength}" 
+										bundle="${messages}">
+											<ec:field-validator-param name="min">1</ec:field-validator-param>
+											<ec:field-validator-param name="max">32</ec:field-validator-param>
+									</ec:field-validator-rule>
+								</ec:if>
+								
+								<ec:if test="!{option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
+									<ec:field-validator-rule 
+										name="regexp"
+										message="#{form.option.value.validation.regexp}"
+										bundle="${messages}">
+										<ec:field-validator-param name="regexp" raw="true">/[0-9]{1,3}(\.[0-9]){1,3}/</ec:field-validator-param>
+									</ec:field-validator-rule>
+								</ec:if>
+								
+							</ec:field-validator>
+						</ec:textfield>
+						
+					<ec:if test="!{option.valueType == 'DATE'}">
+						<ec:datefield 
+							name="value" 
+							value="${option.value}"
+							placeholder="#{form.option.value.placeholder}"
+							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="#{form.option.value.validation.notEmpty}" 
+									bundle="${messages}"/>
+							</ec:field-validator>
+						</ec:datefield>						
+					</ec:if>
+					
+					<ec:if test="!{option.valueType == 'TIME'}">
+						<ec:timefield 
+							name="value" 
+							value="${option.value}"
+							placeholder="#{form.option.value.placeholder}"
+							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="#{form.option.value.validation.notEmpty}" 
+									bundle="${messages}"/>
+							</ec:field-validator>
+						</ec:timefield>						
+					</ec:if>
+
+					<ec:if test="!{option.valueType == 'DATE_TIME'}">
+						<ec:dateTimefield 
+							name="value" 
+							value="${option.value}"
+							placeholder="#{form.option.value.placeholder}"
+							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
+							bundle="${messages}">
+							<ec:field-validator>
+								<ec:field-validator-rule 
+									name="notEmpty" 
+									message="#{form.option.value.validation.notEmpty}" 
+									bundle="${messages}"/>
+							</ec:field-validator>
+						</ec:dateTimefield>						
+					</ec:if>
+					
 				</ed:col>
 				<ed:col size="6" classStyle="form-group has-feedback">
 					<ec:textfield 

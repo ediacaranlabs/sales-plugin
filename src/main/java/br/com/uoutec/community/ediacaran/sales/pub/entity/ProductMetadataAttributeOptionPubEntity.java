@@ -60,7 +60,7 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	public ProductMetadataAttributeOptionPubEntity(ProductMetadataAttributeOption e, Locale locale){
 		this.description = e.getDescription();
 		this.protectedID = e.getId() <= 0? null : SecretUtil.toProtectedID(String.valueOf(e.getId()));
-		this.value = e.getValue() == null? null : e.getValueType().toString(e, locale);
+		this.value = e.getValue() == null? null : e.getValueType().toString(e.getValue(), locale);
 		this.valueType = e.getValueType();
 		this.id = e.getId();
 		this.productMetadataAttribute = e.getProductMetadataAttribute();
