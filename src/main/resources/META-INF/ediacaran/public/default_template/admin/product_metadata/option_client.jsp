@@ -9,14 +9,14 @@
 
 <span formgroup="options" formgrouptype="index">
 	<ec:accordion>
-		<ec:accordion-item title="${option.description}">
-			<input type="hidden" name="protectedID" value="${option.protectedID}">
+		<ec:accordion-item title="!{option.description}">
+			<input type="hidden" name="protectedID" value="!{option.protectedID}">
 			<ed:row>
 				<ed:col size="6" classStyle="form-group has-feedback">
 					<ec:if test="!{option.valueType == 'TEXT' || option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
 						<ec:textfield 
 							name="value" 
-							value="${option.value}"
+							value="!{option.value}"
 							placeholder="#{form.option.value.placeholder}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
@@ -58,7 +58,7 @@
 					<ec:if test="!{option.valueType == 'DATE'}">
 						<ec:dateField 
 							name="value" 
-							value="${option.value}"
+							value="!{option.value}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
 							<ec:field-validator>
@@ -73,7 +73,7 @@
 					<ec:if test="!{option.valueType == 'TIME'}">
 						<ec:timeField 
 							name="value" 
-							value="${option.value}"
+							value="!{option.value}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
 							<ec:field-validator>
@@ -88,7 +88,7 @@
 					<ec:if test="!{option.valueType == 'DATE_TIME'}">
 						<ec:dateTimeField 
 							name="value" 
-							value="${option.value}"
+							value="!{option.value}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
 							<ec:field-validator>
@@ -104,7 +104,7 @@
 				<ed:col size="6" classStyle="form-group has-feedback">
 					<ec:textfield 
 						name="description"
-						value="${option.description}"
+						value="!{option.description}"
 						placeholder="#{form.option.description.placeholder}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:DESCRIPTION')}"
 						bundle="${messages}">
@@ -157,7 +157,7 @@
 						name="deleted" 
 						label="#{form.option.deleted.label}" 
 						align="right" 
-						value="true"
+						value="!{option.deleted}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:DELETED')}"
 						bundle="${messages}">
 						<ec:event type="click">

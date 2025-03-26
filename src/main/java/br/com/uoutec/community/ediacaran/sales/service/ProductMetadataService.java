@@ -157,11 +157,11 @@ public class ProductMetadataService {
 		productMetadataRegistry.removeProductMetadataAttributes(list, metadata);
 	}
 
-	private void registerProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> list, ProductMetadataAttribute parent) throws ProductRegistryException {
+	private void registerProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> list, ProductMetadataAttribute parent) throws ProductRegistryException {
 		productMetadataRegistry.registerProductMetadataAttributeOptions(list, parent);
 	}
 
-	private void unregisterProductMetadataAttributeOptions(List<ProductMetadataAttributeOption> list, ProductMetadataAttribute parent) throws ProductRegistryException {
+	private void unregisterProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> list, ProductMetadataAttribute parent) throws ProductRegistryException {
 		productMetadataRegistry.removeProductMetadataAttributeOptions(list, parent);
 	}
 	

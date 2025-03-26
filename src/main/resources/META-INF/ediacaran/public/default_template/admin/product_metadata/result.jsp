@@ -14,27 +14,31 @@
 	</ec:alert>
 	<script type="text/javascript">
 	$.AppContext.onload(function(){
+		
 		//get product form
 		let $form = $.AppContext.utils.getById('product_metadata_form');
 		
 		// set product id
 		let $protectedID = $form.getField('product_metadata.protectedID');
-		if($protectedID.getValue() != '' && $protectedID.getValue() != '${vars.entity.protectedID}'){
-			alert("invalid product metadata ID!");
-		}
-		$protectedID.setValue('${vars.entity.protectedID}');
 		
+		if($protectedID.getValue() != '' && $protectedID.getValue() != '${vars.entity.protectedID}'){
+			alert("invalid product metadata: " + "${vars.entity.protectedID}" + " != " + $protectedID.getValue() );
+		}
+		
+		$protectedID.setValue('${vars.entity.protectedID}');
 		
 		let $attr;
 		let $opt;
+		
 		// set attribute id
 		<c:forEach items="${vars.attributes}" var="attribute" varStatus="attributeStep">
 		
 		$attr = $form.getField('product_metadata.attributes[${attributeStep.index}].protectedID');
 		
 		if($attr.getValue() != '' && $attr.getValue() != '${attribute.protectedID}'){
-			alert("invalid attribute ID: product_metadata.attributes[${attributeStep.index}]");
+			alert("invalid attribute ID: product_metadata.attributes[${attributeStep.index}]: " + "${attribute.protectedID}" + " != " + $attr.getValue());
 		}
+		
 		$attr.setValue('${attribute.protectedID}');
 		
 			//set opt id
@@ -43,7 +47,7 @@
 			$opt = $form.getField('product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}].protectedID');
 			
 			if($opt.getValue() != '' && $opt.getValue() != '${option.protectedID}'){
-				alert("invalid option ID: product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}]");
+				alert("invalid option ID: product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}]: " + "${option.protectedID}" + " != " + $opt.getValue());
 			}
 			$opt.setValue('${option.protectedID}');
 			

@@ -3,14 +3,15 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 
 public class ProductMetadataAttributeUpdate extends ProductMetadataAttribute{
 
-	private List<ProductMetadataAttributeOption> registerOptions;
+	private List<ProductMetadataAttributeOptionUpdate> registerOptions;
 	
-	private List<ProductMetadataAttributeOption> unregisterOptions;
+	private List<ProductMetadataAttributeOptionUpdate> unregisterOptions;
 
+	private int index;
+	
 	public ProductMetadataAttributeUpdate() {
 	}
 	
@@ -35,19 +36,27 @@ public class ProductMetadataAttributeUpdate extends ProductMetadataAttribute{
 		setValueType(value.getValueType());
 	}
 
-	public List<ProductMetadataAttributeOption> getRegisterOptions() {
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public List<ProductMetadataAttributeOptionUpdate> getRegisterOptions() {
 		return registerOptions;
 	}
 
-	public void setRegisterOptions(List<ProductMetadataAttributeOption> registerOptions) {
+	public void setRegisterOptions(List<ProductMetadataAttributeOptionUpdate> registerOptions) {
 		this.registerOptions = registerOptions;
 	}
 
-	public List<ProductMetadataAttributeOption> getUnregisterOptions() {
+	public List<ProductMetadataAttributeOptionUpdate> getUnregisterOptions() {
 		return unregisterOptions;
 	}
 
-	public void setUnregisterOptions(List<ProductMetadataAttributeOption> unregisterOptions) {
+	public void setUnregisterOptions(List<ProductMetadataAttributeOptionUpdate> unregisterOptions) {
 		this.unregisterOptions = unregisterOptions;
 	}
 	

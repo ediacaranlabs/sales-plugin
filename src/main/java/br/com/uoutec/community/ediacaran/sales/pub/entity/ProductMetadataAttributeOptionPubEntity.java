@@ -20,7 +20,7 @@ import br.com.uoutec.pub.entity.AbstractPubEntity;
 import br.com.uoutec.pub.entity.DataValidation;
 import br.com.uoutec.pub.entity.IdValidation;
 
-public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<ProductMetadataAttributeOption>{
+public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<ProductMetadataAttributeOptionUpdate>{
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
@@ -131,7 +131,7 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	}
 
 	@Override
-	protected void preRebuild(ProductMetadataAttributeOption instance, boolean reload, boolean override, boolean validate) {
+	protected void preRebuild(ProductMetadataAttributeOptionUpdate instance, boolean reload, boolean override, boolean validate) {
 		
 		try {
 			String str = SecretUtil.toID(this.protectedID);
@@ -149,10 +149,11 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	}
 	
 	@Override
-	protected ProductMetadataAttributeOption reloadEntity() throws Throwable {
+	protected ProductMetadataAttributeOptionUpdate reloadEntity() throws Throwable {
 		ProductMetadataRegistry entityRegistry = 
 				EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
-		return entityRegistry.findProductMetadataAttributeOptionById(this.id);
+		ProductMetadataAttributeOption e = entityRegistry.findProductMetadataAttributeOptionById(this.id);
+		return e == null? null : new ProductMetadataAttributeOptionUpdate(e);
 	}
 
 	@Override
@@ -161,12 +162,12 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	}
 
 	@Override
-	protected ProductMetadataAttributeOption createNewInstance() throws Throwable {
-		return new ProductMetadataAttributeOption();
+	protected ProductMetadataAttributeOptionUpdate createNewInstance() throws Throwable {
+		return new ProductMetadataAttributeOptionUpdate();
 	}
 
 	@Override
-	protected void copyTo(ProductMetadataAttributeOption o, boolean reload, boolean override,
+	protected void copyTo(ProductMetadataAttributeOptionUpdate o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
 		o.setValue(this.value == null? null : valueType.parse(this.value, this.locale));
@@ -175,14 +176,14 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	}
 
 	@Override
-	protected boolean isEqualId(ProductMetadataAttributeOption instance) throws Throwable {
+	protected boolean isEqualId(ProductMetadataAttributeOptionUpdate instance) throws Throwable {
 		return instance.getId() <= 0? 
 					this.id == null :
 					this.id != null && instance.getId() == this.id;
 	}
 
 	@Override
-	protected boolean hasId(ProductMetadataAttributeOption instance) throws Throwable {
+	protected boolean hasId(ProductMetadataAttributeOptionUpdate instance) throws Throwable {
 		return instance.getId() > 0;
 	}
 	

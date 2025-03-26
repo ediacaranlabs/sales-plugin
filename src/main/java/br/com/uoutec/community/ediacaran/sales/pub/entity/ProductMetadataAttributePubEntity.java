@@ -327,16 +327,19 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		o.setType(this.type);
 		o.setValueType(this.valueType);
 		
+		int index = 0;
 		if(this.options != null) {
 			List<ProductMetadataAttributeOption> list = new ArrayList<>();
-			List<ProductMetadataAttributeOption> register = new ArrayList<>();
-			List<ProductMetadataAttributeOption> unregister = new ArrayList<>();
+			List<ProductMetadataAttributeOptionUpdate> register = new ArrayList<>();
+			List<ProductMetadataAttributeOptionUpdate> unregister = new ArrayList<>();
 			
 			for(ProductMetadataAttributeOptionPubEntity x: this.options) {
 				
 				x.setValueType(this.valueType);
 				x.setLocale(this.locale);
-				ProductMetadataAttributeOption e = x.rebuild(x.getProtectedID() != null, true, true);
+				
+				ProductMetadataAttributeOptionUpdate e = x.rebuild(x.getProtectedID() != null, true, true);
+				e.setIndex(index++);
 				
 				list.add(e);
 				

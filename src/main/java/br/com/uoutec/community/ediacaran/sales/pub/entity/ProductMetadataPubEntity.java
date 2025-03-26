@@ -166,6 +166,7 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
 		o.setDescription(this.description);
 		
+		int index = 0;
 		if(this.attributes != null) {
 			List<ProductMetadataAttribute> list = new ArrayList<>();
 			List<ProductMetadataAttributeUpdate> registerList = new ArrayList<>();
@@ -175,7 +176,8 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 				
 				x.setLocale(this.locale);
 				ProductMetadataAttributeUpdate xe = x.rebuild(x.getProtectedID() != null, true, true);
-
+				xe.setIndex(index++);
+				
 				list.add(xe);
 				
 				if(x.getProtectedID() != null) {

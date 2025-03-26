@@ -85,7 +85,7 @@ public class ProductMetadataAttributeOptionEntityAccessImp
 	    	
 	    	
 	    	ProductAttributeValueEntityType type = ProductAttributeValueEntityType.valueOf(parent.getValueType().name());
-	    	value = type.toValue(value);
+	    	value = type.parse(value);
 	    	
 	    	if(value instanceof Long) {
 		    	and.add(builder.equal(from.get("number"), value));
