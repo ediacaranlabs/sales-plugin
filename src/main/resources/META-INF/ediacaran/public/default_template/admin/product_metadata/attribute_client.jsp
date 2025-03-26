@@ -148,8 +148,7 @@
 								bundle="${messages}"/>
 						</ec:field-validator>
 						<ec:event type="change">
-							$.AppContext.utils.content.append("!{attribute.optsAreaID}", "");
-
+							$.AppContext.utils.content.update("!{attribute.optsAreaID}", "");
 						</ec:event>
 					</ec:select>
 				</ed:col>

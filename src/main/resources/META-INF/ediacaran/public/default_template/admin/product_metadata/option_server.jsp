@@ -13,7 +13,7 @@
 			<input type="hidden" name="protectedID" value="${option.protectedID}">
 			<ed:row>
 				<ed:col size="6" classStyle="form-group has-feedback">
-					<ec:if test="${option.valueType == 'TEXT' || option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
+					<c:if test="${option.valueType == 'TEXT' || option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
 						<ec:textfield 
 							name="value" 
 							value="${option.value}"
@@ -27,7 +27,7 @@
 									message="#{form.option.value.validation.notEmpty}" 
 									bundle="${messages}"/>
 									
-								<ec:if test="${option.valueType == 'TEXT'}">
+								<c:if test="${option.valueType == 'TEXT'}">
 									<ec:field-validator-rule 
 										name="regexp"
 										message="#{form.option.value.validation.regexp}"
@@ -41,25 +41,24 @@
 											<ec:field-validator-param name="min">1</ec:field-validator-param>
 											<ec:field-validator-param name="max">32</ec:field-validator-param>
 									</ec:field-validator-rule>
-								</ec:if>
+								</c:if>
 								
-								<ec:if test="${option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
+								<c:if test="${option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
 									<ec:field-validator-rule 
 										name="regexp"
 										message="#{form.option.value.validation.regexp}"
 										bundle="${messages}">
 										<ec:field-validator-param name="regexp" raw="true">/[0-9]{1,3}(\.[0-9]){1,3}/</ec:field-validator-param>
 									</ec:field-validator-rule>
-								</ec:if>
+								</c:if>
 								
 							</ec:field-validator>
 						</ec:textfield>
-					</ec:if>
-					<ec:if test="${option.valueType == 'DATE'}">
-						<ec:datefield 
+					</c:if>
+					<c:if test="${option.valueType == 'DATE'}">
+						<ec:dateField 
 							name="value" 
 							value="${option.value}"
-							placeholder="#{form.option.value.placeholder}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
 							<ec:field-validator>
@@ -68,14 +67,13 @@
 									message="#{form.option.value.validation.notEmpty}" 
 									bundle="${messages}"/>
 							</ec:field-validator>
-						</ec:datefield>						
-					</ec:if>
+						</ec:dateField>						
+					</c:if>
 					
-					<ec:if test="${option.valueType == 'TIME'}">
-						<ec:timefield 
+					<c:if test="${option.valueType == 'TIME'}">
+						<ec:timeField 
 							name="value" 
 							value="${option.value}"
-							placeholder="#{form.option.value.placeholder}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
 							<ec:field-validator>
@@ -84,14 +82,13 @@
 									message="#{form.option.value.validation.notEmpty}" 
 									bundle="${messages}"/>
 							</ec:field-validator>
-						</ec:timefield>						
-					</ec:if>
+						</ec:timeField>						
+					</c:if>
 
-					<ec:if test="${option.valueType == 'DATE_TIME'}">
-						<ec:dateTimefield 
+					<c:if test="${option.valueType == 'DATE_TIME'}">
+						<ec:dateTimeField 
 							name="value" 
 							value="${option.value}"
-							placeholder="#{form.option.value.placeholder}"
 							readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:VALUE')}"
 							bundle="${messages}">
 							<ec:field-validator>
@@ -100,8 +97,8 @@
 									message="#{form.option.value.validation.notEmpty}" 
 									bundle="${messages}"/>
 							</ec:field-validator>
-						</ec:dateTimefield>						
-					</ec:if>
+						</ec:dateTimeField>						
+					</c:if>
 					
 				</ed:col>
 				<ed:col size="6" classStyle="form-group has-feedback">

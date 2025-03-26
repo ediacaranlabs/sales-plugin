@@ -88,13 +88,13 @@
 							</ec:field-validator-rule>
 						</ec:field-validator>
 						<ec:event type="keyup">
+							
 							var $source = $event.source;
 							var $form = $source.getForm();
 							
 							var $group = $source.getFormGroup();
 							
 							var $accordion = $group.getFirstChild();
-							
 							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 							
 								$form.updateFieldIndex();
@@ -146,6 +146,9 @@
 								message="#{form.attribute.value_type.validation.notEmpty}" 
 								bundle="${messages}"/>
 						</ec:field-validator>
+						<ec:event type="change">
+							$.AppContext.utils.content.update("${attribute.protectedID}", "");
+						</ec:event>
 					</ec:select>
 				</ed:col>
 			</ed:row>
@@ -361,14 +364,8 @@
 					Options
 				</ed:col>
 			</ed:row>
-			<c:if test="${empty attribute}">
-				<c:set var="optionsArea" value="!{attribute.optsAreaID}"/>
-			</c:if>
-			<c:if test="${!empty attribute}">
-				<c:set var="optionsArea" value="${attribute.protectedID}"/>
-			</c:if>
 			<ed:row>
-				<ed:col id="${optionsArea}">
+				<ed:col id="${attribute.protectedID}">
 					<c:forEach items="${attribute.options}" var="option">
 						<c:set var="option" value="${option}" scope="request"/>
 						<jsp:include page="option_server.jsp"/>
@@ -379,8 +376,21 @@
 				<ed:col>
 					<ec:button label="#{form.attribute.add_option.label}" align="right" actionType="button" bundle="${messages}">
 						<ec:event type="click">
-							var $option = $.AppContext.utils.applyTemplate("option_attribute", {});
-							$.AppContext.utils.content.append("${optionsArea}", $option);
+							let $source = $event.source;
+							let $form = $source.getForm();
+							
+							$form.updateFieldIndex();
+							$form.updateFieldNames();
+							
+							let $group = $source.getFormGroup();
+
+							let $path = $group.getAttribute("group-path");
+							let $valueTypeField = $form.getField($path + ".valueType");
+
+							let $valueType = $valueTypeField.getValue();
+						
+							var $option = $.AppContext.utils.applyTemplate("option_attribute", {valueType: $valueType});
+							$.AppContext.utils.content.append("${attribute.protectedID}", $option);
 						</ec:event>
 					</ec:button>
 				</ed:col>
