@@ -14,6 +14,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductImagePubEntity;
@@ -36,6 +37,7 @@ public abstract class AbstractProductTypeViewHandler
 		Product product = null;
 		List<ProductImage> images = null;
 		Map<Integer, ProductMetadataAttribute> attributesMetadata;
+		List<ProductMetadata> productMetadataList;
 		
 		Throwable exception = null;
 
@@ -45,6 +47,7 @@ public abstract class AbstractProductTypeViewHandler
 		try {
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
 			images = productRegistry.getImagesByProduct(product);
+			productMetadataList = productMetadataRegistry.getAllProductMetadata();
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
 			for(ProductAttributeValue value: product.getAttributes().values()) {
 				listAttributeMetadata.add(productMetadataRegistry.findProductMetadataAttributeById(value.getProductAttributeId()));
@@ -59,6 +62,7 @@ public abstract class AbstractProductTypeViewHandler
 		
 		ra.add("entity", product);
 		ra.add("attributesMetadata", attributesMetadata);
+		ra.add("productMetadataList", productMetadataList);
 		ra.add("images", images);
 		ra.add("measurementUnit", MeasurementUnit.values());
 		
@@ -80,6 +84,7 @@ public abstract class AbstractProductTypeViewHandler
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/result.jsp"), true);
 		
 		try {
+			productPubEntity.setLocale(locale);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
 			if(productPubEntity.getImages() != null) {
 				for(ProductImagePubEntity i: productPubEntity.getImages()) {

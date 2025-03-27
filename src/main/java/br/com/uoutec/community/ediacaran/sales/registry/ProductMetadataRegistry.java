@@ -21,6 +21,8 @@ public interface ProductMetadataRegistry extends PublicBean, Registry{
 	ProductMetadata findProductMetadataById(int id) throws ProductRegistryException;
 
 	ProductMetadata getDefaultProductMetadata() throws ProductRegistryException;
+
+	List<ProductMetadata> getAllProductMetadata() throws ProductRegistryException;
 	
 	ProductMetadataSearchResult search(ProductMetadataSearch value)	throws ProductRegistryException;
 

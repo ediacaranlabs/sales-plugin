@@ -39,6 +39,39 @@
 </ed:row>
 <ed:row style="form">
 	<ed:col size="12" classStyle="form-group has-feedback">
+		<ec:select 
+			name="productMetadata" 
+			label="Product type"
+			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:PRODUCT_METADATA')}"
+			bundle="${messages}">
+			<c:forEach items="${vars.productMetadataList}" var="metadata">
+				<ec:option value="${metadata.protectedID}" selected="${metadata.id == vars.entity.metadata}">${metadata.name}</ec:option>
+			</c:forEach>
+			<ec:field-validator field="description">
+				<ec:field-validator-rule 
+					name="notEmpty" 
+					message="#{resource_form.description.notEmpty}" 
+					bundle="${messages}"/>
+				<ec:field-validator-rule 
+					name="regexp"
+					message="#{resource_form.description.regex}"
+					bundle="${messages}">
+					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
+				</ec:field-validator-rule>
+				<ec:field-validator-rule 
+					name="stringLength" 
+					message="#{resource_form.description.length}" 
+					bundle="${messages}">
+						<ec:field-validator-param name="min">3</ec:field-validator-param>
+						<ec:field-validator-param name="max">256</ec:field-validator-param>
+				</ec:field-validator-rule>
+			</ec:field-validator>
+		</ec:select>
+	</ed:col>
+</ed:row>
+
+<ed:row style="form">
+	<ed:col size="12" classStyle="form-group has-feedback">
 		<ec:textarea 
 			rows="2" 
 			name="shortDescription" 

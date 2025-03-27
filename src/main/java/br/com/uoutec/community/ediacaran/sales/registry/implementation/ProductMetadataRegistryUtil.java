@@ -37,6 +37,10 @@ public class ProductMetadataRegistryUtil {
 	
 	/* - ------- ---------------------------- */
 
+	public static List<ProductMetadata> getAllProductMetadata(ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
+		return entityAccess.getAll();
+	}
+	
 	public static ProductMetadataSearchResult search(ProductMetadataSearch value, ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
 		int page = value.getPage() == null? 0 : value.getPage().intValue();
 		int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();

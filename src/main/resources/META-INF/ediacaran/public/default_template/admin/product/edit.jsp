@@ -50,3 +50,10 @@
 		</ec:form>
 	</ec:box-body>
 </ec:box>				    
+<script type="text/javascript">
+$.AppContext.onload(function(){
+	let $form = $.AppContext.utils.getById('product_form');
+	$form.updateFieldIndex();
+	$form.updateFieldNames();
+})
+</script>

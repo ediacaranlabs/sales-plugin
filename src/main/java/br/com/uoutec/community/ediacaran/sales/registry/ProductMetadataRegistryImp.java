@@ -109,6 +109,20 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		}
 	}
 
+	@Override
+	@ActivateRequestContext
+	public List<ProductMetadata> getAllProductMetadata() throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.getListPermission());
+		
+		try{
+			return ProductMetadataRegistryUtil.getAllProductMetadata(entityAccess);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
+	
 	/* Attributes */
 	
 	@Override

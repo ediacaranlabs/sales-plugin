@@ -65,7 +65,9 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	private String productType;
 
 	@NotNull(groups=DataValidation.class)
-	private Integer productMetadata;
+	private String productMetadata;
+
+	private Integer productMetadataID;
 	
 	@NotNull(groups=DataValidation.class)
 	@Enumerated(EnumerationType.STRING)
@@ -215,6 +217,38 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.shortDescription = shortDescription;
 	}
 
+	public String getProductMetadata() {
+		return productMetadata;
+	}
+
+	public void setProductMetadata(String productMetadata) {
+		this.productMetadata = productMetadata;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public Integer getProductMetadataID() {
+		return productMetadataID;
+	}
+
+	public void setProductMetadataID(Integer productMetadataID) {
+		this.productMetadataID = productMetadataID;
+	}
+
 	@Override
 	protected void preRebuild(Product instance, boolean reload, boolean override, boolean validate) {
 		try {
@@ -222,6 +256,13 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		}
 		catch(Throwable ex){
 			this.id = 0;
+		}
+		
+		try {
+			this.productMetadataID = Integer.parseInt(SecretUtil.toID(this.productMetadata));
+		}
+		catch(Throwable ex){
+			this.productMetadataID = 0;
 		}
 	}
 	
@@ -255,11 +296,12 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
 		o.setTags(this.tagsString != null? StringUtil.toSet(this.tagsString, ",") : tags);
 		o.setShortDescription(this.shortDescription);
+		o.setMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
 		
 		if(this.attributes != null) {
 			
 			ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
-			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(this.productMetadata);
+			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(this.productMetadataID);
 			
 			List<ProductMetadataAttribute> metadataAttributes = productMetadata.getAttributeList();
 
@@ -310,6 +352,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.shortDescription = x.shortDescription;
 		this.tags = x.tags;
 		this.tagsString = x.tagsString;
+		this.productMetadata = x.getProductMetadata();
+		this.locale = x.getLocale();
 	}
 	
 }
