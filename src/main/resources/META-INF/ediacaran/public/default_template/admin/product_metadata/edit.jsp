@@ -108,7 +108,6 @@
 										</ed:row>
 									</ed:col>
 								</ed:row>
-							
 							</ec:tabs-item>
 							<ec:tabs-item title="#{tabs.attribute.title}" bundle="${messages}">
 								<ed:row>

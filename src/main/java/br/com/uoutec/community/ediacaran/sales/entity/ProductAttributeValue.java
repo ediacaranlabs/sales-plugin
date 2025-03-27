@@ -73,6 +73,10 @@ public class ProductAttributeValue {
 		return values == null? null : values.stream().collect(Collectors.toSet());
 	}
 	
+	public boolean containsValue(Object value) {
+		return this.values != null? this.values.contains(value) : false;
+	}
+	
 	public void addValue(Object value) {
 		this.values.add(value);
 	}

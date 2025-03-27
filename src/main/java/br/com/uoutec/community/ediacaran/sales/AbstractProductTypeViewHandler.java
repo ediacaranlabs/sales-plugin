@@ -5,16 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductImagePubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -27,9 +31,12 @@ public abstract class AbstractProductTypeViewHandler
 	public WebResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
 		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
+		ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
 		Product product = null;
 		List<ProductImage> images = null;
+		Map<Integer, ProductMetadataAttribute> attributesMetadata;
+		
 		Throwable exception = null;
 
 		WebResultAction ra = new WebResultActionImp();
@@ -38,6 +45,11 @@ public abstract class AbstractProductTypeViewHandler
 		try {
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
 			images = productRegistry.getImagesByProduct(product);
+			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
+			for(ProductAttributeValue value: product.getAttributes().values()) {
+				listAttributeMetadata.add(productMetadataRegistry.findProductMetadataAttributeById(value.getProductAttributeId()));
+			}
+			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}
 		catch(Throwable ex) {
 			exception = ex;
@@ -46,6 +58,7 @@ public abstract class AbstractProductTypeViewHandler
 		}
 		
 		ra.add("entity", product);
+		ra.add("attributesMetadata", attributesMetadata);
 		ra.add("images", images);
 		ra.add("measurementUnit", MeasurementUnit.values());
 		

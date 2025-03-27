@@ -138,7 +138,33 @@
 								bundle="${messages}"/>
 						</ec:field-validator>
 						<ec:event type="change">
-							$.AppContext.utils.content.update("!{attribute.optsAreaID}", "");
+							let $source = $event.source;
+							let $group = $source.getFormGroup();
+							let $form = $source.getForm();
+							
+							let $path = $group.getAttribute("group-path");
+							let $valueTypeField = $form.getField($path + ".valueType");
+
+							let $optsGroup = $.AppContext.utils.getById('${attribute.protectedID}');
+							let $optsGroupList = $optsGroup.search(function($e){
+								return $e.getAttribute('formgroup') == 'options';
+							});
+							
+							 for (let i = 0; i < $optsGroupList.length; i++) {
+							 
+							 	let $optGroup = $optsGroupList[i];
+							 	let $optData = $form.toObject(null, $optGroup);
+							 	$optData.valueType = $valueTypeField.getValue();
+							 	
+							 	$optGroup.remove();
+							 	
+								let $optionTemplate = $.AppContext.utils.applyTemplate("option_attribute", $optData);
+								$.AppContext.utils.content.insert("${attribute.protectedID}", $optionTemplate);
+
+								$form.updateFieldIndex();
+								$form.updateFieldNames();
+							 	
+							 }
 						</ec:event>
 					</ec:select>
 				</ed:col>
