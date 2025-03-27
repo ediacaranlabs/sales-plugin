@@ -157,7 +157,7 @@
 						name="deleted" 
 						label="#{form.option.deleted.label}" 
 						align="right" 
-						value="!{option.deleted}"
+						value="true"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:OPTION:FIELDS:DELETED')}"
 						bundle="${messages}">
 						<ec:event type="click">

@@ -44,14 +44,9 @@
 							var $form = $source.getForm();
 							
 							var $group = $source.getFormGroup();
-							
 							var $accordion = $group.getFirstChild();
 							
 							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
-							
-								$form.updateFieldIndex();
-								$form.updateFieldNames();
-								
 								var $nameFieldPath = $group.getPath();
 								var $nameField = $form.getField($nameFieldPath + ".name");
 								var $codeField = $form.getField($nameFieldPath + ".code");
@@ -92,14 +87,9 @@
 							var $form = $source.getForm();
 							
 							var $group = $source.getFormGroup();
-							
 							var $accordion = $group.getFirstChild();
 							
 							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
-							
-								$form.updateFieldIndex();
-								$form.updateFieldNames();
-								
 								var $nameFieldPath = $group.getPath();
 								var $nameField = $form.getField($nameFieldPath + ".name");
 								var $codeField = $form.getField($nameFieldPath + ".code");
@@ -335,11 +325,7 @@
 							let $source = $event.source;
 							let $form = $source.getForm();
 							
-							$form.updateFieldIndex();
-							$form.updateFieldNames();
-							
 							let $group = $source.getFormGroup();
-
 							let $path = $group.getAttribute("group-path");
 							let $deleted = $form.getField($path + ".deleted");
 							let $protectedID = $form.getField($path + ".protectedID");
@@ -347,6 +333,7 @@
 							if($protectedID.getValue() == '' && $deleted.getValue()){
 								$group.remove();
 							}
+							
 						</ec:event>
 					</ec:checkbox>
 					<ec:checkbox 
@@ -376,9 +363,6 @@
 							let $source = $event.source;
 							let $form = $source.getForm();
 							
-							$form.updateFieldIndex();
-							$form.updateFieldNames();
-							
 							let $group = $source.getFormGroup();
 
 							let $path = $group.getAttribute("group-path");
@@ -387,6 +371,10 @@
 						
 							var $option = $.AppContext.utils.applyTemplate("option_attribute", {valueType: $valueType});
 							$.AppContext.utils.content.append("!{attribute.optsAreaID}", $option);
+							
+							$form.updateFieldIndex();
+							$form.updateFieldNames();
+							
 						</ec:event>
 					</ec:button>
 				</ed:col>

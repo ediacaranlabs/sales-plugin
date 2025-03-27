@@ -44,14 +44,9 @@
 							var $form = $source.getForm();
 							
 							var $group = $source.getFormGroup();
-							
 							var $accordion = $group.getFirstChild();
 							
 							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
-							
-								$form.updateFieldIndex();
-								$form.updateFieldNames();
-								
 								var $nameFieldPath = $group.getPath();
 								var $nameField = $form.getField($nameFieldPath + ".name");
 								var $codeField = $form.getField($nameFieldPath + ".code");
@@ -93,19 +88,16 @@
 							var $form = $source.getForm();
 							
 							var $group = $source.getFormGroup();
-							
 							var $accordion = $group.getFirstChild();
-							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 							
-								$form.updateFieldIndex();
-								$form.updateFieldNames();
-								
+							if($accordion instanceof $.AppContext.types.components.accordion.Accordion){
 								var $nameFieldPath = $group.getPath();
 								var $nameField = $form.getField($nameFieldPath + ".name");
 								var $codeField = $form.getField($nameFieldPath + ".code");
 								var $item = $accordion.getItens()[0];
 								$item.setTitle($codeField.getValue() + " - " + $nameField.getValue());
 							}
+							
 						</ec:event>
 					</ec:textfield>
 				</ed:col>
@@ -155,13 +147,11 @@
 							let $valueTypeField = $form.getField($path + ".valueType");
 
 							let $valueType = $valueTypeField.getValue();
-							
 							let $optsGroup = $.AppContext.utils.getById('${attribute.protectedID}');
 							
 							let $optsGroupList = $optsGroup.search(function($e){
 								return $e.getAttribute('formgroup') == 'options';
 							});
-							
 							
 							 for (let i = 0; i < $optsGroupList.length; i++) {
 							 
@@ -415,11 +405,7 @@
 							let $source = $event.source;
 							let $form = $source.getForm();
 							
-							$form.updateFieldIndex();
-							$form.updateFieldNames();
-							
 							let $group = $source.getFormGroup();
-
 							let $path = $group.getAttribute("group-path");
 							let $valueTypeField = $form.getField($path + ".valueType");
 
@@ -427,6 +413,10 @@
 						
 							var $option = $.AppContext.utils.applyTemplate("option_attribute", {valueType: $valueType});
 							$.AppContext.utils.content.append("${attribute.protectedID}", $option);
+							
+							$form.updateFieldIndex();
+							$form.updateFieldNames();
+							
 						</ec:event>
 					</ec:button>
 				</ed:col>

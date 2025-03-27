@@ -68,9 +68,9 @@
 			let $path = $att.getAttribute("group-path");
 			let $deleted = $form.getField($path + ".deleted");
 			
-			console.log("check attribute to remove: " + $path);
+			//console.log("check attribute to remove: " + $path);
 			if($deleted.getValue()){
-				console.log("removed attribute: " + $path);
+				//console.log("removed attribute: " + $path);
 				$att.remove();
 			}
 			else{
@@ -83,7 +83,7 @@
 					$path = $opt.getAttribute("group-path");
 					$deleted = $form.getField($path + ".deleted");
 					
-					console.log("check option to remove: " + $path);
+					console.log("check option to remove: " + $path + ": " + $deleted.getValue());
 					
 					if($deleted.getValue()){
 						console.log("removed option: " + $path);

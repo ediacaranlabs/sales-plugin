@@ -162,3 +162,11 @@
 	<c:remove var="option" scope="request"/>
 	<jsp:include page="option_client.jsp"/>
 </ec:template>
+
+<script type="text/javascript">
+$.AppContext.onload(function(){
+	let $form = $.AppContext.utils.getById('product_metadata_form');
+	$form.updateFieldIndex();
+	$form.updateFieldNames();
+})
+</script>
