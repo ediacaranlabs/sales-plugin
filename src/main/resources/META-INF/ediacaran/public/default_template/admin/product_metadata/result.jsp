@@ -83,7 +83,7 @@
 					$path = $opt.getAttribute("group-path");
 					$deleted = $form.getField($path + ".deleted");
 					
-					console.log("check option to remove: " + $path + ": " + $deleted.getValue());
+					//console.log("check option to remove: " + $path + ": " + $deleted.getValue());
 					
 					if($deleted.getValue()){
 						console.log("removed option: " + $path);
