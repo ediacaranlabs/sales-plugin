@@ -47,7 +47,7 @@
 			<c:forEach items="${vars.productMetadataList}" var="metadata">
 				<ec:option value="${metadata.protectedID}" selected="${metadata.id == vars.entity.metadata}">${metadata.name}</ec:option>
 			</c:forEach>
-			<ec:field-validator field="description">
+			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
 					message="#{resource_form.description.notEmpty}" 

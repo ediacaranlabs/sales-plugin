@@ -29,19 +29,19 @@
 								<c:set var="property" value="${propertyEntry.value}"/>
 								<c:set var="propertyMetadata" value="${vars.attributesMetadata[property.productAttributeId]}"/>
 								<span formgroup="attributes" formgrouptype="index">
-									<ec:table-row>
-										 <ec:table-col classStyle="form-group has-feedback">
+									<ed:row>
+										 <ed:col classStyle="form-group has-feedback">
 											<c:choose>
 												<c:when test="${propertyMetadata.type == 'TEXT'}">
 													<c:if test="${propertyMetadata.rows > 0}">
-														<ec:textarea rows="${propertyMetadata.rows}" label="${propertyMetadata.name}" name="${propertyMetadata.code}">${property.value}</ec:textarea>
+														<ec:textarea id="attribute_${propertyMetadata.code}" rows="${propertyMetadata.rows}" label="${propertyMetadata.name}" name="${propertyMetadata.code}">${property.value}</ec:textarea>
 													</c:if>
 													<c:if test="${propertyMetadata.rows <= 0}">
-														<ec:textfield label="${propertyMetadata.name}" name="${propertyMetadata.code}" value="${property.value}"/>
+														<ec:textfield id="attribute_${propertyMetadata.code}" label="${propertyMetadata.name}" name="${propertyMetadata.code}" value="${property.value}"/>
 													</c:if>
 												</c:when>
 												<c:when test="${propertyMetadata.type == 'SELECT'}">
-													<ec:select name="${propertyMetadata.code}" label="${propertyMetadata.name}">
+													<ec:select id="attribute_${propertyMetadata.code}" name="${propertyMetadata.code}" label="${propertyMetadata.name}">
 														<c:set var="opt_selected" value="${property.value}"/>
 														<c:forEach items="${propertyMetadata.options}" var="opts">
 															<ec:option label="${opts.description}" selected="${opts.value == opt_selected}" value="${opts.value}"/>
@@ -49,7 +49,7 @@
 													</ec:select>
 												</c:when>
 												<c:when test="${propertyMetadata.type == 'MULTISELECT'}">
-													<ec:select name="${propertyMetadata.code}" label="${propertyMetadata.name}" multiple="true" rows="5">
+													<ec:select id="attribute_${propertyMetadata.code}" name="${propertyMetadata.code}" label="${propertyMetadata.name}" multiple="true" rows="5">
 														<c:forEach items="${propertyMetadata.options}" var="opts">
 															<ec:option label="${opts.description}" 
 																selected="${property.containsValue(opts.value)}" value="${opts.value}"/>
@@ -60,18 +60,18 @@
 													<ec:label>${propertyMetadata.name}</ec:label><br>
 													<c:set var="opt_selected" value="${property.value}"/>
 													<c:forEach items="${propertyMetadata.options}" var="opts">
-														<ec:radio inline="true" name="${propertyMetadata.code}" label="${opts.description}" value="${opts.value}" selected="${opts.value == opt_selected}"/><br>
+														<ec:radio id="attribute_${propertyMetadata.code}" inline="true" name="${propertyMetadata.code}" label="${opts.description}" value="${opts.value}" selected="${opts.value == opt_selected}"/><br>
 													</c:forEach>
 												</c:when>
 												<c:when test="${propertyMetadata.type == 'MULTISELECT_LIST'}">
 													<ec:label>${propertyMetadata.name}</ec:label><br>
 													<c:forEach items="${propertyMetadata.options}" var="opts">
-														<ec:checkbox inline="true" name="${propertyMetadata.code}" label="${opts.description}" value="${opts.value}" 
+														<ec:checkbox id="attribute_${propertyMetadata.code}" inline="true" name="${propertyMetadata.code}" label="${opts.description}" value="${opts.value}" 
 															selected="${property.containsValue(opts.value)}"/><br>
 													</c:forEach>
 												</c:when>
 											</c:choose>
-											<ec:field-validator form="product_metadata_form" field="${propertyMetadata.code}">
+											<ec:field-validator form="product_form" field="attribute_${propertyMetadata.code}">
 											
 												<c:if test="${!propertyMetadata.allowEmpty}">
 												<ec:field-validator-rule name="notEmpty" message="The ${propertyMetadata.name} is required"/>
@@ -106,11 +106,8 @@
 												</c:if>
 												
 											</ec:field-validator>
-										</ec:table-col>
-										<ec:table-col>
-											<small>${propertyMetadata.description}</small>
-										</ec:table-col>
-									</ec:table-row>
+										</ed:col>
+									</ed:row>
 								</span>
 							</c:forEach>
 						</ec:tabs-item>
