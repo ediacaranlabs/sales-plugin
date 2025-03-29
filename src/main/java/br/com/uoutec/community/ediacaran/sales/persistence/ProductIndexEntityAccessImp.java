@@ -1,15 +1,14 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityID;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductIndexEntity;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -49,12 +48,23 @@ public class ProductIndexEntityAccessImp
 	public void update(Product value) throws EntityAccessException {
 		try{
 			ProductIndexEntity pEntity = new ProductIndexEntity(value);
+			ProductIndexEntity actualEntity = entityManager.find(ProductIndexEntity.class, value.getId());
 			
-			pEntity = (ProductIndexEntity)entityManager.merge(pEntity);
+			List<ProductAttributeValueIndexEntity> actualAttributesEntity = actualEntity.getAttributes();
 			
-			if(pEntity.getAttributes() != null) {
+			List<ProductAttributeValueIndexEntity> attributes = pEntity.getAttributes();
+			pEntity.setAttributes(null);
+			
+			if(attributes != null) {
 				
-				for(ProductAttributeValueIndexEntity e: pEntity.getAttributes()) {
+				if(actualAttributesEntity != null) {
+					actualAttributesEntity = new ArrayList<>(actualAttributesEntity);
+					for(ProductAttributeValueIndexEntity e: actualAttributesEntity) {
+						entityManager.remove(e);
+					}
+				}
+				
+				for(ProductAttributeValueIndexEntity e: attributes) {
 					if(entityManager.find(ProductAttributeValueIndexEntity.class, e.getId()) == null) {
 						entityManager.persist(e);
 					}
@@ -65,20 +75,12 @@ public class ProductIndexEntityAccessImp
 				
 				entityManager.flush();
 				
-				Map<ProductAttributeValueEntityID, ProductAttributeValueIndexEntity> attrsMap = 
-						pEntity.getAttributes().stream()
-								.collect(Collectors.toMap((e)->e.getId(), (e)->e));
-				
-				ProductIndexEntity actualEntity = entityManager.find(ProductIndexEntity.class, value.getId());
-				
-				for(ProductAttributeValueIndexEntity e: actualEntity.getAttributes()) {
-					if(!attrsMap.containsKey(e.getId())) {
-						entityManager.remove(e);
-					}
-				}
 			}
 			
+			pEntity = (ProductIndexEntity)entityManager.merge(pEntity);
+			actualEntity.setAttributes(actualAttributesEntity);
 			entityManager.flush();
+			
     	}
     	catch(Throwable e){
     		throw new EntityAccessException(e);

@@ -122,6 +122,32 @@ public class DefaultProductAdminViewer implements ProductAdminViewer{
 	}
 
 	@Override
+	public WebResultAction showProductEdit(ProductPubEntity productPubEntity, String area, Locale locale)
+			throws InvalidRequestException {
+		
+		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
+		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
+		
+		try {
+			String type = productPubEntity.getProductType();
+			ProductType productType = productTypeRegistry.getProductType(type);
+			return productType.getViewHandler().updateView(productPubEntity, area, locale);
+		}
+		catch(InvalidRequestException ex){
+			throw ex;
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.edit.error.fail_load_request, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+	}
+	
+	@Override
 	public WebResultAction saveProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
 		
 		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);

@@ -307,6 +307,10 @@ public class Product implements Serializable {
 		}
 		
 		attr.validate(value);
+
+		if(value == null) {
+			this.attributes.remove(code);
+		}
 		
 		ProductAttributeValue v = this.attributes.get(code);
 		if(v == null) {

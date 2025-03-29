@@ -123,6 +123,34 @@ public class ProductAdminPubResource {
 		}
 		
 	}
+
+	@Action({"/show/{product.productType:[^/\\\\s//]+}/{area}"})
+	@RequestMethod("POST")
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
+	public ResultAction show(
+			@Basic(bean="product")
+			ProductPubEntity productPubEntity,
+			@Basic(bean="area")
+			String area,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException {
+
+		try {
+			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
+			return handler.getProductAdminViewer().showProductEdit(productPubEntity, area, locale);
+		}
+		catch(InvalidRequestException ex) {
+			throw ex;
+		}
+		catch(Throwable ex) {
+			WebResultAction ra = new WebResultActionImp();
+			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			ra.setReason("product viewer misconfiguration");
+			return ra;
+		}
+		
+	}
 	
 	@Action({"/save/{product.productType:[^/\\\\s//]+}"})
 	@RequestMethod("POST")

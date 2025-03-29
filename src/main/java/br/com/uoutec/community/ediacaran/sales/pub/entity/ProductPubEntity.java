@@ -90,7 +90,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductImagePubEntity> images;
 	
-	private Map<String, String> attributes;
+	private Map<String, List<String>> attributes;
 	
 	@Transient
 	@NotNull(groups=DataValidation.class)
@@ -225,11 +225,11 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.productMetadata = productMetadata;
 	}
 
-	public Map<String, String> getAttributes() {
+	public Map<String, List<String>> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(Map<String, String> attributes) {
+	public void setAttributes(Map<String, List<String>> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -302,12 +302,25 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 			
 			ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(this.productMetadataID);
-			
-			List<ProductMetadataAttribute> metadataAttributes = productMetadata.getAttributeList();
+			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 
-			for(ProductMetadataAttribute attr: metadataAttributes) {
-				String value = this.attributes.get(attr.getCode());
-				o.setAttribute(attr.getCode(), value, locale);
+			
+			if(defaultProductMetadata != null && defaultProductMetadata.getAttributeList() != null) {
+				for(ProductMetadataAttribute attr: defaultProductMetadata.getAttributeList()) {
+					List<String> value = this.attributes.get(attr.getCode());
+
+					for(String v: value) {
+						o.setAttribute(attr.getCode(), v, locale);
+					}
+				}
+			}
+
+			for(ProductMetadataAttribute attr: productMetadata.getAttributeList()) {
+				List<String> value = this.attributes.get(attr.getCode());
+				
+				for(String v: value) {
+					o.setAttribute(attr.getCode(), v, locale);
+				}
 			}
 			
 		}
@@ -354,6 +367,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.tagsString = x.tagsString;
 		this.productMetadata = x.getProductMetadata();
 		this.locale = x.getLocale();
+		this.attributes = x.getAttributes();
 	}
 	
 }

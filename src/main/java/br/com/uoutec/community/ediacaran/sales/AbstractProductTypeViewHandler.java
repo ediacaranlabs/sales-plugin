@@ -12,7 +12,6 @@ import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
@@ -48,10 +47,15 @@ public abstract class AbstractProductTypeViewHandler
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
 			images = productRegistry.getImagesByProduct(product);
 			productMetadataList = productMetadataRegistry.getAllProductMetadata();
+			
+			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(product.getMetadata());
+			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
+			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
-			for(ProductAttributeValue value: product.getAttributes().values()) {
-				listAttributeMetadata.add(productMetadataRegistry.findProductMetadataAttributeById(value.getProductAttributeId()));
+			if(defaultProductMetadata != null) {
+				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
 			}
+			listAttributeMetadata.addAll(productMetadata.getAttributeList());
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}
 		catch(Throwable ex) {
@@ -103,6 +107,7 @@ public abstract class AbstractProductTypeViewHandler
 			}
 		}
 		catch(Throwable ex) {
+			ex.printStackTrace();
 			exception = ex;
 			ra.add("exception", exception);
 			return ra;
@@ -115,6 +120,7 @@ public abstract class AbstractProductTypeViewHandler
 			productRegistry.registerProductImages(saveList, product);			
 		}
 		catch(Throwable ex) {
+			ex.printStackTrace();
 			exception = ex;
 			ra.add("exception", exception);
 			return ra;
@@ -136,7 +142,51 @@ public abstract class AbstractProductTypeViewHandler
 	@Override
 	public WebResultAction updateView(ProductPubEntity productPubEntity, String code, Locale locale)
 			throws InvalidRequestException {
-		throw new UnsupportedOperationException();
+		
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
+		WebResultAction ra = new WebResultActionImp();
+		
+		Product product = null;
+		Map<Integer, ProductMetadataAttribute> attributesMetadata;
+		List<ProductMetadata> productMetadataList;
+		
+		Throwable exception = null;
+
+		try {
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, false);
+			productMetadataList = productMetadataRegistry.getAllProductMetadata();
+			
+			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(product.getMetadata());
+			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
+			
+			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
+			if(defaultProductMetadata != null) {
+				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
+			}
+			listAttributeMetadata.addAll(productMetadata.getAttributeList());
+			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
+		}
+		catch(Throwable ex) {
+			ex.printStackTrace();
+			exception = ex;
+			ra.add("exception", exception);
+			return ra;
+		}
+		
+		if("attribute_tab".equals(code)){
+			ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/attribute_tab.jsp"), true);
+		}
+
+		Map<String,Object> vars = new HashMap<>();
+		
+		vars.put("entity", product);
+		vars.put("attributesMetadata", attributesMetadata);
+		vars.put("productMetadataList", productMetadataList);
+		
+		ra.add("vars", vars);
+		
+		return ra;
 	}
 	
 	@Override

@@ -38,11 +38,11 @@ public enum ProductAttributeValueType {
 		}
 		
 		public Object parse(String value, Locale locale) {
-			return Integer.parseInt(value);
+			return value == null? 0 : Integer.parseInt(value);
 		}
 
 		public String toString(Object value, Locale locale) {
-			return String.valueOf((Integer)value);
+			return value == null? null : String.valueOf((Integer)value);
 		}
 		
 	},
@@ -55,11 +55,11 @@ public enum ProductAttributeValueType {
 		}
 		
 		public Object parse(String value, Locale locale) {
-			return Double.parseDouble(value);
+			return value == null? 0.0 : Double.parseDouble(value);
 		}
 
 		public String toString(Object value, Locale locale) {
-			return String.valueOf((Double)value);
+			return value == null? null : String.valueOf((Double)value);
 		}
 		
 	},
@@ -77,7 +77,7 @@ public enum ProductAttributeValueType {
 					DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale).withZone(ZoneId.systemDefault());
 			return formatter.parse(value);
 			*/
-			return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
+			return value == null? null : LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE);
 		}
 
 		public String toString(Object value, Locale locale) {
@@ -86,7 +86,7 @@ public enum ProductAttributeValueType {
 					DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
 			return formatter.format((LocalDate)value);
 			*/
-			return DateTimeFormatter.ISO_LOCAL_DATE.format((LocalDate)value);
+			return value == null? null : DateTimeFormatter.ISO_LOCAL_DATE.format((LocalDate)value);
 		}
 		
 	},
@@ -104,7 +104,7 @@ public enum ProductAttributeValueType {
 					DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
 			return formatter.parse(value);
 			*/
-			return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+			return value == null? null : LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		}
 
 		public String toString(Object value, Locale locale) {
@@ -113,7 +113,7 @@ public enum ProductAttributeValueType {
 					DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale == null? MessageBundleThread.getLocale() : locale);
 			return formatter.format((LocalDate)value);
 			*/
-			return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format((LocalDate)value);
+			return value == null? null: DateTimeFormatter.ISO_LOCAL_DATE_TIME.format((LocalDate)value);
 		}
 		
 	},
@@ -131,7 +131,7 @@ public enum ProductAttributeValueType {
 					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? Locale.getDefault() : locale);
 			return formatter.parse(value);
 			*/
-			return LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_TIME);
+			return value == null? null : LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_TIME);
 		}
 
 		public String toString(Object value, Locale locale) {
@@ -140,7 +140,7 @@ public enum ProductAttributeValueType {
 					DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale == null? Locale.getDefault() : locale);
 			return formatter.format((LocalDate)value);
 			*/
-			return DateTimeFormatter.ISO_LOCAL_TIME.format((LocalDate)value);
+			return value == null? null : DateTimeFormatter.ISO_LOCAL_TIME.format((LocalDate)value);
 		}
 		
 	};

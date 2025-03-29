@@ -25,91 +25,9 @@
 							<jsp:include page="/default_template/admin/product/image_gallery_tab.jsp"/>
 						</ec:tabs-item>
 						<ec:tabs-item title="Properties">
-							<c:forEach items="${vars.entity.attributes}" var="propertyEntry">
-								<c:set var="property" value="${propertyEntry.value}"/>
-								<c:set var="propertyMetadata" value="${vars.attributesMetadata[property.productAttributeId]}"/>
-								<span formgroup="attributes" formgrouptype="index">
-									<ed:row>
-										 <ed:col classStyle="form-group has-feedback">
-											<c:choose>
-												<c:when test="${propertyMetadata.type == 'TEXT'}">
-													<c:if test="${propertyMetadata.rows > 0}">
-														<ec:textarea id="attribute_${propertyMetadata.code}" rows="${propertyMetadata.rows}" label="${propertyMetadata.name}" name="${propertyMetadata.code}">${property.value}</ec:textarea>
-													</c:if>
-													<c:if test="${propertyMetadata.rows <= 0}">
-														<ec:textfield id="attribute_${propertyMetadata.code}" label="${propertyMetadata.name}" name="${propertyMetadata.code}" value="${property.value}"/>
-													</c:if>
-												</c:when>
-												<c:when test="${propertyMetadata.type == 'SELECT'}">
-													<ec:select id="attribute_${propertyMetadata.code}" name="${propertyMetadata.code}" label="${propertyMetadata.name}">
-														<c:set var="opt_selected" value="${property.value}"/>
-														<c:forEach items="${propertyMetadata.options}" var="opts">
-															<ec:option label="${opts.description}" selected="${opts.value == opt_selected}" value="${opts.value}"/>
-														</c:forEach>
-													</ec:select>
-												</c:when>
-												<c:when test="${propertyMetadata.type == 'MULTISELECT'}">
-													<ec:select id="attribute_${propertyMetadata.code}" name="${propertyMetadata.code}" label="${propertyMetadata.name}" multiple="true" rows="5">
-														<c:forEach items="${propertyMetadata.options}" var="opts">
-															<ec:option label="${opts.description}" 
-																selected="${property.containsValue(opts.value)}" value="${opts.value}"/>
-														</c:forEach>
-													</ec:select>
-												</c:when>
-												<c:when test="${propertyMetadata.type == 'SELECT_LIST'}">
-													<ec:label>${propertyMetadata.name}</ec:label><br>
-													<c:set var="opt_selected" value="${property.value}"/>
-													<c:forEach items="${propertyMetadata.options}" var="opts">
-														<ec:radio id="attribute_${propertyMetadata.code}" inline="true" name="${propertyMetadata.code}" label="${opts.description}" value="${opts.value}" selected="${opts.value == opt_selected}"/><br>
-													</c:forEach>
-												</c:when>
-												<c:when test="${propertyMetadata.type == 'MULTISELECT_LIST'}">
-													<ec:label>${propertyMetadata.name}</ec:label><br>
-													<c:forEach items="${propertyMetadata.options}" var="opts">
-														<ec:checkbox id="attribute_${propertyMetadata.code}" inline="true" name="${propertyMetadata.code}" label="${opts.description}" value="${opts.value}" 
-															selected="${property.containsValue(opts.value)}"/><br>
-													</c:forEach>
-												</c:when>
-											</c:choose>
-											<ec:field-validator form="product_form" field="attribute_${propertyMetadata.code}">
-											
-												<c:if test="${!propertyMetadata.allowEmpty}">
-												<ec:field-validator-rule name="notEmpty" message="The ${propertyMetadata.name} is required"/>
-												</c:if>
-							
-												<c:if test="${(propertyMetadata.type == 'MULTISELECT' || propertyMetadata.type == 'MULTISELECT_LIST') && (propertyMetadata.minLength > 0 || propertyMetadata.maxLength > 0)}">
-												<ec:field-validator-rule name="choice"  message="Please choose ${propertyMetadata.minLength} - ${propertyMetadata.maxLength}!">
-													<c:if test="${propertyMetadata.minLength > 0}">
-													<ec:field-validator-param name="min">${propertyMetadata.minLength}</ec:field-validator-param>
-													</c:if>
-													<c:if test="${propertyMetadata.maxLength > 0}">
-													<ec:field-validator-param name="max">${propertyMetadata.maxLength}</ec:field-validator-param>
-													</c:if>
-												</ec:field-validator-rule>
-												</c:if>
-																	
-												<c:if test="${!(propertyMetadata.type == 'MULTISELECT' || propertyMetadata.type == 'MULTISELECT_LIST') && (propertyMetadata.minLength > 0 || propertyMetadata.maxLength > 0)}">
-												<ec:field-validator-rule name="stringLength"  message="The ${propertyMetadata.name} is short or large!">
-													<c:if test="${propertyMetadata.min > 0}">
-													<ec:field-validator-param name="min">${propertyMetadata.minLength}</ec:field-validator-param>
-													</c:if>
-													<c:if test="${propertyMetadata.max > 0}">
-													<ec:field-validator-param name="max">${propertyMetadata.maxLength}</ec:field-validator-param>
-													</c:if>
-												</ec:field-validator-rule>
-												</c:if>
-							
-												<c:if test="${!empty propertyMetadata.regex}">
-												<ec:field-validator-rule name="regexp"  message="Invalid format!">
-													<ec:field-validator-param name="regexp" raw="true">/${propertyMetadata.regex}/</ec:field-validator-param>
-												</ec:field-validator-rule>
-												</c:if>
-												
-											</ec:field-validator>
-										</ed:col>
-									</ed:row>
-								</span>
-							</c:forEach>
+							<span id="attribute_tab">
+								<jsp:include page="/default_template/admin/product/attribute_tab.jsp"/>
+							</span>
 						</ec:tabs-item>
 						<c:forEach items="${vars.tabs}" var="tab">
 						<!-- tab (${tab.id}) -->

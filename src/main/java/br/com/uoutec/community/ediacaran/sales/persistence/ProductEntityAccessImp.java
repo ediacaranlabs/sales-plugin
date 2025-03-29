@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -30,7 +29,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchAttributeFilt
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityID;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductIndexEntity;
@@ -75,36 +73,55 @@ public class ProductEntityAccessImp
 	public void update(Product value) throws EntityAccessException {
 		try{
 			ProductEntity pEntity = new ProductEntity(value);
+			ProductEntity actualEntity = entityManager.find(ProductEntity.class, value.getId());
+			//Product actualValue = actualEntity.toEntity();
 			
-			pEntity = (ProductEntity)entityManager.merge(pEntity);
+			List<ProductAttributeValueEntity> actualAttributesEntity = actualEntity.getAttributes();
 			
-			if(pEntity.getAttributes() != null) {
+			//TODO: javax.persistence.EntityNotFoundException: 
+			// Unable to find br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntity with 
+			// id br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductAttributeValueEntityID@xxxxx
+			List<ProductAttributeValueEntity> attributes = pEntity.getAttributes();
+			pEntity.setAttributes(null);
+			
+			if(attributes != null) {
 				
-				for(ProductAttributeValueEntity e: pEntity.getAttributes()) {
-					if(entityManager.find(ProductAttributeValueIndexEntity.class, e.getId()) == null) {
+				if(actualAttributesEntity != null) {
+					actualAttributesEntity = new ArrayList<>(actualAttributesEntity);
+					for(ProductAttributeValueEntity e: actualAttributesEntity) {
+						//TODO: cascade exception productIndex
+						e.setProductIndex(null);
+						entityManager.remove(e);
+					}
+				}
+				
+				//entityManager.flush();
+				/*
+				if(actualValue.getAttributes() != null) {
+					for(ProductAttributeValue e: actualValue.getAttributes().values()) {
+						ProductAttributeValueEntity x = new ProductAttributeValueEntity(e.getValue(), e, actualValue);
+						x = entityManager.merge(x);
+						entityManager.remove(x);
+					}
+				}
+				*/
+				
+				for(ProductAttributeValueEntity e: attributes) {
+					if(entityManager.find(ProductAttributeValueEntity.class, e.getId()) == null) {
 						entityManager.persist(e);
 					}
 					else {
 						e = entityManager.merge(e);
 					}
 				}
-				
-				entityManager.flush();
-				
-				Map<ProductAttributeValueEntityID, ProductAttributeValueEntity> attrsMap = 
-						pEntity.getAttributes().stream()
-								.collect(Collectors.toMap((e)->e.getId(), (e)->e));
-				
-				ProductEntity actualEntity = entityManager.find(ProductEntity.class, value.getId());
-				
-				for(ProductAttributeValueEntity e: actualEntity.getAttributes()) {
-					if(!attrsMap.containsKey(e.getId())) {
-						entityManager.remove(e);
-					}
-				}
+
 			}
-			
+
+			pEntity = (ProductEntity)entityManager.merge(pEntity);
+			pEntity.setAttributes(attributes);
 			entityManager.flush();
+
+			pEntity.toEntity(value);
     	}
     	catch(Throwable e){
     		throw new EntityAccessException(e);

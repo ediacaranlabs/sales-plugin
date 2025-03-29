@@ -17,6 +17,8 @@ public interface ProductAdminViewer {
 	
 	WebResultAction showProductEdit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException;
 	
+	WebResultAction showProductEdit(ProductPubEntity productPubEntity, String area, Locale locale) throws InvalidRequestException;
+	
 	WebResultAction saveProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException;
 	
 	WebResultAction removeProduct(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException;

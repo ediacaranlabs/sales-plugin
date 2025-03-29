@@ -66,6 +66,15 @@
 						<ec:field-validator-param name="max">256</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="change">
+				let $source = $event.source;
+				let $form = $source.getForm();
+				$form.submit(
+					false, 
+					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/${vars.entity.productType.toLowerCase()}/attribute_tab", 
+					"attribute_tab"
+				); 
+			</ec:event>
 		</ec:select>
 	</ed:col>
 </ed:row>
