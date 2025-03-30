@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -300,6 +301,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		
 		if(this.attributes != null) {
 			
+			o.setAttributes(new HashMap<>());
+			
 			ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(this.productMetadataID);
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
@@ -308,13 +311,17 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 			if(defaultProductMetadata != null && defaultProductMetadata.getAttributeList() != null) {
 				for(ProductMetadataAttribute attr: defaultProductMetadata.getAttributeList()) {
 					List<String> value = this.attributes.get(attr.getCode());
-					o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+					if(value != null) {
+						o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+					}
 				}
 			}
 
 			for(ProductMetadataAttribute attr: productMetadata.getAttributeList()) {
 				List<String> value = this.attributes.get(attr.getCode());
-				o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+				if(value != null) {
+					o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+				}
 			}
 			
 		}

@@ -28,6 +28,10 @@ public class ProductMetadataService {
 	@Inject
 	private ProductMetadataRegistry productMetadataRegistry;
 
+	public List<ProductMetadata> getAllProductMetadata() throws ProductRegistryException {
+		return productMetadataRegistry.getAllProductMetadata();
+	}
+	
 	public List<ProductMetadataAttribute> getAttributes(ProductMetadata metadata) throws ProductRegistryException{
 		return productMetadataRegistry.getProductMetadataAttributes(metadata);
 	}

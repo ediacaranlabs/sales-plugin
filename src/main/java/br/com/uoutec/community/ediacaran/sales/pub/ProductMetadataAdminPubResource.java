@@ -98,7 +98,10 @@ public class ProductMetadataAdminPubResource {
 		
 	}
 	
-	@Action("/edit/{product_metadata.protectedID:[^/\\s//]+}")
+	@Action({
+		"/edit/{product_metadata.protectedID:[^/\\s//]+}",
+		"/edit"
+	})
 	@View("${plugins.ediacaran.sales.template}/admin/product_metadata/edit")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
@@ -111,9 +114,11 @@ public class ProductMetadataAdminPubResource {
 		
 		ProductMetadata entity;
 		try{
-			if(productMetadataPubEntity != null) {
-				productMetadataPubEntity.setLocale(locale);
+			if(productMetadataPubEntity == null) {
+				productMetadataPubEntity = new ProductMetadataPubEntity();
 			}
+			
+			productMetadataPubEntity.setLocale(locale);
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, false, true);
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);
@@ -167,11 +172,13 @@ public class ProductMetadataAdminPubResource {
 			List<ProductMetadataAttribute> list = entity.getAttributeList();
 			productMetadataService.registerProductMetadata(entity);
 			
-			Collections.sort(
-					list, 
-					(a,b)-> 
-						((ProductMetadataAttributeUpdate)a).getIndex() - ((ProductMetadataAttributeUpdate)b).getIndex() 
-			);
+			if(list != null) {
+				Collections.sort(
+						list, 
+						(a,b)-> 
+							((ProductMetadataAttributeUpdate)a).getIndex() - ((ProductMetadataAttributeUpdate)b).getIndex() 
+				);
+			}
 			
 			Map<String,Object> map = new HashMap<>();
 			map.put("entity", entity);

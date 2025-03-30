@@ -40,11 +40,11 @@
 			<ed:row>
 				<ed:col>
 					<ec:button icon="search" label="#{search.form.search.label}" form="productSearchForm"  actionType="submit" align="right" bundle="${messages}"/>
-					<ec:dropdown label="#{search.form.new.label}" style="primary" align="right" bundle="${messages}">
-						<c:forEach items="${vars.productTypes}" var="productType">
-							<ec:dropdown-item src="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/edit/${fn:toLowerCase(productType.code)}">${productType.name}</ec:dropdown-item>
-						</c:forEach>
-					</ec:dropdown>
+					<ec:button label="#{search.form.new.label}"  actionType="button" align="right" bundle="${messages}">
+						<ec:event type="click">
+							$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata/edit');
+						</ec:event>
+					</ec:button>
 				</ed:col>
 			</ed:row>
 			<ec:data-result var="response">
