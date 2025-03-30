@@ -12,23 +12,23 @@
 		<ec:textfield 
 			name="name" 
 			value="${vars.entity.name}" 
-			label="#{resource_form.name.label}"
+			label="#{product.form.name.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:NAME')}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
-					message="#{resource_form.name.notEmpty}" 
+					message="#{product.form.name.notEmpty}" 
 					bundle="${messages}"/>
 				<ec:field-validator-rule 
 					name="regexp"
-					message="#{resource_form.name.regex}"
+					message="#{product.form.name.regex}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule 
 					name="stringLength" 
-					message="#{resource_form.name.length}" 
+					message="#{product.form.name.length}" 
 					bundle="${messages}">
 						<ec:field-validator-param name="min">3</ec:field-validator-param>
 						<ec:field-validator-param name="max">256</ec:field-validator-param>
@@ -41,7 +41,7 @@
 	<ed:col size="12" classStyle="form-group has-feedback">
 		<ec:select 
 			name="productMetadata" 
-			label="Product type"
+			label="#{product.form.product_metadata.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:PRODUCT_METADATA')}"
 			bundle="${messages}">
 			<c:forEach items="${vars.productMetadataList}" var="metadata">
@@ -50,21 +50,8 @@
 			<ec:field-validator>
 				<ec:field-validator-rule 
 					name="notEmpty" 
-					message="#{resource_form.description.notEmpty}" 
+					message="#{product.form.product_metadata.notEmpty}" 
 					bundle="${messages}"/>
-				<ec:field-validator-rule 
-					name="regexp"
-					message="#{resource_form.description.regex}"
-					bundle="${messages}">
-					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
-				</ec:field-validator-rule>
-				<ec:field-validator-rule 
-					name="stringLength" 
-					message="#{resource_form.description.length}" 
-					bundle="${messages}">
-						<ec:field-validator-param name="min">3</ec:field-validator-param>
-						<ec:field-validator-param name="max">256</ec:field-validator-param>
-				</ec:field-validator-rule>
 			</ec:field-validator>
 			<ec:event type="change">
 				let $source = $event.source;
@@ -90,17 +77,17 @@
 		<ec:field-validator field="description">
 			<ec:field-validator-rule 
 				name="notEmpty" 
-				message="#{resource_form.description.notEmpty}" 
+				message="#{product.form.description.notEmpty}" 
 				bundle="${messages}"/>
 			<ec:field-validator-rule 
 				name="regexp"
-				message="#{resource_form.description.regex}"
+				message="#{product.form.description.regex}"
 				bundle="${messages}">
 				<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
 			</ec:field-validator-rule>
 			<ec:field-validator-rule 
 				name="stringLength" 
-				message="#{resource_form.description.length}" 
+				message="#{product.form.description.length}" 
 				bundle="${messages}">
 					<ec:field-validator-param name="min">3</ec:field-validator-param>
 					<ec:field-validator-param name="max">256</ec:field-validator-param>
@@ -113,23 +100,23 @@
 		<ec:textarea 
 			rows="10" 
 			name="description" 
-			label="#{resource_form.description.label}"
+			label="#{product.form.description.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:DESCRIPTION')}"
 			bundle="${messages}">${vars.entity.description}</ec:textarea>
 		<ec:field-validator field="description">
 			<ec:field-validator-rule 
 				name="notEmpty" 
-				message="#{resource_form.description.notEmpty}" 
+				message="#{product.form.description.notEmpty}" 
 				bundle="${messages}"/>
 			<ec:field-validator-rule 
 				name="regexp"
-				message="#{resource_form.description.regex}"
+				message="#{product.form.description.regex}"
 				bundle="${messages}">
 				<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
 			</ec:field-validator-rule>
 			<ec:field-validator-rule 
 				name="stringLength" 
-				message="#{resource_form.description.length}" 
+				message="#{product.form.description.length}" 
 				bundle="${messages}">
 					<ec:field-validator-param name="min">3</ec:field-validator-param>
 					<ec:field-validator-param name="max">2048</ec:field-validator-param>
@@ -148,7 +135,7 @@
 					<ec:option value="USD">USD</ec:option>
 					<ec:field-validator>
 						<ec:field-validator-rule name="notEmpty"
-							message="#{resource_form.currency.notEmpty}" bundle="${messages}" />
+							message="#{product.form.currency.notEmpty}" bundle="${messages}" />
 					</ec:field-validator>
 				</ec:select>
 			</ec:prepend-field>
@@ -157,9 +144,9 @@
 				value="${vars.entity.cost}">
 				<ec:field-validator>
 					<ec:field-validator-rule name="notEmpty"
-						message="#{resource_form.cost.notEmpty}" bundle="${messages}" />
+						message="#{product.form.cost.notEmpty}" bundle="${messages}" />
 					<ec:field-validator-rule name="regexp"
-						message="#{resource_form.cost.regex}" bundle="${messages}">
+						message="#{product.form.cost.regex}" bundle="${messages}">
 						<ec:field-validator-param name="regexp" raw="true">/[0-9]{1,10}\.[0-9]{2,2}/</ec:field-validator-param>
 					</ec:field-validator-rule>
 				</ec:field-validator>
@@ -180,17 +167,17 @@
 		</ec:field-group>
 	</ed:col>
 	<ed:col size="8" classStyle="form-group has-feedback">
-		<ec:textfield name="tagsString" label="#{resource_form.tags.label}"
+		<ec:textfield name="tagsString" label="#{product.form.tags.label}"
 			align="center" value="${vars.entity.tagsString}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:TAGS')}"
 			bundle="${messages}">
 			<ec:field-validator>
 				<ec:field-validator-rule name="stringLength"
-					message="#{resource_form.tags.length}" bundle="${messages}">
+					message="#{product.form.tags.length}" bundle="${messages}">
 					<ec:field-validator-param name="max">600</ec:field-validator-param>
 				</ec:field-validator-rule>
 				<ec:field-validator-rule name="regexp"
-					message="#{resource_form.tags.regex}" bundle="${messages}">
+					message="#{product.form.tags.regex}" bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">/^([^,.]+(\,[^,.]+)*)$/</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
