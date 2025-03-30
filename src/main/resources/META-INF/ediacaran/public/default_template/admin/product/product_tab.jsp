@@ -71,23 +71,23 @@
 		<ec:textarea 
 			rows="2" 
 			name="shortDescription" 
-			label="Short description"
+			label="#{product.form.short_description.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:SHORT_DESCRIPTION')}"
 			bundle="${messages}">${vars.entity.shortDescription}</ec:textarea>
 		<ec:field-validator field="description">
 			<ec:field-validator-rule 
 				name="notEmpty" 
-				message="#{product.form.description.notEmpty}" 
+				message="#{product.form.short_description.notEmpty}" 
 				bundle="${messages}"/>
 			<ec:field-validator-rule 
 				name="regexp"
-				message="#{product.form.description.regex}"
+				message="#{product.form.short_description.regex}"
 				bundle="${messages}">
 				<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
 			</ec:field-validator-rule>
 			<ec:field-validator-rule 
 				name="stringLength" 
-				message="#{product.form.description.length}" 
+				message="#{product.form.short_description.length}" 
 				bundle="${messages}">
 					<ec:field-validator-param name="min">3</ec:field-validator-param>
 					<ec:field-validator-param name="max">256</ec:field-validator-param>
@@ -126,7 +126,7 @@
 </ed:row>
 <ed:row style="form">
 	<ed:col size="4">
-		<ec:label>Cost</ec:label>
+		<ec:label><fmt:message key="product.form.cost.label" bundle="${messages}"/></ec:label>
 		<ec:field-group>
 			<ec:prepend-field>
 				<ec:select
