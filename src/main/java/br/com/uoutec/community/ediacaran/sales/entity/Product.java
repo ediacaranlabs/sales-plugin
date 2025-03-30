@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -234,7 +235,7 @@ public class Product implements Serializable {
 		return this.attributes.get(code);
 	}
 
-	public void setAttribute(String code, String value) throws ProductRegistryException, ValidationException {
+	public void setAttribute(String code, String ... value) throws ProductRegistryException, ValidationException {
 		
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
@@ -253,10 +254,12 @@ public class Product implements Serializable {
 			throw new IllegalStateException(code);
 		}
 		
-		setAttribute(code, attr.getValueType().parse(value, null), attr);
+		ProductMetadataAttribute fAttr = attr;
+		Object[] values = Arrays.stream(value).map((e)->fAttr.getValueType().parse(e, null)).toArray(Object[]::new);
+		setAttribute(code, attr, values);
 	}
 	
-	public void setAttribute(String code, String value, Locale locale) throws ProductRegistryException, ValidationException {
+	public void setAttribute(String code, Locale locale, String ... value) throws ProductRegistryException, ValidationException {
 		
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
@@ -275,10 +278,12 @@ public class Product implements Serializable {
 			throw new IllegalStateException(code);
 		}
 		
-		setAttribute(code, attr.getValueType().parse(value, locale), attr);
+		ProductMetadataAttribute fAttr = attr;
+		Object[] values = Arrays.stream(value).map((e)->fAttr.getValueType().parse(e, locale)).toArray(Object[]::new);
+		setAttribute(code, attr, values);
 	}
 
-	public void setAttribute(String code, Object value) throws ProductRegistryException, ValidationException {
+	public void setAttribute(String code, Object ... value) throws ProductRegistryException, ValidationException {
 		
 		ProductMetadata productMetadata = getProductMetadata();
 		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
@@ -297,28 +302,27 @@ public class Product implements Serializable {
 			throw new IllegalStateException(code);
 		}
 		
-		setAttribute(code, value, attr);
+		setAttribute(code, attr, value);
 	}
 	
-	private void setAttribute(String code, Object value, ProductMetadataAttribute attr) throws ProductRegistryException, ValidationException {
+	private void setAttribute(String code, ProductMetadataAttribute attr, Object[] value) throws ProductRegistryException, ValidationException {
 		
 		if(attr == null) {
 			throw new IllegalStateException(code);
 		}
 		
-		attr.validate(value);
 
-		if(value == null) {
-			this.attributes.remove(code);
-		}
-		
 		ProductAttributeValue v = this.attributes.get(code);
+		
 		if(v == null) {
 			v = new ProductAttributeValue(attr);
 			this.attributes.put(code, v);
 		}
-		v.addValue(value);
 		
+		for(Object o: value) {
+			attr.validate(o);
+		}
+		v.setValue(value);
 	}
 	
 	private ProductMetadata getDefaultProductMetadata() throws ProductRegistryException {
