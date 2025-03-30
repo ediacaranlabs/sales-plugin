@@ -50,9 +50,9 @@
 			<ec:data-result var="response">
 				<ec:table>
 					<ec:table-header>
-						<ec:table-col><ec:center>Name</ec:center></ec:table-col>
-						<ec:table-col><ec:center>Description</ec:center></ec:table-col>
-						<ec:table-col><ec:center>Actions</ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="result.tab.title.name" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="result.tab.title.description" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="result.tab.title.actions" bundle="${messages}"/></ec:center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
 						<ec:forEach items="!{response.itens}" var="item">

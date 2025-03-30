@@ -375,7 +375,7 @@
 			</ed:row>
 			<ed:row>
 				<ed:col>
-					Options
+					<fmt:message key="form.attribute.options" bundle="${messages}"/>
 				</ed:col>
 			</ed:row>
 			<ed:row>
