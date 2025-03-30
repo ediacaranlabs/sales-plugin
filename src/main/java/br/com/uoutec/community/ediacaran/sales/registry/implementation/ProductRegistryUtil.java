@@ -14,14 +14,29 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductIndexEntityAcc
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
+import br.com.uoutec.entity.registry.DataValidation;
+import br.com.uoutec.entity.registry.IdValidation;
+import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public class ProductRegistryUtil {
 
-	public static void validate(Product product, ProductMetadataEntityAccess productMetadataEntityAccess, Class<?> ... groups) throws ValidationException, EntityAccessException {
-		ValidatorBean.validate(product, groups);
+	private static final Class<?>[] saveValidations = 
+			new Class[] {DataValidation.class, ParentValidation.class};
+
+	private static final Class<?>[] updateValidations = 
+			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
+	
+	public static void validate(Product product, ProductMetadataEntityAccess productMetadataEntityAccess) throws ValidationException, EntityAccessException {
+		
+		if(product.getId() <= 0){
+			ValidatorBean.validate(product, saveValidations);
+		}
+		else {
+			ValidatorBean.validate(product, updateValidations);
+		}
 		
 		ProductMetadata metadata = productMetadataEntityAccess.findById(product.getMetadata());
 		
@@ -82,10 +97,10 @@ public class ProductRegistryUtil {
 	
 	public static void saveOrUpdate(Product product, ProductEntityAccess entityAccess) throws EntityAccessException {
 		if(product.getId() > 0){
-			ProductRegistryUtil.update(product, entityAccess);	
+			update(product, entityAccess);	
 		}
 		else{
-			ProductRegistryUtil.save(product, entityAccess);	
+			save(product, entityAccess);	
 		}
 	}
 

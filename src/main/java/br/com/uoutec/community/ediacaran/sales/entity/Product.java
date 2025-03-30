@@ -82,6 +82,7 @@ public class Product implements Serializable {
 	
 	public Product() {
 		this.attributes = new HashMap<>();
+		this.visibility = ProductVisibility.SHOW;
 	}
 	
 	public String getProtectedID() {
