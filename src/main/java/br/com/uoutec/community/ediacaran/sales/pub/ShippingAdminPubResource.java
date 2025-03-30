@@ -240,6 +240,7 @@ public class ShippingAdminPubResource {
 			resolvedView 	= true;
 		}
 		catch(Throwable ex){
+			ex.printStackTrace();
 			String error = i18nRegistry
 					.getString(
 							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
