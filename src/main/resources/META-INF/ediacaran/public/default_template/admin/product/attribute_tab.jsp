@@ -55,11 +55,11 @@
 				<ec:field-validator form="product_form" field="attribute_${propertyMetadata.code}">
 				
 					<c:if test="${!propertyMetadata.allowEmpty}">
-					<ec:field-validator-rule name="notEmpty" message="The ${propertyMetadata.name} is required"/>
+					<ec:field-validator-rule name="notEmpty" bundle="${messages}" message="#{form.fields.notEmpty}"/>
 					</c:if>
 
 					<c:if test="${(propertyMetadata.type == 'MULTISELECT' || propertyMetadata.type == 'MULTISELECT_LIST') && (propertyMetadata.minLength > 0 || propertyMetadata.maxLength > 0)}">
-					<ec:field-validator-rule name="choice"  message="Please choose ${propertyMetadata.minLength} - ${propertyMetadata.maxLength}!">
+					<ec:field-validator-rule name="choice" bundle="${messages}" message="#{form.fields.choice}">
 						<c:if test="${propertyMetadata.minLength > 0}">
 						<ec:field-validator-param name="min">${propertyMetadata.minLength}</ec:field-validator-param>
 						</c:if>
@@ -83,13 +83,13 @@
 							</ec:field-validator-rule>
 							--%>
 							<c:if test="${propertyMetadata.valueType == 'INTEGER' && empty propertyMetadata.regex}">
-								<ec:field-validator-rule name="regexp"  message="Invalid format!">
+								<ec:field-validator-rule name="regexp" bundle="${messages}" message="#{form.fields.regexp}">
 									<ec:field-validator-param name="regexp" raw="true">/^\d+$/</ec:field-validator-param>
 								</ec:field-validator-rule>
 							</c:if>
 							
 							<c:if test="${propertyMetadata.valueType == 'DECIMAL' && empty propertyMetadata.regex}">
-								<ec:field-validator-rule name="regexp"  message="Invalid format!">
+								<ec:field-validator-rule name="regexp" bundle="${messages}" message="#{form.fields.regexp}">
 									<ec:field-validator-param name="regexp" raw="true">/^\d+\.\d+$/</ec:field-validator-param>
 								</ec:field-validator-rule>
 							</c:if>
@@ -97,7 +97,7 @@
 						</c:if>
 
 						<c:if test="${(propertyMetadata.valueType == 'TEXT') && (propertyMetadata.minLength > 0 || propertyMetadata.maxLength > 0)}">
-							<ec:field-validator-rule name="stringLength"  message="The ${propertyMetadata.name} is short or large!">
+							<ec:field-validator-rule name="stringLength" bundle="${messages}" message="#{form.fields.stringLength}">
 								<c:if test="${propertyMetadata.min > 0}">
 								<ec:field-validator-param name="min">${propertyMetadata.minLength}</ec:field-validator-param>
 								</c:if>
@@ -110,7 +110,7 @@
 					</c:if>
 
 					<c:if test="${!empty propertyMetadata.regex}">
-					<ec:field-validator-rule name="regexp"  message="Invalid format!">
+					<ec:field-validator-rule name="regexp" bundle="${messages}" message="#{form.fields.regexp}">
 						<ec:field-validator-param name="regexp" raw="true">/${propertyMetadata.regex}/</ec:field-validator-param>
 					</ec:field-validator-rule>
 					</c:if>
