@@ -34,22 +34,22 @@
 	    			<ec:textfield name="ownerName" label="#{form.client.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-		    			<ec:datefield label="#{form.from.label}" name="startDate" bundle="${messages}">
+		    			<ec:dateField label="#{form.from.label}" name="startDate" bundle="${messages}">
 		    				<ec:event type="change">
 								var $form = $.AppContext.utils.getById('orderSearchForm');
 								var $startDate = $form.getField('startDate');
 								var $endDate = $form.getField('endDate');
 								$endDate.setProperty('min', $startDate.getValue());
 		    				</ec:event>
-		    			</ec:datefield>
-		    			<ec:datefield label="#{form.to.label}" name="endDate" bundle="${messages}">
+		    			</ec:dateField>
+		    			<ec:dateField label="#{form.to.label}" name="endDate" bundle="${messages}">
 		    				<ec:event type="change">
 								var $form = $.AppContext.utils.getById('orderSearchForm');
 								var $startDate = $form.getField('startDate');
 								var $endDate = $form.getField('endDate');
 								$startDate.setProperty('max', $endDate.getValue());
 		    				</ec:event>
-		    			</ec:datefield>
+		    			</ec:dateField>
 				</ed:col>
 				<ed:col size="3">
 					<ec:select label="#{form.status.label}" name="status" bundle="${messages}">

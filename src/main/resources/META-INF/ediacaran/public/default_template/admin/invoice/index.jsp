@@ -42,22 +42,22 @@
 	    			<ec:radio label="#{form.canceled.no}" value="false" name="canceled" selected="true" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:datefield label="#{form.from.label}" name="startDate" bundle="${messages}">
+	    			<ec:dateField label="#{form.from.label}" name="startDate" bundle="${messages}">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
 							var $startDate = $form.getField('startDate');
 							var $endDate = $form.getField('endDate');
 							$endDate.setProperty('min', $startDate.getValue());
 	    				</ec:event>
-	    			</ec:datefield>
-	    			<ec:datefield label="#{form.to.label}" name="endDate" bundle="${messages}">
+	    			</ec:dateField>
+	    			<ec:dateField label="#{form.to.label}" name="endDate" bundle="${messages}">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
 							var $startDate = $form.getField('startDate');
 							var $endDate = $form.getField('endDate');
 							$startDate.setProperty('max', $endDate.getValue());
 	    				</ec:event>
-	    			</ec:datefield>
+	    			</ec:dateField>
 				</ed:col>
 				<ed:col size="2">
 	    			<ec:textfield label="#{form.mintotal.label}" name="minTotal" bundle="${messages}"/>

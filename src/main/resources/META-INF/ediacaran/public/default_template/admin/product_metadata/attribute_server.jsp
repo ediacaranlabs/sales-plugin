@@ -107,7 +107,7 @@
 				<ed:col size="6" classStyle="form-group has-feedback">
 					<ec:select 
 						name="type" 
-						label="Type"
+						label="#{form.attribute.type.label}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:TYPE')}"
 						bundle="${messages}">
 						<ec:option value=""><fmt:message key="form.attribute.type.emptyOption" bundle="${messages}"/></ec:option>
