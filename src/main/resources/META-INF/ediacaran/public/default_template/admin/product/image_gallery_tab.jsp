@@ -19,7 +19,7 @@
 					</ed:row>
 					<ed:row>
 						<ed:col>
-							<ec:textarea name="description" rows="3">${image.description}</ec:textarea>
+							<ec:textarea name="#{product.form.description.label}" rows="3" bundle="${messages}">${image.description}</ec:textarea>
 						</ed:col>
 					</ed:row>
 					<ed:row>
@@ -60,7 +60,7 @@
 				</ed:row>
 				<ed:row>
 					<ed:col>
-						<ec:textarea name="description" rows="3"></ec:textarea>
+						<ec:textarea name="#{product.form.description.label}" rows="3" bundle="${messages}"></ec:textarea>
 					</ed:col>
 				</ed:row>
 			</ec:box-body>
