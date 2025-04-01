@@ -62,7 +62,9 @@ public class ProductMetadataSearchResultEntityFilter {
 		
 		if(this.filters != null) {
 			for(ProductMetadataAttributeSearchResultEntityFilter f: this.filters.values()) {
-				filters.add(f.toEntity());
+				if(f.getProductMetadataAttribute().isFilter()) {
+					filters.add(f.toEntity());
+				}
 			}
 			e.setFilters(filters);
 		}

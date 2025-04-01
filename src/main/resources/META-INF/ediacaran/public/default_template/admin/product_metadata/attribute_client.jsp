@@ -363,6 +363,30 @@
 						</ec:event>
 					</ec:checkbox>
 					<ec:checkbox 
+						name="showForm" 
+						label="#{form.attribute.show_form.label}" 
+						align="right"
+						value="true"
+						selected="${attribute.showForm}"
+						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:SHOW_FORM')}"
+						bundle="${messages}"/>
+					<ec:checkbox 
+						name="show" 
+						label="#{form.attribute.show.label}" 
+						align="right"
+						value="true"
+						selected="${attribute.show}"
+						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:SHOW')}"
+						bundle="${messages}"/>
+					<ec:checkbox 
+						name="filter" 
+						label="#{form.attribute.filter.label}" 
+						align="right"
+						value="true"
+						selected="${attribute.filter}"
+						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:FILTER')}"
+						bundle="${messages}"/>
+					<ec:checkbox 
 						name="allowEmpty"
 						selected="${attribute.allowEmpty}" 
 						label="#{form.attribute.allowEmpty.label}" 
@@ -370,7 +394,6 @@
 						align="right"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:ALLOW_EMPTY')}"
 						bundle="${messages}"/>
-						
 				</ed:col>
 			</ed:row>
 			<ed:row>

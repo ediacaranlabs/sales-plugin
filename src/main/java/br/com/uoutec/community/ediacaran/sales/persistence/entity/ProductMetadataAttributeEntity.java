@@ -64,6 +64,15 @@ public class ProductMetadataAttributeEntity implements Serializable{
 
 	@Column(name="bit_allow_empty", length = 1)
 	private Boolean allowEmpty;
+
+	@Column(name="bit_show", length = 1)
+	private Boolean show;
+
+	@Column(name="bit_show_form", length = 1)
+	private Boolean showForm;
+	
+	@Column(name="bit_filter", length = 1)
+	private Boolean filter;
 	
 	@Column(name="vlr_rows", length = 2)
 	private Short rows;
@@ -112,6 +121,9 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		this.order = e.getOrder();
 		this.prefix = e.getPrefix();
 		this.suffix = e.getSuffix();
+		this.show = e.isShow();
+		this.showForm = e.isShowForm();
+		this.filter = e.isFilter();
 		this.productMetadataID = e.getProductMetadata();
 		/*
 		if(e.getProductMetadata() > 0) {
@@ -316,6 +328,9 @@ public class ProductMetadataAttributeEntity implements Serializable{
 		e.setPrefix(this.prefix);
 		e.setSuffix(this.suffix);
 		e.setProductMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
+		e.setShow(this.show == null? false : this.show.booleanValue());
+		e.setFilter(this.filter == null? false : this.filter.booleanValue());
+		e.setShowForm(this.showForm == null? false : this.showForm);
 		
 		if(this.productMetadata != null){
 			e.setProductMetadata(this.productMetadata.getId());

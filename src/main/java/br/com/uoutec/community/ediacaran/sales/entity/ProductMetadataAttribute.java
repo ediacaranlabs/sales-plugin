@@ -50,6 +50,12 @@ public class ProductMetadataAttribute {
 	protected String description;
 
 	protected boolean allowEmpty;
+
+	protected boolean show;
+
+	protected boolean showForm;
+	
+	protected boolean filter;
 	
 	protected short rows;
 	
@@ -166,6 +172,30 @@ public class ProductMetadataAttribute {
 			loadOptions();
 		}
 		return options;
+	}
+
+	public boolean isShow() {
+		return show;
+	}
+
+	public void setShow(boolean show) {
+		this.show = show;
+	}
+
+	public boolean isShowForm() {
+		return showForm;
+	}
+
+	public void setShowForm(boolean showForm) {
+		this.showForm = showForm;
+	}
+
+	public boolean isFilter() {
+		return filter;
+	}
+
+	public void setFilter(boolean filter) {
+		this.filter = filter;
 	}
 
 	protected volatile boolean optionsLoaded = false;

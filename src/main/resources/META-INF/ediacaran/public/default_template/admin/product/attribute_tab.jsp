@@ -9,6 +9,7 @@
 <c:forEach items="${vars.attributesMetadata}" var="propertyEntry">
 	<c:set var="propertyMetadata" value="${propertyEntry.value}"/>
 	<c:set var="property" value="${vars.entity.attributes[propertyMetadata.code]}"/>
+	<c:if test="${propertyMetadata.showForm}">
 	<span formgroup="attributes">
 		<ed:row>
 			 <ed:col classStyle="form-group has-feedback">
@@ -119,4 +120,5 @@
 			</ed:col>
 		</ed:row>
 	</span>
+	</c:if>
 </c:forEach>

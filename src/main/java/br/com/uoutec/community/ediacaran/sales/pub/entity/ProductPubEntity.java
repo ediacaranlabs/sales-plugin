@@ -310,17 +310,21 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 			
 			if(defaultProductMetadata != null && defaultProductMetadata.getAttributeList() != null) {
 				for(ProductMetadataAttribute attr: defaultProductMetadata.getAttributeList()) {
-					List<String> value = this.attributes.get(attr.getCode());
-					if(value != null) {
-						o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+					if(attr.isShowForm()) {
+						List<String> value = this.attributes.get(attr.getCode());
+						if(value != null) {
+							o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+						}
 					}
 				}
 			}
 
 			for(ProductMetadataAttribute attr: productMetadata.getAttributeList()) {
-				List<String> value = this.attributes.get(attr.getCode());
-				if(value != null) {
-					o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+				if(attr.isShowForm()) {
+					List<String> value = this.attributes.get(attr.getCode());
+					if(value != null) {
+						o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+					}
 				}
 			}
 			

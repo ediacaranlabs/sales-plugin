@@ -60,6 +60,12 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	private ProductAttributeValueType valueType;
 	
 	private Boolean allowEmpty;
+
+	private Boolean show;
+	
+	private Boolean showForm;
+
+	private Boolean filter;
 	
 	private Short rows;
 	
@@ -106,6 +112,9 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		this.rows = e.getRows();
 		this.type = e.getType();
 		this.valueType = e.getValueType();
+		this.show = e.isShow();
+		this.showForm = e.isShowForm();
+		this.filter = e.isFilter();
 		
 		if(e.getOptions() != null) {
 			this.options = new ArrayList<>();
@@ -193,6 +202,30 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 
 	public void setRows(Short rows) {
 		this.rows = rows;
+	}
+
+	public Boolean getShow() {
+		return show;
+	}
+
+	public void setShow(Boolean show) {
+		this.show = show;
+	}
+
+	public Boolean getShowForm() {
+		return showForm;
+	}
+
+	public void setShowForm(Boolean showForm) {
+		this.showForm = showForm;
+	}
+
+	public Boolean getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Boolean filter) {
+		this.filter = filter;
 	}
 
 	public Short getMinLength() {
@@ -326,6 +359,9 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 		o.setRows(this.rows == null? 0 : this.rows.shortValue());
 		o.setType(this.type);
 		o.setValueType(this.valueType);
+		o.setShow(this.show == null? false : this.show.booleanValue());
+		o.setShowForm(this.showForm == null? false : this.showForm.booleanValue());
+		o.setFilter(this.filter == null? false : this.filter.booleanValue());
 		
 		int index = 0;
 		if(this.options != null) {

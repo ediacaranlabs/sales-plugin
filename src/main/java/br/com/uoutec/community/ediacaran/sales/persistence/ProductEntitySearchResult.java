@@ -42,9 +42,14 @@ public class ProductEntitySearchResult {
 		
 		if(this.filters != null) {
 			List<ProductSearchResultFilter> list = new ArrayList<>();
+			
 			for(ProductMetadataSearchResultEntityFilter f: this.filters.values()) {
-				list.add(f.toEntity());
+				ProductSearchResultFilter fr = f.toEntity();
+				if(!fr.getFilters().isEmpty()) {
+					list.add(f.toEntity());
+				}
 			}
+			
 			e.setFilters(list);
 		}
 		return e;
