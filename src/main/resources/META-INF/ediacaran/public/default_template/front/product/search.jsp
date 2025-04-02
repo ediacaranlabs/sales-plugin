@@ -218,7 +218,7 @@
 	</ec:data-table>
 
 	<ec:template var="filtersGroup" id="filterTemplate">
-		<b>Product filter</b>
+		<b><fmt:message key="search.filters.title" bundle="${messages}"/></b>
 		<hr>
 		<ec:forEach items="!{filtersGroup}" var="group">
 			<span formgroup="filters" formgrouptype="index" class="filter_group">
