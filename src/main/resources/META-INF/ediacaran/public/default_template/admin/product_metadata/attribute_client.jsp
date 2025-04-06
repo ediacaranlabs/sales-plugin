@@ -343,7 +343,6 @@
 					<ec:checkbox 
 						name="deleted" 
 						label="#{form.attribute.deleted.label}" 
-						align="right"
 						value="true"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:DELETED')}"
 						bundle="${messages}">
@@ -351,7 +350,11 @@
 							let $source = $event.source;
 							let $form = $source.getForm();
 							
+							$form.updateFieldIndex();
+							$form.updateFieldNames();
+							
 							let $group = $source.getFormGroup();
+
 							let $path = $group.getAttribute("group-path");
 							let $deleted = $form.getField($path + ".deleted");
 							let $protectedID = $form.getField($path + ".protectedID");
@@ -359,39 +362,42 @@
 							if($protectedID.getValue() == '' && $deleted.getValue()){
 								$group.remove();
 							}
-							
 						</ec:event>
 					</ec:checkbox>
+				</ed:col>
+				<ed:col classStyle="form-group has-feedback">
 					<ec:checkbox 
 						name="showForm" 
 						label="#{form.attribute.show_form.label}" 
-						align="right"
 						value="true"
 						selected="${attribute.showForm}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:SHOW_FORM')}"
 						bundle="${messages}"/>
+				</ed:col>
+				<ed:col classStyle="form-group has-feedback">
 					<ec:checkbox 
 						name="show" 
 						label="#{form.attribute.show.label}" 
-						align="right"
 						value="true"
 						selected="${attribute.show}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:SHOW')}"
 						bundle="${messages}"/>
+				</ed:col>
+				<ed:col classStyle="form-group has-feedback">
 					<ec:checkbox 
 						name="filter" 
 						label="#{form.attribute.filter.label}" 
-						align="right"
 						value="true"
 						selected="${attribute.filter}"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:FILTER')}"
 						bundle="${messages}"/>
+				</ed:col>
+				<ed:col classStyle="form-group has-feedback">
 					<ec:checkbox 
 						name="allowEmpty"
 						selected="${attribute.allowEmpty}" 
 						label="#{form.attribute.allowEmpty.label}" 
 						value="true" 
-						align="right"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:ATTRIBUTE:FIELDS:ALLOW_EMPTY')}"
 						bundle="${messages}"/>
 				</ed:col>
