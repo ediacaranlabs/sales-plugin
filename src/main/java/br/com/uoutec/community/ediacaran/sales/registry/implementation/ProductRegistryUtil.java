@@ -77,12 +77,16 @@ public class ProductRegistryUtil {
 
 	public static void loadProductImage(Product product, ObjectsTemplateManager objectsManager) {
 		String path = ProductUtil.getThumbPath(product);
-		product.setThumb((Path)objectsManager.getObject(path));
+		if(path != null) {
+			product.setThumb((Path)objectsManager.getObject(path));
+		}
 	}
 
 	public static void loadProductImage(ProductImage image, ObjectsTemplateManager objectsManager) {
 		String path = ProductUtil.getThumbPath(image);
-		image.setImage((Path)objectsManager.getObject(path));
+		if(path != null) {
+			image.setImage((Path)objectsManager.getObject(path));
+		}
 	}
 	
 	public static void deleteProductImage(Product product, ObjectsTemplateManager objectsManager) {

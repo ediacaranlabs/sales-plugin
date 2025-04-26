@@ -52,10 +52,14 @@ public abstract class AbstractProductTypeViewHandler
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
+			
 			if(defaultProductMetadata != null) {
 				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
 			}
-			listAttributeMetadata.addAll(productMetadata.getAttributeList());
+			
+			if(productMetadata != null) {
+				listAttributeMetadata.addAll(productMetadata.getAttributeList());
+			}
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}
 		catch(Throwable ex) {
