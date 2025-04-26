@@ -23,6 +23,8 @@ import org.brandao.brutos.annotation.View;
 import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
@@ -51,6 +53,8 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ResponseErrors(rendered=false)
 public class ProductMetadataAdminPubResource {
 
+	private static final Logger logger = LoggerFactory.getLogger(ProductMetadataAdminPubResource.class);
+	
 	@Transient
 	@Inject
 	private I18nRegistry i18nRegistry;
@@ -89,10 +93,15 @@ public class ProductMetadataAdminPubResource {
 			return new ProductMetadatasSearchResultPubEntity(result, locale);
 		}
 		catch(InvalidRequestException ex) {
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
 			throw ex;
 		}
 		catch(Throwable ex) {
-			ex.printStackTrace();
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
 			return null;
 		}
 		
@@ -127,6 +136,11 @@ public class ProductMetadataAdminPubResource {
 			return map;
 		}
 		catch(Throwable ex){
+			
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
@@ -159,6 +173,11 @@ public class ProductMetadataAdminPubResource {
 			entity = productMetadataPubEntity.rebuild(productMetadataPubEntity.getProtectedID() != null, true, true);
 		}
 		catch(Throwable ex){
+			
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
@@ -186,6 +205,11 @@ public class ProductMetadataAdminPubResource {
 			return map;
 		}
 		catch(AttributeCodeDuplicatedProductRegistryException ex){
+
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
@@ -195,6 +219,11 @@ public class ProductMetadataAdminPubResource {
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		catch(OptionCodeDuplicatedProductRegistryException ex){
+			
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
@@ -204,6 +233,11 @@ public class ProductMetadataAdminPubResource {
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		catch(Throwable ex){
+			
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
@@ -235,6 +269,11 @@ public class ProductMetadataAdminPubResource {
 			entity = productMetadataPubEntity.rebuild(true, false, true);
 		}
 		catch(Throwable ex){
+			
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,
@@ -248,6 +287,11 @@ public class ProductMetadataAdminPubResource {
 			productMetadataService.unregisterProductMetadata(entity);
 		}
 		catch(Throwable ex){
+			
+			if(logger.isErrorEnabled()) {
+				logger.error("request fail", ex);
+			}
+			
 			String error = i18nRegistry
 					.getString(
 							ProductMetadataAdminPubResourceMessages.RESOURCE_BUNDLE,

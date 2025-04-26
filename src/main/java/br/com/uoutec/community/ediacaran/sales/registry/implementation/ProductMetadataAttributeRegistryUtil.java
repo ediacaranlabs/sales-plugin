@@ -35,6 +35,10 @@ public class ProductMetadataAttributeRegistryUtil {
 	public static void checkDuplicationCode(List<ProductMetadataAttribute> list, 
 			ProductMetadata parent, ProductMetadataAttributeEntityAccess entityAccess) throws ValidationException, EntityAccessException, AttributeCodeDuplicatedProductRegistryException {
 		
+		if(list == null) {
+			return;
+		}
+		
 		Set<String> codes = new HashSet<>();
 		
 		for(ProductMetadataAttribute e: list) {

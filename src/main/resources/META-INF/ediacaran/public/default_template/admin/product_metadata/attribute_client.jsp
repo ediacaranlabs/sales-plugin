@@ -145,7 +145,7 @@
 							let $path = $group.getAttribute("group-path");
 							let $valueTypeField = $form.getField($path + ".valueType");
 
-							let $optsGroup = $.AppContext.utils.getById('${attribute.protectedID}');
+							let $optsGroup = $.AppContext.utils.getById('!{attribute.optsAreaID}');
 							let $optsGroupList = $optsGroup.search(function($e){
 								return $e.getAttribute('formgroup') == 'options';
 							});

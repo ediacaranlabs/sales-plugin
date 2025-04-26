@@ -52,6 +52,51 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib/</outputDirectory>
+							<excludeArtifactIds>
+								ediacaran-junit-mock,
+								application-se,
+								objenesis,
+								ediacaran-junit,
+								mockito-core,
+								opentest4j,
+								junit-jupiter-engine,
+								byte-buddy,
+								ediacaran-weld
+							</excludeArtifactIds>
+							<excludeGroupIds>
+								org.jboss.weld.se,
+								org.jboss,
+								org.jboss.weld.servlet,
+								org.mockito,
+								org.junit.jupiter,
+								org.junit.platform,
+								org.apiguardian,
+								net.bytebuddy,
+								org.slf4j,
+								log4j,
+								org.junit.jupiter,
+								org.hibernate,
+								org.hsqldb
+							</excludeGroupIds>
+							<includeScope>runtime</includeScope>
+							<!--<excludeScope>provided</excludeScope>-->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

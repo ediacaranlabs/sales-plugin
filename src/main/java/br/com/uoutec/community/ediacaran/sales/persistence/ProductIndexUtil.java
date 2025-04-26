@@ -114,7 +114,7 @@ public class ProductIndexUtil {
 		}
 		
 		for(Object v: values) {
-			optionsIn.value(entityType.toValue(v));
+			optionsIn.value(entityType.parse(v));
 			
 		}
 

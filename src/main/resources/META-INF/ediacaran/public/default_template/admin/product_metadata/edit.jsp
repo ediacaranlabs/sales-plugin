@@ -126,6 +126,12 @@
 													optsAreaID: 'optsArea_' + new Date().getTime() + "_" + Math.floor(Math.random() * 1000)
 												});
 												$.AppContext.utils.content.append("attrArea",$attr);
+												
+												let $source = $event.source;
+												let $form = $source.getForm();
+												
+												$form.updateFieldIndex();
+												$form.updateFieldNames();
 											</ec:event>
 										</ec:button>
 									</ed:col>

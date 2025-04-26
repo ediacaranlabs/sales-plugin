@@ -2,10 +2,12 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import br.com.uoutec.application.bugfix.JDK8046171;
 import br.com.uoutec.community.ediacaran.sales.registry.CartRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
@@ -14,10 +16,10 @@ public class ItensCollection implements Serializable{
 
 	private static final long serialVersionUID = -1646012927852286756L;
 	
-	private Map<String, ProductRequest> itens;
+	private ConcurrentMap<String, ProductRequest> itens;
 
 	public ItensCollection(){
-		this.itens = new HashMap<String, ProductRequest>();
+		this.itens = new ConcurrentHashMap<String, ProductRequest>();
 	}
 	
 	public ProductRequest get(String id){
@@ -119,7 +121,7 @@ public class ItensCollection implements Serializable{
 	}
 	
 	public Collection<ProductRequest> getItens() {
-		return itens.values();
+		return JDK8046171.values(itens);
 	}
 
 	public int getSize(){
