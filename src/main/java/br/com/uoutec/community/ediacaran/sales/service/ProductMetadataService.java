@@ -39,7 +39,7 @@ public class ProductMetadataService {
 	@Transactional
 	public void registerProductMetadata(ProductMetadata metadata) throws ProductRegistryException {
 		
-		if(metadata.getId() != 0 && metadata instanceof ProductMetadataUpdate) {
+		if(metadata instanceof ProductMetadataUpdate) {
 			
 			ProductMetadataUpdate e = (ProductMetadataUpdate)metadata;
 			
@@ -70,7 +70,7 @@ public class ProductMetadataService {
 	@Transactional
 	public void unregisterProductMetadata(ProductMetadata metadata) throws ProductRegistryException {
 		
-		if(metadata.getId() != 0 && metadata instanceof ProductMetadataUpdate) {
+		if(metadata instanceof ProductMetadataUpdate) {
 			
 			ProductMetadataUpdate e = (ProductMetadataUpdate)metadata;
 			
