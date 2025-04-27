@@ -58,7 +58,7 @@
 				let $form = $source.getForm();
 				$form.submit(
 					false, 
-					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/${vars.entity.productType.toLowerCase()}/attribute_tab", 
+					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/${empty vars.entity? 'empty_id' : vars.entity.productType.toLowerCase()}/attribute_tab", 
 					"attribute_tab"
 				); 
 			</ec:event>
