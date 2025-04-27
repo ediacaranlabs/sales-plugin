@@ -45,6 +45,7 @@ public abstract class AbstractProductTypeViewHandler
 		
 		try {
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
+			
 			images = productRegistry.getImagesByProduct(product);
 			productMetadataList = productMetadataRegistry.getAllProductMetadata();
 			
@@ -60,6 +61,7 @@ public abstract class AbstractProductTypeViewHandler
 			if(productMetadata != null) {
 				listAttributeMetadata.addAll(productMetadata.getAttributeList());
 			}
+			
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}
 		catch(Throwable ex) {
@@ -165,9 +167,10 @@ public abstract class AbstractProductTypeViewHandler
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
-			if(defaultProductMetadata != null) {
+			if(defaultProductMetadata != null && defaultProductMetadata.getId() != productMetadata.getId()) {
 				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
 			}
+			
 			listAttributeMetadata.addAll(productMetadata.getAttributeList());
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}

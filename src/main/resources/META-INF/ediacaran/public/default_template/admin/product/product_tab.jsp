@@ -44,6 +44,7 @@
 			label="#{product.form.product_metadata.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:PRODUCT_METADATA')}"
 			bundle="${messages}">
+			<ec:option value=""></ec:option>
 			<c:forEach items="${vars.productMetadataList}" var="metadata">
 				<ec:option value="${metadata.protectedID}" selected="${metadata.id == vars.entity.metadata}">${metadata.name}</ec:option>
 			</c:forEach>
@@ -58,7 +59,7 @@
 				let $form = $source.getForm();
 				$form.submit(
 					false, 
-					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/${empty vars.entity? 'empty_id' : vars.entity.productType.toLowerCase()}/attribute_tab", 
+					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/${vars.entity.productType.toLowerCase()}/attribute_tab", 
 					"attribute_tab"
 				); 
 			</ec:event>
@@ -125,7 +126,7 @@
 	</ed:col>
 </ed:row>
 <ed:row style="form">
-	<ed:col size="4">
+	<ed:col size="4" classStyle="form-group has-feedback">
 		<ec:label><fmt:message key="product.form.cost.label" bundle="${messages}"/></ec:label>
 		<ec:field-group>
 			<ec:prepend-field>
