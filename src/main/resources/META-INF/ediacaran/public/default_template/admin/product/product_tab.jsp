@@ -70,12 +70,13 @@
 <ed:row style="form">
 	<ed:col size="12" classStyle="form-group has-feedback">
 		<ec:textarea 
+			id="product_form_shortDescription"
 			rows="2" 
 			name="shortDescription" 
 			label="#{product.form.short_description.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:SHORT_DESCRIPTION')}"
 			bundle="${messages}">${vars.entity.shortDescription}</ec:textarea>
-		<ec:field-validator field="description">
+		<ec:field-validator form="product_form" field="product_form_shortDescription">
 			<ec:field-validator-rule 
 				name="notEmpty" 
 				message="#{product.form.short_description.notEmpty}" 
@@ -98,13 +99,14 @@
 </ed:row>
 <ed:row style="form">
 	<ed:col size="12" classStyle="form-group has-feedback">
-		<ec:textarea 
+		<ec:textarea
+			id="product_form_description" 
 			rows="10" 
 			name="description" 
 			label="#{product.form.description.label}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:DESCRIPTION')}"
 			bundle="${messages}">${vars.entity.description}</ec:textarea>
-		<ec:field-validator field="description">
+		<ec:field-validator form="product_form" field="product_form_description">
 			<ec:field-validator-rule 
 				name="notEmpty" 
 				message="#{product.form.description.notEmpty}" 

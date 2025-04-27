@@ -288,6 +288,14 @@ public class ProductMetadataAttribute {
 				ProductAttributeType.MULTISELECT == this.type || 
 				ProductAttributeType.MULTISELECT_LIST == this.type;
 	}
+
+	public boolean isSelect() {
+		return 
+				ProductAttributeType.SELECT == this.type || 
+				ProductAttributeType.MULTISELECT == this.type || 
+				ProductAttributeType.MULTISELECT_LIST == this.type ||
+				ProductAttributeType.SELECT_LIST == this.type;
+	}
 	
 	public void validate(Object value) throws ValidationException {
 
@@ -344,7 +352,7 @@ public class ProductMetadataAttribute {
 			break;
 		}
 
-		if(!options.isEmpty()) {
+		if(!options.isEmpty() && isSelect()) {
 			for(ProductMetadataAttributeOption o: options) {
 				if(o.getValue().equals(value)) {
 					return;

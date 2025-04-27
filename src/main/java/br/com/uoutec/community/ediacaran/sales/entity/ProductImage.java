@@ -82,7 +82,7 @@ public class ProductImage implements Serializable{
 	}
 
 	public String getPublicThumb() {
-		return image == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
+		return getImage() == null? null : ProductUtil.getPublicThumbPath(this) + ".png";
 	}
 	
 	public String getProtectedID() {

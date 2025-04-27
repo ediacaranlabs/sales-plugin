@@ -323,7 +323,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 				if(attr.isShowForm()) {
 					List<String> value = this.attributes.get(attr.getCode());
 					if(value != null) {
-						o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+						try {
+							o.setAttribute(attr.getCode(), locale, value.stream().toArray(String[]::new));
+						}
+						catch(ValidationException ex) {
+							if(validate) {
+								throw ex;
+							}
+						}
 					}
 				}
 			}
