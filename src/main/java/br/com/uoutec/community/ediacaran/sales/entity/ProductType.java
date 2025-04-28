@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,8 @@ import javax.validation.constraints.Pattern;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeViewHandler;
+import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -24,6 +27,8 @@ public class ProductType implements Serializable{
 	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	private final String name;
 
+	private String resourceBundle;
+	
 	@Min(0)
 	private final int maxExtra;
 	
@@ -33,11 +38,12 @@ public class ProductType implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	private final ProductTypeViewHandler viewHandler;
 	
-	public ProductType(String code, String name, int maxExtra, ProductTypeHandler handler, ProductTypeViewHandler viewHandler) {
+	public ProductType(String code, String name, String resourceBundle, int maxExtra, ProductTypeHandler handler, ProductTypeViewHandler viewHandler) {
 		this.code = code;
 		this.name = name;
 		this.maxExtra = maxExtra;
 		this.handler = handler;
+		this.resourceBundle = resourceBundle;
 		this.viewHandler = viewHandler;
 	}
 
@@ -49,6 +55,14 @@ public class ProductType implements Serializable{
 		return handler;
 	}
 
+	public String getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public void setResourceBundle(String resourceBundle) {
+		this.resourceBundle = resourceBundle;
+	}
+
 	public String getCode() {
 		return code;
 	}
@@ -57,6 +71,20 @@ public class ProductType implements Serializable{
 		return name;
 	}
 
+	public String getFriendlyName(Locale locale) {
+		if(resourceBundle != null) {
+			I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
+			return i18nRegistry
+						.getString(
+								resourceBundle,
+								name.toLowerCase(), 
+								locale
+						);
+		}
+		
+		return name;
+	}
+	
 	public int getMaxExtra() {
 		return maxExtra;
 	}

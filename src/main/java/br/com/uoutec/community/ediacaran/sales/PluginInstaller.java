@@ -28,6 +28,8 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	private ProductViewerPluginInstaller productViewerPluginInstaller;
 	
+	private ProductTypeInstaller productTypeInstaller;
+	
 	public PluginInstaller() {
 		this.securityPluginInstaller = new SecurityPluginInstaller();
 		this.i18nPluginInstaller = new I18nPluginInstaller();
@@ -36,6 +38,7 @@ public class PluginInstaller extends AbstractPlugin {
 		this.menuPluginInstaller = new MenuPluginInstaller();
 		this.entitiesPluginInstaller = new EntitiesPluginInstaller(getPackagesNames());
 		this.shippingMethodPluginInstaller = new ShippingMethodPluginInstaller();
+		this.productTypeInstaller = new ProductTypeInstaller();
 		this.actionsPluginInstaller = new ActionsPluginInstaller();
 		this.driversPluginInstaller = new DriversPluginInstaller();
 		this.productViewerPluginInstaller = new ProductViewerPluginInstaller();
@@ -50,6 +53,7 @@ public class PluginInstaller extends AbstractPlugin {
 		menuPluginInstaller.install();
 		entitiesPluginInstaller.install();
 		shippingMethodPluginInstaller.install();
+		productTypeInstaller.install();
 		actionsPluginInstaller.install();
 		driversPluginInstaller.install();
 		productViewerPluginInstaller.install();
@@ -67,6 +71,7 @@ public class PluginInstaller extends AbstractPlugin {
 		shippingMethodPluginInstaller.uninstall();
 		actionsPluginInstaller.uninstall();
 		driversPluginInstaller.uninstall();
+		productTypeInstaller.uninstall();
 	}
 	
 }
