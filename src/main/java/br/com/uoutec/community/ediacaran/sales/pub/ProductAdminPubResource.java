@@ -124,7 +124,7 @@ public class ProductAdminPubResource {
 		
 	}
 
-	@Action({"/show/{product.productType:[^/\\\\s//]+}/{area}"})
+	@Action({"/show/{product.productType:[^/\\s//]+}/{area}"})
 	@RequestMethod("POST")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
