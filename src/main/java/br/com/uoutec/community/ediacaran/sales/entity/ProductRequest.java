@@ -84,6 +84,7 @@ public class ProductRequest implements Serializable {
 		setCost(value.getCost());
 		setCurrency(value.getCurrency());
 		setDescription(value.getDescription());
+		setShortDescription(value.getShortDescription());
 		setMaxExtra(value.getMaxExtra());
 		setName(value.getName());
 		setMeasurementUnit(value.getMeasurementUnit());

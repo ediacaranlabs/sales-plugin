@@ -51,7 +51,7 @@ public abstract class AbstractProductTypeHandler
 
 	@Override
 	public String getShortDescription(ProductRequest productRequest) throws ProductTypeHandlerException {
-		return productRequest.getProduct().getName();
+		return productRequest.getProduct().getShortDescription();
 	}
 
 	@Override

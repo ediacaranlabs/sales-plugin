@@ -289,7 +289,8 @@ public class CartClientPubResource {
 			if(client.getId() == null) {
 				Client tmpClient = clientRegistry.getClientBySystemID(String.valueOf(client.getSystemID()));
 				if(tmpClient != null) {
-					throw new ClientRegistryException("exist");
+					//throw new ClientRegistryException("exist");
+					client = tmpClient;
 				}
 			}
 			

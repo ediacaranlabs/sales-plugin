@@ -260,6 +260,7 @@ public class CartAdminPubResource {
 			result.put("payment_gateway_list",		cartService.getPaymentGateways(adminCart.getCart(), adminCart.getClient()));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
 			result.put("client_data_view",			clientEntityTypes.getClientEntityView(adminCart.getClient()));
+			result.put("reloadAddress",				varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/client"));
 			result.put("payment_gateway_uri_base",	varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/cart/payment-type"));
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("principal",					subjectProvider.getSubject().getPrincipal());

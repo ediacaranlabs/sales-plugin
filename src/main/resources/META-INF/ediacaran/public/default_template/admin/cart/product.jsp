@@ -26,7 +26,8 @@
 					<ed:col>
 						<ed:row>
 							<ed:col>
-								${productRequest.description}
+								<b>${productRequest.name}</b>
+								<p>${productRequest.shortDescription}</p>
 							</ed:col>
 						</ed:row>
 

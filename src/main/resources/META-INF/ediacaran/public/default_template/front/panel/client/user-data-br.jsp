@@ -35,6 +35,21 @@
 						<ec:field-validator-param name="max">60</ec:field-validator-param>
 				</ec:field-validator-rule>
 			</ec:field-validator>
+			<ec:event type="focusout">
+				var $source = $event.source;
+				var $form = $source.getForm();
+				var $emailField = $form.getField($source.getAttribute('name'));
+				var $email = $emailField.getValue();
+				var $group = $source.getFormGroup();
+				
+				if($emailField){
+					$form.submit(
+						false, 
+						"${vars.reloadAddress}", 
+						$group.getAttribute("id")
+					);
+				}
+			</ec:event>
 		</ec:textfield>
 	</ed:col>
 	<ed:col size="3" classStyle="form-group has-feedback">
