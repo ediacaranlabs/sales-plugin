@@ -4,6 +4,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.InvalidDataPaymentGateway
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.pub.CartPubResource;
 import br.com.uoutec.community.ediacaran.sales.pub.CartPubResourceMessages;
+import br.com.uoutec.community.ediacaran.sales.registry.ClientExistsRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.MaxItensException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
@@ -194,7 +195,13 @@ public class CartErrorsPluginInstaller {
 			}
 			else
 			if(t instanceof OrderRegistryException){
-				messageKey = CartPubResourceMessages.checkout.error.mount_order_fail;
+				
+				if(t.getCause() instanceof ClientExistsRegistryException) {
+					messageKey = CartPubResourceMessages.checkout.error.user_exists;
+				}
+				else {
+					messageKey = CartPubResourceMessages.checkout.error.mount_order_fail;
+				}
 			}
 			else
 			if(t instanceof InvalidDataPaymentGatewayException){

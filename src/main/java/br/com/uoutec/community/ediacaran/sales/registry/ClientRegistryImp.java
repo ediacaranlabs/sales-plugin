@@ -9,6 +9,7 @@ import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import br.com.uoutec.application.proxy.ProxyException;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.DoPrivilegedException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
@@ -21,6 +22,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.AddressEntityAccess;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUserSearchResult;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserExistRegistryException;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
@@ -72,7 +74,20 @@ public class ClientRegistryImp
 				return null;
 			});
 		}
+		catch(ProxyException ex) {
+			throw new ClientRegistryException(ex.getCause());
+		}
 		catch(DoPrivilegedException ex) {
+			
+			if(ex.getCause() instanceof ProxyException) {
+				ProxyException px = (ProxyException)ex.getCause();
+				if(px.getCause() instanceof SystemUserExistRegistryException) {
+					throw new ClientExistsRegistryException(ex.getCause());
+				}
+				throw new ClientRegistryException(px.getCause());
+				
+			}
+			
 			throw new ClientRegistryException(ex.getCause());
 		}
 	}

@@ -61,6 +61,8 @@ public class CartPubResourceMessages {
 			public static final String cart_empty = "checkout.error.cart_empty";
 
 			public static final String invalid_data = "checkout.error.invalid_data";
+
+			public static final String user_exists = "checkout.error.user_exists";
 			
 			public static final String payment_gateway_load_fail = "checkout.error.payment_gateway_load_fail";
 			

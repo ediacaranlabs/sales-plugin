@@ -239,6 +239,9 @@ public class CartRegistryImp
 		catch(ExistOrderRegistryException e){
 			order = orderRegistry.findByCartID(cart.getId());
 		}
+		catch(OrderRegistryException e){
+			throw e;
+		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);
 		}

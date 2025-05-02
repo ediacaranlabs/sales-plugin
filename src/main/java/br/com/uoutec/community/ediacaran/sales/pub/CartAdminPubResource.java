@@ -131,7 +131,7 @@ public class CartAdminPubResource {
 			return result;
 		}
 		catch(Throwable ex) {
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
@@ -163,7 +163,7 @@ public class CartAdminPubResource {
 			
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "updateUnits", "updateQuantity", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "updateUnits", "updateQuantity", locale, ex);
 			exception    = new InvalidRequestException(error, ex);
 		}
 		
@@ -203,13 +203,13 @@ public class CartAdminPubResource {
 			addData.put("host", requestProperties.getRemoteAddress());
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "loadProductData", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "loadProductData", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 
 		if(product == null){
 			Throwable ex = new IllegalStateException("product");
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "productNotFound", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "productNotFound", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
@@ -217,7 +217,7 @@ public class CartAdminPubResource {
 			cartService.add(adminCart.getCart(), product, addData, 1);
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "add", "addProduct", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "add", "addProduct", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 
@@ -237,7 +237,7 @@ public class CartAdminPubResource {
 			cartService.remove(adminCart.getCart(), productIndex);
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "remove", "removeProduct", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "remove", "removeProduct", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 	}
@@ -269,7 +269,7 @@ public class CartAdminPubResource {
 			return result;
 		}
 		catch(Throwable ex) {
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "index", "load", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "index", "load", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
@@ -295,7 +295,7 @@ public class CartAdminPubResource {
 			payment = paymentPubEntity.rebuild(false, true, true);
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "loadPaymentData", locale,  ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadPaymentData", locale,  ex);
 			throw new InvalidRequestException(error, ex);
 		}		
 		
@@ -305,11 +305,11 @@ public class CartAdminPubResource {
 			return cartService.checkout(adminCart.getCart(), payment, "Pedido criado via website.");
 		}
 		catch(EmptyOrderException ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "emptyCart", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "emptyCart", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "checkout", "checkout", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "checkout", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		
@@ -345,7 +345,7 @@ public class CartAdminPubResource {
 			ra 							= productTypeViewHandler.getProductOrderView(product);
 		}
 		catch(Throwable ex){
-			String error = this.errorMappingProvider.getError(CartAdminPubResource.class, "productForm", "loadData", locale, ex);
+			String error = this.errorMappingProvider.getError(CartPubResource.class, "productForm", "loadData", locale, ex);
 			exception = new InvalidRequestException(error, ex);
 		}
 		
