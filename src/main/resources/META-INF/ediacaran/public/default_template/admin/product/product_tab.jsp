@@ -141,8 +141,8 @@
 				<ec:select
 					readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:CURRENCY')}"
 					name="currency">
-					<ec:option value="USD">USD</ec:option>
-					<ec:option value="BRL">BRL</ec:option>
+					<ec:option value="USD" selected="${vars.entity.currency == 'USD'}">USD</ec:option>
+					<ec:option value="BRL" selected="${vars.entity.currency == 'BRL'}">BRL</ec:option>
 					<ec:field-validator>
 						<ec:field-validator-rule name="notEmpty"
 							message="#{product.form.currency.notEmpty}" bundle="${messages}" />
@@ -165,7 +165,6 @@
 				<ec:append-field>
 					<ec:select name="measurementUnit"
 						readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:MEASUREMENT_UNIT')}">
-						<ec:option></ec:option>
 						<c:forEach items="${vars.measurementUnit}" var="measurementUnit">
 							<ec:option
 								selected="${vars.entity.measurementUnit == measurementUnit}"

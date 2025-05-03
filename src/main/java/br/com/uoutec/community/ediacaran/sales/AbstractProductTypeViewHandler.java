@@ -53,19 +53,24 @@ public abstract class AbstractProductTypeViewHandler
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
-			
-			if(defaultProductMetadata != null && defaultProductMetadata.getId() != productMetadata.getId()) {
-				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
-			}
-			
+
 			if(productMetadata != null) {
 				listAttributeMetadata.addAll(productMetadata.getAttributeList());
+				
+				if(defaultProductMetadata != null && defaultProductMetadata.getId() != productMetadata.getId()) {
+					listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
+				}
+				
+			}
+			else {
+				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
 			}
 			
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}
 		catch(Throwable ex) {
 			exception = ex;
+			exception.printStackTrace();
 			ra.add("exception", exception);
 			return ra;
 		}
