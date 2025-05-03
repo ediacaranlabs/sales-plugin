@@ -19,7 +19,6 @@ import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.front.components.Image;
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
@@ -50,15 +49,17 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3,groups=DataValidation.class)
-	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
+	//@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
 	private String name;
 	
 	@NotNull(groups=DataValidation.class)
-	@Size(min=3,groups=DataValidation.class)
+	@Size(min=3, max=2048, groups=DataValidation.class)
+	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
 	private String description;
 
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3, max = 256,groups=DataValidation.class)
+	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
 	private String shortDescription;
 	
 	@Enumerated(EnumerationType.STRING)

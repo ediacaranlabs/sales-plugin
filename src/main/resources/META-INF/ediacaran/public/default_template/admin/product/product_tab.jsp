@@ -20,12 +20,14 @@
 					name="notEmpty" 
 					message="#{product.form.name.notEmpty}" 
 					bundle="${messages}"/>
+				<%--
 				<ec:field-validator-rule 
 					name="regexp"
 					message="#{product.form.name.regex}"
 					bundle="${messages}">
 					<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().NAME_FORMAT</ec:field-validator-param>
 				</ec:field-validator-rule>
+				--%>
 				<ec:field-validator-rule 
 					name="stringLength" 
 					message="#{product.form.name.length}" 
@@ -140,6 +142,7 @@
 					readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:CURRENCY')}"
 					name="currency">
 					<ec:option value="USD">USD</ec:option>
+					<ec:option value="BRL">BRL</ec:option>
 					<ec:field-validator>
 						<ec:field-validator-rule name="notEmpty"
 							message="#{product.form.currency.notEmpty}" bundle="${messages}" />
@@ -154,7 +157,7 @@
 						message="#{product.form.cost.notEmpty}" bundle="${messages}" />
 					<ec:field-validator-rule name="regexp"
 						message="#{product.form.cost.regex}" bundle="${messages}">
-						<ec:field-validator-param name="regexp" raw="true">/[0-9]{1,10}\.[0-9]{2,2}/</ec:field-validator-param>
+						<ec:field-validator-param name="regexp" raw="true">/[0-9]{1,10}(\.[0-9]{2,2})?/</ec:field-validator-param>
 					</ec:field-validator-rule>
 				</ec:field-validator>
 			</ec:textfield>

@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -39,7 +38,7 @@ public class Product implements Serializable {
 	protected int id;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	//@Pattern(regexp = CommonValidation.NAME_FORMAT)
 	@Length(max = 128, groups = DataValidation.class)
 	protected String name;
 	
@@ -200,8 +199,8 @@ public class Product implements Serializable {
 		return 
 			cost == null || currency == null? 
 					"" :
-					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
-					DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
+					currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
+					//DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
 	}
 	
 	public String getTagsString() {
