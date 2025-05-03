@@ -73,7 +73,6 @@
 								mockito-core,
 								opentest4j,
 								junit-jupiter-engine,
-								byte-buddy,
 								ediacaran-weld
 							</excludeArtifactIds>
 							<excludeGroupIds>
@@ -84,15 +83,10 @@
 								org.junit.jupiter,
 								org.junit.platform,
 								org.apiguardian,
-								net.bytebuddy,
 								org.slf4j,
-								log4j,
-								org.junit.jupiter,
-								org.hibernate,
-								org.hsqldb
+								log4j
 							</excludeGroupIds>
 							<includeScope>runtime</includeScope>
-							<!--<excludeScope>provided</excludeScope>-->
 						</configuration>
 					</execution>
 				</executions>
