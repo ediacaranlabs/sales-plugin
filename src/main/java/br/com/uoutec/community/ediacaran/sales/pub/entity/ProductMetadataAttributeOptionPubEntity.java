@@ -3,13 +3,11 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 import org.hibernate.validator.constraints.Length;
 
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
@@ -34,7 +32,7 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	private String protectedID;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Length(max = 128, groups = DataValidation.class)
 	private String value;
 
@@ -43,7 +41,7 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	private ProductAttributeValueType valueType;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
 	@Length(max = 256, groups = DataValidation.class)
 	private String description;
 

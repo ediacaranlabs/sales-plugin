@@ -93,8 +93,22 @@
 				<ed:row>
 					<ed:col size="12">
 						<ec:tabs>
-							<ec:tabs-item title="Details" active="true">
+							<ec:tabs-item title="#{tabs.details}" bundle="${messages}" active="true">
 								${entity.description}
+							</ec:tabs-item>
+							<ec:tabs-item title="#{tabs.characteristics}" bundle="${messages}">
+								<ec:table style="striped">
+									<c:forEach var="prop" items="${entity.getProductAttributes(true)}">
+										<ec:table-row>
+											<ec:table-col>
+												${prop.name}
+											</ec:table-col>
+											<ec:table-col>
+												${prop.value}
+											</ec:table-col>
+										</ec:table-row>
+									</c:forEach>
+								</ec:table>
 							</ec:tabs-item>
 							<c:forEach items="${tabs}" var="tab">
 							<!-- tab (${tab.id}) -->

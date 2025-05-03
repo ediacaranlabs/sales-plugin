@@ -8,13 +8,11 @@ import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.io.Path;
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -27,14 +25,14 @@ public class ProductMetadata {
 	protected int id;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	//@Pattern(regexp = CommonValidation.NAME_FORMAT)
 	@Length(max = 128, groups = DataValidation.class)
 	protected String name;
 	
 	protected Path thumb;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
 	@Size(max=256)
 	protected String description;
 	

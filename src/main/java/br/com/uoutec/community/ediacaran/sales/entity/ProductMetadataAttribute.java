@@ -9,8 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
-
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
@@ -36,7 +34,7 @@ public class ProductMetadataAttribute {
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT)
-	@Length(max = 128, groups = DataValidation.class)
+	//@Length(max = 128, groups = DataValidation.class)
 	protected String name;
 
 	@NotNull(groups = DataValidation.class)
@@ -45,7 +43,7 @@ public class ProductMetadataAttribute {
 	@NotNull(groups = DataValidation.class)
 	protected ProductAttributeValueType valueType;
 	
-	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
 	@Size(max=128)
 	protected String description;
 

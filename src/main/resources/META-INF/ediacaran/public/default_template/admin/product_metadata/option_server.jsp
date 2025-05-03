@@ -28,12 +28,14 @@
 									bundle="${messages}"/>
 									
 								<c:if test="${option.valueType == 'TEXT'}">
+									<%--
 									<ec:field-validator-rule 
 										name="regexp"
 										message="#{form.option.value.validation.regexp}"
 										bundle="${messages}">
 										<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 									</ec:field-validator-rule>
+									--%>
 									<ec:field-validator-rule 
 										name="stringLength" 
 										message="#{form.option.value.validation.stringLength}" 
@@ -113,12 +115,14 @@
 								name="notEmpty" 
 								message="#{form.option.description.validation.notEmpty}" 
 								bundle="${messages}"/>
+							<%--
 							<ec:field-validator-rule 
 								name="regexp"
 								message="#{form.option.description.validation.regexp}"
 								bundle="${messages}">
 								<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
 							</ec:field-validator-rule>
+							--%>
 							<ec:field-validator-rule 
 								name="stringLength" 
 								message="#{form.option.description.validation.stringLength}" 

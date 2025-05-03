@@ -14,7 +14,6 @@ import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 import org.hibernate.validator.constraints.Length;
 
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
@@ -46,7 +45,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	private String code;
 	
 	@NotNull(groups=DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT)
+	//@Pattern(regexp = CommonValidation.NAME_FORMAT)
 	@Length(max = 128, groups = DataValidation.class)
 	private String name;
 	

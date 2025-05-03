@@ -2,8 +2,12 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +20,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.io.Path;
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
@@ -175,6 +180,40 @@ public class Product implements Serializable {
 		this.attributes = attributes;
 	}
 
+	public List<ProductAttribute> getProductAttributes(Boolean visible) throws ProductRegistryException{
+		Set<String> keys = new HashSet<>(this.attributes.keySet());
+		List<ProductAttribute> r = new ArrayList<>();
+		
+		for(String key: keys) {
+			
+			ProductMetadataAttribute pa = getProductMetadataAttribute(key);
+			
+			if(pa == null) {
+				continue;
+			}
+			
+			if(visible != null && (pa.isShow() && !visible)) {
+				continue;
+			}
+			
+			ProductAttributeValue val = attributes.get(key);
+			
+			Object[] values = val.getValues();
+			
+			if(values.length == 1) {
+				r.add(new ProductAttribute(pa.getName(), String.valueOf(values[0])));
+			}
+			if(values.length > 1) {
+				r.add(new ProductAttribute(pa.getName(), Arrays.toString(values)));
+			}
+			
+		}
+		
+		Collections.sort(r, (a,b)->a.getName().compareTo(b.getName()));
+		
+		return r;
+	}
+	
 	public String getShortDescription() {
 		return shortDescription;
 	}
@@ -345,17 +384,40 @@ public class Product implements Serializable {
 	
 	/* metadata */
 	
+	private ProductMetadataAttribute getProductMetadataAttribute(String code) throws ProductRegistryException {
+		
+		ProductMetadata productMetadata = getProductMetadata();
+		ProductMetadataAttribute attr = productMetadata.getAttributes().get(code);
+		
+		if(attr == null) {
+			
+			productMetadata = getDefaultProductMetadata();
+			
+			if(productMetadata != null) {
+				attr = productMetadata.getAttributes().get(code);
+			}
+			
+		}
+		
+		return attr;
+	}
+	
 	private transient volatile ProductMetadata productMetadata;
 	
 	private transient volatile ProductMetadata defaultProductMetadata;
 	
 	private synchronized void loadMetadata() throws ProductRegistryException {
 		
-		if(this.productMetadata == null) {
-			ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
-			this.productMetadata = productMetadataRegistry.findProductMetadataById(this.metadata);
-			this.defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
-		}
+		ContextSystemSecurityCheck.doPrivileged(()->{
+			
+			if(this.productMetadata == null) {
+				ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
+				this.productMetadata = productMetadataRegistry.findProductMetadataById(this.metadata);
+				this.defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
+			}
+			
+			return null;
+		});
 		
 	}
 }

@@ -4,11 +4,9 @@ import java.util.Objects;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -29,7 +27,7 @@ public class ProductMetadataAttributeOption {
 	private Object value;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
 	@Length(max = 256, groups = DataValidation.class)
 	private String description;
 

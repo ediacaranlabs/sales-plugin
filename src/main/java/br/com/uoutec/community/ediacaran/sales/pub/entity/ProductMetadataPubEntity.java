@@ -6,7 +6,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Basic;
@@ -14,7 +13,6 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
-import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.front.components.Image;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
@@ -39,14 +37,14 @@ public class ProductMetadataPubEntity extends AbstractPubEntity<ProductMetadataU
 	
 	@NotNull(groups=DataValidation.class)
 	@Size(max=128,groups=DataValidation.class)
-	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
+	//@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
 	private String name;
 	
 	private Image thumbnail;
 
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3, max = 256, groups=DataValidation.class)
-	@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
+	//@Pattern(regexp=CommonValidation.NAME_FORMAT,groups=DataValidation.class)
 	private String description;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
