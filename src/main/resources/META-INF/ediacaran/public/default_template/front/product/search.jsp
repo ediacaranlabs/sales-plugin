@@ -122,7 +122,7 @@
 											<ed:col size="12">
 												<ec:field-group>
 													<ec:textfield 
-														name="text" 
+														name="name" 
 														placeholder="#{search.placeholder}" 
 														value="${text}"
 														bundle="${messages}"/>
