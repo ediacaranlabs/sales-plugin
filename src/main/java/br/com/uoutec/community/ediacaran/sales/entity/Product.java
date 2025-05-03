@@ -48,7 +48,7 @@ public class Product implements Serializable {
 	protected volatile transient boolean imageLoaded;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
 	@Size(max=256)
 	protected String shortDescription;
 	
@@ -56,7 +56,7 @@ public class Product implements Serializable {
 	protected ProductVisibility visibility;
 	
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
+	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
 	@Size(max=2048)
 	protected String description;
 	

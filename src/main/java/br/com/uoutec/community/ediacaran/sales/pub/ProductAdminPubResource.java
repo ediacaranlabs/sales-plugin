@@ -152,7 +152,7 @@ public class ProductAdminPubResource {
 		
 	}
 	
-	@Action({"/save/{product.productType:[^/\\\\s//]+}"})
+	@Action({"/save/{product.productType:[^/\\s//]+}"})
 	@RequestMethod("POST")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)

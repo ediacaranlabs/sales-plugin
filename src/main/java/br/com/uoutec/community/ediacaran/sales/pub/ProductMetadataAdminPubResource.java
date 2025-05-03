@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
@@ -158,6 +159,7 @@ public class ProductMetadataAdminPubResource {
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)
+	@Transactional
 	public Map<String,Object> save(
 			@Basic(bean = "product_metadata")
 			ProductMetadataPubEntity productMetadataPubEntity,

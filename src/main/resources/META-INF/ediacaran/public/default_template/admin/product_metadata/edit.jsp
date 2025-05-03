@@ -80,12 +80,13 @@
 										<ed:row style="form">
 											<ed:col size="12" classStyle="form-group has-feedback">
 												<ec:textarea 
+													id="product_def_description"
 													rows="5" 
 													name="description" 
 													label="#{form.description.label}"
 													readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT_METADATA:FIELDS:DESCRIPTION')}"
 													bundle="${messages}">${vars.entity.description}</ec:textarea>
-												<ec:field-validator field="description">
+												<ec:field-validator field="product_def_description">
 													<ec:field-validator-rule 
 														name="notEmpty" 
 														message="#{form.description.validation.notEmpty}" 
@@ -94,7 +95,7 @@
 														name="regexp"
 														message="#{form.description.validation.regex}"
 														bundle="${messages}">
-														<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+														<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
 													</ec:field-validator-rule>
 													<ec:field-validator-rule 
 														name="stringLength" 

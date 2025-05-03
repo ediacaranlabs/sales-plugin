@@ -27,7 +27,7 @@ import br.com.uoutec.ediacaran.core.plugins.PluginType;
 @Singleton
 public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 
-	private ProductMetadata defaultProductMetadata;
+	private volatile ProductMetadata defaultProductMetadata;
 	
 	private volatile boolean loadedDefaultProductMetadata;
 	
@@ -62,6 +62,18 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 		catch(Throwable e){
 			throw new ProductRegistryException(e);
 		}
+		
+		try {
+			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
+			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
+			if(id != null && id == entity.getId()) {
+				this.nextLoadedDefaultProductMetadata = -1;	
+			}
+		}
+		catch(Throwable ex) {
+			//supress
+		}
+		
 	}
 	
 	@Override

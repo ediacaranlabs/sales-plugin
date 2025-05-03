@@ -54,7 +54,7 @@ public abstract class AbstractProductTypeViewHandler
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
 			
-			if(defaultProductMetadata != null) {
+			if(defaultProductMetadata != null && defaultProductMetadata.getId() != productMetadata.getId()) {
 				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
 			}
 			

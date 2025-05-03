@@ -81,12 +81,14 @@
 				name="notEmpty" 
 				message="#{product.form.short_description.notEmpty}" 
 				bundle="${messages}"/>
+			<%--
 			<ec:field-validator-rule 
 				name="regexp"
 				message="#{product.form.short_description.regex}"
 				bundle="${messages}">
 				<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
 			</ec:field-validator-rule>
+			--%>
 			<ec:field-validator-rule 
 				name="stringLength" 
 				message="#{product.form.short_description.length}" 
@@ -111,12 +113,14 @@
 				name="notEmpty" 
 				message="#{product.form.description.notEmpty}" 
 				bundle="${messages}"/>
+			<%--
 			<ec:field-validator-rule 
 				name="regexp"
 				message="#{product.form.description.regex}"
 				bundle="${messages}">
 				<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().WORD_NUM</ec:field-validator-param>
 			</ec:field-validator-rule>
+			--%>
 			<ec:field-validator-rule 
 				name="stringLength" 
 				message="#{product.form.description.length}" 
