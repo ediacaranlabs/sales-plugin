@@ -144,8 +144,14 @@
 														<ec:button 
 															actionType="submit" 
 															icon="search" 
+															bundle="${messages}"/>
+														<%--
+														<ec:button 
+															actionType="submit" 
+															icon="search" 
 															label="#{search.button}"
 															bundle="${messages}"/>
+														--%>
 													</ec:append-field>
 												</ec:field-group>
 											</ed:col>
@@ -185,12 +191,20 @@
 															<ec:box-body>
 																<ed:row style="form">
 																	<ed:col size="12">
+																		<a href="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" target="_self">
+																			<b>${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}</b>
+																		</a>
+																	</ed:col>
+																</ed:row>
+																<ed:row style="form">
+																	<ed:col size="12">
 																		<a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">
 																		<ec:if test="!{item.thumbnail == null}">
 																			<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid"/>
 																		</ec:if>
 																		<ec:if test="!{item.thumbnail != null}">
 																			<ec:image src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" style="fluid"/>
+																			<b>${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}</b>
 																		</ec:if>
 																		</a>
 																	</ed:col>
