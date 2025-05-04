@@ -28,6 +28,9 @@
 	min-height: 600px;
 }
 
+#filter_toggler button{
+	padding: 0px 0px;
+}
 /*
 .sidebar-group .sidebar {
 	width: 200px;
@@ -111,6 +114,7 @@
 			    				<ed:row>
 			    					<ed:col>
 										<!-- start search form  -->
+										<%--
 					    				<ed:row id="filter_toggler">
 					    					<ed:col>
 								 				<ec:menu-toggler menuID="pageBody">
@@ -118,9 +122,19 @@
 												</ec:menu-toggler>
 					    					</ed:col>
 					    				</ed:row>
+					    				--%>
 										<ed:row>
 											<ed:col size="12">
 												<ec:field-group>
+													<ec:prepend-field id="filter_toggler">
+														<ec:prepend-field-item>
+														
+											 				<ec:menu-toggler menuID="pageBody">
+																<ec:icon icon="bars" size="1" />
+															</ec:menu-toggler>
+														
+														</ec:prepend-field-item>
+													</ec:prepend-field>
 													<ec:textfield 
 														name="name" 
 														placeholder="#{search.placeholder}" 
