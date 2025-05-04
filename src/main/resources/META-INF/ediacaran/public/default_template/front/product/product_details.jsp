@@ -123,7 +123,7 @@
 				<ed:row>
 					<ed:col>
 						<ec:button 
-							label="Add cart" 
+							label="#{form.add_cart.label}" 
 							align="right"
 							bundle="${messages}">
 							<ec:event type="click">
