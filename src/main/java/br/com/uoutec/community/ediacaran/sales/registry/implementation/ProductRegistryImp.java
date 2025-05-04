@@ -56,9 +56,13 @@ public class ProductRegistryImp
 		
 		try{
 			ProductRegistryUtil.validate(entity, productMetadataEntityAccess);
+			
 			ProductRegistryUtil.saveOrUpdate(entity, entityAccess);
+			ProductRegistryUtil.sendToRepository(entityAccess);
+			
 			ProductRegistryUtil.updateIndex(entity, productIndexEntityAccess);
 			ProductRegistryUtil.sendToRepository(entityAccess);
+			
 			ProductRegistryUtil.persistProductImage(entity, objectsManager);
 		}
 		catch(Throwable e){

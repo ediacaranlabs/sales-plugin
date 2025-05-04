@@ -3,7 +3,9 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -157,6 +159,26 @@ public class ProductIndexEntity implements Serializable {
 		}
 		
 		e.setId(this.id == null? 0 : this.id);
+		
+		if(attributes != null) {
+			Map<String, ProductAttributeValue> attrs = new HashMap<>();
+			
+			for(ProductAttributeValueIndexEntity x: this.attributes) {
+				
+				ProductAttributeValue att = attrs.get(x.getAttributeID());
+				
+				if(att == null) {
+					att = x.toEntity();
+					attrs.put(x.getAttributeID(), att);
+				}
+				else {
+					att.addValue(x.parseValue());
+				}
+				
+			}
+			
+			e.setAttributes(attrs);
+		}
 		
 		return e;
 	}

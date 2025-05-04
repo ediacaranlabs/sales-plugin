@@ -88,8 +88,10 @@ public class ProductIndexEntityAccessImp
 	}
 
 	public void delete(Product value) throws EntityAccessException {
+		
 		try{
-			ProductIndexEntity pEntity = entityManager.find(ProductIndexEntity.class, value.getId());
+			ProductIndexEntity pEntity = new ProductIndexEntity(value);
+			pEntity = entityManager.merge(pEntity);
 			
 			if(pEntity != null) {
 				for(ProductAttributeValueIndexEntity e: pEntity.getAttributes()) {
@@ -104,6 +106,7 @@ public class ProductIndexEntityAccessImp
     	catch(Throwable e){
     		throw new EntityAccessException(e);
     	}
+		
 	}
 	
 	@Override

@@ -128,12 +128,13 @@ public class ProductRegistryUtil {
 	
 	public static void updateIndex(Product product, ProductIndexEntityAccess entityAccess) throws EntityAccessException {
 		
-		if(entityAccess.findById(product.getId()) != null) {
-			entityAccess.update(product);
+		Product productIndex = entityAccess.findById(product.getId());
+		
+		if(productIndex != null) {
+			entityAccess.delete(productIndex);
 		}
-		else {
-			entityAccess.save(product);
-		}
+		
+		entityAccess.save(product);
 		
 	}
 
