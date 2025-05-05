@@ -34,7 +34,7 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="cod_product_request", length=38)
 	private String id;
 	
-	@Column(name="dsc_serial", length=30)
+	@Column(name="dsc_serial", length=128)
 	private String serial;
 	
 	@Column(name="dsc_name", length=128)

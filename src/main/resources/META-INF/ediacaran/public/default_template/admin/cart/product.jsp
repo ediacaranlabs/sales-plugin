@@ -19,7 +19,9 @@
 		
 		<ed:row style="form">
 			<ed:col size="3">
-				<ec:image align="center" src="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png"/>
+				<ec:image 
+				 	style="fluid"
+					src="${plugins.ediacaran.sales.image_prefix_address}${empty productRequest.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : productRequest.product.publicThumb}"/>
 			</ed:col>
 			<ed:col size="4" id="cart_item_description_${step.index}">
 				<ed:row style="form">

@@ -46,7 +46,7 @@ public abstract class AbstractProductTypeHandler
 	
 	@Override
 	public String getSerial(ProductRequest productRequest){
-		return "PR-" + productRequest.getProduct().getName().replaceAll("\\s+", " ").replaceAll("\\s+", "-").toUpperCase();
+		return "PR-" + productRequest.getProduct().getProtectedID().toUpperCase();
 	}
 
 	@Override
