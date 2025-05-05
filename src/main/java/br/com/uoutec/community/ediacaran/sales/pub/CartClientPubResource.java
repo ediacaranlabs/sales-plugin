@@ -215,8 +215,8 @@ public class CartClientPubResource {
 			if(clientPubEntity == null) {
 				clientPubEntity = new ClientPubEntity();
 			}
-			SystemUser user = clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, false, true);
-			client = clientRegistry.toClient(user);
+			client = (Client)clientPubEntity.rebuild(clientPubEntity.getProtectedID() != null, false, true);
+			//client = clientRegistry.toClient(user);
 		}
 		catch(Throwable ex){
 			String error = this.errorMappingProvider.getError(CartClientPubResource.class, "showUser", "view", locale, ex);
