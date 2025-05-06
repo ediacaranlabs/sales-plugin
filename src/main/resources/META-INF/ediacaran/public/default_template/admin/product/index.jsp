@@ -40,7 +40,7 @@
 					<ec:select label="#{search.form.product_type.label}" name="productType" bundle="${messages}">
 						<ec:option value=""></ec:option>
 						<c:forEach items="${vars.productTypes}" var="productType">
-						<ec:option value="${productType.code}">${productType.name}</ec:option>
+						<ec:option value="${productType.code}">${productType.getFriendlyName(locale)}</ec:option>
 						</c:forEach>
 					</ec:select>
 				</ed:col>
