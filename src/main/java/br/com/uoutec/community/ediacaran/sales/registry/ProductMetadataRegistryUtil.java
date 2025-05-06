@@ -1,12 +1,15 @@
-package br.com.uoutec.community.ediacaran.sales.registry.implementation;
+package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataSearchResult;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
+import br.com.uoutec.ediacaran.core.plugins.PluginType;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
@@ -83,6 +86,56 @@ public class ProductMetadataRegistryUtil {
 
 	public static void sendToRepository(ProductMetadataEntityAccess entityAccess) throws EntityAccessException {
 		entityAccess.flush();
+	}
+	
+	private static volatile ProductMetadata defaultProductMetadata = null;
+	
+	private static volatile long nextLoadedDefaultProductMetadata = -1;
+	
+	static void markToReloadIfDefaultProductMetadata(ProductMetadata entity) {
+		try {
+			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
+			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
+			if(id != null && id == entity.getId()) {
+				nextLoadedDefaultProductMetadata = -1;	
+			}
+		}
+		catch(Throwable ex) {
+			//supress
+		}
+	}
+
+	static ProductMetadata getDefaultProductMetadata(ProductMetadataEntityAccess entityAccess) throws ProductRegistryException{
+		
+		long currentTime = SystemProperties.currentTimeMillis();
+		
+		if(currentTime > nextLoadedDefaultProductMetadata) {
+			loadDefaultProductMetadata(entityAccess);
+		}
+		
+		return defaultProductMetadata;
+	}
+	
+	static synchronized void loadDefaultProductMetadata(ProductMetadataEntityAccess entityAccess) throws ProductRegistryException{
+		
+		long currentTime = SystemProperties.currentTimeMillis();
+		
+		if(currentTime <= nextLoadedDefaultProductMetadata) {
+			return;
+		}
+		
+		try {
+			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
+			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
+			if(id != null) {
+				defaultProductMetadata = entityAccess.findById(id);
+			}
+			nextLoadedDefaultProductMetadata = currentTime + 10000; // TODO: update
+		}
+		catch(Throwable ex) {
+			throw new ProductRegistryException(ex);
+		}
+		
 	}
 	
 }

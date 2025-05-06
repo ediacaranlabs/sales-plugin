@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
-import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
@@ -20,19 +19,10 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttrib
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataAttributeOptionEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataAttributeRegistryUtil;
-import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductMetadataRegistryUtil;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
-import br.com.uoutec.ediacaran.core.plugins.PluginType;
 
 @Singleton
 public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 
-	private volatile ProductMetadata defaultProductMetadata;
-	
-	private volatile boolean loadedDefaultProductMetadata;
-	
-	private volatile long nextLoadedDefaultProductMetadata = -1;
-	
 	@Inject
 	private ProductMetadataEntityAccess entityAccess;
 	
@@ -43,8 +33,6 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	private ProductMetadataAttributeOptionEntityAccess productMetadataAttributeOptionEntityAccess;
 	
 	public ProductMetadataRegistryImp() {
-		this.defaultProductMetadata = null;
-		this.loadedDefaultProductMetadata = false;
 	}
 	
 	@Override
@@ -58,20 +46,10 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 			ProductMetadataRegistryUtil.validate(entity);
 			ProductMetadataRegistryUtil.saveOrUpdate(entity, entityAccess);
 			ProductMetadataRegistryUtil.sendToRepository(entityAccess);
+			ProductMetadataRegistryUtil.markToReloadIfDefaultProductMetadata(entity);
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);
-		}
-		
-		try {
-			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
-			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
-			if(id != null && id == entity.getId()) {
-				this.nextLoadedDefaultProductMetadata = -1;	
-			}
-		}
-		catch(Throwable ex) {
-			//supress
 		}
 		
 	}
@@ -192,38 +170,9 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 
 	@Override
 	public ProductMetadata getDefaultProductMetadata() throws ProductRegistryException{
-		
-		long currentTime = SystemProperties.currentTimeMillis();
-		if(currentTime > nextLoadedDefaultProductMetadata || !loadedDefaultProductMetadata) {
-			loadDefaultProductMetadata();
-		}
-		
-		return defaultProductMetadata;
+		return ProductMetadataRegistryUtil.getDefaultProductMetadata(entityAccess);
 	}
 
-	public synchronized void loadDefaultProductMetadata() throws ProductRegistryException{
-		
-		long currentTime = SystemProperties.currentTimeMillis();
-		
-		if(currentTime > nextLoadedDefaultProductMetadata && loadedDefaultProductMetadata) {
-			return;
-		}
-		
-		try {
-			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
-			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
-			if(id != null) {
-				defaultProductMetadata = entityAccess.findById(id);
-			}
-			this.nextLoadedDefaultProductMetadata = currentTime + 10000; // TODO: update
-			this.loadedDefaultProductMetadata = true;
-		}
-		catch(Throwable ex) {
-			throw new ProductRegistryException(ex);
-		}
-		
-	}
-	
 	@Override
 	public void registerDefaultProductMetadataAttribute(ProductMetadataAttribute entity) throws ProductRegistryException {
 		
@@ -381,7 +330,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 			throw new ProductRegistryException(e);
 		}
 	}
-	
+
 	@Override
 	public void flush() {
 	}
