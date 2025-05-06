@@ -10,6 +10,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta property="og:url" content="${plugins.ediacaran.system.website}${plugins.ediacaran.sales.web_path}/products${entity.publicID}">
+<meta property="fb:app_id">
+<meta property="og:title" content="${entity.name}">
+<meta property="og:description" content="${entity.shortDescription}">
+<meta name="description" content="${entity.shortDescription}">
+<meta property="keywords" content="${entity.tagsString}">
+<meta property="og:type" content="article">
+<meta property="og:image:width" content="960">
+<meta property="og:image:height" content="960">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="${plugins.ediacaran.sales.image_prefix_address}${empty entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : entity.publicThumb}">
+<meta property="og:image:secure_url" content="${plugins.ediacaran.sales.image_prefix_address}${empty entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : entity.publicThumb}">
+<%--<meta property="og:locale" content="pt_BR">--%>
+<meta name="twitter:image" content="${plugins.ediacaran.sales.image_prefix_address}${empty entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : entity.publicThumb}">
+<meta name="twitter:card" content="summary_large_image">
+
 <ec:include uri="/includes/head.jsp"/>
 <style type="text/css">
 .box-body {

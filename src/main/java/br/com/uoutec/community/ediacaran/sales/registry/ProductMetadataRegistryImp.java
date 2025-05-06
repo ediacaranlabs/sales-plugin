@@ -103,7 +103,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	@ActivateRequestContext
 	public List<ProductMetadata> getAllProductMetadata() throws ProductRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.getListPermission());
+		//ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.getListPermission());
 		
 		try{
 			return ProductMetadataRegistryUtil.getAllProductMetadata(entityAccess);
@@ -119,7 +119,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	@ActivateRequestContext
 	public ProductMetadataAttribute findProductMetadataAttributeById(int id) throws ProductRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getGetPermission());
+		//ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.ATTRIBUTE.getGetPermission());
 		
 		try{
 			return ProductMetadataAttributeRegistryUtil.get(id, metadataentityAccess);
