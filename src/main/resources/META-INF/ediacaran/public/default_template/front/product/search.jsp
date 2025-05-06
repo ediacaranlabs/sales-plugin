@@ -247,7 +247,7 @@
 				<ec:forEach items="!{group.filters}" var="filter">
 					<span formgroup="filters" formgrouptype="index" class="filter">
 						<input type="hidden" name="protectedID" value="!{filter.protectedID}">
-						<span class="filter_title">!{filter.title}</span>
+						<span class="filter_title">!{filter.title} (!{group.title})</span>
 						
 						<ec:forEach items="!{filter.options}" var="option">
 							<span class="filter_option">
