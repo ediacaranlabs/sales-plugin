@@ -56,8 +56,9 @@ public class Product implements Serializable {
 	@Size(max=256)
 	protected String shortDescription;
 	
-	@NotNull(groups = DataValidation.class)
-	protected ProductVisibility visibility;
+	protected boolean display;
+
+	protected boolean featured;
 	
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
@@ -86,7 +87,7 @@ public class Product implements Serializable {
 	
 	public Product() {
 		this.attributes = new HashMap<>();
-		this.visibility = ProductVisibility.SHOW;
+		this.display = true;
 	}
 	
 	public String getProtectedID() {
@@ -164,12 +165,20 @@ public class Product implements Serializable {
 		this.measurementUnit = measurementUnit;
 	}
 
-	public ProductVisibility getVisibility() {
-		return visibility;
+	public boolean isDisplay() {
+		return display;
 	}
 
-	public void setVisibility(ProductVisibility visibility) {
-		this.visibility = visibility;
+	public void setDisplay(boolean display) {
+		this.display = display;
+	}
+
+	public boolean isFeatured() {
+		return featured;
+	}
+
+	public void setFeatured(boolean featured) {
+		this.featured = featured;
 	}
 
 	public Map<String, ProductAttributeValue> getAttributes() {

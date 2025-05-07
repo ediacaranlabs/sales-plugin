@@ -25,7 +25,6 @@ import javax.persistence.Table;
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductVisibility;
 import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
@@ -63,9 +62,11 @@ public class ProductEntity implements Serializable,PublicType{
 	@Column(name="set_measurement_unit", length=10)
 	private MeasurementUnit measurementUnit;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="set_product_visibility", length=6)
-	private ProductVisibility visibility;
+	@Column(name="bit_display", length=1)
+	private Boolean display;
+	
+	@Column(name="bit_featured", length=1)
+	private Boolean featured;
 	
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
@@ -88,8 +89,9 @@ public class ProductEntity implements Serializable,PublicType{
 		this.id               = e.getId() <= 0? null : e.getId();
 		this.name             = e.getName();
 		this.shortDescription = e.getShortDescription();
-		this.visibility       = e.getVisibility();
-		this.metadata          = e.getMetadata() <= 0? null : e.getMetadata();
+		this.display          = e.isDisplay();
+		this.metadata         = e.getMetadata() <= 0? null : e.getMetadata();
+		this.featured         = e.isFeatured();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -189,12 +191,20 @@ public class ProductEntity implements Serializable,PublicType{
 		this.metadata = metadata;
 	}
 
-	public ProductVisibility getVisibility() {
-		return visibility;
+	public Boolean getDisplay() {
+		return display;
 	}
 
-	public void setVisibility(ProductVisibility visibility) {
-		this.visibility = visibility;
+	public void setDisplay(Boolean display) {
+		this.display = display;
+	}
+
+	public Boolean getFeatured() {
+		return featured;
+	}
+
+	public void setFeatured(Boolean featured) {
+		this.featured = featured;
 	}
 
 	public List<ProductAttributeValueEntity> getAttributes() {
@@ -223,8 +233,9 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
 		e.setShortDescription(this.shortDescription);
-		e.setVisibility(this.visibility);
+		e.setDisplay(this.display == null? false : this.display);
 		e.setMetadata(this.metadata == null? 0 : this.metadata);
+		e.setFeatured(this.featured == null? false : this.featured);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))

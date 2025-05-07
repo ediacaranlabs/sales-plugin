@@ -36,7 +36,7 @@
 				<ed:col size="5">
 	    			<ec:textfield name="name" label="#{search.form.name.label}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="3">
+				<ed:col size="2">
 					<ec:select label="#{search.form.product_type.label}" name="productType" bundle="${messages}">
 						<ec:option value=""></ec:option>
 						<c:forEach items="${vars.productTypes}" var="productType">
@@ -44,7 +44,21 @@
 						</c:forEach>
 					</ec:select>
 				</ed:col>
-				<ed:col size="4">
+				<ed:col size="1">
+					<ec:label>Display</ec:label>
+					<p>
+					<ec:radio inline="true" name="display" value="true" label="Yes"/>
+					<ec:radio inline="true" name="display" value="false" label="No"/>
+					</p>
+				</ed:col>
+				<ed:col size="1">
+					<ec:label>Featured</ec:label>
+					<p>
+					<ec:radio inline="true" name="featured" value="true" label="Yes"/>
+					<ec:radio inline="true" name="featured" value="false" label="No"/>
+					</p>
+				</ed:col>
+				<ed:col size="3">
 		    			<ec:textfield label="#{search.form.min_cost.label}" name="minCost" bundle="${messages}"/>
 		    			<ec:textfield label="#{search.form.max_cost.label}" name="maxCost" bundle="${messages}"/>
 				</ed:col>

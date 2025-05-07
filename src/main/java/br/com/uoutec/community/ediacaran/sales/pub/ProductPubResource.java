@@ -82,6 +82,14 @@ public class ProductPubResource {
 	) throws InvalidRequestException{
 		
 		try {
+			
+			if(productSearch == null) {
+				productSearch = new ProductSearchPubEntity();
+			}
+			
+			productSearch.setDisplay(true);
+			productSearch.setFeatured(null);
+			
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
 			return handler.getProductViewer().searchProduct(productSearch, locale);
 		}

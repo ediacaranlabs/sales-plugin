@@ -77,6 +77,12 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 
 	@NotNull(groups=DataValidation.class)
 	private BigDecimal cost;
+
+	@NotNull(groups=DataValidation.class)
+	private Boolean display;
+
+	@NotNull(groups=DataValidation.class)
+	private Boolean featured;
 	
 	@NotNull(groups=DataValidation.class)
 	@Size(min=3,groups=DataValidation.class)
@@ -113,6 +119,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.productType = e.getProductType();
 		this.tags = e.getTags();
 		this.shortDescription = e.getShortDescription();
+		this.display = e.isDisplay();
+		this.featured = e.isFeatured();
 	}
 	
 	public String getProtectedID() {
@@ -299,6 +307,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setTags(this.tagsString != null? StringUtil.toSet(this.tagsString, ",") : tags);
 		o.setShortDescription(this.shortDescription);
 		o.setMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
+		o.setDisplay(this.display == null? false : this.display);
+		o.setFeatured(this.featured == null? false : this.featured);
 		
 		if(this.attributes != null) {
 			
@@ -381,6 +391,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.productMetadata = x.getProductMetadata();
 		this.locale = x.getLocale();
 		this.attributes = x.getAttributes();
+		this.display = x.display;
+		this.featured = x.featured;
 	}
 	
 }

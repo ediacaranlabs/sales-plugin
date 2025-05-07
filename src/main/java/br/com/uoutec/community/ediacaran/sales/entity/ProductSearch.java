@@ -21,6 +21,10 @@ public class ProductSearch {
 	
 	private Integer resultPerPage;
 	
+	private Boolean display;
+	
+	private Boolean featured;
+	
 	public Set<ProductSearchFilter> getFilters() {
 		return filters;
 	}
@@ -83,6 +87,22 @@ public class ProductSearch {
 
 	public void setResultPerPage(Integer resultPerPage) {
 		this.resultPerPage = resultPerPage;
+	}
+
+	public Boolean getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Boolean display) {
+		this.display = display;
+	}
+
+	public Boolean getFeatured() {
+		return featured;
+	}
+
+	public void setFeatured(Boolean featured) {
+		this.featured = featured;
 	}
 
 }

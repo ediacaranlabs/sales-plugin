@@ -31,6 +31,10 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 
 	private String productType;
 	
+	private Boolean display;
+	
+	private Boolean featured;
+	
 	private Integer page;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
@@ -76,6 +80,8 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 		o.setPage(page);
 		o.setProductType(this.productType);
 		o.setResultPerPage(resultPerPage);
+		o.setDisplay(display);
+		o.setFeatured(featured);
 		
 		if(this.filters != null) {
 			Set<ProductSearchFilter> set = new HashSet<>();
@@ -117,6 +123,22 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 
 	public void setMaxCost(BigDecimal maxCost) {
 		this.maxCost = maxCost;
+	}
+
+	public Boolean getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Boolean display) {
+		this.display = display;
+	}
+
+	public Boolean getFeatured() {
+		return featured;
+	}
+
+	public void setFeatured(Boolean featured) {
+		this.featured = featured;
 	}
 
 	public String getProductType() {
