@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -237,7 +238,8 @@ public class Product implements Serializable {
 		return 
 			cost == null || currency == null? 
 					"" :
-					currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
+					Currency.getInstance(currency).getSymbol() + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
+					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					//DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
 	}
 	

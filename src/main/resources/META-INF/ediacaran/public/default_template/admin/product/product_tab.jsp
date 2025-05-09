@@ -156,8 +156,9 @@
 				<ec:select
 					readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:CURRENCY')}"
 					name="currency">
-					<ec:option value="USD" selected="${vars.entity.currency == 'USD'}">USD</ec:option>
-					<ec:option value="BRL" selected="${vars.entity.currency == 'BRL'}">BRL</ec:option>
+					<c:forEach items="${vars.currencyList}" var="currency">
+						<ec:option value="${currency.currencyCode}" selected="${vars.entity.currency == currency.currencyCode}">${currency.symbol}</ec:option>
+					</c:forEach>
 					<ec:field-validator>
 						<ec:field-validator-rule name="notEmpty"
 							message="#{product.form.currency.notEmpty}" bundle="${messages}" />

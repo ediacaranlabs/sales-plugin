@@ -1,6 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +39,7 @@ public abstract class AbstractProductTypeViewHandler
 		List<ProductImage> images = null;
 		Map<Integer, ProductMetadataAttribute> attributesMetadata;
 		List<ProductMetadata> productMetadataList;
+		List<Currency> currencyList;
 		
 		Throwable exception = null;
 
@@ -67,6 +70,9 @@ public abstract class AbstractProductTypeViewHandler
 			}
 			
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
+			
+			currencyList = Currency.getAvailableCurrencies().stream().collect(Collectors.toList());
+			Collections.sort(currencyList, (a,b)->a.getCurrencyCode().compareTo(b.getCurrencyCode()));
 		}
 		catch(Throwable ex) {
 			exception = ex;
@@ -79,6 +85,7 @@ public abstract class AbstractProductTypeViewHandler
 		ra.add("attributesMetadata", attributesMetadata);
 		ra.add("productMetadataList", productMetadataList);
 		ra.add("images", images);
+		ra.add("currencyList", currencyList);
 		ra.add("measurementUnit", MeasurementUnit.values());
 		
 		return ra;

@@ -90,7 +90,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	public ProductMetadataSearchResult search(ProductMetadataSearch value) throws ProductRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT_METADATA.getListPermission());
-		
+
 		try{
 			return ProductMetadataRegistryUtil.search(value, entityAccess);
 		}
