@@ -44,19 +44,12 @@
 						</c:forEach>
 					</ec:select>
 				</ed:col>
-				<ed:col size="1">
-					<ec:label>Display</ec:label>
-					<p>
-					<ec:radio inline="true" name="display" value="true" label="Yes"/>
-					<ec:radio inline="true" name="display" value="false" label="No"/>
-					</p>
-				</ed:col>
-				<ed:col size="1">
-					<ec:label>Featured</ec:label>
-					<p>
-					<ec:radio inline="true" name="featured" value="true" label="Yes"/>
-					<ec:radio inline="true" name="featured" value="false" label="No"/>
-					</p>
+				<ed:col size="2">
+					<ec:select label="#{search.form.display.label}" name="display" bundle="${messages}">
+						<ec:option value=""></ec:option>
+						<ec:option value="true" ><fmt:message key="search.form.display.options.show" bundle="${messages}" /></ec:option>
+						<ec:option value="false"><fmt:message key="search.form.display.options.hide" bundle="${messages}" /></ec:option>
+					</ec:select>
 				</ed:col>
 				<ed:col size="3">
 		    			<ec:textfield label="#{search.form.min_cost.label}" name="minCost" bundle="${messages}"/>

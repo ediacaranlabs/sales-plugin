@@ -44,6 +44,9 @@ public class ProductIndexEntity implements Serializable {
 	@Column(name="cod_product_type")
 	private String productType;
 
+	@Column(name="bit_display", length=1)
+	private Boolean display;
+	
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
 	
@@ -59,6 +62,7 @@ public class ProductIndexEntity implements Serializable {
 		this.description    = e.getDescription();
 		this.id             = e.getId() <= 0? null : e.getId();
 		this.name           = e.getName();
+		this.display        = e.isDisplay();
 		
 		if(e.getDescription() != null) {
 			this.description = StringUtil.toSearch(e.getDescription());
@@ -146,6 +150,14 @@ public class ProductIndexEntity implements Serializable {
 
 	public void setAttributes(List<ProductAttributeValueIndexEntity> attributes) {
 		this.attributes = attributes;
+	}
+
+	public Boolean getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Boolean display) {
+		this.display = display;
 	}
 
 	public Product toEntity(){

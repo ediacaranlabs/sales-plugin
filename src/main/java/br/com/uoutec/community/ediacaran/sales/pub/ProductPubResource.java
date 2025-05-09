@@ -88,7 +88,6 @@ public class ProductPubResource {
 			}
 			
 			productSearch.setDisplay(true);
-			productSearch.setFeatured(null);
 			
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
 			return handler.getProductViewer().searchProduct(productSearch, locale);

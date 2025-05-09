@@ -58,8 +58,6 @@ public class Product implements Serializable {
 	
 	protected boolean display;
 
-	protected boolean featured;
-	
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
 	@Size(max=2048)
@@ -171,14 +169,6 @@ public class Product implements Serializable {
 
 	public void setDisplay(boolean display) {
 		this.display = display;
-	}
-
-	public boolean isFeatured() {
-		return featured;
-	}
-
-	public void setFeatured(boolean featured) {
-		this.featured = featured;
 	}
 
 	public Map<String, ProductAttributeValue> getAttributes() {

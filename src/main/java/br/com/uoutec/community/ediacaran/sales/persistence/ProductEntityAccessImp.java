@@ -459,6 +459,10 @@ public class ProductEntityAccessImp
 	*/
 	
 	private void addGenericfilter(ProductSearch value, List<Predicate> and, CriteriaBuilder builder, From<ProductIndexEntity, ProductAttributeValueIndexEntity> from) {
+
+	    if(value.getDisplay() != null) {
+		    and.add(builder.equal(from.get("display"), value.getDisplay()));
+	    }
 		
 	    if(value.getDescription() != null) {
 	    	and.add(builder.like(from.get("description"), "%" + StringUtil.toSearch(value.getDescription(), "%") + "%"));

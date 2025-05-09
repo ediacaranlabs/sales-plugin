@@ -65,9 +65,6 @@ public class ProductEntity implements Serializable,PublicType{
 	@Column(name="bit_display", length=1)
 	private Boolean display;
 	
-	@Column(name="bit_featured", length=1)
-	private Boolean featured;
-	
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
 	
@@ -91,7 +88,6 @@ public class ProductEntity implements Serializable,PublicType{
 		this.shortDescription = e.getShortDescription();
 		this.display          = e.isDisplay();
 		this.metadata         = e.getMetadata() <= 0? null : e.getMetadata();
-		this.featured         = e.isFeatured();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -199,14 +195,6 @@ public class ProductEntity implements Serializable,PublicType{
 		this.display = display;
 	}
 
-	public Boolean getFeatured() {
-		return featured;
-	}
-
-	public void setFeatured(Boolean featured) {
-		this.featured = featured;
-	}
-
 	public List<ProductAttributeValueEntity> getAttributes() {
 		return attributes;
 	}
@@ -235,7 +223,6 @@ public class ProductEntity implements Serializable,PublicType{
 		e.setShortDescription(this.shortDescription);
 		e.setDisplay(this.display == null? false : this.display);
 		e.setMetadata(this.metadata == null? 0 : this.metadata);
-		e.setFeatured(this.featured == null? false : this.featured);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))
