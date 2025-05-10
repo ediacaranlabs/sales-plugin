@@ -62,10 +62,10 @@
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
+								<ec:table-col><center>${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
+								<ec:table-col><center>${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
+								<ec:table-col><center>${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
+								<ec:table-col><center>${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -94,16 +94,16 @@
 				
 				<ec:description-list>
 					<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.subtotal}"/>
+						${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.subtotal}"/>
 					</ec:description>
 					<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.discount}"/>
+						${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.discount}"/>
 					</ec:description>
 					<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.tax}"/>
+						${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.tax}"/>
 					</ec:description>
 					<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.total}"/>
+						${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.total}"/>
 					</ec:description>
 				</ec:description-list>
 			</ed:col>

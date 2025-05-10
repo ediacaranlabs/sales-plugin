@@ -85,7 +85,7 @@
 				</ed:row>
 				<ed:row style="form">
 					<ed:col>
-						${item.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${item.total}"/>
+						${item.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${item.total}"/>
 					</ed:col>
 				</ed:row>
 			</ed:col>

@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Currency;
 import java.util.Map;
 
 import javax.validation.constraints.Min;
@@ -94,6 +95,10 @@ public class Payment implements Serializable{
 		this.currency = currency;
 	}
 
+	public String getSymbol() {
+		return Currency.getInstance(currency).getSymbol();
+	}
+	
 	public PaymentStatus getStatus() {
 		return status;
 	}

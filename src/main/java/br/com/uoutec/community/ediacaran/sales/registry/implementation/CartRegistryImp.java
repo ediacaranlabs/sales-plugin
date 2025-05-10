@@ -187,7 +187,9 @@ public class CartRegistryImp
 		productRequest.setSerial(productTypeHandler.getSerial(productRequest));
 		productRequest.setShortDescription(productTypeHandler.getShortDescription(productRequest));
 		productRequest.setDescription(productTypeHandler.getDescription(productRequest));
-
+		productRequest.setExchangeCurrency(product.getExchangeCurrency());
+		productRequest.setExchangeRate(product.getExchangeRate());
+		
 		productTypeHandler.addItem(cart, cart.getItensCollection(), productRequest);
 		
 		return productRequest;

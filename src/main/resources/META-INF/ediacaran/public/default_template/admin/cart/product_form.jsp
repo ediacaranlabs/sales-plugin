@@ -22,7 +22,7 @@
 		</ed:row>
 		<ed:row>
 			<ed:col>
-				<b>${product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${product.cost}"/></b><br>
+				<b>${product.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${product.cost}"/></b><br>
 				${product.shortDescription}
 			</ed:col>
 		</ed:row>

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -146,6 +147,10 @@ public class Order implements Serializable{
 		this.completeInvoice = completeInvoice;
 	}
 
+	public String getSymbol() {
+		return Currency.getInstance(currency).getSymbol();
+	}
+	
 	/*
 	public List<Invoice> getInvoice() {
 		return invoices;

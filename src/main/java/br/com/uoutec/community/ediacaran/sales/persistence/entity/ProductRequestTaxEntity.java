@@ -37,6 +37,15 @@ public class ProductRequestTaxEntity {
 	@Column(name = "vlr_value", scale = 3, precision = 12)
 	private BigDecimal value;
 
+	@Column(name="dsc_currency", length=3)
+	private String currency;
+	
+	@Column(name="vlr_exchange_rate", scale=3, precision=12)
+	protected BigDecimal exchangeRate;
+	
+	@Column(name="dsc_exchange_currency", length=3)
+	protected String exchangeCurrency;
+	
 	@Column(name = "set_type", length = 32)
 	@Enumerated(EnumType.STRING)
 	private TaxType type;
@@ -52,13 +61,16 @@ public class ProductRequestTaxEntity {
 
 	public ProductRequestTaxEntity(
 			ProductRequestEntity productRequest, Tax e) {
-		this.description = e.getDescription();
-		this.name = e.getName();
-		this.order = e.getOrder();
-		this.productRequest = productRequest;
-		this.type = e.getType();
-		this.value = e.getValue();
-		this.discount = e.isDiscount();
+		this.description      = e.getDescription();
+		this.name             = e.getName();
+		this.order            = e.getOrder();
+		this.productRequest   = productRequest;
+		this.type             = e.getType();
+		this.value            = e.getValue();
+		this.discount         = e.isDiscount();
+		this.exchangeCurrency = e.getExchangeCurrency();
+		this.exchangeRate     = e.getExchangeRate();
+		this.currency         = e.getCurrency();
 	}
 
 	public String getId() {
@@ -134,6 +146,9 @@ public class ProductRequestTaxEntity {
 		e.setType(this.type);
 		e.setValue(this.value);
 		e.setDiscount(this.discount == null? false : this.discount);
+		e.setExchangeCurrency(this.exchangeCurrency);
+		e.setExchangeRate(this.exchangeRate);
+		e.setCurrency(this.currency);
 		return e;
 	}
 

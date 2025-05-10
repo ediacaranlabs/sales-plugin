@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,6 +95,10 @@ public class Invoice implements Serializable{
 		this.currency = currency;
 	}
 
+	public String getSymbol() {
+		return Currency.getInstance(currency).getSymbol();
+	}
+	
 	public LocalDateTime getCancelDate() {
 		return cancelDate;
 	}

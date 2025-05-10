@@ -82,7 +82,7 @@
 			</ed:col>
 			<ed:col size="4">
 				<ec:center>
-						${productRequest.product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+						${productRequest.product.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
 				</ec:center>
 			</ed:col>
 			<ed:col id="cart_item_value_${step.index}" size="1">

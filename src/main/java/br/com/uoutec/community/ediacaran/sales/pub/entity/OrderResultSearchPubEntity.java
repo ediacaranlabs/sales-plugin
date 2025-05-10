@@ -35,9 +35,9 @@ public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSea
 		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
 		this.date = orderResultSearch.getOrder().getDate() == null? null : dateTimeFormatter.format(orderResultSearch.getOrder().getDate());
 		this.status = orderResultSearch.getOrder().getStatus() == null? null : orderResultSearch.getOrder().getStatus().getName(locale);
-		this.subTotal = orderResultSearch.getOrder().getCurrency() + " " + df.format(orderResultSearch.getOrder().getSubtotal());
-		this.taxes = orderResultSearch.getOrder().getCurrency() + " " + df.format(orderResultSearch.getOrder().getTax());
-		this.total = orderResultSearch.getOrder().getCurrency() + " " + df.format(orderResultSearch.getOrder().getTotal());
+		this.subTotal = orderResultSearch.getOrder().getSymbol() + " " + df.format(orderResultSearch.getOrder().getSubtotal());
+		this.taxes = orderResultSearch.getOrder().getSymbol() + " " + df.format(orderResultSearch.getOrder().getTax());
+		this.total = orderResultSearch.getOrder().getSymbol() + " " + df.format(orderResultSearch.getOrder().getTotal());
 		//this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
 	}
 

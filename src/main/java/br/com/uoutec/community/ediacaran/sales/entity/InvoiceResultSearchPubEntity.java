@@ -33,10 +33,10 @@ public class InvoiceResultSearchPubEntity implements Serializable {
 		this.owner = invoiceResultSearch.getOwner().getFirstName() + " " + invoiceResultSearch.getOwner().getLastName();
 		this.date = invoiceResultSearch.getInvoice().getDate() == null? null : dateTimeFormatter.format(invoiceResultSearch.getInvoice().getDate());
 		this.order = invoiceResultSearch.getInvoice().getOrder();
-		this.subTotal = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getSubtotal());
-		this.taxes = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getTax());
-		this.discounts = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getDiscount());
-		this.total = invoiceResultSearch.getInvoice().getCurrency() + " " + df.format(invoiceResultSearch.getInvoice().getTotal());
+		this.subTotal = invoiceResultSearch.getInvoice().getSymbol() + " " + df.format(invoiceResultSearch.getInvoice().getSubtotal());
+		this.taxes = invoiceResultSearch.getInvoice().getSymbol() + " " + df.format(invoiceResultSearch.getInvoice().getTax());
+		this.discounts = invoiceResultSearch.getInvoice().getSymbol() + " " + df.format(invoiceResultSearch.getInvoice().getDiscount());
+		this.total = invoiceResultSearch.getInvoice().getSymbol() + " " + df.format(invoiceResultSearch.getInvoice().getTotal());
 	}
 	
 	public String getId() {

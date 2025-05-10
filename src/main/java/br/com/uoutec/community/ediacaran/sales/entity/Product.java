@@ -84,6 +84,10 @@ public class Product implements Serializable {
 	
 	protected Map<String, ProductAttributeValue> attributes;
 	
+	protected BigDecimal exchangeRate;
+	
+	protected String exchangeCurrency;
+	
 	public Product() {
 		this.attributes = new HashMap<>();
 		this.display = true;
@@ -238,15 +242,43 @@ public class Product implements Serializable {
 		return 
 			cost == null || currency == null? 
 					"" :
-					Currency.getInstance(currency).getSymbol() + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
+					Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol() + " " + getValue().setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					//DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
+	}
+	
+	public String getSymbol() {
+		return Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol();
 	}
 	
 	public String getTagsString() {
 		return tags == null? null: StringUtil.toString(tags, ",");
 	}
 	
+	public BigDecimal getOrigialValue() {
+		return cost;
+	}
+	
+	public BigDecimal getValue() {
+		return exchangeRate == null? cost : cost.multiply(exchangeRate);
+	}
+	
+	public BigDecimal getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(BigDecimal exchangeRate) {
+		this.exchangeRate = exchangeRate;
+	}
+
+	public String getExchangeCurrency() {
+		return exchangeCurrency;
+	}
+
+	public void setExchangeCurrency(String exchangeCurrency) {
+		this.exchangeCurrency = exchangeCurrency;
+	}
+
 	public BigDecimal getCost() {
 		return cost;
 	}

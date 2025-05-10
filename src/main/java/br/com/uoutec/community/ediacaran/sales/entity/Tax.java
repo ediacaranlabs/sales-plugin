@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Currency;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -32,6 +33,13 @@ public class Tax implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	private BigDecimal value;
 	
+	protected BigDecimal exchangeRate;
+	
+	protected String exchangeCurrency;
+	
+	@NotNull
+	protected String currency;
+	
 	@NotNull(groups = DataValidation.class)
 	private TaxType type;
 	
@@ -44,12 +52,12 @@ public class Tax implements Serializable {
 	
 	public Tax(Tax tax) {
 		this.description = tax.getDescription();
-		this.discount = tax.isDiscount();
-		this.id = tax.getId();
-		this.name = tax.getName();
-		this.order = tax.getOrder();
-		this.type = tax.getType();
-		this.value = tax.getValue();
+		this.discount    = tax.isDiscount();
+		this.id          = tax.getId();
+		this.name        = tax.getName();
+		this.order       = tax.getOrder();
+		this.type        = tax.getType();
+		this.value       = tax.getValue();
 	}
 	
 	public String getId() {
@@ -76,14 +84,22 @@ public class Tax implements Serializable {
 		this.description = description;
 	}
 
-	public BigDecimal getValue() {
+	public BigDecimal getOrigialValue() {
 		return value;
+	}
+	
+	public BigDecimal getValue() {
+		return exchangeRate == null? value : value.multiply(exchangeRate);
 	}
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 
+	public String getSymbol() {
+		return Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol();
+	}
+	
 	public TaxType getType() {
 		return type;
 	}
@@ -106,6 +122,30 @@ public class Tax implements Serializable {
 
 	public void setOrder(byte order) {
 		this.order = order;
+	}
+
+	public BigDecimal getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(BigDecimal exchangeRate) {
+		this.exchangeRate = exchangeRate;
+	}
+
+	public String getExchangeCurrency() {
+		return exchangeCurrency;
+	}
+
+	public void setExchangeCurrency(String exchangeCurrency) {
+		this.exchangeCurrency = exchangeCurrency;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 	
 }

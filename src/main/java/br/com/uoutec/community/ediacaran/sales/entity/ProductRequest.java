@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
@@ -48,13 +49,17 @@ public class ProductRequest implements Serializable {
 	@NotNull
 	protected MeasurementUnit measurementUnit;
 	
+	protected BigDecimal exchangeRate;
+	
+	protected String exchangeCurrency;
+	
+	@NotNull
+	protected String currency;
+	
 	@NotNull
 	protected BigDecimal cost;
 
 	protected List<Tax> taxes;
-	
-	@NotNull
-	protected String currency;
 	
 	protected Map<String, String> addData;
 
@@ -94,6 +99,8 @@ public class ProductRequest implements Serializable {
 		setShortDescription(value.getShortDescription());
 		setTaxes(value.getTaxes());
 		setUnits(value.getUnits());
+		setExchangeCurrency(value.getExchangeCurrency());
+		setExchangeRate(value.getExchangeRate());
 	}
 	
 	public String getId() {
@@ -152,6 +159,22 @@ public class ProductRequest implements Serializable {
 		this.units = units;
 	}
 
+	public BigDecimal getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(BigDecimal exchangeRate) {
+		this.exchangeRate = exchangeRate;
+	}
+
+	public String getExchangeCurrency() {
+		return exchangeCurrency;
+	}
+
+	public void setExchangeCurrency(String exchangeCurrency) {
+		this.exchangeCurrency = exchangeCurrency;
+	}
+
 	public BigDecimal getCost() {
 		return cost;
 	}
@@ -168,6 +191,10 @@ public class ProductRequest implements Serializable {
 		this.currency = currency;
 	}
 
+	public String getSymbol() {
+		return Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol();
+	}
+	
 	public Map<String, String> getAddData() {
 		return addData;
 	}
@@ -216,14 +243,22 @@ public class ProductRequest implements Serializable {
 		this.taxes = taxes;
 	}
 
+	public BigDecimal getOrigialValue() {
+		return cost;
+	}
+	
+	public BigDecimal getValue() {
+		return exchangeRate == null? cost : cost.multiply(exchangeRate);
+	}
+	
 	public BigDecimal getSubtotal(){
-		BigDecimal value = cost;
+		BigDecimal value = getValue();
 		return value.multiply(new BigDecimal(this.units));
 	}
 
 	public BigDecimal getDiscount() {
 		
-		BigDecimal value = cost;
+		BigDecimal value = getValue();
 		BigDecimal discount = BigDecimal.ZERO;
 		
 		if(taxes != null) {
@@ -247,7 +282,7 @@ public class ProductRequest implements Serializable {
 
 	public BigDecimal getTax() {
 		
-		BigDecimal value = cost;
+		BigDecimal value = getValue();
 		BigDecimal tax = BigDecimal.ZERO;
 		
 		if(taxes != null) {
@@ -271,7 +306,7 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getTotal(){
 		
-		BigDecimal value = cost;
+		BigDecimal value = getValue();
 		
 		if(taxes != null) {
 			

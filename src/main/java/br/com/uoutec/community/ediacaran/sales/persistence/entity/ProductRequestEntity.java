@@ -79,6 +79,12 @@ public class ProductRequestEntity implements Serializable{
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
+	@Column(name="vlr_exchange_rate", scale=3, precision=12)
+	protected BigDecimal exchangeRate;
+	
+	@Column(name="dsc_exchange_currency", length=3)
+	protected String exchangeCurrency;
+	
 	@OneToMany(mappedBy="productRequest", fetch=FetchType.LAZY)
 	private List<ProductRequestTaxEntity> taxes;
 	
@@ -116,6 +122,8 @@ public class ProductRequestEntity implements Serializable{
 		this.shortDescription = e.getShortDescription();
 		this.description      = e.getDescription();
 		this.productID        = e.getProductID();
+		this.exchangeCurrency = e.getExchangeCurrency();
+		this.exchangeRate     = e.getExchangeRate();
 		
 		List<Tax> taxes = e.getTaxes();
 		
@@ -270,6 +278,8 @@ public class ProductRequestEntity implements Serializable{
 		e.setShortDescription(this.shortDescription);
 		e.setDescription(this.description);
 		e.setProductID(this.productID);
+		e.setExchangeCurrency(this.exchangeCurrency);
+		e.setExchangeRate(this.exchangeRate);
 		
 		if(this.taxes != null){
 			List<Tax> taxes = new ArrayList<Tax>();
