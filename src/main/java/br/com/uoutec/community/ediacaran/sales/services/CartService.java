@@ -167,6 +167,7 @@ public class CartService {
 					shippingTax.setName(o.getTitle());
 					shippingTax.setType(TaxType.UNIT);
 					shippingTax.setValue(o.getValue());
+					shippingTax.setCurrency(o.getCurrency());
 					taxes.add(shippingTax);
 				}
 			}
@@ -178,6 +179,7 @@ public class CartService {
 				shippingTax.setName(selected.getTitle());
 				shippingTax.setType(TaxType.UNIT);
 				shippingTax.setValue(selected.getValue());
+				shippingTax.setCurrency(selected.getCurrency());
 				taxes.add(shippingTax);
 				
 			}

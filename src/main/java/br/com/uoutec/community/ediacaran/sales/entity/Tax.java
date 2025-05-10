@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Currency;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -10,6 +9,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -97,7 +97,7 @@ public class Tax implements Serializable {
 	}
 
 	public String getSymbol() {
-		return Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol();
+		return CurrencyUtil.getSymbol(currency);
 	}
 	
 	public TaxType getType() {
@@ -146,6 +146,10 @@ public class Tax implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+	
+	public String getDisplayValue() {
+		return CurrencyUtil.toString(currency, getValue());
 	}
 	
 }

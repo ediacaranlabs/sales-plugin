@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +18,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.entity.registry.IdValidation;
 
 public class ProductRequest implements Serializable {
@@ -192,7 +192,7 @@ public class ProductRequest implements Serializable {
 	}
 
 	public String getSymbol() {
-		return Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol();
+		return CurrencyUtil.getSymbol(currency);
 	}
 	
 	public Map<String, String> getAddData() {
@@ -256,6 +256,10 @@ public class ProductRequest implements Serializable {
 		return value.multiply(new BigDecimal(this.units));
 	}
 
+	public String getDisplaySubtotal() {
+		return CurrencyUtil.toString(getCurrency(), getSubtotal());
+	}
+	
 	public BigDecimal getDiscount() {
 		
 		BigDecimal value = getValue();
@@ -280,6 +284,10 @@ public class ProductRequest implements Serializable {
 		return discount.multiply(new BigDecimal(this.units));
 	}
 
+	public String getDisplayDiscount() {
+		return CurrencyUtil.toString(currency, getDiscount());
+	}
+	
 	public BigDecimal getTax() {
 		
 		BigDecimal value = getValue();
@@ -304,6 +312,10 @@ public class ProductRequest implements Serializable {
 		return tax.multiply(new BigDecimal(this.units));
 	}
 	
+	public String getDisplayTax() {
+		return CurrencyUtil.toString(currency, getTax());
+	}
+	
 	public BigDecimal getTotal(){
 		
 		BigDecimal value = getValue();
@@ -322,6 +334,10 @@ public class ProductRequest implements Serializable {
 		}
 		
 		return value.multiply(new BigDecimal(this.units));
+	}
+	
+	public String getDisplayTotal() {
+		return CurrencyUtil.toString(currency, getTotal());
 	}
 	
 	public BigDecimal getRemainingValue(LocalDate validate){

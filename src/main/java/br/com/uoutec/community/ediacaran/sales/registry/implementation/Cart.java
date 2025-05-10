@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
@@ -138,6 +139,11 @@ public class Cart implements Serializable{
 		this.taxes = taxes;
 	}
 
+	public String getSymbol() {
+		String currency = getCurrency();
+		return currency == null? null : CurrencyUtil.getSymbol(getCurrency());
+	}
+	
 	public String getCurrency() {
 		if(itens.isNoitems()) {
 			return null;
@@ -174,6 +180,10 @@ public class Cart implements Serializable{
 		return value;
 	}
 	
+	public String getDisplaySubtotal() {
+		return CurrencyUtil.toString(getCurrency(), getSubtotal());
+	}
+	
 	public BigDecimal getTotalDiscount() {
 		
 		BigDecimal value = this.getSubtotal();
@@ -198,6 +208,10 @@ public class Cart implements Serializable{
 		return discount;
 	}
 
+	public String getDisplayTotalDiscount() {
+		return CurrencyUtil.toString(getCurrency(), getTotalDiscount());
+	}
+	
 	public BigDecimal getTotalTax() {
 		
 		BigDecimal value = this.getSubtotal();
@@ -220,6 +234,10 @@ public class Cart implements Serializable{
 		}
 		
 		return tax;
+	}
+	
+	public String getDisplayTotalTax() {
+		return CurrencyUtil.toString(getCurrency(), getTotalTax());
 	}
 	
 	public BigDecimal getTotal(){
@@ -249,6 +267,10 @@ public class Cart implements Serializable{
 		return value;
 	}
 
+	public String getDisplayTotal() {
+		return CurrencyUtil.toString(getCurrency(), getTotal());
+	}
+	
 	public int getTotalItens(){
 		return this.itens.getTotalItens();
 	}

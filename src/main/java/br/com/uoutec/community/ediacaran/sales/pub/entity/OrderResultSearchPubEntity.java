@@ -1,6 +1,5 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -11,8 +10,6 @@ public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSea
 
 	private static final long serialVersionUID = -4887905873425384110L;
 
-	private static final DecimalFormat df = new DecimalFormat("###,###,##0.00");
-	
 	private String id;
 	
 	private String owner;
@@ -35,9 +32,9 @@ public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSea
 		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
 		this.date = orderResultSearch.getOrder().getDate() == null? null : dateTimeFormatter.format(orderResultSearch.getOrder().getDate());
 		this.status = orderResultSearch.getOrder().getStatus() == null? null : orderResultSearch.getOrder().getStatus().getName(locale);
-		this.subTotal = orderResultSearch.getOrder().getSymbol() + " " + df.format(orderResultSearch.getOrder().getSubtotal());
-		this.taxes = orderResultSearch.getOrder().getSymbol() + " " + df.format(orderResultSearch.getOrder().getTax());
-		this.total = orderResultSearch.getOrder().getSymbol() + " " + df.format(orderResultSearch.getOrder().getTotal());
+		this.subTotal = orderResultSearch.getOrder().getDisplaySubtotal();
+		this.taxes = orderResultSearch.getOrder().getDisplayTax();
+		this.total = orderResultSearch.getOrder().getDisplayTotal();
 		//this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
 	}
 

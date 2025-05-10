@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +22,7 @@ import org.hibernate.validator.constraints.Length;
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
@@ -242,13 +242,18 @@ public class Product implements Serializable {
 		return 
 			cost == null || currency == null? 
 					"" :
-					Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol() + " " + getValue().setScale(2, BigDecimal.ROUND_UNNECESSARY);
+					CurrencyUtil.toString(currency, getValue());
+					//getSymbol() + " " + getValue().setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					//DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
 	}
 	
+	public String getDisplayValue() {
+		return CurrencyUtil.toString(currency, getValue());
+	}
+	
 	public String getSymbol() {
-		return Currency.getInstance(exchangeCurrency == null? currency : exchangeCurrency).getSymbol();
+		return CurrencyUtil.getSymbol(currency);
 	}
 	
 	public String getTagsString() {

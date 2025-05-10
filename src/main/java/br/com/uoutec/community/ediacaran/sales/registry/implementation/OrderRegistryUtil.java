@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -187,12 +188,33 @@ public class OrderRegistryUtil {
 		for(ProductRequest pr: order.getItens()){
 			
 			if(!currency.equals(pr.getCurrency())){
-				throw new OrderRegistryException("moeda divergente: " + 
-					currency + " <> " + pr.getCurrency());
+				throw new OrderRegistryException(currency + " <> " + pr.getCurrency());
+			}
+			
+			if(pr.getTaxes() != null) {
+				for(Tax t: pr.getTaxes()) {
+
+					if(!currency.equals(t.getCurrency())){
+						throw new OrderRegistryException(currency + " <> " + t.getCurrency());
+					}
+					
+				}
+			}
+			
+		}
+	
+		if(order.getTaxes() != null) {
+			for(Tax t: order.getTaxes()) {
+
+				if(!currency.equals(t.getCurrency())){
+					throw new OrderRegistryException(currency + " <> " + t.getCurrency());
+				}
+				
 			}
 		}
 		
 	}
+	
 	public static Address getBillingAddress(Address billingAddress, Address defaultAddress) {
 		if(billingAddress == null) {
 			return defaultAddress;

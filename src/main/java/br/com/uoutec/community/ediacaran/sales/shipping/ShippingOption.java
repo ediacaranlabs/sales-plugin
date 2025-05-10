@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.shipping;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Currency;
 import java.util.Locale;
 
 public class ShippingOption {
@@ -82,7 +83,7 @@ public class ShippingOption {
 	public String toString(Locale locale) {
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);
 		DecimalFormat df = new DecimalFormat("###,###,##0.00", dfs); 
-		return currency + " " + df.format(getValue()) + " " + this.toString(); 
+		return Currency.getInstance(currency).getSymbol() + " " + df.format(getValue()) + " " + this.toString(); 
 	}
 	
 	public String toString() {

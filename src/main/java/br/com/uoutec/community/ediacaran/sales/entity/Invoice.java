@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +17,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -96,7 +96,7 @@ public class Invoice implements Serializable{
 	}
 
 	public String getSymbol() {
-		return Currency.getInstance(currency).getSymbol();
+		return CurrencyUtil.getSymbol(currency);
 	}
 	
 	public LocalDateTime getCancelDate() {
@@ -161,6 +161,10 @@ public class Invoice implements Serializable{
 		return value;
 	}
 
+	public String getDisplaySubtotal() {
+		return CurrencyUtil.toString(currency, getSubtotal());
+	}
+	
 	public BigDecimal getDiscount() {
 
 		BigDecimal value = BigDecimal.ZERO;
@@ -195,6 +199,10 @@ public class Invoice implements Serializable{
 		return discount;
 	}
 	
+	public String getDisplayDiscount() {
+		return CurrencyUtil.toString(currency, getDiscount());
+	}
+	
 	public BigDecimal getTax() {
 		
 		BigDecimal value = BigDecimal.ZERO;
@@ -204,6 +212,10 @@ public class Invoice implements Serializable{
 		return value.add(getTaxBySubtotal());
 	}
 
+	public String getDisplayTax() {
+		return CurrencyUtil.toString(currency, getTax());
+	}
+	
 	private BigDecimal getTaxBySubtotal() {
 		
 		BigDecimal value = getSubtotal();
@@ -246,6 +258,10 @@ public class Invoice implements Serializable{
 		}
 		
 		return value;
+	}
+
+	public String getDisplayTotal() {
+		return CurrencyUtil.toString(currency, getTax());
 	}
 	
 }

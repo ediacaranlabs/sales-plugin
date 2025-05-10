@@ -128,10 +128,10 @@
 										</ec:field-validator>
 									</ec:textfield>
 								</ec:table-col>
-								<ec:table-col><center id="${product.serial}_subtotal">${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
-								<ec:table-col><center id="${product.serial}_discount">${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
-								<ec:table-col><center id="${product.serial}_tax">${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
-								<ec:table-col><center id="${product.serial}_total">${product.symbol} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_subtotal">${product.displaySubtotal}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_discount">${product.displayTax}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_tax">${product.displayTax}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_total">${product.displayTotal}</center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -149,16 +149,16 @@
 				
 				<ec:description-list>
 					<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
-						<span id="subtotal">${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.subtotal}"/></span>
+						<span id="subtotal">${vars.invoice.displaySubtotal}</span>
 					</ec:description>
 					<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
-						<span id="discounts">${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.discount}"/></span>
+						<span id="discounts">${vars.invoice.displayDiscount}</span>
 					</ec:description>
 					<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
-						<span id="taxes">${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.tax}"/></span>
+						<span id="taxes">${vars.invoice.displayTax}</span>
 					</ec:description>
 					<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
-						<span id="total">${vars.invoice.symbol} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.total}"/></span>
+						<span id="total">${vars.invoice.displayTotal}</span>
 					</ec:description>
 				</ec:description-list>
 			</ed:col>

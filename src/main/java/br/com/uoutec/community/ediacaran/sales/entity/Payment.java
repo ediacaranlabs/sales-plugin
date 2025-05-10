@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Currency;
 import java.util.Map;
 
 import javax.validation.constraints.Min;
@@ -13,6 +12,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -96,7 +96,7 @@ public class Payment implements Serializable{
 	}
 
 	public String getSymbol() {
-		return Currency.getInstance(currency).getSymbol();
+		return CurrencyUtil.getSymbol(currency);
 	}
 	
 	public PaymentStatus getStatus() {
@@ -139,6 +139,10 @@ public class Payment implements Serializable{
 		this.total = total;
 	}
 
+	public String getDisplayTotal() {
+		return CurrencyUtil.toString(currency, getTotal());
+	}
+	
 	/*
 	public BigDecimal getTotal(){
 		return this.value.subtract(this.discount).add(this.tax);
