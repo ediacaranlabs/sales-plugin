@@ -690,7 +690,7 @@ public class OrderRegistryImp
 	}
 
 	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
-		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID.getSystemID()));
+		SystemUser user = systemUserRegistry.getBySystemID(userID);
 		
 		if(user == null) {
 			throw new SystemUserRegistryException(String.valueOf(userID));

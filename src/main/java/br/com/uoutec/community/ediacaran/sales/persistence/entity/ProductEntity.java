@@ -25,12 +25,11 @@ import javax.persistence.Table;
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValue;
-import br.com.uoutec.ediacaran.core.plugins.PublicType;
 
 @Entity
 @Table(name="rw_product")
 @EntityListeners(ProductEntityListener.class)
-public class ProductEntity implements Serializable,PublicType{
+public class ProductEntity implements Serializable {
 
 	private static final long serialVersionUID = 7360107228997614767L;
 

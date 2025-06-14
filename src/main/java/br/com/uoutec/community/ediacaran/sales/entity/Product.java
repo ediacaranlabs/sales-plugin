@@ -135,7 +135,10 @@ public class Product implements Serializable {
 		}
 		
 		ObjectsTemplateManager objectsManager = EntityContextPlugin.getEntity(ObjectsTemplateManager.class);
-		ProductRegistryUtil.loadProductImage(this, objectsManager);
+		ContextSystemSecurityCheck.doPrivileged(()->{
+			ProductRegistryUtil.loadProductImage(this, objectsManager);
+			return null;
+		});
 	}
 	
 	public void setThumb(Path thumb) {

@@ -7,8 +7,9 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
-public interface ProductRegistry {
+public interface ProductRegistry extends PublicBean{
 
 	void registerProduct(Product entity) throws ProductRegistryException;
 	

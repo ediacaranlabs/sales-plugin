@@ -20,6 +20,11 @@ public class ProductViewerRegistryImp implements ProductViewerRegistry {
 	
 	private long time;
 	
+	public ProductViewerRegistryImp() {
+		this.repository = null;
+		this.pluginType = null;
+	}
+	
 	@Inject
 	public ProductViewerRegistryImp(ProductViewerRegistryRepository repository, PluginType pluginType) {
 		this.repository = repository;

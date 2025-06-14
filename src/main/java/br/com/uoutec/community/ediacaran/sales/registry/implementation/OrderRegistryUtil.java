@@ -331,7 +331,7 @@ public class OrderRegistryUtil {
 
 	public static SystemUser getActualUser(SystemUserID userID, SystemUserRegistry systemUserRegistry) throws SystemUserRegistryException {
 		
-		SystemUser user = systemUserRegistry.getBySystemID(String.valueOf(userID.getSystemID()));
+		SystemUser user = systemUserRegistry.getBySystemID(userID);
 		
 		if(user == null) {
 			throw new SystemUserRegistryException(String.valueOf(userID));

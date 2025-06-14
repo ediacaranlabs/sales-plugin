@@ -1,6 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -102,25 +104,25 @@ public class ProductAdminPubResource {
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
-	public ResultAction edit(
+	public Map<String,Object> edit(
 			@Basic(bean = "product")
 			ProductEditPubEntity productPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
+		Map<String,Object> vars = new HashMap<>();
 		try {
 			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.getProductAdminViewer().showProductEdit(productPubEntity, locale);
+			vars.put("product_view", handler.getProductAdminViewer().showProductEdit(productPubEntity, locale));
 		}
 		catch(InvalidRequestException ex) {
 			throw ex;
 		}
 		catch(Throwable ex) {
-			WebResultAction ra = new WebResultActionImp();
-			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			ra.setReason("product viewer misconfiguration");
-			return ra;
+			vars.put("exception", ex);
 		}
+		
+		return vars;
 		
 	}
 

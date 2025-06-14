@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
@@ -90,22 +89,23 @@ public class DefaultProductAdminViewer implements ProductAdminViewer{
 	public WebResultAction showProductEdit(ProductPubEntity productPubEntity, Locale locale)
 			throws InvalidRequestException {
 		
-		WebResultAction r = new WebResultActionImp();
+		//WebResultAction r = new WebResultActionImp();
 		ProductTypeRegistry productTypeRegistry = EntityContextPlugin.getEntity(ProductTypeRegistry.class);
 		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
 		
 		try {
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
-			ResultAction ra = productType.getViewHandler().edit(productPubEntity, locale);
+			return productType.getViewHandler().edit(productPubEntity, locale);
 			
-			Map<String,Object> vars = new HashMap<>();
-			vars.put("product_view", ra);
+			//ResultAction ra = productType.getViewHandler().edit(productPubEntity, locale);
+			//Map<String,Object> vars = new HashMap<>();
+			//vars.put("product_view", ra);
 			
-			r.setView("${plugins.ediacaran.sales.template}/admin/product/edit");
-			r.add("vars", vars);
+			//r.setView("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit");
+			//r.add("vars", vars);
 			
-			return r;
+			//return r;
 		}
 		catch(InvalidRequestException ex){
 			throw ex;

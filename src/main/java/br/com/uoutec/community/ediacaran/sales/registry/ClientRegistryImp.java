@@ -166,7 +166,7 @@ public class ClientRegistryImp
 		
 		try {
 			SystemUser user =ContextSystemSecurityCheck.doPrivileged(()->{
-				return systemUserRegistry.getBySystemID(value);
+				return systemUserRegistry.getBySystemID(()->value);
 			});
 			
 			if(user == null) {
