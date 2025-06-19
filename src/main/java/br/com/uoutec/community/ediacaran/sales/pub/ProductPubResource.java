@@ -1,6 +1,8 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,11 +24,18 @@ import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductViewerRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductWidget;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
+import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -35,6 +44,14 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class ProductPubResource {
 
+	@Transient
+	@Inject
+	public ProductRegistry productRegistry;
+	
+	@Transient
+	@Inject
+	public I18nRegistry i18nRegistry;
+	
 	@Transient
 	@Inject
 	private Cart cart;
@@ -50,13 +67,8 @@ public class ProductPubResource {
 			) {
 		
 		try {
-			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			WebResultAction ra = handler.getProductViewer().showProductSearch(locale);
-			
-			if(ra == null) {
-				throw new NullPointerException("ResultAction");
-			}
-			
+			WebResultAction ra = new WebResultActionImp();
+			ra.setView("${plugins.ediacaran.sales.template}/front/product/search");
 			return ra;
 		}
 		catch(Throwable ex) {
@@ -81,21 +93,34 @@ public class ProductPubResource {
 			Locale locale
 	) throws InvalidRequestException{
 		
-		try {
-			
-			if(productSearch == null) {
-				productSearch = new ProductSearchPubEntity();
-			}
-			
-			productSearch.setDisplay(true);
-			
-			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			return handler.getProductViewer().searchProduct(productSearch, locale);
+		ProductSearch search = null;
+		try{
+			search = productSearch.rebuild(false, true, true);
 		}
-		catch(Throwable ex) {
-			ex.printStackTrace();
-			return null;
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.search_product.error.fail_load_request, 
+							locale);
+			throw new InvalidRequestException(error, ex);
 		}
+
+		ProductSearchResult result;
+		
+		try{
+			result = productRegistry.search(search);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.search_product.error.fail_search, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return new ProductsSimplifiedSearchResultPubEntity(result, locale);		
 		
 	}
 	
@@ -109,14 +134,23 @@ public class ProductPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
-		try {
-			ProductViewerHandler handler = productViewerRegistry.getProductViewerHandler();
-			WebResultAction ra = handler.getProductViewer().showProduct(productPubEntity, locale);
+		
+		try{
+			Product product = null;
+			List<ProductImage> images = null;
+			List<ProductWidgetWrapper> widgets = null;
 			
-			if(ra == null) {
-				throw new NullPointerException("WebResultAction");
-			}
+			product = productPubEntity.rebuild(true, false, true);
+			images = productRegistry.getImagesByProduct(product);
 			
+			List<ProductWidget> productWidgets = productViewerRegistry.getProductViewerWidgets();
+			widgets = productWidgets.stream().map((e)->new ProductWidgetWrapper(e)).collect(Collectors.toList());
+			
+			WebResultAction ra = new WebResultActionImp();
+			ra.setView("${plugins.ediacaran.sales.template}/front/product/product_details");
+			ra.add("entity", product);
+			ra.add("images", images);
+			ra.add("widgets", widgets);
 			return ra;
 		}
 		catch(Throwable ex) {
