@@ -5,8 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import br.com.uoutec.ediacaran.core.plugins.PluginType;
-
 @Singleton
 public class ProductViewerRegistryImp implements ProductViewerRegistry {
 
@@ -17,7 +15,7 @@ public class ProductViewerRegistryImp implements ProductViewerRegistry {
 	}
 	
 	@Inject
-	public ProductViewerRegistryImp(ProductViewerRegistryRepository repository, PluginType pluginType) {
+	public ProductViewerRegistryImp(ProductViewerRegistryRepository repository) {
 		this.repository = repository;
 	}
 
