@@ -239,6 +239,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.attributes = attributes;
 	}
 
+	public Boolean getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Boolean display) {
+		this.display = display;
+	}
+
 	public Locale getLocale() {
 		return locale;
 	}
