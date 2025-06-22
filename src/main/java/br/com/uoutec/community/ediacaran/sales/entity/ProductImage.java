@@ -24,15 +24,18 @@ public class ProductImage implements Serializable{
 
 	protected int product;
 	
+	protected boolean deleted;
+	
 	public ProductImage() {
 	}
 	
-	public ProductImage(String id, int product, Path image, String description) {
+	public ProductImage(String id, int product, Path image, String description, boolean deleted) {
 		this.id = id;
 		this.image = image;
 		this.description = description;
 		this.product = product;
 		this.imageLoaded = false;
+		this.deleted = false;
 	}
 
 	public String getId() {
@@ -89,6 +92,14 @@ public class ProductImage implements Serializable{
 		return id == null || id == null? null : SecretUtil.toProtectedID(id);		
 	}
 	
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

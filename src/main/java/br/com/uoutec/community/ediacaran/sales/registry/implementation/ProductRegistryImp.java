@@ -64,6 +64,26 @@ public class ProductRegistryImp
 			ProductRegistryUtil.sendToRepository(entityAccess);
 			
 			ProductRegistryUtil.persistProductImage(entity, objectsManager);
+			
+			if(entity.getImages() != null) {
+			
+				for(ProductImage i: entity.getImages()) {
+					i.setProduct(entity.getId());
+					if(i.getId() != null && i.isDeleted()) {
+						//ProductImage e = ProductImageRegistryUtil.getActual(i, imageEntityAccess);
+						ProductImageRegistryUtil.deleteImage(i, objectsManager);
+						ProductImageRegistryUtil.delete(i, imageEntityAccess);
+					}
+					else
+					if(!i.isDeleted()) {
+						ProductImageRegistryUtil.validate(i);
+						ProductImageRegistryUtil.saveOrUpdate(i, imageEntityAccess);
+					}
+				}
+				
+				ProductImageRegistryUtil.sendToRepository(imageEntityAccess);
+				
+			}
 		}
 		catch(Throwable e){
 			throw new ProductRegistryException(e);

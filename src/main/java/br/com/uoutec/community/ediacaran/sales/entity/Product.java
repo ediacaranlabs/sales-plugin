@@ -24,6 +24,7 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductRegistryUtil;
@@ -177,6 +178,38 @@ public class Product implements Serializable {
 
 	public void setDisplay(boolean display) {
 		this.display = display;
+	}
+
+	protected volatile List<ProductImage> images;
+ 
+	protected volatile boolean imagesLoaded;
+	
+	public List<ProductImage> getImages() {
+		
+		if(!imagesLoaded) {
+			loadImages();
+		}
+		
+		return images;
+	}
+
+	private synchronized void loadImages() {
+		
+		if(imagesLoaded || this.id <= 0) {
+			return;
+		}
+		
+		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
+		ContextSystemSecurityCheck.doPrivileged(()->{
+			this.images = productRegistry.getImagesByProduct(this);
+			this.imagesLoaded = true;
+			return null;
+		});
+		
+	}
+	public void setImages(List<ProductImage> images) {
+		this.images = images;
+		this.imagesLoaded = true;
 	}
 
 	public Map<String, ProductAttributeValue> getAttributes() {

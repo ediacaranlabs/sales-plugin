@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,7 @@ import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
@@ -312,6 +314,15 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setShortDescription(this.shortDescription);
 		o.setMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
 		o.setDisplay(this.display == null? false : this.display);
+		
+		if(this.images != null) {
+			List<ProductImage> list = new ArrayList<>();
+			for(ProductImagePubEntity i: images) {
+				ProductImage tmp = i.rebuild(i.getProtectedID() != null, true, true);
+				list.add(tmp);
+			}
+			o.setImages(list);
+		}
 		
 		if(this.attributes != null) {
 			

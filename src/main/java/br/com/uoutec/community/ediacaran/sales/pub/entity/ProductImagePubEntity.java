@@ -123,6 +123,7 @@ public class ProductImagePubEntity extends AbstractPubEntity<ProductImage>{
 		o.setDescription(this.description);
 		o.setId(this.id);
 		o.setImage(image == null? null : image.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
+		o.setDeleted(this.deleted == null? false : this.deleted.booleanValue());
 	}
 
 	@Override

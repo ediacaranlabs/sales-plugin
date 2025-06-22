@@ -19,7 +19,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductImagePubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -29,13 +28,21 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 public abstract class AbstractProductTypeViewHandler 
 	implements ProductTypeViewHandler{
 	
+	/*
 	@Override
 	public WebResultAction edit(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+		Product product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
+		return edit(product, locale);
+	}
+	*/
+	
+	@Override
+	public WebResultAction edit(Product entity, Locale locale) throws InvalidRequestException {
 		
 		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
 		ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		Product product = null;
+
 		List<ProductImage> images = null;
 		Map<Integer, ProductMetadataAttribute> attributesMetadata;
 		List<ProductMetadata> productMetadataList;
@@ -47,12 +54,11 @@ public abstract class AbstractProductTypeViewHandler
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/edit_product.jsp"), true);
 		
 		try {
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, false);
 			
-			images = productRegistry.getImagesByProduct(product);
+			images = productRegistry.getImagesByProduct(entity);
 			productMetadataList = productMetadataRegistry.getAllProductMetadata();
 			
-			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(product.getMetadata());
+			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(entity.getMetadata());
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
@@ -81,7 +87,7 @@ public abstract class AbstractProductTypeViewHandler
 			return ra;
 		}
 		
-		ra.add("entity", product);
+		ra.add("entity", entity);
 		ra.add("attributesMetadata", attributesMetadata);
 		ra.add("productMetadataList", productMetadataList);
 		ra.add("images", images);
@@ -91,91 +97,56 @@ public abstract class AbstractProductTypeViewHandler
 		return ra;
 	}
 
+	/*
 	@Override
 	public WebResultAction save(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+		productPubEntity.setLocale(locale);
+		Product product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
+		return save(product, locale);
+	}
+	*/
+	
+	@Override
+	public WebResultAction save(Product entity, Throwable exception, Locale locale) throws InvalidRequestException {
 		
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
-		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
-		Product product = null;
-		List<ProductImage> saveList = new ArrayList<>();
-		List<ProductImage> removeList = new ArrayList<>();
-		List<ProductImageGroup> group = new ArrayList<>();
-		Throwable exception = null;
-
 		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/product/result.jsp"), true);
 		
-		try {
-			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
-			if(productPubEntity.getImages() != null) {
-				for(ProductImagePubEntity i: productPubEntity.getImages()) {
-					if(i.getProtectedID() != null && i.getDeleted() != null && i.getDeleted().booleanValue()) {
-						ProductImage tmp = i.rebuild(true, false, true);
-						group.add(new ProductImageGroup(i, tmp));
-						removeList.add(tmp);
-					}
-					else
-					if((i.getDeleted() == null || !i.getDeleted().booleanValue())) {
-						ProductImage tmp = i.rebuild(i.getProtectedID() != null, true, true);
-						group.add(new ProductImageGroup(i, tmp));
-						saveList.add(tmp);
-					}
-				}
-			}
-		}
-		catch(Throwable ex) {
-			ex.printStackTrace();
-			exception = ex;
-			ra.add("exception", exception);
-			return ra;
-		}
-
-		
-		try {
-			productRegistry.registerProduct(product);
-			productRegistry.removeProductImages(removeList, product);			
-			productRegistry.registerProductImages(saveList, product);			
-		}
-		catch(Throwable ex) {
-			ex.printStackTrace();
-			exception = ex;
-			ra.add("exception", exception);
-			return ra;
-		}
-		
 		Map<String,Object> vars = new HashMap<>();
-		vars.put("entity", product);
-		vars.put("images", group);
+		vars.put("entity", entity);
+		vars.put("images", entity.getImages());
 		
 		ra.add("vars", vars);
+		ra.add("exception", exception);
+		
 		return ra;
 	}
 
 	@Override
-	public WebResultAction remove(ProductPubEntity productPubEntity, Locale locale) throws InvalidRequestException {
+	public WebResultAction remove(Product entity, Throwable exception, Locale locale) throws InvalidRequestException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public WebResultAction updateView(ProductPubEntity productPubEntity, String code, Locale locale)
+	public WebResultAction updateView(Product entity, String code, Locale locale)
 			throws InvalidRequestException {
 		
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
 		ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 		WebResultAction ra = new WebResultActionImp();
 		
-		Product product = null;
+		//Product product = null;
 		Map<Integer, ProductMetadataAttribute> attributesMetadata;
 		List<ProductMetadata> productMetadataList;
 		
 		Throwable exception = null;
 
 		try {
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, false);
+			//product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, false);
 			productMetadataList = productMetadataRegistry.getAllProductMetadata();
 			
-			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(product.getMetadata());
+			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(entity.getMetadata());
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
@@ -199,7 +170,7 @@ public abstract class AbstractProductTypeViewHandler
 
 		Map<String,Object> vars = new HashMap<>();
 		
-		vars.put("entity", product);
+		vars.put("entity", entity);
 		vars.put("attributesMetadata", attributesMetadata);
 		vars.put("productMetadataList", productMetadataList);
 		
@@ -209,7 +180,7 @@ public abstract class AbstractProductTypeViewHandler
 	}
 	
 	@Override
-	public WebResultAction getProductFormView(ProductPubEntity productPubEntity, Locale locale) {
+	public WebResultAction getProductFormView(Product entity, Locale locale) {
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
 		WebResultAction ra = new WebResultActionImp();
 		ra.setView(varParser.getValue("${plugins.ediacaran.sales.web_path}:${plugins.ediacaran.sales.template}/admin/cart/product_form.jsp"), true);
