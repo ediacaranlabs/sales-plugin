@@ -151,7 +151,7 @@ public class ProductsCartAdminPubResource {
 		ResultAction ra;
 		
 		try{
-			ra = productTypeViewHandler.getProductFormView(productPubEntity, locale);
+			ra = productTypeViewHandler.getProductFormView(product, locale);
 			ra.add("product", product);
 		}
 		catch(Throwable ex){

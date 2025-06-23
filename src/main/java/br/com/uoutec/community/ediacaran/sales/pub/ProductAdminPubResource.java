@@ -28,6 +28,7 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
@@ -136,10 +137,13 @@ public class ProductAdminPubResource {
 			Locale locale) throws InvalidRequestException {
 		
 		Map<String,Object> map = new HashMap<>();
+		Product product;
+		
 		try {
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
-			map.put("product_view", productType.getViewHandler().edit(productPubEntity, locale));
+			map.put("product_view", productType.getViewHandler().edit(product, locale));
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -165,17 +169,35 @@ public class ProductAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 
+		Product product = null;
+		
+		try {
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.edit.error.fail_load_request, 
+							locale);
+			WebResultAction ra = new WebResultActionImp();
+			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+			ra.setReason(error);
+			return ra;
+			
+		}
+		
 		try {
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().updateView(productPubEntity, area, locale);
+			return productType.getViewHandler().updateView(product, area, locale);
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
 			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
 			ra.setReason("product viewer misconfiguration");
 			return ra;
-		}
+		}		
 		
 	}
 	
@@ -189,10 +211,21 @@ public class ProductAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
+		Product product = null;
+		Throwable exception = null;
+		
+		try {
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
+			productRegistry.registerProduct(product);
+		}
+		catch(Throwable ex){
+			exception = ex;
+		}
+		
 		try {
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().save(productPubEntity, locale);
+			return productType.getViewHandler().save(product, exception, locale);
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
@@ -213,10 +246,21 @@ public class ProductAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
+		Product product = null;
+		Throwable exception = null;
+		
+		try {
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
+			productRegistry.removeProduct(product);
+		}
+		catch(Throwable ex){
+			exception = ex;
+		}
+		
 		try {
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().remove(productPubEntity, locale);
+			return productType.getViewHandler().remove(product, exception, locale);
 		}
 		catch(Throwable ex) {
 			WebResultAction ra = new WebResultActionImp();
