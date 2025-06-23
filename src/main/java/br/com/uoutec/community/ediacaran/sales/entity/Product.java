@@ -93,6 +93,29 @@ public class Product implements Serializable {
 		this.attributes = new HashMap<>();
 		this.display = true;
 	}
+
+	public Product(Product e) {
+		this.attributes = e.attributes;
+		this.cost = e.cost;
+		this.currency = e.currency;
+		this.defaultProductMetadata = e.defaultProductMetadata;
+		this.description = e.description;
+		this.display = e.display;
+		this.exchangeCurrency = e.exchangeCurrency;
+		this.exchangeRate = e.exchangeRate;
+		this.id = e.id;
+		this.imageLoaded = e.imageLoaded;
+		this.images = e.images;
+		this.imagesLoaded = e.imagesLoaded;
+		this.measurementUnit = e.measurementUnit;
+		this.metadata = e.metadata;
+		this.name = e.name;
+		this.productMetadata = e.productMetadata;
+		this.productType = e.productType;
+		this.shortDescription = e.shortDescription;
+		this.tags = e.tags;
+		this.thumb = e.thumb;
+	}
 	
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		

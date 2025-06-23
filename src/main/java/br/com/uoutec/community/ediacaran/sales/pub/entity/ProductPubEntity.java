@@ -406,6 +406,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.locale = x.getLocale();
 		this.attributes = x.getAttributes();
 		this.display = x.display;
+		this.images = x.images;
 	}
 	
 }
