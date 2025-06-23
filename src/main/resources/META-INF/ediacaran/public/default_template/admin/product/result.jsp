@@ -25,7 +25,7 @@
 		// set images id
 		<c:forEach items="${vars.images}" var="image" varStatus="imagesStep">
 		var $image = $form.getField('product.images[${imagesStep.index}].protectedID');
-		$image.setValue('${image.entity.protectedID}');
+		$image.setValue('${image.protectedID}');
 		</c:forEach>
 		
 		//remove deleted images

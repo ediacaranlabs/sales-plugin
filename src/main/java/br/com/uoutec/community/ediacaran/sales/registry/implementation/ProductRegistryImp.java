@@ -78,10 +78,17 @@ public class ProductRegistryImp
 					if(!i.isDeleted()) {
 						ProductImageRegistryUtil.validate(i);
 						ProductImageRegistryUtil.saveOrUpdate(i, imageEntityAccess);
+						ProductImageRegistryUtil.persistImage(i, objectsManager);
 					}
 				}
 				
 				ProductImageRegistryUtil.sendToRepository(imageEntityAccess);
+
+				for(ProductImage i: entity.getImages()) {
+					if(!i.isDeleted()) {
+						ProductImageRegistryUtil.persistImage(i, objectsManager);
+					}
+				}
 				
 			}
 		}

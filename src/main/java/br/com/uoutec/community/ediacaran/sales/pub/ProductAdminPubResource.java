@@ -140,6 +140,7 @@ public class ProductAdminPubResource {
 		Product product;
 		
 		try {
+			productPubEntity.setLocale(locale);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
 			String type = productPubEntity.getProductType();
 			ProductType productType = productTypeRegistry.getProductType(type);
@@ -172,6 +173,7 @@ public class ProductAdminPubResource {
 		Product product = null;
 		
 		try {
+			productPubEntity.setLocale(locale);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
 		}
 		catch(Throwable ex){
@@ -215,7 +217,8 @@ public class ProductAdminPubResource {
 		Throwable exception = null;
 		
 		try {
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
+			productPubEntity.setLocale(locale);
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
 			productRegistry.registerProduct(product);
 		}
 		catch(Throwable ex){
@@ -250,6 +253,7 @@ public class ProductAdminPubResource {
 		Throwable exception = null;
 		
 		try {
+			productPubEntity.setLocale(locale);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
 			productRegistry.removeProduct(product);
 		}
