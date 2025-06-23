@@ -271,14 +271,12 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 			this.id = Integer.parseInt(SecretUtil.toID(this.protectedID));
 		}
 		catch(Throwable ex){
-			this.id = 0;
 		}
 		
 		try {
 			this.productMetadataID = Integer.parseInt(SecretUtil.toID(this.productMetadata));
 		}
 		catch(Throwable ex){
-			this.productMetadataID = 0;
 		}
 	}
 	
