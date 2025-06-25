@@ -303,7 +303,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setCost(this.cost);
 		o.setCurrency(this.currency);
 		o.setDescription(this.description);
-		o.setId(this.id);
+		o.setId(this.id == null? 0 : this.id);
 		o.setName(this.name);
 		o.setMeasurementUnit(this.measurementUnit);
 		o.setProductType(this.productType);
