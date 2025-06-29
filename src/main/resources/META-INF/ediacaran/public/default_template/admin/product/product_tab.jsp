@@ -6,6 +6,7 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:setTemplatePackage name="admin"/>
 
+<span id="beforeProduct"></span>
 <input type="hidden" name="protectedID" value="${vars.entity.protectedID}">
 <ed:row style="form">
 	<ed:col size="12" classStyle="form-group has-feedback">
@@ -134,7 +135,7 @@
 	</ed:col>
 </ed:row>
 <ed:row style="form">
-	<ed:col size="2" classStyle="form-group has-feedback">
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:select
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:DISPLAY')}" 
 			label="#{product.form.display.label}" 
@@ -149,7 +150,7 @@
 			</ec:field-validator>
 		</ec:select>
 	</ed:col>
-	<ed:col size="4" classStyle="form-group has-feedback">
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:label><fmt:message key="product.form.cost.label" bundle="${messages}"/></ec:label>
 		<ec:field-group>
 			<ec:prepend-field>
@@ -191,7 +192,9 @@
 			</ec:append-field>
 		</ec:field-group>
 	</ed:col>
-	<ed:col size="4" classStyle="form-group has-feedback">
+</ed:row>
+<ed:row>
+	<ed:col size="12" classStyle="form-group has-feedback">
 		<ec:textfield name="tagsString" label="#{product.form.tags.label}"
 			align="center" value="${vars.entity.tagsString}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:TAGS')}"
@@ -209,3 +212,4 @@
 		</ec:textfield>
 	</ed:col>
 </ed:row>
+<span id="afterProduct"></span>

@@ -17,7 +17,7 @@
 						bundle="${messages}" width="200" height="200" border="squad"/>
 				</ed:col>
 				<ed:col size="9">
-					<span id="beforeProduct"></span>
+					<span id="beforeProductForm"></span>
 					<ec:tabs>
 						<ec:tabs-item active="true" title="#{product.tabs.details}" bundle="${messages}">
 							<jsp:include page="/default_template/admin/product/product_tab.jsp"/>
@@ -38,7 +38,7 @@
 						<!-- /tab (${tab.id}) -->
 						</c:forEach>
 					</ec:tabs>
-					<span id="afterProduct"></span>
+					<span id="afterProductForm"></span>
 				</ed:col>
 			</ed:row>
 		</span>
