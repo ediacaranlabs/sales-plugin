@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.shipping.flatrate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -10,6 +11,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethod;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOption;
+import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOptionGroup;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -68,8 +70,16 @@ public class FlatRateShippingMethod implements ShippingMethod{
 		String flatRateCurrency = pluginType.getConfiguration().getString("flat_rate_currency");
 		String flatRateName = pluginType.getConfiguration().getString("flat_rate_name");
 		
-		result.add(new ShippingOption("flatrate", "flatrate", flatRateName, flatRateCurrency, new BigDecimal(flatRate), new BigDecimal(flatRate)));
-		return result;
+		
+		ShippingOptionGroup sgo = new ShippingOptionGroup("flatrate", "flatrate", flatRateName, flatRateCurrency, result);
+		
+		for(ProductRequest pr: request.getItens()) {
+			BigDecimal v = new BigDecimal(flatRate);
+			v = v.multiply(new BigDecimal(pr.getUnits()));
+			result.add(new ShippingOption("flatrate", "flatrate", flatRateName, flatRateCurrency, v, v));
+		}
+
+		return Arrays.asList(sgo);
 	}
 
 	@Override

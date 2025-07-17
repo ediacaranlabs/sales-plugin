@@ -37,6 +37,8 @@ public class Tax implements Serializable {
 	
 	protected String exchangeCurrency;
 	
+	protected String group;
+	
 	@NotNull
 	protected String currency;
 	
@@ -58,6 +60,7 @@ public class Tax implements Serializable {
 		this.order       = tax.getOrder();
 		this.type        = tax.getType();
 		this.value       = tax.getValue();
+		this.group       = tax.getGroup();
 	}
 	
 	public String getId() {
@@ -150,6 +153,14 @@ public class Tax implements Serializable {
 	
 	public String getDisplayValue() {
 		return CurrencyUtil.toString(currency, getValue());
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
 	}
 	
 }

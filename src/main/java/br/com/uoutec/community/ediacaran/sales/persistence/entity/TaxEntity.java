@@ -35,6 +35,9 @@ public class TaxEntity {
 	@Enumerated(EnumType.STRING)
 	private TaxType type;
 
+	@Column(name = "dsc_group", length = 32)
+	private String group;
+	
 	@Column(name = "bit_discount")
 	private Boolean discount;
 	
@@ -52,6 +55,7 @@ public class TaxEntity {
 		this.type = e.getType();
 		this.value = e.getValue();
 		this.discount = e.isDiscount();
+		this.group = e.getGroup();
 	}
 
 	public String getId() {
@@ -102,6 +106,22 @@ public class TaxEntity {
 		this.order = order;
 	}
 
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	public Boolean getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Boolean discount) {
+		this.discount = discount;
+	}
+
 	public Tax toEntity() {
 		return this.toEntity(null);
 	}
@@ -119,6 +139,8 @@ public class TaxEntity {
 		e.setType(this.type);
 		e.setValue(this.value);
 		e.setDiscount(this.discount == null? false : this.discount.booleanValue());
+		e.setGroup(this.group);
+		
 		return e;
 	}
 

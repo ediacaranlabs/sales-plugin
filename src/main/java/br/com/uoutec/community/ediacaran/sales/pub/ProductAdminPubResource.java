@@ -32,7 +32,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductEditPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -132,7 +132,7 @@ public class ProductAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
 	public Map<String,Object> edit(
 			@Basic(bean = "product")
-			ProductEditPubEntity productPubEntity,
+			ProductPubEntity productPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
@@ -164,7 +164,7 @@ public class ProductAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
 	public WebResultAction show(
 			@Basic(bean="product")
-			ProductEditPubEntity productPubEntity,
+			ProductPubEntity productPubEntity,
 			@Basic(bean="area")
 			String area,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -174,7 +174,7 @@ public class ProductAdminPubResource {
 		
 		try {
 			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -209,7 +209,7 @@ public class ProductAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)
 	public ResultAction save(
 			@Basic(bean="product")
-			ProductEditPubEntity productPubEntity,
+			ProductPubEntity productPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
@@ -245,7 +245,7 @@ public class ProductAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.DELETE)
 	public ResultAction remove(
 			@Basic(bean="product")
-			ProductEditPubEntity productPubEntity,
+			ProductPubEntity productPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		

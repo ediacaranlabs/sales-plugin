@@ -123,10 +123,17 @@ public class ProductMetadataRegistryUtil {
 		if(currentTime <= nextLoadedDefaultProductMetadata) {
 			return;
 		}
-		
+
+		Integer id;
 		try {
 			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
-			Integer id = pluginType.getConfiguration().getInt("default_product_metadata");
+			id = pluginType.getConfiguration().getInt("default_product_metadata");
+		}
+		catch(NumberFormatException ex) {
+			id = null;
+		}
+		
+		try {
 			if(id != null) {
 				defaultProductMetadata = entityAccess.findById(id);
 			}

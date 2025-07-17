@@ -46,7 +46,6 @@ import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOption;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingOptionGroup;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
-import br.com.uoutec.ediacaran.core.VarParser;
 
 @Singleton
 public class CartService {
@@ -63,8 +62,10 @@ public class CartService {
 	@Inject
 	private ClientRegistry clientRegistry;
 
+	/*
 	@Inject
 	private VarParser varParser;
+	*/
 	
 	@Inject
 	private ShippingMethodRegistry shippingMethodRegistry;
@@ -144,7 +145,7 @@ public class CartService {
 		List<Tax> taxList = new ArrayList<>();
 		
 		for(Tax tax: taxes) {
-			if(tax.getId().startsWith("shipping")){
+			if("shipping".equals(tax.getGroup())){
 				taxList.add(tax);
 			}
 		}
@@ -154,7 +155,9 @@ public class CartService {
 		if(selected != null) {
 			
 			taxList.clear();
-			
+			List<Tax> tmp = shippingToTaxes(selected);
+			taxes.addAll(tmp);
+			/*
 			if(selected instanceof ShippingOptionGroup) {
 				ShippingOptionGroup sgo = (ShippingOptionGroup)selected;
 				List<ShippingOption> opts = sgo.getOptions();
@@ -163,7 +166,8 @@ public class CartService {
 					Tax shippingTax = new Tax();
 					shippingTax.setDescription(o.getMethod());
 					shippingTax.setDiscount(false);
-					shippingTax.setId("shipping-"+o.getMethod());
+					shippingTax.setId(o.getId());
+					shippingTax.setGroup("shipping");
 					shippingTax.setName(o.getTitle());
 					shippingTax.setType(TaxType.UNIT);
 					shippingTax.setValue(o.getValue());
@@ -173,9 +177,10 @@ public class CartService {
 			}
 			else {
 				Tax shippingTax = new Tax();
-				shippingTax.setDescription(selected.getMethod());
+				shippingTax.setDescription(selected.getTitle());
 				shippingTax.setDiscount(false);
-				shippingTax.setId("shipping");
+				shippingTax.setId(selected.getId());
+				shippingTax.setGroup("shipping");
 				shippingTax.setName(selected.getTitle());
 				shippingTax.setType(TaxType.UNIT);
 				shippingTax.setValue(selected.getValue());
@@ -183,10 +188,38 @@ public class CartService {
 				taxes.add(shippingTax);
 				
 			}
-			
+			*/
 			taxes.addAll(taxList);
 		}
 		
+	}
+	
+	private List<Tax> shippingToTaxes(ShippingOption shipping){
+		List<Tax> list = new ArrayList<>();
+		shippingToTaxes(shipping, list);
+		return list;
+	}
+
+	private void shippingToTaxes(ShippingOption shipping, List<Tax> list){
+		if(shipping instanceof ShippingOptionGroup) {
+			ShippingOptionGroup sgo = (ShippingOptionGroup)shipping;
+			List<ShippingOption> opts = sgo.getOptions();
+			
+			for(ShippingOption o: opts) {
+				shippingToTaxes(o, list);
+			}
+		}
+		else {
+			Tax shippingTax = new Tax();
+			shippingTax.setDescription(shipping.getTitle());
+			shippingTax.setDiscount(false);
+			shippingTax.setGroup("shipping");
+			shippingTax.setName(shipping.getTitle());
+			shippingTax.setType(TaxType.UNIT);
+			shippingTax.setValue(shipping.getValue());
+			shippingTax.setCurrency(shipping.getCurrency());
+			list.add(shippingTax);
+		}
 	}
 	
 	public List<ShippingOption> getShippingOptions(Client client, Address dest, String currency, Cart cart) throws CountryRegistryException, ProductTypeRegistryException {
@@ -197,6 +230,7 @@ public class CartService {
 			dest = ShippingRegistryUtil.getAddress(client);
 		}
 		
+		/*
 		String serviceShippingName = varParser.getValue("${plugins.ediacaran.sales.electronic_shipping_method}");
 		ShippingMethod electronicShippingMethod = shippingMethodRegistry.getShippingMethod(serviceShippingName);
 		ShippingRateRequest shippingRateRequest = new ShippingRateRequest(origin, dest, new ArrayList<>(cart.getItens()));
@@ -204,6 +238,7 @@ public class CartService {
 		if(electronicShippingMethod.isApplicable(shippingRateRequest)) {
 			return electronicShippingMethod.getOptions(shippingRateRequest);
 		}
+		*/
 		
 		Map<String, List<ProductRequest>> productTypeGroup = groupProductType(cart.getItens());
 		Map<String, List<ShippingOption>> shippingOptionGroup = groupShippingOptions(productTypeGroup, origin, dest);
@@ -337,12 +372,20 @@ public class CartService {
 	}
 
 	public List<ShippingOption> createShippingOptionsGroup(List<List<ShippingOption>> list){
+		
 		List<ShippingOption> result = new ArrayList<>();
 		
 		for(List<ShippingOption> group: list) {
+			
+			if(group.size() == 1) {
+				result.add(group.get(0));
+				continue;
+			}
+			
 			StringBuilder title = new StringBuilder(); 
 			StringBuilder id = new StringBuilder(); 
 			BigDecimal value = BigDecimal.ZERO;
+			
 			for(ShippingOption opt: group) {
 				if(!title.toString().isEmpty()) {
 					title.append(" + ");
@@ -361,6 +404,7 @@ public class CartService {
 							group.get(0).getCurrency(), 
 							group
 					);
+			
 			result.add(opt);
 		}
 		
