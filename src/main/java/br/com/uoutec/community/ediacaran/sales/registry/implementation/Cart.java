@@ -189,6 +189,10 @@ public class Cart implements Serializable{
 		BigDecimal value = this.getSubtotal();
 		BigDecimal discount = BigDecimal.ZERO;
 		
+		for(ProductRequest pr: this.itens.getItens()){
+			discount = discount.add(pr.getDiscount());
+		}
+		
 		if(taxes != null) {
 			
 			List<Tax> tx = new ArrayList<>(taxes);
@@ -216,6 +220,10 @@ public class Cart implements Serializable{
 		
 		BigDecimal value = this.getSubtotal();
 		BigDecimal tax = BigDecimal.ZERO;
+		
+		for(ProductRequest pr: this.itens.getItens()){
+			tax = tax.add(pr.getTax());
+		}
 		
 		if(taxes != null) {
 			

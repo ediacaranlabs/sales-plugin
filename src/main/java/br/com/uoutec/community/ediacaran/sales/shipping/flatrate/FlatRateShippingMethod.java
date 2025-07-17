@@ -76,7 +76,7 @@ public class FlatRateShippingMethod implements ShippingMethod{
 		for(ProductRequest pr: request.getItens()) {
 			BigDecimal v = new BigDecimal(flatRate);
 			v = v.multiply(new BigDecimal(pr.getUnits()));
-			result.add(new ShippingOption("flatrate", "flatrate", flatRateName, flatRateCurrency, v, v));
+			result.add(new ShippingOption("flatrate", "flatrate", flatRateName, pr.getProduct().getId(), flatRateCurrency, v, v));
 		}
 
 		return Arrays.asList(sgo);

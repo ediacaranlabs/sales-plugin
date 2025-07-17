@@ -14,6 +14,8 @@ public class ShippingOption {
 	
 	private String title;
 	
+	private Integer productID;
+	
 	private String currency;
 	
 	private BigDecimal cost;
@@ -24,12 +26,25 @@ public class ShippingOption {
 	}
 	
 	public ShippingOption(String id, String method, String title, String currency, BigDecimal cost, BigDecimal value) {
+		this(id, method, title, null, currency, cost, value);
+	}
+	
+	public ShippingOption(String id, String method, String title, Integer productID, String currency, BigDecimal cost, BigDecimal value) {
 		this.id = id;
 		this.method = method;
 		this.title = title;
 		this.currency = currency;
 		this.cost = cost;
 		this.value = value;
+		this.productID = productID;
+	}
+
+	public Integer getProductID() {
+		return productID;
+	}
+
+	public void setProductID(Integer productID) {
+		this.productID = productID;
 	}
 
 	public String getId() {

@@ -242,6 +242,10 @@ public class Order implements Serializable{
 		BigDecimal value = getSubtotal();
 		BigDecimal discount = BigDecimal.ZERO;
 		
+		for(ProductRequest pr: this.itens){
+			discount = discount.add(pr.getDiscount());
+		}
+		
 		if(taxes != null) {
 			
 			List<Tax> tx = taxes;
@@ -269,6 +273,10 @@ public class Order implements Serializable{
 		
 		BigDecimal value = getSubtotal();
 		BigDecimal tax = BigDecimal.ZERO;
+		
+		for(ProductRequest pr: this.itens){
+			tax = tax.add(pr.getTax());
+		}
 		
 		if(taxes != null) {
 			

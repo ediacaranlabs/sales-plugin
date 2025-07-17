@@ -127,7 +127,6 @@ public class CartService {
 		List<ShippingOption> list = getShippingOptions(client, cart.getBillingAddress(), null, cart);
 		
 		ShippingOption selected = null;
-		//Tax shippingTax = null;
 		
 		for(ShippingOption so: list) {
 			if(shippingID.equals(so.getId())) {
@@ -135,78 +134,65 @@ public class CartService {
 			}
 		}
 
-		List<Tax> taxes = cart.getTaxes();
-		
-		if(taxes == null) {
-			taxes = new ArrayList<>();
-			cart.setTaxes(taxes);
+		if(cart.getTaxes() == null) {
+			cart.setTaxes(new ArrayList<>());
 		}
 		
-		List<Tax> taxList = new ArrayList<>();
-		
-		for(Tax tax: taxes) {
-			if("shipping".equals(tax.getGroup())){
-				taxList.add(tax);
+		for(ProductRequest pr: cart.getItens()) {
+			if(pr.getTaxes() == null) {
+				pr.setTaxes(new ArrayList<>());
 			}
 		}
 		
-		taxes.removeAll(taxList);
-		
-		if(selected != null) {
-			
-			taxList.clear();
-			List<Tax> tmp = shippingToTaxes(selected);
-			taxes.addAll(tmp);
-			/*
-			if(selected instanceof ShippingOptionGroup) {
-				ShippingOptionGroup sgo = (ShippingOptionGroup)selected;
-				List<ShippingOption> opts = sgo.getOptions();
-				
-				for(ShippingOption o: opts) {
-					Tax shippingTax = new Tax();
-					shippingTax.setDescription(o.getMethod());
-					shippingTax.setDiscount(false);
-					shippingTax.setId(o.getId());
-					shippingTax.setGroup("shipping");
-					shippingTax.setName(o.getTitle());
-					shippingTax.setType(TaxType.UNIT);
-					shippingTax.setValue(o.getValue());
-					shippingTax.setCurrency(o.getCurrency());
-					taxes.add(shippingTax);
+		List<Tax> tmpTax = new ArrayList<>(cart.getTaxes());
+		for(Tax tax: tmpTax) {
+			if("shipping".equals(tax.getGroup())){
+				cart.getTaxes().remove(tax);
+			}
+		}
+
+		for(ProductRequest pr: cart.getItens()) {
+			tmpTax = new ArrayList<>(pr.getTaxes());
+			for(Tax tax: tmpTax) {
+				if("shipping".equals(tax.getGroup())){
+					pr.getTaxes().remove(tax);
 				}
 			}
-			else {
-				Tax shippingTax = new Tax();
-				shippingTax.setDescription(selected.getTitle());
-				shippingTax.setDiscount(false);
-				shippingTax.setId(selected.getId());
-				shippingTax.setGroup("shipping");
-				shippingTax.setName(selected.getTitle());
-				shippingTax.setType(TaxType.UNIT);
-				shippingTax.setValue(selected.getValue());
-				shippingTax.setCurrency(selected.getCurrency());
-				taxes.add(shippingTax);
-				
+		}
+		
+		if(selected != null) {
+			Map<Integer, List<Tax>> tmp = shippingToTaxes(selected);
+			
+			List<Tax> taxes = tmp.get(0);
+			
+			if(taxes != null) {
+				cart.getTaxes().addAll(taxes);
 			}
-			*/
-			taxes.addAll(taxList);
+			
+			for(ProductRequest pr: cart.getItens()) {
+				taxes = tmp.get(pr.getProduct().getId());
+				if(taxes != null) {
+					pr.getTaxes().addAll(taxes);
+				}
+			}
+			
 		}
 		
 	}
 	
-	private List<Tax> shippingToTaxes(ShippingOption shipping){
-		List<Tax> list = new ArrayList<>();
+	private Map<Integer, List<Tax>> shippingToTaxes(ShippingOption shipping){
+		Map<Integer, List<Tax>> list = new HashMap<>();
 		shippingToTaxes(shipping, list);
 		return list;
 	}
 
-	private void shippingToTaxes(ShippingOption shipping, List<Tax> list){
+	private void shippingToTaxes(ShippingOption shipping, Map<Integer, List<Tax>> products){
 		if(shipping instanceof ShippingOptionGroup) {
 			ShippingOptionGroup sgo = (ShippingOptionGroup)shipping;
 			List<ShippingOption> opts = sgo.getOptions();
 			
 			for(ShippingOption o: opts) {
-				shippingToTaxes(o, list);
+				shippingToTaxes(o, products);
 			}
 		}
 		else {
@@ -218,8 +204,18 @@ public class CartService {
 			shippingTax.setType(TaxType.UNIT);
 			shippingTax.setValue(shipping.getValue());
 			shippingTax.setCurrency(shipping.getCurrency());
+			
+			List<Tax> list = products.get(shipping.getProductID() == null? 0 : shipping.getProductID());
+			
+			if(list == null) {
+				list = new ArrayList<>();
+				products.put(shipping.getProductID() == null? 0 : shipping.getProductID(), list);
+			}
+			
 			list.add(shippingTax);
+			
 		}
+		
 	}
 	
 	public List<ShippingOption> getShippingOptions(Client client, Address dest, String currency, Cart cart) throws CountryRegistryException, ProductTypeRegistryException {

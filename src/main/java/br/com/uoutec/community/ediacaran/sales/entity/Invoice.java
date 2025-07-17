@@ -261,7 +261,7 @@ public class Invoice implements Serializable{
 	}
 
 	public String getDisplayTotal() {
-		return CurrencyUtil.toString(currency, getTax());
+		return CurrencyUtil.toString(currency, getTotal());
 	}
 	
 }
