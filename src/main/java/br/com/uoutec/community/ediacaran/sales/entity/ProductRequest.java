@@ -262,7 +262,7 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getDiscount() {
 		
-		BigDecimal value = getValue();
+		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		BigDecimal discount = BigDecimal.ZERO;
 		
 		if(taxes != null) {
@@ -281,7 +281,8 @@ public class ProductRequest implements Serializable {
 			
 		}
 		
-		return discount.multiply(new BigDecimal(this.units));
+		return discount;
+		//return discount.multiply(new BigDecimal(this.units));
 	}
 
 	public String getDisplayDiscount() {
@@ -290,7 +291,7 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getTax() {
 		
-		BigDecimal value = getValue();
+		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		BigDecimal tax = BigDecimal.ZERO;
 		
 		if(taxes != null) {
@@ -309,7 +310,8 @@ public class ProductRequest implements Serializable {
 			
 		}
 		
-		return tax.multiply(new BigDecimal(this.units));
+		return tax;
+		//return tax.multiply(new BigDecimal(this.units));
 	}
 	
 	public String getDisplayTax() {
@@ -318,7 +320,7 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getTotal(){
 		
-		BigDecimal value = getValue();
+		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		
 		if(taxes != null) {
 			
@@ -333,7 +335,8 @@ public class ProductRequest implements Serializable {
 			
 		}
 		
-		return value.multiply(new BigDecimal(this.units));
+		return value;
+		//return value.multiply(new BigDecimal(this.units));
 	}
 	
 	public String getDisplayTotal() {
