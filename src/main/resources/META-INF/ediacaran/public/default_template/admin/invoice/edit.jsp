@@ -57,7 +57,7 @@
 					<ec:table-header>
 						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<%--<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>--%>
 						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
@@ -72,7 +72,7 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.description}</center></ec:table-col>
+								<%--<ec:table-col><center>${product.product.description}</center></ec:table-col>--%>
 								<ec:table-col classStyle="qty form-group has-feedback" >
 									<ec:textfield maxlength="2" name="itens[${product.serial}]" value="${product.units}">
 										<ec:event type="keyup">
@@ -129,7 +129,7 @@
 									</ec:textfield>
 								</ec:table-col>
 								<ec:table-col><center id="${product.serial}_subtotal">${product.displaySubtotal}</center></ec:table-col>
-								<ec:table-col><center id="${product.serial}_discount">${product.displayTax}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_discount">${product.displayDiscount}</center></ec:table-col>
 								<ec:table-col><center id="${product.serial}_tax">${product.displayTax}</center></ec:table-col>
 								<ec:table-col><center id="${product.serial}_total">${product.displayTotal}</center></ec:table-col>
 							</ec:table-row>

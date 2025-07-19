@@ -228,7 +228,7 @@ public class Order implements Serializable{
 	public BigDecimal getSubtotal(){
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
-			value = value.add(pr.getTotal());
+			value = value.add(pr.getSubtotal());
 		}
 		return value;
 	}
@@ -303,7 +303,11 @@ public class Order implements Serializable{
 	
 	public BigDecimal getTotal(){
 		
-		BigDecimal value = getSubtotal();
+		BigDecimal value = BigDecimal.ZERO;
+		
+		for(ProductRequest pr: itens) {
+			value = value.add(pr.getTotal());
+		}
 		
 		if(taxes != null) {
 			
@@ -317,12 +321,12 @@ public class Order implements Serializable{
 			}
 			
 		}
-		
+
 		return value;
 	}
 
 	public String getDisplayTotal() {
-		return CurrencyUtil.toString(currency, getSubtotal());
+		return CurrencyUtil.toString(currency, getTotal());
 	}
 	
 }

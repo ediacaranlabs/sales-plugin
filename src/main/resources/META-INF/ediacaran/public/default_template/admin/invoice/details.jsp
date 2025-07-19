@@ -48,7 +48,7 @@
 					<ec:table-header>
 						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<%--<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>--%>
 						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
@@ -60,7 +60,7 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
+								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
 								<ec:table-col><center>${product.displaySubtotal}</center></ec:table-col>
 								<ec:table-col><center>${product.displayDiscount}</center></ec:table-col>

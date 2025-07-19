@@ -317,6 +317,31 @@ public class ProductRequest implements Serializable {
 	public String getDisplayTax() {
 		return CurrencyUtil.toString(currency, getTax());
 	}
+
+	public BigDecimal getTotalTax() {
+		
+		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
+		BigDecimal tax = BigDecimal.ZERO;
+		
+		if(taxes != null) {
+			
+			List<Tax> tx = taxes;
+			
+			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
+			
+			for(Tax t: tx) {
+				BigDecimal taxUnit = t.getType().apply(value, t.getValue());
+				value = t.isDiscount()? value.subtract(taxUnit) : value.add(taxUnit); 
+			}
+			
+		}
+		
+		return tax;
+	}
+	
+	public String getDisplayTotalTax() {
+		return CurrencyUtil.toString(currency, getTotalTax());
+	}
 	
 	public BigDecimal getTotal(){
 		

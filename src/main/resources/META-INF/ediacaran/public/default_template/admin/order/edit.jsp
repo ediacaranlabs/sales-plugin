@@ -60,7 +60,7 @@
 					<ec:table-header>
 						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<%--<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>--%>
 						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
@@ -72,7 +72,7 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
+								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
 								<ec:table-col><center>${product.displaySubtotal}</center></ec:table-col>
 								<ec:table-col><center>${product.displayDiscount}</center></ec:table-col>
@@ -97,13 +97,73 @@
 					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
 						<ec:description-list>
 							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
-								${vars.order.payment.displayTotal}
+								${vars.order.displaySubtotal}
 							</ec:description>
+
+							<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
+								${vars.order.displayDiscount}
+							</ec:description>
+							
+							<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
+								${vars.order.displayTax}
+							</ec:description>
+							
 							<%--
 							<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
 								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.discount}"/>
 							</ec:description>
 							--%>
+							
+							<%--
+							<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
+								<c:forEach items="${vars.order.itens}" var="pr">
+	
+									<c:forEach items="${pr.taxes}" var="tax">
+										<c:if test="${tax.discount}">
+											<c:if test="${tax.type == 'UNIT'}">${tax.displayValue}</c:if>
+											<c:if test="${tax.type == 'PERCENTAGE'}"><fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/> %</c:if>
+											(${tax.name})<br>
+										</c:if>
+									</c:forEach>
+								
+								</c:forEach>
+
+								<c:forEach items="${vars.order.taxes}" var="tax">
+									<c:if test="${tax.discount}">
+										<c:if test="${tax.type == 'UNIT'}">${tax.displayValue}</c:if>
+										<c:if test="${tax.type == 'PERCENTAGE'}"><fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/> %</c:if>
+										(${tax.name})<br>
+									</c:if>
+								</c:forEach>
+								
+							</ec:description>
+							
+							<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
+
+								<c:forEach items="${vars.order.itens}" var="pr">
+	
+									<c:forEach items="${pr.taxes}" var="tax">
+										<c:if test="${!tax.discount}">
+											<c:if test="${tax.type == 'UNIT'}">${tax.displayValue}</c:if>
+											<c:if test="${tax.type == 'PERCENTAGE'}"><fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/> %</c:if>
+											(${tax.name})<br>
+										</c:if>
+									</c:forEach>
+								
+								</c:forEach>
+
+								<c:forEach items="${vars.order.taxes}" var="tax">
+									<c:if test="${!tax.discount}">
+										<c:if test="${tax.type == 'UNIT'}">${tax.displayValue}</c:if>
+										<c:if test="${tax.type == 'PERCENTAGE'}"><fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/> %</c:if>
+										(${tax.name})<br>
+									</c:if>
+								</c:forEach>
+							
+							</ec:description>
+							--%>
+							
+							<%--
 							<c:forEach items="${vars.order.taxes}" var="tax">
 							<ec:description title="${tax.name}" truncate="false">
 								<c:if test="${tax.discount}">-</c:if>
@@ -111,13 +171,14 @@
 								<c:if test="${tax.type == 'PERCENTAGE'}"><fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/> %</c:if>
 							</ec:description>
 							</c:forEach>
+							--%>
 							<%--
 							<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
 								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.tax}"/>
 							</ec:description>
 							--%>
 							<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
-								${vars.order.payment.displayTotal}
+								${vars.order.displayTotal}
 							</ec:description>
 						</ec:description-list>
 					</ec:tabs-item>
