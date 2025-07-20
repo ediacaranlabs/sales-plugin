@@ -68,7 +68,7 @@
 						<ec:table-col><center><fmt:message key="product_table.id" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="product_table.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="product_table.description" bundle="${messages}"/></center></ec:table-col>
+						<%--<ec:table-col><center><fmt:message key="product_table.description" bundle="${messages}"/></center></ec:table-col>--%>
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.shipping.products}" var="product">
@@ -94,7 +94,7 @@
 									</c:if>
 								</ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
+								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -108,7 +108,21 @@
 				<ec:tabs>
 					<ec:tabs-item active="true" title="#{tabs.details.title}" bundle="${messages}">
 						<ed:row style="form">
-							<ed:col classStyle="form-group has-feedback">
+							<ed:col size="3" classStyle="form-group has-feedback">
+								<ec:dateField label="Sent in"/>
+							</ed:col>
+							<ed:col size="9" classStyle="form-group has-feedback">
+								<ec:textfield label="Sent by"/>
+							</ed:col>
+						</ed:row>
+						<ed:row style="form">
+							<ed:col size="3" classStyle="form-group has-feedback">
+								<ec:dateField label="Received in"/>
+							</ed:col>
+							<ed:col size="6" classStyle="form-group has-feedback">
+								<ec:textfield label="Received by"/>
+							</ed:col>
+							<ed:col size="3" classStyle="form-group has-feedback">
 								<ec:select label="#{tabs.details.form.shipping_method.label}" name="shippingType" enabled="${empty vars.shipping.id}" bundle="${messages}">
 									<ec:field-validator>
 										<ec:field-validator-rule name="notEmpty" message="#{tabs.details.form.shipping_method.validation.notEmpty}" bundle="${messages}"/>
