@@ -41,6 +41,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusReg
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
+import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -66,6 +67,9 @@ public class OrderRegistryImp
 
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
+	
+	@Inject
+	private ActionRegistry actionRegistry;
 	
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
@@ -410,6 +414,7 @@ public class OrderRegistryImp
 		OrderRegistryUtil.registerNewOrder(order, actualClient, actualPayment, message, paymentGateway, orderEntityAccess);
 		OrderRegistryUtil.postOrder(order, cart, productTypeRegistry);
 		OrderRegistryUtil.registerEvent(message == null? "Pedido criado #" + order.getId() : message, order, orderEntityAccess);
+		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, order);
 		
 		return order;
 	}

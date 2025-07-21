@@ -28,6 +28,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegi
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
+import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -50,6 +51,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
+
+	@Inject
+	private ActionRegistry actionRegistry;
 	
 	@Inject
 	private InvoiceEntityAccess entityAccess;
@@ -403,6 +407,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
+		InvoiceRegistryUtil.registerNewInvoiceEvent(actionRegistry, entity);
+		
 	}
 
 	private void updateInvoice(Invoice entity, Order order

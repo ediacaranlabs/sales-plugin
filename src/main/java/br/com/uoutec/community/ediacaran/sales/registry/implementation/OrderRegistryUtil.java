@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
@@ -44,6 +45,8 @@ import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductExcept
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
+import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
+import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -120,6 +123,15 @@ public class OrderRegistryUtil {
 
 	public static void registerEvent(String message, Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		orderRegistry.registryLog(order.getId(), message);
+	}
+	
+	public static void registerNewOrderEvent(ActionRegistry actionRegistry, Order order) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.NEW_ORDER_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("order", order.getId())
+				.build()
+		);
 	}
 	
 	public static void registerEvent(String message, Order order, OrderEntityAccess entityAccess) throws OrderRegistryException {

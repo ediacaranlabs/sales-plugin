@@ -108,21 +108,7 @@
 				<ec:tabs>
 					<ec:tabs-item active="true" title="#{tabs.details.title}" bundle="${messages}">
 						<ed:row style="form">
-							<ed:col size="3" classStyle="form-group has-feedback">
-								<ec:dateField label="Sent in"/>
-							</ed:col>
-							<ed:col size="9" classStyle="form-group has-feedback">
-								<ec:textfield label="Sent by"/>
-							</ed:col>
-						</ed:row>
-						<ed:row style="form">
-							<ed:col size="3" classStyle="form-group has-feedback">
-								<ec:dateField label="Received in"/>
-							</ed:col>
-							<ed:col size="6" classStyle="form-group has-feedback">
-								<ec:textfield label="Received by"/>
-							</ed:col>
-							<ed:col size="3" classStyle="form-group has-feedback">
+							<ed:col size="12" classStyle="form-group has-feedback">
 								<ec:select label="#{tabs.details.form.shipping_method.label}" name="shippingType" enabled="${empty vars.shipping.id}" bundle="${messages}">
 									<ec:field-validator>
 										<ec:field-validator-rule name="notEmpty" message="#{tabs.details.form.shipping_method.validation.notEmpty}" bundle="${messages}"/>

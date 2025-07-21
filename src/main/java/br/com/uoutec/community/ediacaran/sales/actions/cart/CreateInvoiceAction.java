@@ -14,7 +14,7 @@ import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorResponse;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 @Singleton
-public class PendingPaymentAction implements ActionExecutor, PublicBean{
+public class CreateInvoiceAction implements ActionExecutor, PublicBean{
 
 	@Inject
 	private OrderRegistry orderRegistry;
@@ -30,12 +30,14 @@ public class PendingPaymentAction implements ActionExecutor, PublicBean{
 	}
 	
 	private void localExecute(ActionExecutorRequest request, ActionExecutorResponse response) throws Throwable {
+		
 		String orderID = request.getParameter("order");
 		
 		Order order = orderRegistry.findById(orderID);
-		orderRegistry.registerPayment(order);
+		orderRegistry.createInvoice(order, null, "The invoice was created automatically!");
 		
 		response.setParameter("order", orderID);
+		
 	}
 
 }

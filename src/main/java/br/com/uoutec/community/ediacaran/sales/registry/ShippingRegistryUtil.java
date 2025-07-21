@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
+import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
@@ -21,6 +22,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
+import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -198,6 +201,15 @@ public class ShippingRegistryUtil {
 		}
 		
 		markAsComplete(order, allShippings, orderRegistry, productTypeRegistry); 
+	}
+	
+	public static void registerNewShippingEvent(ActionRegistry actionRegistry, Shipping shipping) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.NEW_SHIPPING_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("shipping", shipping.getId())
+				.build()
+		);
 	}
 	
 	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry,

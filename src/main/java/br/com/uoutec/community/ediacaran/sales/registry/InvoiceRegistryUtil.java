@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
@@ -19,6 +20,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
+import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -212,6 +215,15 @@ public class InvoiceRegistryUtil {
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
 		}
+	}
+	
+	public static void registerNewInvoiceEvent(ActionRegistry actionRegistry, Invoice invoice) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.NEW_INVOICE_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("invoice", invoice.getId())
+				.build()
+		);
 	}
 	
 	public static Client getActualUser(Order order, Client client, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException {

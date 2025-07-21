@@ -2,16 +2,24 @@ package br.com.uoutec.community.ediacaran.sales;
 
 import java.time.temporal.ChronoUnit;
 
-import br.com.uoutec.community.ediacaran.sales.actions.cart.OrderInvoicedAction;
-import br.com.uoutec.community.ediacaran.sales.actions.cart.PaymentReceivedAction;
-import br.com.uoutec.community.ediacaran.sales.actions.cart.PendingPaymentAction;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.actions.cart.CreateInvoiceAction;
+import br.com.uoutec.community.ediacaran.sales.actions.cart.RegisterPaymntInfoAction;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyInvoiceException;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class ActionsPluginInstaller {
 
+	public static final String NEW_ORDER_REGISTERED 	= "new_order_registered";
+
+	public static final String NEW_INVOICE_REGISTERED 	= "new_invoice_registered";
+
+	public static final String NEW_SHIPPING_REGISTERED 	= "new_shipping_registered";
+	
+	public static final String REGISTER_PAYMENT_INFO 	= "register_payment_info";
+
+	public static final String CREATE_INVOICE 			= "create_invoice";
+	
 	public ActionsPluginInstaller() {
 	}
 	
@@ -19,21 +27,37 @@ public class ActionsPluginInstaller {
 				
 		ActionRegistry actionRegistry = EntityContextPlugin.getEntity(ActionRegistry.class);
 		
-		actionRegistry.registerAction(OrderStatus.PENDING_PAYMENT.name(), 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(PendingPaymentAction.class));
-		actionRegistry.registerAction(OrderStatus.PAYMENT_RECEIVED.name(), 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(PaymentReceivedAction.class));
-		actionRegistry.registerAction(OrderStatus.ORDER_INVOICED.name(), 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(OrderInvoicedAction.class));
+		actionRegistry.registerAction(NEW_ORDER_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String orderID = request.getParameter("order");
+			response.setParameter("order", orderID);
+		});
+
+		actionRegistry.registerAction(NEW_INVOICE_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String invoice = request.getParameter("invoice");
+			response.setParameter("invoice", invoice);
+		});
+
+		actionRegistry.registerAction(NEW_SHIPPING_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String shipping = request.getParameter("shipping");
+			response.setParameter("shipping", shipping);
+		});
 		
-		actionRegistry.addNextAction(OrderStatus.PENDING_PAYMENT.name(), 		OrderStatus.PAYMENT_RECEIVED.name());
-		actionRegistry.addNextAction(OrderStatus.PAYMENT_RECEIVED.name(), 		OrderStatus.ORDER_INVOICED.name());
-		actionRegistry.addExceptionAction(OrderStatus.PAYMENT_RECEIVED.name(),	EmptyInvoiceException.class, null);
+		actionRegistry.registerAction(REGISTER_PAYMENT_INFO, 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(RegisterPaymntInfoAction.class));
+		actionRegistry.registerAction(CREATE_INVOICE,			3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(CreateInvoiceAction.class));
+		
+		actionRegistry.addNextAction(NEW_ORDER_REGISTERED,	REGISTER_PAYMENT_INFO);
+		actionRegistry.addNextAction(REGISTER_PAYMENT_INFO,	CREATE_INVOICE);
+		actionRegistry.addExceptionAction(CREATE_INVOICE,	EmptyInvoiceException.class, null);
 		
 	}
 	
 	public void uninstall() throws Throwable {
 		ActionRegistry actionRegistry = EntityContextPlugin.getEntity(ActionRegistry.class);
-		actionRegistry.removeAction(OrderStatus.PENDING_PAYMENT.name());
-		actionRegistry.removeAction(OrderStatus.PAYMENT_RECEIVED.name());
-		actionRegistry.removeAction(OrderStatus.ORDER_INVOICED.name());
+		actionRegistry.removeAction(NEW_ORDER_REGISTERED);
+		actionRegistry.removeAction(NEW_INVOICE_REGISTERED);
+		actionRegistry.removeAction(NEW_SHIPPING_REGISTERED);
+		actionRegistry.removeAction(REGISTER_PAYMENT_INFO);
+		actionRegistry.removeAction(CREATE_INVOICE);
 	}
 	
 }

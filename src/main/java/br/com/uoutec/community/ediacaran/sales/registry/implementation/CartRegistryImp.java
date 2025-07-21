@@ -12,7 +12,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
-import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
@@ -30,14 +29,11 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
-import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
-import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.system.lock.NamedLock;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.filter.invoker.annotation.EnableFilters;
 
@@ -226,17 +222,7 @@ public class CartRegistryImp
 		
 		try{
 			activeLock = lock.lock(lockID);
-			
 			order = orderRegistry.createOrder(cart, payment, message, paymentGateway);
-			
-			ActionRegistry actionRegistry = EntityContextPlugin.getEntity(ActionRegistry.class);
-			actionRegistry.executeAction(
-					PaymentStatus.PENDING_PAYMENT.name(), 
-					ActionExecutorRequestBuilder.builder()
-						.withParameter("order", order.getId())
-					.build()
-			);
-
 		}
 		catch(ExistOrderRegistryException e){
 			order = orderRegistry.findByCartID(cart.getId());
