@@ -1,35 +1,58 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class OrderResultSearch implements Serializable {
-
-	private static final long serialVersionUID = 9166429937476180931L;
-
-	private Order order;
 	
-	private Client owner;
+	private static final long serialVersionUID = 8112064051350456421L;
 
-	public OrderResultSearch(Order order, Client owner) {
-		this.order = order;
-		this.owner = owner;
-	}
-
-	public Order getOrder() {
-		return order;
-	}
-
-	public void setOrder(Order order) {
-		this.order = order;
-	}
-
-	public Client getOwner() {
-		return owner;
-	}
-
-	public void setOwner(Client owner) {
-		this.owner = owner;
-	}
+	private boolean hasNextPage;
 	
+	private int maxPages;
+	
+	private int page;
+	
+	private List<Order> data;
+
+	public OrderResultSearch(boolean hasNextPage, int maxPages, int page, List<Order> data) {
+		super();
+		this.maxPages = maxPages;
+		this.page = page;
+		this.data = data;
+		this.hasNextPage = hasNextPage;
+	}
+
+	public int getMaxPages() {
+		return maxPages;
+	}
+
+	public void setMaxPages(int maxPages) {
+		this.maxPages = maxPages;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public List<Order> getData() {
+		return data;
+	}
+
+	public void setData(List<Order> data) {
+		this.data = data;
+	}
+
+	public boolean isHasNextPage() {
+		return hasNextPage;
+	}
+
+	public void setHasNextPage(boolean hasNextPage) {
+		this.hasNextPage = hasNextPage;
+	}
 	
 }

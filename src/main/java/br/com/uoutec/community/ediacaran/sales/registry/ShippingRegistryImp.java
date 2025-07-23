@@ -183,7 +183,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 				
 				if(client != null) {
 					Order order = orderRegistry.findByCartID(e.getOrder());
-					if(order == null || order.getClient() != client.getId()) {
+					if(order == null || order.getClient().getId() != client.getId()) {
 						return null;
 					}
 				}
@@ -261,12 +261,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		}
 		
 		List<Shipping> actualShippings;
-		Client user;
-		
 		try {
-			user = new Client();
-			user.setId(actualOrder.getClient());
-			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, user, entityAccess);
+			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, actualOrder.getClient(), entityAccess);
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
@@ -397,13 +393,10 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private void registryNewShipping(Shipping shipping, Order order
 			) throws OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
 		
-		Client client = new Client();
-		client.setId(order.getClient());
-
 		OrderRegistry orderRegistry		= EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry	= EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);		
+		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
 		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
 		List<Invoice> actualInvoices	= InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
 		
@@ -420,13 +413,10 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private void updateShipping(Shipping shipping, Order order
 			) throws ShippingRegistryException, EntityAccessException, OrderRegistryException, ProductTypeRegistryException, InvoiceRegistryException {
 		
-		Client user = new Client();
-		user.setId(order.getClient());
-		
 		OrderRegistry orderRegistry      = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		Order actualOrder                = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient              = ShippingRegistryUtil.getActualClient(order, user, clientRegistry);
+		Client actualClient              = ShippingRegistryUtil.getActualClient(order, order.getClient(), clientRegistry);
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);

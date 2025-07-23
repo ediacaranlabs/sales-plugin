@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -119,13 +119,11 @@ public class OrderRegistryImp
 		validateOrder(entity, saveValidations);
 		orderEntityAccess.save(entity);
 		
-		Client client = clientRegistry.findClientById(entity.getClient());
-		
 		if(orderEntityAccess.ifIndexExist(entity)) {
-			orderEntityAccess.updateIndex(entity, client);
+			orderEntityAccess.updateIndex(entity);
 		}
 		else {
-			orderEntityAccess.saveIndex(entity, client);
+			orderEntityAccess.saveIndex(entity);
 		}
 		
 		orderEntityAccess.flush();
@@ -135,18 +133,18 @@ public class OrderRegistryImp
 		validateOrder(entity, updateValidations);
 		orderEntityAccess.update(entity);
 		
-		Client client = clientRegistry.findClientById(entity.getClient());
+
 		if(entity.isRemoved()) {
 			if(orderEntityAccess.ifIndexExist(entity)) {
-				orderEntityAccess.deleteIndex(entity, client);
+				orderEntityAccess.deleteIndex(entity);
 			}
 		}
 		else {
 			if(orderEntityAccess.ifIndexExist(entity)) {
-				orderEntityAccess.updateIndex(entity, client);
+				orderEntityAccess.updateIndex(entity);
 			}
 			else {
-				orderEntityAccess.saveIndex(entity, client);
+				orderEntityAccess.saveIndex(entity);
 			}
 		}
 		
@@ -221,7 +219,7 @@ public class OrderRegistryImp
 			Order order = orderEntityAccess.findById(id);
 			
 			if(order != null) {
-				if(systemUser != null && order.getClient() != systemUser.getId()) {
+				if(systemUser != null && order.getClient().getId() != systemUser.getId()) {
 					return null;
 				}
 			}
@@ -249,7 +247,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@ActivateRequestContext
-	public OrdersResultSearch searchOrder(OrderSearch value) throws OrderRegistryException {
+	public OrderResultSearch searchOrder(OrderSearch value) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
@@ -259,15 +257,17 @@ public class OrderRegistryImp
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<OrderResultSearch> itens = orderEntityAccess.searchOrder(value, firstResult, maxResults);
+			List<Order> itens = orderEntityAccess.searchOrder(value, firstResult, maxResults);
+			List<Order> result = new ArrayList<>();
 			ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
 			
-			for(OrderResultSearch e: itens) {
-				e.setOrder(orderEntityAccess.findById(e.getOrder().getId()));
-				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
+			for(Order e: itens) {
+				e = OrderRegistryUtil.getActualOrder(e, orderEntityAccess);
+				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));
+				result.add(e);
 			}
 			
-			return new OrdersResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+			return new OrderResultSearch(result.size() > maxItens, -1, page, result.size() > maxItens? result.subList(0, maxItens -1) : result);
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);
@@ -429,7 +429,7 @@ public class OrderRegistryImp
 		
 		Order order                   = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
-		Client actualUser             = OrderRegistryUtil.getActualClient(order.getClient(), clientRegistry);
+		Client actualUser             = OrderRegistryUtil.getActualClient(order.getClient().getId(), clientRegistry);
 		
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
 		paymentGateway.payment(new PaymentRequest(actualUser, order.getPayment()));

@@ -6,7 +6,7 @@ import java.util.Map;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
-import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
@@ -63,7 +63,7 @@ public interface OrderRegistry extends PublicBean {
 	
 	Order findByCartID(String id) throws OrderRegistryException;
 
-	OrdersResultSearch searchOrder(OrderSearch value) throws OrderRegistryException;
+	OrderResultSearch searchOrder(OrderSearch value) throws OrderRegistryException;
 	
 	List<Order> getOrders(OrderStatus status, Integer first, 
 			Integer max) throws OrderRegistryException, SystemUserRegistryException;

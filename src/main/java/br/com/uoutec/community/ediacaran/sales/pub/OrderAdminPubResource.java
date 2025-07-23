@@ -31,7 +31,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.OrdersResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -139,7 +139,7 @@ public class OrderAdminPubResource {
 		
 		
 		try{
-			OrdersResultSearch values = orderRegistry.searchOrder(orderSearch);
+			OrderResultSearch values = orderRegistry.searchOrder(orderSearch);
 			return new OrdersResultSearchPubEntity(values, locale);
 		}
 		catch(Throwable ex){
@@ -214,7 +214,7 @@ public class OrderAdminPubResource {
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
-			client = clientRegistry.findClientById(order.getClient());
+			client = clientRegistry.findClientById(order.getClient().getId());
 			shippings = shippingRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){

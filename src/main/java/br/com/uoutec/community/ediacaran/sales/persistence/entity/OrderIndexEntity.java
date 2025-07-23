@@ -15,7 +15,6 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
@@ -52,21 +51,21 @@ public class OrderIndexEntity implements Serializable {
 	public OrderIndexEntity(){
 	}
 	
-	public OrderIndexEntity(Order e, Client client){
+	public OrderIndexEntity(Order e){
 		this.date = e.getDate();
 		this.cartID = e.getCartID();
 		this.id = e.getId();
 		this.total = e.getTotal();
 		this.status = e.getStatus();
-		this.client = e.getClient();
+		this.client = e.getClient().getId();
 		this.clientName = "";
 		
-		if(client.getFirstName() != null) {
-			this.clientName = this.clientName + " " + client.getFirstName();
+		if(e.getClient().getFirstName() != null) {
+			this.clientName = this.clientName + " " + e.getClient().getFirstName();
 		}
 		
-		if(client.getLastName() != null) {
-			this.clientName = this.clientName + " " + client.getLastName();
+		if(e.getClient().getLastName() != null) {
+			this.clientName = this.clientName + " " + e.getClient().getLastName();
 		}
 		
 		this.clientName = StringUtil.toSearch(this.clientName);
@@ -129,24 +128,21 @@ public class OrderIndexEntity implements Serializable {
 		this.total = total;
 	}
 
-	public OrderResultSearch toEntity() {
+	public Order toEntity() {
 		return toEntity(null);
 	}
 	
-	public OrderResultSearch toEntity(OrderResultSearch e) {
+	public Order toEntity(Order e) {
 		
 		if(e == null) {
-			e = new OrderResultSearch(null, null);
+			e = new Order();
 		}
-		
-		Order o = new Order();
-		o.setId(id);
 		
 		Client client = new Client();
 		client.setId(this.client);
 		
-		e.setOrder(o);
-		e.setOwner(client);
+		e.setClient(client);
+		e.setId(this.id);
 		
 		return e;
 	}

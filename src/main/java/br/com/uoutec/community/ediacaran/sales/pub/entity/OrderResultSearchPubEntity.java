@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -26,15 +27,15 @@ public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSea
 	
 	//private String invoice;
 
-	public OrderResultSearchPubEntity(OrderResultSearch orderResultSearch, Locale locale, DateTimeFormatter dateTimeFormatter) {
-		this.id = orderResultSearch.getOrder().getId();
-		this.owner = orderResultSearch.getOwner().getFirstName() + " " + orderResultSearch.getOwner().getLastName();
+	public OrderResultSearchPubEntity(Order order, Locale locale, DateTimeFormatter dateTimeFormatter) {
+		this.id = order.getId();
+		this.owner = order.getClient().getFirstName() + " " + order.getClient().getLastName();
 		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
-		this.date = orderResultSearch.getOrder().getDate() == null? null : dateTimeFormatter.format(orderResultSearch.getOrder().getDate());
-		this.status = orderResultSearch.getOrder().getStatus() == null? null : orderResultSearch.getOrder().getStatus().getName(locale);
-		this.subTotal = orderResultSearch.getOrder().getDisplaySubtotal();
-		this.taxes = orderResultSearch.getOrder().getDisplayTax();
-		this.total = orderResultSearch.getOrder().getDisplayTotal();
+		this.date = order.getDate() == null? null : dateTimeFormatter.format(order.getDate());
+		this.status = order.getStatus() == null? null : order.getStatus().getName(locale);
+		this.subTotal = order.getDisplaySubtotal();
+		this.taxes = order.getDisplayTax();
+		this.total = order.getDisplayTotal();
 		//this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
 	}
 

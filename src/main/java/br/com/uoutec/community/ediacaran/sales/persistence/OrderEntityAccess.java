@@ -3,10 +3,8 @@ package br.com.uoutec.community.ediacaran.sales.persistence;
 import java.io.Serializable;
 import java.util.List;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -24,15 +22,15 @@ public interface OrderEntityAccess {
 	
 	void delete(Order value) throws EntityAccessException;
 
-	void saveIndex(Order value, Client client) throws EntityAccessException;
+	void saveIndex(Order value) throws EntityAccessException;
 	
-	void updateIndex(Order value, Client client) throws EntityAccessException;
+	void updateIndex(Order value) throws EntityAccessException;
 	
-	void deleteIndex(Order value, Client client) throws EntityAccessException;
+	void deleteIndex(Order value) throws EntityAccessException;
 	
 	boolean ifIndexExist(Order value) throws EntityAccessException;
 	
-	List<OrderResultSearch> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws EntityAccessException;
+	List<Order> searchOrder(OrderSearch value, Integer firstResult, Integer max) throws EntityAccessException;
 	
 	List<Order> getOrders(Integer owner, Integer first, Integer max) throws EntityAccessException;
 	

@@ -239,9 +239,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 
 		List<Invoice> actualInvoices;
 		
-		Client client = new Client();
-		client.setId(actualOrder.getClient());
-		actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, client, entityAccess);
+		actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualOrder.getClient(), entityAccess);
 		
 		return createInvoice(actualOrder, actualInvoices);
 	}
@@ -269,9 +267,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		List<Invoice> invoices;
 		
 		try {
-			SystemUser user = new SystemUser();
-			user.setId(order.getClient());
-			invoices = entityAccess.findByOrder(order.getId(), user);
+			invoices = entityAccess.findByOrder(order.getId(), order.getClient());
 		}
 		catch (EntityAccessException e) {
 			throw new InvoiceRegistryException(e);

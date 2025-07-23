@@ -229,7 +229,7 @@ public class InvoiceRegistryUtil {
 	public static Client getActualUser(Order order, Client client, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException {
 		Client actualClient;
 		try{
-			actualClient = clientRegistry.findClientById(order.getClient());
+			actualClient = clientRegistry.findClientById(order.getClient().getId());
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException("usuário não encontrado: " + order.getClient());
@@ -376,7 +376,7 @@ public class InvoiceRegistryUtil {
 	public static Invoice toInvoice(Order order, Collection<ProductRequest> itens) {
 		Invoice i = new Invoice();
 		i.setId(null);
-		i.setClient(order.getClient());
+		i.setClient(order.getClient().getId());
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
 		i.setItens(new ArrayList<ProductRequest>(itens));

@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -102,7 +103,7 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		this.date = e.getDate();
 		this.cartID = e.getCartID();
 		this.id = e.getId();
-		this.client = e.getClient();
+		this.client = e.getClient() == null? null : e.getClient().getId();
 		this.paymentType = e.getPaymentType();
 		this.value = e.getSubtotal();
 		this.discount = e.getDiscount();
@@ -300,7 +301,13 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		
 		e.setDate(this.date);
 		e.setId(this.id);
-		e.setClient(this.client);
+		
+		if(this.client != null) {
+			Client c = new Client();
+			c.setId(this.client);
+			e.setClient(c);	
+		}
+		
 		e.setPayment(this.payment == null? null : this.payment.toEntity());
 		e.setRemoved(this.removed == null? false : this.removed);
 		e.setStatus(this.status);

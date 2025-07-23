@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -32,8 +31,7 @@ public class Order implements Serializable{
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
-	@Min(value = 1, groups = DataValidation.class)
-	private int client;
+	private Client client;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.UUID)
@@ -88,11 +86,11 @@ public class Order implements Serializable{
 		this.id = id;
 	}
 
-	public int getClient() {
+	public Client getClient() {
 		return client;
 	}
 
-	public void setClient(int client) {
+	public void setClient(Client client) {
 		this.client = client;
 	}
 
