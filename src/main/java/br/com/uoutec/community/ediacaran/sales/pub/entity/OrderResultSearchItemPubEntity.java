@@ -3,6 +3,8 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import org.brandao.brutos.annotation.Constructor;
+
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -27,6 +29,10 @@ public class OrderResultSearchItemPubEntity extends AbstractPubEntity<OrderResul
 	
 	//private String invoice;
 
+	@Constructor
+	public OrderResultSearchItemPubEntity() {
+		
+	}
 	public OrderResultSearchItemPubEntity(Order order, Locale locale, DateTimeFormatter dateTimeFormatter) {
 		this.id = order.getId();
 		this.owner = order.getClient().getFirstName() + " " + order.getClient().getLastName();

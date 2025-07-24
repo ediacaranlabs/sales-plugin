@@ -36,7 +36,7 @@
 				<%--<b><fmt:message key="invoice_id" bundle="${messages}"/>:</b> #${vars.order.invoice.id}<br>--%>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.order.id}<br>
 				<b><fmt:message key="payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(locale)}<br>
-				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.order.client}<br>
+				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.order.client.firstName} ${vars.order.client.lastName}<br>
 				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
 			</ed:col>
 			<ed:col>

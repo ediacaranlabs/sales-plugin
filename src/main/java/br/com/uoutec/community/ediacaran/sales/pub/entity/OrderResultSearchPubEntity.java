@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.MappingTypes;
+
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -20,6 +23,7 @@ public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSea
 	
 	private Integer page;
 	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<OrderResultSearchItemPubEntity> data;
 
 	public OrderResultSearchPubEntity() {
