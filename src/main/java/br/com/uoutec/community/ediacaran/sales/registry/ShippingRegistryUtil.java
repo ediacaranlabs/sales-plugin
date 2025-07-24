@@ -312,7 +312,7 @@ public class ShippingRegistryUtil {
 			i.setCancelJustification(justification);
 			entityAccess.update(i);
 			
-			orderRegistry.registryLog(actualOrder.getId(), "canceled shipping #" + i.getId() + ": " +  justification);
+			orderRegistry.registryLog(actualOrder, "canceled shipping #" + i.getId() + ": " +  justification);
 			
 		}
 

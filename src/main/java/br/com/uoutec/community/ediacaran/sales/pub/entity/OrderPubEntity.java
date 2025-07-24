@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -54,6 +55,19 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 	public OrderPubEntity() {
 	}
 
+	public OrderPubEntity(Order order, Locale locale) {
+		this.date = order.getDate();
+		this.id = order.getId();
+		this.payment = order.getPayment() == null? null : new PaymentPubEntity(order.getPayment(), locale).getType();
+		this.status = order.getStatus();
+		if(order.getItens() != null) {
+			this.itens = new ArrayList<>();
+			for(ProductRequest pr: order.getItens()) {
+				this.itens.add(new ProductRequestPubEntity(pr, locale));
+			}
+		}
+	}
+	
 	public String getId() {
 		return id;
 	}

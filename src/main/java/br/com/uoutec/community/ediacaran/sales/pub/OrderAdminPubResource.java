@@ -1,6 +1,5 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,16 +28,16 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrdersResultSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderResultSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -115,9 +114,10 @@ public class OrderAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@Result(mappingType = MappingTypes.OBJECT)
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.SEARCH)
-	public synchronized Serializable search(
+	public OrderResultSearchPubEntity search(
 			@DetachedName OrderSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
@@ -140,7 +140,7 @@ public class OrderAdminPubResource {
 		
 		try{
 			OrderResultSearch values = orderRegistry.searchOrder(orderSearch);
-			return new OrdersResultSearchPubEntity(values, locale);
+			return new OrderResultSearchPubEntity(values, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

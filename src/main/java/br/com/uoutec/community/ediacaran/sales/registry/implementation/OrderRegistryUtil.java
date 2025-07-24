@@ -122,7 +122,7 @@ public class OrderRegistryUtil {
 	}
 
 	public static void registerEvent(String message, Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
-		orderRegistry.registryLog(order.getId(), message);
+		orderRegistry.registryLog(order, message);
 	}
 	
 	public static void registerNewOrderEvent(ActionRegistry actionRegistry, Order order) {

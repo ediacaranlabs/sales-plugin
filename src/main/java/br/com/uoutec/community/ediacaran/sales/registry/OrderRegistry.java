@@ -81,7 +81,7 @@ public interface OrderRegistry extends PublicBean {
 
 	/* log */
 	
-	void registryLog(String orderID, String message) throws OrderRegistryException;
+	void registryLog(Order order, String message) throws OrderRegistryException;
 
 	/*
 	void updateLog(OrderLog log) throws OrderRegistryException;

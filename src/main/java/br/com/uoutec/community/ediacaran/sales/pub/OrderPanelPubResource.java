@@ -36,7 +36,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPanelPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPanelPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrdersResultSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderResultSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -122,7 +122,7 @@ public class OrderPanelPubResource {
 		
 		try{
 			OrderResultSearch values = orderRegistry.searchOrder(orderSearch);
-			return new OrdersResultSearchPubEntity(values, locale);
+			return new OrderResultSearchPubEntity(values, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

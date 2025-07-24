@@ -1,5 +1,10 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.util.HashMap;
+import java.util.Locale;
+
+import org.brandao.brutos.annotation.Constructor;
+
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 
@@ -10,7 +15,13 @@ public class PaymentPubEntity
 	
 	private String paymentType;
 	
+	@Constructor
 	public PaymentPubEntity(){
+	}
+	
+	public PaymentPubEntity(Payment payment, Locale locale){
+		this.paymentType = payment.getPaymentType();
+		super.setData(payment.getAddData() == null? null : new HashMap<>(payment.getAddData()));
 	}
 	
 	public String getPaymentType() {

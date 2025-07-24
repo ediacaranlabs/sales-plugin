@@ -411,7 +411,7 @@ public class InvoiceRegistryUtil {
 			
 			update(i, actualOrder, entityAccess, clientRegistry);
 			
-			orderRegistry.registryLog(actualOrder.getId(), "canceled invoice #" + i.getId() + ": " +  justification);
+			orderRegistry.registryLog(actualOrder, "canceled invoice #" + i.getId() + ": " +  justification);
 			
 		}
 

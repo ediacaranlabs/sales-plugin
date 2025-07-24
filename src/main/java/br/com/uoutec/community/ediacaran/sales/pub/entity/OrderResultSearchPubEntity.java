@@ -1,6 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -9,34 +12,61 @@ import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSearch>{
 
-	private static final long serialVersionUID = -4887905873425384110L;
+	private static final long serialVersionUID = -4626442588141322167L;
 
-	private String id;
+	private Boolean hasNextPage;
 	
-	private String owner;
-
-	private String date;
+	private Integer maxPages;
 	
-	private String status;
-
-	private String subTotal;
-
-	private String taxes;
+	private Integer page;
 	
-	private String total;
-	
-	//private String invoice;
+	private List<OrderResultSearchItemPubEntity> data;
 
-	public OrderResultSearchPubEntity(Order order, Locale locale, DateTimeFormatter dateTimeFormatter) {
-		this.id = order.getId();
-		this.owner = order.getClient().getFirstName() + " " + order.getClient().getLastName();
-		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
-		this.date = order.getDate() == null? null : dateTimeFormatter.format(order.getDate());
-		this.status = order.getStatus() == null? null : order.getStatus().getName(locale);
-		this.subTotal = order.getDisplaySubtotal();
-		this.taxes = order.getDisplayTax();
-		this.total = order.getDisplayTotal();
-		//this.invoice = orderResultSearch.getOrder().getInvoice() == null? null : orderResultSearch.getOrder().getInvoice().getId();
+	public OrderResultSearchPubEntity() {
+	}
+
+	public OrderResultSearchPubEntity(OrderResultSearch e, Locale locale) {
+		this.hasNextPage = e.isHasNextPage();
+		this.maxPages = e.getMaxPages();
+		this.page = e.getPage();
+		this.data = new ArrayList<>();
+		
+		DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
+		for(Order x: e.getData()) {
+			this.data.add(new OrderResultSearchItemPubEntity(x, locale, dtaFormt));
+		}
+	}
+	
+	public Boolean getHasNextPage() {
+		return hasNextPage;
+	}
+
+	public void setHasNextPage(Boolean hasNextPage) {
+		this.hasNextPage = hasNextPage;
+	}
+
+	public Integer getMaxPages() {
+		return maxPages;
+	}
+
+	public void setMaxPages(Integer maxPages) {
+		this.maxPages = maxPages;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
+	}
+
+	public List<OrderResultSearchItemPubEntity> getData() {
+		return data;
+	}
+
+	public void setData(List<OrderResultSearchItemPubEntity> data) {
+		this.data = data;
 	}
 
 	@Override
@@ -65,62 +95,6 @@ public class OrderResultSearchPubEntity extends AbstractPubEntity<OrderResultSea
 
 	@Override
 	protected void copyTo(OrderResultSearch o, boolean reload, boolean override, boolean validate) throws Throwable {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getOwner() {
-		return owner;
-	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getSubTotal() {
-		return subTotal;
-	}
-
-	public void setSubTotal(String subTotal) {
-		this.subTotal = subTotal;
-	}
-
-	public String getTaxes() {
-		return taxes;
-	}
-
-	public void setTaxes(String taxes) {
-		this.taxes = taxes;
-	}
-
-	public String getTotal() {
-		return total;
-	}
-
-	public void setTotal(String total) {
-		this.total = total;
 	}
 	
 }

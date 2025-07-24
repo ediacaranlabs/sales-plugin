@@ -550,7 +550,7 @@ public class OrderRegistryImp
 		this.registerOrder(order);
 		
 		//Registra o evento no log
-		this.registryLog(order.getId(), message != null? message : "Reembolso feito.");
+		this.registryLog(order, message != null? message : "Reembolso feito.");
 		
 	}
 	
@@ -643,13 +643,8 @@ public class OrderRegistryImp
 	/* log  */
 	
 	@ActivateRequestContext
-	public void registryLog(String orderID, String message) throws OrderRegistryException{
-		
+	public void registryLog(Order order, String message) throws OrderRegistryException{
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.LOGS.getRegisterPermission());
-		
-		Order order = new Order();
-		order.setId(orderID);
-		
 		OrderRegistryUtil.registerEvent(message, order, orderEntityAccess);
 	}
 
