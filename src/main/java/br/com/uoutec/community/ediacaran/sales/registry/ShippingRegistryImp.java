@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.security.Principal;
@@ -198,7 +198,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	
 	@Override
 	@ActivateRequestContext
-	public ShippingsResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException {
+	public ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
 		
@@ -208,14 +208,16 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<ShippingResultSearch> itens = entityAccess.search(value, firstResult, maxResults);
+			List<Shipping> list = entityAccess.search(value, firstResult, maxResults);
+			List<Shipping> itens = new ArrayList<>();
 			
-			for(ShippingResultSearch e: itens) {
-				e.setShipping(entityAccess.findById(e.getShipping().getId()));
-				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
+			for(Shipping e: list) {
+				e = entityAccess.findById(e.getId());
+				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));
+				itens.add(e);
 			}
 			
-			return new ShippingsResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+			return new ShippingResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
 		}
 		catch(Throwable e){
 			throw new ShippingRegistryException(e);

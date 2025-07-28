@@ -11,7 +11,6 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity
@@ -57,7 +56,7 @@ public class ShippingIndexEntity implements Serializable{
 		this.shippingType = e.getShippingType();
 		this.date = e.getDate();
 		this.cancelDate = e.getCancelDate();
-		this.client = e.getClient();
+		this.client = e.getClient() == null? null : e.getClient().getId();
 		
 		if(client.getFirstName() != null) {
 			this.clientName = this.clientName + " " + client.getFirstName();
@@ -119,27 +118,25 @@ public class ShippingIndexEntity implements Serializable{
 		this.destAddress = destAddress;
 	}
 
-	public ShippingResultSearch toEntity(){
+	public Shipping toEntity(){
 		return this.toEntity(null);
 	}
 	
-	public ShippingResultSearch toEntity(ShippingResultSearch e){
+	public Shipping toEntity(Shipping e){
 		
-		try{
-			
-			if(e == null) {
-				e =  new ShippingResultSearch(null, null);
-			}
-			
-			Shipping s = new Shipping();
-			s.setId(id);
-			Client c = new Client();
-			c.setId(this.client);
-			return new ShippingResultSearch(s, c);
+		if(e == null) {
+			e =  new Shipping();
 		}
-		catch(Throwable ex){
-			throw new RuntimeException(ex);
-		}
+		
+		Shipping s = new Shipping();
+		
+		s.setId(id);
+		
+		Client c = new Client();
+		c.setId(this.client);
+		e.setClient(c);
+		
+		return e;
 	}
 
 	@Override

@@ -116,7 +116,7 @@ public class ShippingEntity implements Serializable{
 		this.date = e.getDate();
 		this.cancelDate = e.getCancelDate();
 		this.cancelJustification = e.getCancelJustification();
-		this.client = e.getClient();
+		this.client = e.getClient() == null? null : e.getClient().getId();
 		
 		this.depth = e.getDepth();
 		this.height = e.getHeight();

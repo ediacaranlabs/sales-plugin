@@ -1,30 +1,55 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.List;
+
 public class ShippingResultSearch {
 
-	private Shipping shipping;
+	private Boolean hasNextPage;
 	
-	private Client owner;
+	private int maxPages;
+	
+	private int page;
+	
+	private List<Shipping> itens;
 
-	public ShippingResultSearch(Shipping shipping, Client owner) {
-		this.shipping = shipping;
-		this.owner = owner;
+	public ShippingResultSearch(boolean hasNextPage, int maxPages, int page, List<Shipping> itens) {
+		super();
+		this.maxPages = maxPages;
+		this.page = page;
+		this.itens = itens;
+		this.hasNextPage = hasNextPage;
 	}
 
-	public Shipping getShipping() {
-		return shipping;
+	public Boolean getHasNextPage() {
+		return hasNextPage;
 	}
 
-	public Client getOwner() {
-		return owner;
+	public void setHasNextPage(Boolean hasNextPage) {
+		this.hasNextPage = hasNextPage;
 	}
 
-	public void setShipping(Shipping shipping) {
-		this.shipping = shipping;
+	public int getMaxPages() {
+		return maxPages;
 	}
 
-	public void setOwner(Client owner) {
-		this.owner = owner;
+	public void setMaxPages(int maxPages) {
+		this.maxPages = maxPages;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public List<Shipping> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<Shipping> itens) {
+		this.itens = itens;
 	}
 	
 }

@@ -31,7 +31,7 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.CancelationShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
@@ -113,7 +113,7 @@ public class ShippingAdminPubResource {
 		
 		
 		try{
-			ShippingsResultSearch result = shippingRegistry.searchShipping(search);
+			ShippingResultSearch result = shippingRegistry.searchShipping(search);
 			return result == null? null : new ShippingsSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){

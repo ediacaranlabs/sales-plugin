@@ -37,7 +37,7 @@ public class Shipping implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 1, groups = DataValidation.class)
-	private int client;
+	private Client client;
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
@@ -122,11 +122,11 @@ public class Shipping implements Serializable{
 		this.origin = origin;
 	}
 
-	public int getClient() {
+	public Client getClient() {
 		return client;
 	}
 
-	public void setClient(int client) {
+	public void setClient(Client client) {
 		this.client = client;
 	}
 

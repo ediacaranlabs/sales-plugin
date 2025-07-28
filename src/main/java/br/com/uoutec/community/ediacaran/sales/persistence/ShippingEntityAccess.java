@@ -4,7 +4,6 @@ import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -22,7 +21,7 @@ public interface ShippingEntityAccess {
 	
 	List<Shipping> findByOrder(String order, Client client) throws EntityAccessException;
 	
-	List<ShippingResultSearch> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException;
+	List<Shipping> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException;
 	
 	void flush();
 	

@@ -8,7 +8,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingsResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
@@ -27,7 +27,7 @@ public interface ShippingRegistry extends PublicBean{
 	Shipping toShipping(Order order
 			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException;
 	
-	ShippingsResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
+	ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
 	
 	Shipping createShipping(Order orderID, Map<String, Integer> itens, String message) 
 		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,

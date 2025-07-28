@@ -359,7 +359,7 @@ public class ShippingRegistryUtil {
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
 		i.getDest().setId(0);
-		i.setClient(order.getClient().getId());
+		i.setClient(order.getClient());
 		i.setProducts(new ArrayList<ProductRequest>(itens));
 		
 		i.setOrder(order.getId());

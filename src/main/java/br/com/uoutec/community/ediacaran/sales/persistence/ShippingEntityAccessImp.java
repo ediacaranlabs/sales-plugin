@@ -18,7 +18,6 @@ import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
@@ -296,7 +295,7 @@ public class ShippingEntityAccessImp
 
 	}
 
-	public List<ShippingResultSearch> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException {
+	public List<Shipping> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<ShippingIndexEntity> criteria = builder.createQuery(ShippingIndexEntity.class);
@@ -362,7 +361,7 @@ public class ShippingEntityAccessImp
 		    }
 		    
 		    List<ShippingIndexEntity> list = (List<ShippingIndexEntity>)typed.getResultList();
-		    List<ShippingResultSearch> result = new ArrayList<ShippingResultSearch>();
+		    List<Shipping> result = new ArrayList<Shipping>();
 
 		    for(ShippingIndexEntity e: list) {
 		    	result.add(e.toEntity());
