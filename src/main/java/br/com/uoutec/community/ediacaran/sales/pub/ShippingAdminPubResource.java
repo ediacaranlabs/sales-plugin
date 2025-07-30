@@ -37,7 +37,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.CancelationShippingPub
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingsSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethod;
@@ -91,7 +91,7 @@ public class ShippingAdminPubResource {
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.SEARCH)
 	@Result(mappingType = MappingTypes.OBJECT)
-	public ShippingsSearchResultPubEntity search(
+	public ShippingSearchResultPubEntity search(
 			@DetachedName ShippingSearchPubEntity request,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
@@ -114,7 +114,7 @@ public class ShippingAdminPubResource {
 		
 		try{
 			ShippingResultSearch result = shippingRegistry.searchShipping(search);
-			return result == null? null : new ShippingsSearchResultPubEntity(result, locale);
+			return result == null? null : new ShippingSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

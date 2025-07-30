@@ -12,7 +12,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingResultSearch> {
+public class ShippingSearchResultPubEntity extends AbstractPubEntity<ShippingResultSearch> {
 	
 	private static final long serialVersionUID = 8112064051350456421L;
 
@@ -26,10 +26,10 @@ public class ShippingsSearchResultPubEntity extends AbstractPubEntity<ShippingRe
 	private List<ShippingPubEntity> itens;
 
 	@Constructor
-	public ShippingsSearchResultPubEntity() {
+	public ShippingSearchResultPubEntity() {
 	}
 	
-	public ShippingsSearchResultPubEntity(ShippingResultSearch e, Locale locale) {
+	public ShippingSearchResultPubEntity(ShippingResultSearch e, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.getHasNextPage();
