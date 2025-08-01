@@ -36,7 +36,6 @@ public class Shipping implements Serializable{
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
-	@Min(value = 1, groups = DataValidation.class)
 	private Client client;
 	
 	@NotNull(groups = DataValidation.class)
