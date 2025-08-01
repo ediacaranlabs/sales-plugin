@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import org.brandao.brutos.bean.BeanInstance;
 import org.brandao.brutos.bean.BeanProperty;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
@@ -306,6 +307,12 @@ public class ShippingEntity implements Serializable{
 			e.setCancelDate(this.cancelDate);
 			e.setCancelJustification(this.cancelJustification);
 			e.setDate(this.date);
+			
+			if(this.client != null) {
+				Client c = new Client();
+				c.setId(this.client);
+				e.setClient(c);
+			}
 			
 			if(this.order != null) {
 				e.setOrder(this.order.getId());
