@@ -329,12 +329,12 @@ public class ShippingEntityAccessImp
 		    	
 		    }
 
-		    if(value.getOwner() != null) {
-			    and.add(builder.equal(from.get("client"), value.getOwner()));
+		    if(value.getClient() != null) {
+			    and.add(builder.equal(from.get("client"), value.getClient()));
 		    }
 
-		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
-			    and.add(builder.like(from.get("clientName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
+		    if(value.getClientName() != null && !value.getClientName().trim().isEmpty()) {
+			    and.add(builder.like(from.get("clientName"), "%" + StringUtil.normalize(value.getClientName(), "%") + "%" ));
 		    }
 		    
 		    if(!and.isEmpty()) {

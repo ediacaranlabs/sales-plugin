@@ -1,12 +1,10 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.resource.spi.IllegalStateException;
 import javax.validation.constraints.Max;
 
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -16,29 +14,19 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 
 	private String id;
 	
-	private Integer owner;
+	private Integer client;
 
-	private String ownerName;
+	private String clientName;
 	
 	private LocalDate startDate;
 	
 	private LocalDate endDate;
 	
-	private OrderStatus status;
-
-	private BigDecimal minTotal;
-
-	private BigDecimal maxTotal;
-	
-	private Boolean canceled;
-	
-	private String order;
-	
 	private Integer page;
 	
 	@Max(100)
 	private Integer resultPerPage;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -47,12 +35,20 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 		this.id = id;
 	}
 
-	public Integer getOwner() {
-		return owner;
+	public Integer getClient() {
+		return client;
 	}
 
-	public void setOwner(Integer owner) {
-		this.owner = owner;
+	public void setClient(Integer client) {
+		this.client = client;
+	}
+
+	public String getClientName() {
+		return clientName;
+	}
+
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public LocalDate getStartDate() {
@@ -71,46 +67,6 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 		this.endDate = endDate;
 	}
 
-	public Boolean getCanceled() {
-		return canceled;
-	}
-
-	public void setCanceled(Boolean canceled) {
-		this.canceled = canceled;
-	}
-
-	public OrderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderStatus status) {
-		this.status = status;
-	}
-
-	public BigDecimal getMinTotal() {
-		return minTotal;
-	}
-
-	public void setMinTotal(BigDecimal minTotal) {
-		this.minTotal = minTotal;
-	}
-
-	public BigDecimal getMaxTotal() {
-		return maxTotal;
-	}
-
-	public void setMaxTotal(BigDecimal maxTotal) {
-		this.maxTotal = maxTotal;
-	}
-
-	public String getOrder() {
-		return order;
-	}
-
-	public void setOrder(String order) {
-		this.order = order;
-	}
-
 	public Integer getPage() {
 		return page;
 	}
@@ -125,14 +81,6 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 
 	public void setResultPerPage(Integer resultPerPage) {
 		this.resultPerPage = resultPerPage;
-	}
-
-	public String getOwnerName() {
-		return ownerName;
-	}
-
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
 	}
 
 	@Override
@@ -162,14 +110,13 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 	@Override
 	protected void copyTo(ShippingSearch o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
-		o.setEndDate(endDate);
 		o.setId(id);
-		o.setOwner(owner);
+		o.setClient(client);
+		o.setClientName(clientName);
 		o.setPage(page);
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
-		o.setOwnerName(this.ownerName);
-		o.setOrder(order);
+		o.setEndDate(endDate);
 	}
 	
 }

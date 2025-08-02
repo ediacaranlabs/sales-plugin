@@ -9,9 +9,9 @@ public class ShippingSearch implements Serializable{
 
 	private String id;
 	
-	private Integer owner;
+	private Integer client;
 
-	private String ownerName;
+	private String clientName;
 	
 	private String order;
 	
@@ -31,20 +31,21 @@ public class ShippingSearch implements Serializable{
 		this.id = id;
 	}
 
-	public Integer getOwner() {
-		return owner;
+
+	public Integer getClient() {
+		return client;
 	}
 
-	public void setOwner(Integer owner) {
-		this.owner = owner;
+	public void setClient(Integer client) {
+		this.client = client;
 	}
 
-	public String getOwnerName() {
-		return ownerName;
+	public String getClientName() {
+		return clientName;
 	}
 
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	public String getOrder() {

@@ -32,22 +32,22 @@
 				</ed:col>
 				<ed:col size="4">
 		    		<ec:field-group>
-		    			<ec:datefield name="startDate">
+		    			<ec:dateField name="startDate">
 		    				<ec:event type="change">
 								var $form = $.AppContext.utils.getById('orderSearchForm');
 								var $startDate = $form.getField('startDate');
 								var $endDate = $form.getField('endDate');
 								$endDate.setProperty('min', $startDate.getValue());
 		    				</ec:event>
-		    			</ec:datefield>
-		    			<ec:datefield name="endDate">
+		    			</ec:dateField>
+		    			<ec:dateField name="endDate">
 		    				<ec:event type="change">
 								var $form = $.AppContext.utils.getById('orderSearchForm');
 								var $startDate = $form.getField('startDate');
 								var $endDate = $form.getField('endDate');
 								$startDate.setProperty('max', $endDate.getValue());
 		    				</ec:event>
-		    			</ec:datefield>
+		    			</ec:dateField>
 		    		</ec:field-group>
 				</ed:col>
 				<ed:col size="2">
