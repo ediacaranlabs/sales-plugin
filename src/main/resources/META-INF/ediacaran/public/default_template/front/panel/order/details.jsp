@@ -36,8 +36,22 @@
 				<%--<b><fmt:message key="invoice_id" bundle="${messages}"/>:</b> #${vars.order.invoice.id}<br>--%>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.order.id}<br>
 				<b><fmt:message key="payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(locale)}<br>
-				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.order.client}<br>
+				<%--<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.order.client}<br>--%>
 				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
+			</ed:col>
+			<ed:col>
+				<b><fmt:message key="billing_address.title" bundle="${messages}"/></b><p>
+				${vars.order.billingAddress.firstName} ${vars.order.billingAddress.lastName}<br>
+				${vars.order.billingAddress.addressLine1}<br>
+				${vars.order.billingAddress.addressLine2}<br>
+				${vars.order.billingAddress.zip} ${vars.order.billingAddress.city} ${vars.order.billingAddress.region} ${vars.order.billingAddress.country.name}
+			</ed:col>
+			<ed:col>
+				<b><fmt:message key="shipping_address.title" bundle="${messages}"/></b><p>
+				${vars.order.shippingAddress.firstName} ${vars.order.shippingAddress.lastName}<br>
+				${vars.order.shippingAddress.addressLine1}<br>
+				${vars.order.shippingAddress.addressLine2}<br>
+				${vars.order.shippingAddress.zip} ${vars.order.shippingAddress.city} ${vars.order.shippingAddress.region} ${vars.order.shippingAddress.country.name}
 			</ed:col>
 		</ed:row>
 		<ed:row>
@@ -46,7 +60,7 @@
 					<ec:table-header>
 						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<%--<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>--%>
 						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
@@ -58,7 +72,7 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
+								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
 								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
 								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>

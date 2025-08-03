@@ -25,76 +25,69 @@
 <ec:box>
 	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
-		<ec:data-table id="invoiceSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/search">
+		<ec:data-table id="shippingSearchForm" action="${plugins.ediacaran.marketplace.web_path}${plugins.ediacaran.front.panel_context}/shippings/search">
 			<ed:row>
-				<ed:col size="1">
+				<ed:col size="3">
 	    			<ec:textfield name="id" label="#{form.id.label}" bundle="${messages}"/>
 				</ed:col>
-				<ed:col size="2">
+				<ed:col size="3">
 	    			<ec:textfield name="order" label="#{form.order.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="3">
-	    			<ec:textfield name="ownerName" label="#{form.client.label}" bundle="${messages}"/>
+	    			<ec:textfield name="clientName" label="#{form.client.label}" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="1">
-					<ec:label><fmt:message key="form.canceled.label" bundle="${messages}"/></ec:label>
-	    			<ec:radio label="#{form.canceled.yes}" value="true" name="canceled" bundle="${messages}"/>
-	    			<ec:radio label="#{form.canceled.no}" value="false" name="canceled" selected="true" bundle="${messages}"/>
+					<ec:label><fmt:message key="form.closed.label" bundle="${messages}"/></ec:label>
+	    			<ec:radio label="#{form.closed.yes}" value="true" name="closed" bundle="${messages}"/>
+	    			<ec:radio label="#{form.closed.no}" value="false" name="closed" selected="true" bundle="${messages}"/>
 				</ed:col>
 				<ed:col size="2">
-	    			<ec:datefield label="#{form.from.label}" name="startDate" bundle="${messages}">
+	    			<ec:dateField label="#{form.from.label}" name="startDate" bundle="${messages}">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
 							var $startDate = $form.getField('startDate');
 							var $endDate = $form.getField('endDate');
 							$endDate.setProperty('min', $startDate.getValue());
 	    				</ec:event>
-	    			</ec:datefield>
-	    			<ec:datefield label="#{form.to.label}" name="endDate" bundle="${messages}">
+	    			</ec:dateField>
+	    			<ec:dateField label="#{form.to.label}" name="endDate" bundle="${messages}">
 	    				<ec:event type="change">
 							var $form = $.AppContext.utils.getById('invoiceSearchForm');
 							var $startDate = $form.getField('startDate');
 							var $endDate = $form.getField('endDate');
 							$startDate.setProperty('max', $endDate.getValue());
 	    				</ec:event>
-	    			</ec:datefield>
-				</ed:col>
-				<ed:col size="2">
-	    			<ec:textfield label="#{form.mintotal.label}" name="minTotal" bundle="${messages}"/>
-	    			<ec:textfield label="#{form.maxtotal.label}" name="maxTotal" bundle="${messages}"/>
-				</ed:col>
-				<ed:col size="1">
-					<ec:button icon="search" style="info" actionType="submit" align="right"/>
+	    			</ec:dateField>
 				</ed:col>
 			</ed:row>
-
+			<ed:row>
+				<ed:col size="12">
+					<ec:right>
+						<ec:button icon="search" style="info" actionType="submit" align="right"/>
+					</ec:right>
+				</ed:col>
+			</ed:row>
 			<ec:data-result var="response">
 				<ec:table>
 					<ec:table-header>
 						<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.order" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.subtotal" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.taxes" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.discounts" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.client" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.date" bundle="${messages}"/></ec:center></ec:table-col>
+						<ec:table-col><ec:center><fmt:message key="table.receivedDate" bundle="${messages}"/></ec:center></ec:table-col>
 						<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
-						<ec:forEach items="!{response.data}" var="item">
-						<ec:table-row>
+						<ec:forEach items="!{response.itens}" var="item">
+						<ec:table-row style="!{item.closed? (item.receivedDate == null? 'warning' : 'success') : (item.daysAfterCreated > 5? 'danger' : '') }">
 							<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
-							<ec:table-col><ec:center><small>!{item.order}</small></ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.client}</ec:center></ec:table-col>
 							<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.subTotal}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.taxes}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.discounts}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+							<ec:table-col><ec:center>!{item.receivedDate}</ec:center></ec:table-col>
 							<ec:table-col>
 								<ec:center>
-								<ec:button id="!{item.id}_button" icon="search" style="info" actionType="button">
+								<ec:button icon="search" style="info" actionType="button">
 									<ec:event type="click">
-										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/invoices/show/!{item.id}');
+										$.AppContext.utils.updateContent('#!${plugins.ediacaran.marketplace.web_path}${plugins.ediacaran.front.panel_context}/shippings/edit/!{item.id}');
 									</ec:event>
 								</ec:button>
 								</ec:center>

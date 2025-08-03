@@ -81,6 +81,12 @@ public class ShippingEntity implements Serializable{
 	@JoinColumn(name = "cod_dest_address", referencedColumnName = "cod_address" )
 	private AddressEntity dest;
 
+	@Column(name="dat_received")
+	private LocalDateTime receivedDate;
+
+	@Column(name="bit_closed")
+	private Boolean closed;
+	
 	@Column(name="vlr_weight")
 	private Float weight;
 	
@@ -131,6 +137,9 @@ public class ShippingEntity implements Serializable{
 				this.products.add(new ProductRequestEntity(this, p));
 			}
 		}
+		
+		this.receivedDate = e.getReceivedDate();
+		this.closed = e.isClosed();
 		
 		Map<String,String> data = DataUtil.encode(e, excludeFields);
 
@@ -265,8 +274,20 @@ public class ShippingEntity implements Serializable{
 		this.products = products;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public LocalDateTime getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(LocalDateTime receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
+	public Boolean getClosed() {
+		return closed;
+	}
+
+	public void setClosed(Boolean closed) {
+		this.closed = closed;
 	}
 
 	public Shipping toEntity(){
@@ -317,6 +338,9 @@ public class ShippingEntity implements Serializable{
 			if(this.order != null) {
 				e.setOrder(this.order.getId());
 			}
+
+			e.setReceivedDate(this.receivedDate);
+			e.setClosed(this.closed == null? false : this.closed.booleanValue());
 			
 			e.setDepth(this.depth == null? 0f : this.depth.floatValue());
 			e.setHeight(this.height == null? 0f : this.height.floatValue());

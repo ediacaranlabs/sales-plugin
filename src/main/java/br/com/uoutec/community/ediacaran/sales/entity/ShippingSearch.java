@@ -19,6 +19,12 @@ public class ShippingSearch implements Serializable{
 	
 	private LocalDate endDate;
 	
+	private LocalDate startReceivedDate;
+	
+	private LocalDate endReceivedDate;
+	
+	private Boolean closed;
+	
 	private Integer page;
 	
 	private Integer resultPerPage;
@@ -88,5 +94,28 @@ public class ShippingSearch implements Serializable{
 		this.resultPerPage = resultPerPage;
 	}
 
+	public LocalDate getStartReceivedDate() {
+		return startReceivedDate;
+	}
+
+	public void setStartReceivedDate(LocalDate startReceivedDate) {
+		this.startReceivedDate = startReceivedDate;
+	}
+
+	public LocalDate getEndReceivedDate() {
+		return endReceivedDate;
+	}
+
+	public void setEndReceivedDate(LocalDate endReceivedDate) {
+		this.endReceivedDate = endReceivedDate;
+	}
+
+	public Boolean getClosed() {
+		return closed;
+	}
+
+	public void setClosed(Boolean closed) {
+		this.closed = closed;
+	}
 
 }

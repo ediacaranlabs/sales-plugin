@@ -329,6 +329,26 @@ public class ShippingEntityAccessImp
 		    	
 		    }
 
+		    if(value.getStartReceivedDate() != null || value.getEndReceivedDate() != null) {
+		    	
+		    	if(value.getStartReceivedDate() != null && value.getEndReceivedDate() != null) {
+				    and.add(builder.between(from.get("receivedDate"), value.getStartReceivedDate(), value.getEndReceivedDate()));
+		    	}
+		    	else
+		    	if(value.getStartReceivedDate() != null) {
+				    and.add(builder.greaterThanOrEqualTo(from.get("receivedDate"), value.getStartReceivedDate()));
+		    	}
+		    	else
+		    	if(value.getEndReceivedDate() != null) {
+				    and.add(builder.lessThanOrEqualTo(from.get("receivedDate"), value.getEndReceivedDate()));
+		    	}
+		    	
+		    }
+
+		    if(value.getClosed() != null) {
+			    and.add(builder.equal(from.get("closed"), value.getClosed()));
+		    }
+		    
 		    if(value.getClient() != null) {
 			    and.add(builder.equal(from.get("client"), value.getClient()));
 		    }

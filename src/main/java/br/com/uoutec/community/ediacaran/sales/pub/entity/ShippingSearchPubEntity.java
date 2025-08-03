@@ -22,6 +22,12 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 	
 	private LocalDate endDate;
 	
+	private LocalDate startReceivedDate;
+	
+	private LocalDate endReceivedDate;
+	
+	private Boolean closed;
+	
 	private Integer page;
 	
 	@Max(100)
@@ -67,6 +73,30 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 		this.endDate = endDate;
 	}
 
+	public LocalDate getStartReceivedDate() {
+		return startReceivedDate;
+	}
+
+	public void setStartReceivedDate(LocalDate startReceivedDate) {
+		this.startReceivedDate = startReceivedDate;
+	}
+
+	public LocalDate getEndReceivedDate() {
+		return endReceivedDate;
+	}
+
+	public void setEndReceivedDate(LocalDate endReceivedDate) {
+		this.endReceivedDate = endReceivedDate;
+	}
+
+	public Boolean getClosed() {
+		return closed;
+	}
+
+	public void setClosed(Boolean closed) {
+		this.closed = closed;
+	}
+	
 	public Integer getPage() {
 		return page;
 	}
@@ -117,6 +147,9 @@ public class ShippingSearchPubEntity extends AbstractPubEntity<ShippingSearch> {
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
 		o.setEndDate(endDate);
+		o.setStartReceivedDate(startReceivedDate);
+		o.setEndReceivedDate(endReceivedDate);
+		o.setClosed(closed);
 	}
 	
 }

@@ -1,9 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +79,10 @@ public class Shipping implements Serializable{
 	private List<ProductRequest> products;
 	
 	private Map<String, String> addData;
+	
+	private LocalDateTime receivedDate;
+
+	private boolean closed;
 	
 	public Shipping(){
 	}
@@ -193,6 +199,22 @@ public class Shipping implements Serializable{
 		this.cancelJustification = cancelJustification;
 	}
 
+	public LocalDateTime getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(LocalDateTime receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
+	public boolean isClosed() {
+		return closed;
+	}
+
+	public void setClosed(boolean closed) {
+		this.closed = closed;
+	}
+
 	public void set(String property, String value) {
 		if(addData == null) {
 			addData = new HashMap<>();
@@ -234,6 +256,20 @@ public class Shipping implements Serializable{
 		this.cancelDate = cancelDate;
 	}
 
+	public String toStringReceivedDate(Locale locale) {
+		if(receivedDate == null) {
+			return "";
+		}
+		
+		DateTimeFormatter dateTimeFormatter = 
+				DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
+		return receivedDate.format(dateTimeFormatter);
+	}
+
+	public long getDaysAfterCreated() {
+		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
