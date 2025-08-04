@@ -44,7 +44,9 @@
 				<b><fmt:message key="shipping_code" bundle="${messages}"/>:</b> #${vars.shipping.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringDate(locale)}<br>
 				<b><fmt:message key="canceled_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringCancelDate(locale)}<br>
+				<b><fmt:message key="received_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringReceivedDate(locale)}<br>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.shipping.order}<br>
+				<b><fmt:message key="closed" bundle="${messages}"/>:</b>
 				<c:if test="${vars.shipping.closed}">
 					<fmt:message key="closed" bundle="${messages}"/><br>
 				</c:if> 

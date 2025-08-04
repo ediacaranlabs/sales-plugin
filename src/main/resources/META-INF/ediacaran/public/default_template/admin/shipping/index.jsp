@@ -25,7 +25,7 @@
 <ec:box>
 	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
-		<ec:data-table id="shippingSearchForm" action="${plugins.ediacaran.marketplace.web_path}${plugins.ediacaran.front.panel_context}/shippings/search">
+		<ec:data-table id="shippingSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/search">
 			<ed:row>
 				<ed:col size="3">
 	    			<ec:textfield name="id" label="#{form.id.label}" bundle="${messages}"/>
@@ -87,7 +87,7 @@
 								<ec:center>
 								<ec:button icon="search" style="info" actionType="button">
 									<ec:event type="click">
-										$.AppContext.utils.updateContent('#!${plugins.ediacaran.marketplace.web_path}${plugins.ediacaran.front.panel_context}/shippings/edit/!{item.id}');
+										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/edit/!{item.id}');
 									</ec:event>
 								</ec:button>
 								</ec:center>

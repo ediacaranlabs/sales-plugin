@@ -1,5 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +25,7 @@ public class ShippingSearchResultPubEntity extends AbstractPubEntity<ShippingRes
 	private Integer page;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<ShippingPubEntity> itens;
+	private List<ShippingResultSearchItemPubEntity> itens;
 
 	@Constructor
 	public ShippingSearchResultPubEntity() {
@@ -35,8 +37,9 @@ public class ShippingSearchResultPubEntity extends AbstractPubEntity<ShippingRes
 		this.hasNextPage = e.getHasNextPage();
 		this.itens = new ArrayList<>();
 		if(e.getItens() != null) {
+			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
 			for(Shipping p: e.getItens()) {
-				ShippingPubEntity x = new ShippingResultPubEntity(p, locale).getType();
+				ShippingResultSearchItemPubEntity x = new ShippingResultSearchItemPubEntity(p, locale, dtaFormt);
 				itens.add(x);
 			}
 		}
@@ -95,11 +98,11 @@ public class ShippingSearchResultPubEntity extends AbstractPubEntity<ShippingRes
 		this.page = page;
 	}
 
-	public List<ShippingPubEntity> getItens() {
+	public List<ShippingResultSearchItemPubEntity> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<ShippingPubEntity> itens) {
+	public void setItens(List<ShippingResultSearchItemPubEntity> itens) {
 		this.itens = itens;
 	}
 

@@ -18,14 +18,11 @@ import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingIndexEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
-import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -295,6 +292,7 @@ public class ShippingEntityAccessImp
 
 	}
 
+	/*
 	public List<Shipping> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -393,7 +391,8 @@ public class ShippingEntityAccessImp
 			throw new EntityAccessException(e);
 		}		
 	}
-
+    */
+	
 	@Override
 	public Shipping findById(String id) throws EntityAccessException {
 		return super.findById(id);

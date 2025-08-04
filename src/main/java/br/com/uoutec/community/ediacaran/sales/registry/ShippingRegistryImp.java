@@ -23,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -56,6 +57,9 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Inject
 	private ShippingEntityAccess entityAccess;
 
+	@Inject
+	private ShippingIndexEntityAccess indexEntityAccess;
+	
 	@Inject
 	private EventRegistry throwSystemEventRegistry;
 	
@@ -208,7 +212,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<Shipping> list = entityAccess.search(value, firstResult, maxResults);
+			List<Shipping> list = indexEntityAccess.search(value, firstResult, maxResults);
 			List<Shipping> itens = new ArrayList<>();
 			
 			for(Shipping e: list) {
@@ -386,7 +390,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			order.setId(entry.getKey());
 			
 			ShippingRegistryUtil.cancelShippings(shippings, order, justification, 
-					cancelDate, orderRegistry, shippingRegistry, entityAccess, productTypeRegistry);
+					cancelDate, orderRegistry, shippingRegistry, entityAccess, indexEntityAccess, productTypeRegistry);
 			
 		}
 		
@@ -406,6 +410,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
+		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
@@ -427,6 +432,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, EntityContextPlugin.getEntity(OrderRegistry.class), productTypeRegistry);
+		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		
 	}

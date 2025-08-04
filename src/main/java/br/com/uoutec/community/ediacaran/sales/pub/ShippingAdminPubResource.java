@@ -88,7 +88,7 @@ public class ShippingAdminPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
-	@RequireAnyRole(BasicRoles.USER)
+	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.SEARCH)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public ShippingSearchResultPubEntity search(

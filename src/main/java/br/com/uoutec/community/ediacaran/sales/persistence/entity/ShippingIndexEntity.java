@@ -9,7 +9,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
@@ -45,10 +44,16 @@ public class ShippingIndexEntity implements Serializable{
 	@Column(name = "dsc_dest_address", length=255)
 	private String destAddress;
 
+	@Column(name="dat_received")
+	private LocalDateTime receivedDate;
+
+	@Column(name="bit_closed")
+	private Boolean closed;
+	
 	public ShippingIndexEntity(){
 	}
 	
-	public ShippingIndexEntity(Shipping e, Client client){
+	public ShippingIndexEntity(Shipping e){
 		this.order = e.getOrder();
 		this.destAddress = e.getDest() == null? null : e.getDest().toString();
 		this.destAddress = this.destAddress.length() > 255? this.destAddress.substring(0, 254) : this.destAddress;
@@ -58,15 +63,18 @@ public class ShippingIndexEntity implements Serializable{
 		this.cancelDate = e.getCancelDate();
 		this.client = e.getClient() == null? null : e.getClient().getId();
 		
-		if(client.getFirstName() != null) {
-			this.clientName = this.clientName + " " + client.getFirstName();
+		if(e.getClient().getFirstName() != null) {
+			this.clientName = this.clientName + " " + e.getClient().getFirstName();
 		}
 		
-		if(client.getLastName() != null) {
-			this.clientName = this.clientName + " " + client.getLastName();
+		if(e.getClient().getLastName() != null) {
+			this.clientName = this.clientName + " " + e.getClient().getLastName();
 		}
 		
 		this.clientName = StringUtil.toSearch(this.clientName);
+
+		this.receivedDate = e.getReceivedDate();
+		this.closed = e.isClosed();
 		
 	}
 
@@ -128,14 +136,7 @@ public class ShippingIndexEntity implements Serializable{
 			e =  new Shipping();
 		}
 		
-		Shipping s = new Shipping();
-		
-		s.setId(id);
-		
-		Client c = new Client();
-		c.setId(this.client);
-		e.setClient(c);
-		
+		e.setId(id);
 		return e;
 	}
 

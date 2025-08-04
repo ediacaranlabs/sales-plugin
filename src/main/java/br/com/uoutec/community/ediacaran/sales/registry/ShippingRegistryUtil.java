@@ -21,6 +21,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
@@ -202,6 +203,29 @@ public class ShippingRegistryUtil {
 		
 		markAsComplete(order, allShippings, orderRegistry, productTypeRegistry); 
 	}
+
+	public static void saveOrUpdateIndex(Shipping e, ShippingIndexEntityAccess indexEntityAccess) throws ShippingRegistryException {
+		try {
+			if(indexEntityAccess.findById(e.getId()) == null) {
+				indexEntityAccess.save(e);
+			}
+			else {
+				indexEntityAccess.update(e);
+			}
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+	}
+
+	public static void deleteIndex(Shipping e, ShippingIndexEntityAccess indexEntityAccess) throws ShippingRegistryException {
+		try {
+			indexEntityAccess.delete(e);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+	}
 	
 	public static void registerNewShippingEvent(ActionRegistry actionRegistry, Shipping shipping) {
 		actionRegistry.executeAction(
@@ -299,7 +323,7 @@ public class ShippingRegistryUtil {
 
 	public static void cancelShippings(List<Shipping> shippings, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, 
+			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, ShippingIndexEntityAccess indexEntityAccess,
 			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
@@ -310,9 +334,9 @@ public class ShippingRegistryUtil {
 			
 			i.setCancelDate(cancelDate);
 			i.setCancelJustification(justification);
-			entityAccess.update(i);
-			
-			orderRegistry.registryLog(actualOrder, "canceled shipping #" + i.getId() + ": " +  justification);
+			update(i, actualOrder, entityAccess);
+			saveOrUpdateIndex(i, indexEntityAccess);
+			OrderRegistryUtil.registerEvent("canceled shipping #" + i.getId() + ": " +  justification, actualOrder, orderRegistry);
 			
 		}
 
