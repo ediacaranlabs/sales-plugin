@@ -107,6 +107,7 @@ public class ProductsCartAdminPubResource {
 		
 		ProductSearch search = null;
 		try{
+			productSearch.setDisplay(true);
 			search = productSearch.rebuild(false, true, true);
 		}
 		catch(Throwable ex){

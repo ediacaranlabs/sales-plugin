@@ -57,28 +57,29 @@
 					<ec:table style="striped">
 						<ec:table-header>
 							<ec:table-col>
-								<b><fmt:message key="tabs.search.result.firt_name.label" bundle="${messages}"/></b>
+								<ec:center><b><fmt:message key="tabs.search.result.firt_name.label" bundle="${messages}"/></b></ec:center>
 							</ec:table-col>
 							<ec:table-col>
-								<b><fmt:message key="tabs.search.result.last_name.label" bundle="${messages}"/></b>
+								<ec:center><b><fmt:message key="tabs.search.result.last_name.label" bundle="${messages}"/></b></ec:center>
 							</ec:table-col>
 							<ec:table-col>
-								<b><fmt:message key="tabs.search.result.country.label" bundle="${messages}"/></b>
+								<ec:center><b><fmt:message key="tabs.search.result.country.label" bundle="${messages}"/></b></ec:center>
 							</ec:table-col>
 							<ec:table-col>
+								<ec:center><fmt:message key="tabs.search.result.actions.label" bundle="${messages}"/></b></ec:center>
 							</ec:table-col>
 						</ec:table-header>
 						<ec:table-body>
 						<ec:forEach items="!{response.itens}" var="item">
 						<ec:table-row>
 							<ec:table-col>
-								!{item.firstName}
+								<ec:center>!{item.firstName}</ec:center>
 							</ec:table-col>
 							<ec:table-col>
-								!{item.lastName}
+								<ec:center>!{item.lastName}</ec:center>
 							</ec:table-col>
 							<ec:table-col>
-								!{item.country.name}
+								<ec:center>!{item.country.name}</ec:center>
 							</ec:table-col>
 							<ec:table-col>
 								<ec:button id="button_product_!{item.protectedID}" label="#{tabs.search.result.select.label}" icon="check" align="right" actionType="button" bundle="${messages}">

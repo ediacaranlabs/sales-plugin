@@ -2,9 +2,11 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -223,6 +225,10 @@ public class Order implements Serializable{
 		this.taxes = taxes;
 	}
 
+	public long getDaysAfterCreated() {
+		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
+	}
+	
 	public BigDecimal getSubtotal(){
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {

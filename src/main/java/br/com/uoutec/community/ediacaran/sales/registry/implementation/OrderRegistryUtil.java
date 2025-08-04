@@ -25,6 +25,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.OrderIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
@@ -392,8 +393,7 @@ public class OrderRegistryUtil {
 		return address;
 	}
 
-	public static void save(Order entity, OrderEntityAccess entityAccess) 
-			throws PaymentGatewayException, ValidationException, PersistenceOrderRegistryException{
+	public static void save(Order entity, OrderEntityAccess entityAccess) throws PersistenceOrderRegistryException, ValidationException {
 		validateOrder(entity, saveValidations);
 		try {
 			entityAccess.save(entity);
@@ -419,6 +419,34 @@ public class OrderRegistryUtil {
 		ValidatorBean.validate(order, groups);
 	}
 
+	public static void saveOrUpdateIndex(Order e, OrderIndexEntityAccess indexEntityAccess) throws PersistenceOrderRegistryException {
+		try {
+			
+			if(indexEntityAccess.findById(e.getId()) != null) {
+				indexEntityAccess.update(e);
+			}
+			else {
+				indexEntityAccess.save(e);
+			}
+			indexEntityAccess.flush();
+		}
+		catch(Throwable ex) {
+			throw new PersistenceOrderRegistryException(ex);			
+		}
+		
+	}
+
+	public static void removeIndex(Order e, OrderIndexEntityAccess indexEntityAccess) throws PersistenceOrderRegistryException {
+		try {
+			indexEntityAccess.delete(e);
+			indexEntityAccess.flush();
+		}
+		catch(Throwable ex) {
+			throw new PersistenceOrderRegistryException(ex);			
+		}
+		
+	}
+	
 	public static void checkAndUpdateNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		checkNewOrderStatus(order, newStatus);
 		order.setStatus(newStatus);		
@@ -529,7 +557,7 @@ public class OrderRegistryUtil {
 			throw new InvoiceRegistryException("payment has not yet been made");
 		}
 	}
-	
+
 	public static void markAsCompleteOrder(Order order, Invoice invoice, Shipping shipping, List<Invoice> invoices, List<Shipping> shippings, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
 			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 

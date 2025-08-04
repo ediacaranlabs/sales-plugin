@@ -26,6 +26,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.OrderIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
@@ -33,6 +34,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
@@ -54,8 +56,6 @@ import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.entity.registry.RegistryException;
 import br.com.uoutec.filter.invoker.annotation.EnableFilters;
 import br.com.uoutec.i18n.ValidationException;
-import br.com.uoutec.i18n.ValidatorBean;
-import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
 public class OrderRegistryImp
@@ -80,6 +80,9 @@ public class OrderRegistryImp
 	@Inject
 	private OrderEntityAccess orderEntityAccess;
 
+	@Inject
+	private OrderIndexEntityAccess indexEntityAccess;
+	
 	@Inject
 	private SubjectProvider subjectProvider;
 
@@ -112,43 +115,27 @@ public class OrderRegistryImp
 			e.printStackTrace();
 			throw new OrderRegistryException(e);
 		}
+		
 	}
 
-	private void registryNewOrder(Order entity) 
-					throws PaymentGatewayException, EntityAccessException, ValidationException, ClientRegistryException{
-		validateOrder(entity, saveValidations);
-		orderEntityAccess.save(entity);
-		
-		if(orderEntityAccess.ifIndexExist(entity)) {
-			orderEntityAccess.updateIndex(entity);
-		}
-		else {
-			orderEntityAccess.saveIndex(entity);
-		}
-		
-		orderEntityAccess.flush();
+	private void registryNewOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
+		OrderRegistryUtil.validateOrder(entity, saveValidations);
+		OrderRegistryUtil.save(entity, orderEntityAccess);
+		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}
 	
-	private void updateOrder(Order entity) throws EntityAccessException, ValidationException, ClientRegistryException{
-		validateOrder(entity, updateValidations);
-		orderEntityAccess.update(entity);
-		
+	private void updateOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
+		OrderRegistryUtil.validateOrder(entity, updateValidations);
+		OrderRegistryUtil.update(entity, orderEntityAccess);
+		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
+	}
 
-		if(entity.isRemoved()) {
-			if(orderEntityAccess.ifIndexExist(entity)) {
-				orderEntityAccess.deleteIndex(entity);
-			}
+	private void deleteOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
+		if(!entity.isRemoved()){
+			entity.setRemoved(true);
+			OrderRegistryUtil.update(entity, orderEntityAccess);
+			OrderRegistryUtil.removeIndex(entity, indexEntityAccess);
 		}
-		else {
-			if(orderEntityAccess.ifIndexExist(entity)) {
-				orderEntityAccess.updateIndex(entity);
-			}
-			else {
-				orderEntityAccess.saveIndex(entity);
-			}
-		}
-		
-		orderEntityAccess.flush();
 	}
 	
 	@Override
@@ -158,12 +145,14 @@ public class OrderRegistryImp
 	public void removeOrder(Order entity) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRemovePermission());
-		
+
 		try{
-			if(!entity.isRemoved()){
-				entity.setRemoved(true);
-				this.updateOrder(entity);
+			if(entity.getId() != null){
+				deleteOrder(entity);
 			}
+		}
+		catch(ValidationException e){
+			throw new OrderRegistryException(e.getMessage());
 		}
 		catch(Throwable e){
 			e.printStackTrace();
@@ -260,7 +249,7 @@ public class OrderRegistryImp
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<Order> itens = orderEntityAccess.searchOrder(value, firstResult, maxResults);
+			List<Order> itens = indexEntityAccess.searchOrder(value, firstResult, maxResults);
 			List<Order> result = new ArrayList<>();
 			ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
 			
@@ -418,6 +407,7 @@ public class OrderRegistryImp
 		OrderRegistryUtil.postOrder(order, cart, productTypeRegistry);
 		OrderRegistryUtil.registerEvent(message == null? "Pedido criado #" + order.getId() : message, order, orderEntityAccess);
 		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, order);
+		OrderRegistryUtil.saveOrUpdateIndex(order, indexEntityAccess);
 		
 		return order;
 	}
@@ -639,10 +629,6 @@ public class OrderRegistryImp
 		*/
 	}
 	
-	private void validateOrder(Order order, Class<?> ... groups) throws ValidationException{
-		ValidatorBean.validate(order, groups);
-	}
-
 	/* log  */
 	
 	@ActivateRequestContext
