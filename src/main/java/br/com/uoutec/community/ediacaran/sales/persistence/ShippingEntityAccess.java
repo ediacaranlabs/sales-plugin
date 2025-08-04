@@ -20,8 +20,6 @@ public interface ShippingEntityAccess {
 	
 	List<Shipping> findByOrder(String order, Client client) throws EntityAccessException;
 	
-	//List<Shipping> search(ShippingSearch value, Integer first, Integer max) throws EntityAccessException;
-	
 	void flush();
 	
 }

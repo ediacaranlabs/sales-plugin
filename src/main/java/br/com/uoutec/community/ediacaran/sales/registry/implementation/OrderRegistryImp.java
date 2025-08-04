@@ -223,6 +223,9 @@ public class OrderRegistryImp
 					return null;
 				}
 			}
+			
+			order.setClient(order.getClient() == null? null : clientRegistry.findClientById(order.getClient().getId()));					
+			
 			return order;
 		}
 		catch(Throwable e){

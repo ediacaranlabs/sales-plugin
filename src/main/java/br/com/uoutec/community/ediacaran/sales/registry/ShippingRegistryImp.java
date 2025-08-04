@@ -191,6 +191,9 @@ public class ShippingRegistryImp implements ShippingRegistry{
 						return null;
 					}
 				}
+				
+				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));					
+				
 			}
 			
 			return e;
