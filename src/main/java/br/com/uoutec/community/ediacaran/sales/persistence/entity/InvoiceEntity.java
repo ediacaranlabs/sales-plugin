@@ -17,11 +17,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
-import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
-
 
 @Entity
 @Table(name="rw_invoice")
@@ -37,9 +36,8 @@ public class InvoiceEntity implements Serializable{
 	@Column(name="dat_date")
 	private LocalDateTime date;
 
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cod_client",  updatable = false, referencedColumnName="cod_system_user")
-	private SystemUserEntity client;
+	@Column(name="cod_client", length = 11)
+	private Integer client;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="cod_order",  updatable = false, referencedColumnName="cod_order")
@@ -87,9 +85,8 @@ public class InvoiceEntity implements Serializable{
 		this.cancelDate = e.getCancelDate();
 		this.cancelJustification = e.getCancelJustification();
 		
-		if(e.getClient() > 0) {
-			this.client = new SystemUserEntity();
-			this.client.setId(e.getClient());
+		if(e.getClient() != null) {
+			this.client = e.getClient().getId();
 		}
 		
 		this.value = e.getSubtotal();
@@ -136,11 +133,11 @@ public class InvoiceEntity implements Serializable{
 		this.order = order;
 	}
 
-	public SystemUserEntity getClient() {
+	public Integer getClient() {
 		return client;
 	}
 
-	public void setClient(SystemUserEntity client) {
+	public void setClient(Integer client) {
 		this.client = client;
 	}
 
@@ -234,7 +231,9 @@ public class InvoiceEntity implements Serializable{
 		e.setCancelJustification(this.cancelJustification);
 		
 		if(this.client != null) {
-			e.setClient(this.client.getId());
+			Client client = new Client();
+			client.setId(this.client);
+			e.setClient(client);
 		}
 		
 		if(this.itens != null){

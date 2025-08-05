@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearchPubEntity;
+import org.brandao.brutos.annotation.Basic;
+import org.brandao.brutos.annotation.MappingTypes;
+
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -20,7 +22,8 @@ public class InvoiceSearchResultPubEntity extends AbstractPubEntity<InvoicesResu
 	
 	private int page;
 	
-	private List<InvoiceResultSearchPubEntity> data;
+	@Basic(mappingType = MappingTypes.OBJECT)
+	private List<InvoiceSearchResultItemPubEntity> itens;
 
 	public InvoiceSearchResultPubEntity(InvoicesResultSearch invoicesResultSearch, Locale locale) {
 		super();
@@ -30,8 +33,8 @@ public class InvoiceSearchResultPubEntity extends AbstractPubEntity<InvoicesResu
 		
 		if(invoicesResultSearch.getItens() != null) {
 			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.SHORT).withLocale(locale);
-			this.data = invoicesResultSearch.getItens().stream()
-					.map((e)->new InvoiceResultSearchPubEntity(e, locale, dtaFormt)).collect(Collectors.toList());
+			this.itens = invoicesResultSearch.getItens().stream()
+					.map((e)->new InvoiceSearchResultItemPubEntity(e, locale, dtaFormt)).collect(Collectors.toList());
 		}
 	}
 
@@ -80,12 +83,12 @@ public class InvoiceSearchResultPubEntity extends AbstractPubEntity<InvoicesResu
 		this.page = page;
 	}
 
-	public List<InvoiceResultSearchPubEntity> getData() {
-		return data;
+	public List<InvoiceSearchResultItemPubEntity> getItens() {
+		return itens;
 	}
 
-	public void setData(List<InvoiceResultSearchPubEntity> data) {
-		this.data = data;
+	public void setItens(List<InvoiceSearchResultItemPubEntity> itens) {
+		this.itens = itens;
 	}
 
 	public boolean isHasNextPage() {

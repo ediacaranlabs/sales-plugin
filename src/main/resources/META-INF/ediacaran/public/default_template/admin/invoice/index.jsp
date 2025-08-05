@@ -81,7 +81,7 @@
 						<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
 					</ec:table-header>
 					<ec:table-body>
-						<ec:forEach items="!{response.data}" var="item">
+						<ec:forEach items="!{response.itens}" var="item">
 						<ec:table-row>
 							<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
 							<ec:table-col><ec:center><small>!{item.order}</small></ec:center></ec:table-col>

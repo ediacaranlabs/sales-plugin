@@ -19,10 +19,13 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.i18n.ValidationException;
+import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public class InvoiceRegistryUtil {
@@ -35,6 +38,11 @@ public class InvoiceRegistryUtil {
 		}
 	}
 
+	public static void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{
+		ValidatorBean.validate(e, groups);
+	}
+
+	
 	public static boolean isCompletedInvoice(Order order, Collection<Invoice> invoices
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		
@@ -226,7 +234,7 @@ public class InvoiceRegistryUtil {
 		);
 	}
 	
-	public static Client getActualUser(Order order, Client client, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException {
+	public static Client getActualUser(Order order, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException {
 		Client actualClient;
 		try{
 			actualClient = clientRegistry.findClientById(order.getClient().getId());
@@ -235,8 +243,8 @@ public class InvoiceRegistryUtil {
 			throw new OrderRegistryException("usuário não encontrado: " + order.getClient());
 		}
 		
-		if(actualClient.getId() != client.getId()) {
-			throw new InvoiceRegistryException("invalid user: " + actualClient.getId()+ " != " + client.getId());
+		if(actualClient.getId() != order.getClient().getId()) {
+			throw new InvoiceRegistryException("invalid user: " + actualClient.getId()+ " != " + order.getClient().getId());
 		}
 		
 		return actualClient;
@@ -319,47 +327,46 @@ public class InvoiceRegistryUtil {
 			productTypeHandler.registryItem(user, order, productRequest);
 		}
 	}
-	
-	public static void save(Invoice invoice, Order order, InvoiceEntityAccess entityAccess, ClientRegistry clientRegistry) throws InvoiceRegistryException {
+
+	public static void saveOrUpdateIndex(Invoice invoice, InvoiceIndexEntityAccess entityAccess) throws InvoiceRegistryException {
 		try {
 			entityAccess.save(invoice);
 			
-			Client client = clientRegistry.findClientById(invoice.getClient());
-			
-			if(entityAccess.ifIndexExist(invoice)) {
-				entityAccess.updateIndex(invoice, client);
+			if(entityAccess.findById(invoice) != null) {
+				entityAccess.update(invoice);
 			}
 			else {
-				entityAccess.saveIndex(invoice, client);
+				entityAccess.save(invoice);
 			}
-			
 			
 			entityAccess.flush();
 		}
 		catch(Throwable e){
 			throw new PersistenceInvoiceRegistryException(
-				"invoice error: " + order.getId(), e);
+				"invoice error: " + invoice.getOrder(), e);
+		}
+	}
+	
+	public static void save(Invoice invoice, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+		try {
+			entityAccess.save(invoice);
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new PersistenceInvoiceRegistryException(
+				"invoice error: " + invoice.getOrder(), e);
 		}
 	}
 
-	public static void update(Invoice invoice, Order order, InvoiceEntityAccess entityAccess, ClientRegistry clientRegistry) throws InvoiceRegistryException {
+	public static void update(Invoice invoice, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
 		try {
 			entityAccess.update(invoice);
-			
-			Client client = clientRegistry.findClientById(invoice.getClient());
-			
-			if(entityAccess.ifIndexExist(invoice)) {
-				entityAccess.updateIndex(invoice, client);
-			}
-			else {
-				entityAccess.saveIndex(invoice, client);
-			}
 			
 			entityAccess.flush();
 		}
 		catch(Throwable e){
 			throw new PersistenceInvoiceRegistryException(
-				"invoice error: " + order.getId(), e);
+				"invoice error: " + invoice.getOrder(), e);
 		}
 	}
 	
@@ -376,7 +383,7 @@ public class InvoiceRegistryUtil {
 	public static Invoice toInvoice(Order order, Collection<ProductRequest> itens) {
 		Invoice i = new Invoice();
 		i.setId(null);
-		i.setClient(order.getClient().getId());
+		i.setClient(order.getClient());
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
 		i.setItens(new ArrayList<ProductRequest>(itens));
@@ -397,7 +404,7 @@ public class InvoiceRegistryUtil {
 
 	public static void cancelInvoices(List<Invoice> invoices, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		
@@ -409,7 +416,7 @@ public class InvoiceRegistryUtil {
 			i.setCancelDate(cancelDate);
 			i.setCancelJustification(justification);
 			
-			update(i, actualOrder, entityAccess, clientRegistry);
+			update(i, entityAccess);
 			
 			orderRegistry.registryLog(actualOrder, "canceled invoice #" + i.getId() + ": " +  justification);
 			

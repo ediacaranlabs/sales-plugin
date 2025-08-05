@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,6 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -24,6 +24,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -40,7 +41,6 @@ import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.entity.registry.RegistryException;
 import br.com.uoutec.filter.invoker.annotation.EnableFilters;
 import br.com.uoutec.i18n.ValidationException;
-import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
@@ -58,6 +58,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	@Inject
 	private InvoiceEntityAccess entityAccess;
 
+	@Inject
+	private InvoiceIndexEntityAccess indexEntityAccess;
+	
 	@Inject
 	private SystemUserRegistry systemUserRegistry;
 	
@@ -90,11 +93,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		}
 		
 		if(entity.getId() == null){
-			validateInvoice(entity, saveValidations);
+			InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
 			registryNewInvoice(entity, order);
 		}
 		else{
-			validateInvoice(entity, updateValidations);
+			InvoiceRegistryUtil.validateInvoice(entity, updateValidations);
 			updateInvoice(entity, order);
 		}
 	}
@@ -170,10 +173,15 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			Invoice e = entityAccess.findById(id);
 			
 			if(e != null) {
-				if(systemUser != null && e.getClient() != systemUser.getId()) {
+				if(systemUser != null && e.getClient().getId() != systemUser.getId()) {
 					return null;
 				}
 			}
+			
+			ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
+			
+			e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));					
+			
 			return e;
 		}
 		catch(Throwable e){
@@ -194,12 +202,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
-			List<InvoiceResultSearch> itens = entityAccess.search(value, firstResult, maxResults);
+			List<Invoice> list = indexEntityAccess.search(value, firstResult, maxResults);
+			List<Invoice> itens = new ArrayList<>();
 			ClientRegistry clientRegistry   = EntityContextPlugin.getEntity(ClientRegistry.class);
 			
-			for(InvoiceResultSearch e: itens) {
-				e.setInvoice(entityAccess.findById(e.getInvoice().getId()));
-				e.setOwner(clientRegistry.findClientById(e.getOwner().getId()));
+			for(Invoice e: list) {
+				e = entityAccess.findById(e.getId());
+				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));
+				itens.add(e);
 			}
 			
 			return new InvoicesResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
@@ -287,7 +297,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		LocalDateTime cancelDate          = LocalDateTime.now();
 		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-		ClientRegistry clientRegistry     = EntityContextPlugin.getEntity(ClientRegistry.class);
 		
 		for(Entry<String,List<Invoice>> entry: map.entrySet()) {
 			
@@ -295,7 +304,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			order.setId(entry.getKey());
 			
 			InvoiceRegistryUtil.cancelInvoices(invoices, order, justification, 
-					cancelDate, orderRegistry, shippingRegistry, entityAccess, clientRegistry);
+					cancelDate, orderRegistry, shippingRegistry, entityAccess);
 			
 		}
 		
@@ -383,14 +392,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private void registryNewInvoice(Invoice entity, Order order
 			) throws RegistryException, EntityAccessException, ProductTypeHandlerException {
 		
-		Client client = new Client();
-		client.setId(entity.getClient());
-		
 		ClientRegistry clientRegistry      = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, client, clientRegistry);		
+		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, entityAccess);
 		List<Shipping> actualShippings     = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
 		
@@ -399,7 +405,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
 		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
-		InvoiceRegistryUtil.save(entity, actualOrder, entityAccess, clientRegistry);
+		InvoiceRegistryUtil.save(entity, entityAccess);
+		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
@@ -410,29 +417,23 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private void updateInvoice(Invoice entity, Order order
 			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 		
-		Client client = new Client();
-		client.setId(entity.getClient());
-		
 		ClientRegistry clientRegistry      = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, client, clientRegistry);		
+		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
 		Invoice actualInvoice              = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(order, actualClient, entityAccess);
 		List<Shipping> actualShippings     = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
 		
 		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
-		InvoiceRegistryUtil.update(entity, order, entityAccess, clientRegistry);
+		InvoiceRegistryUtil.update(entity, entityAccess);
+		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, EntityContextPlugin.getEntity(OrderRegistry.class));
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, entity, actualInvoices, actualShippings, orderRegistry, productTypeRegistry);
 	}
 	
-	private void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{
-		ValidatorBean.validate(e, groups);
-	}
-
 	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
 		SystemUser user = systemUserRegistry.getBySystemID(userID);
 		

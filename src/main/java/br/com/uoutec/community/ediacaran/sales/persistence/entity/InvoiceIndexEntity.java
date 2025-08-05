@@ -10,9 +10,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity
@@ -29,13 +27,13 @@ public class InvoiceIndexEntity implements Serializable{
 	@Column(name="dat_date")
 	private LocalDateTime date;
 
-	@Column(name="cod_client",  updatable = false)
+	@Column(name="cod_client")
 	private Integer client;
 	
 	@Column(name="dsc_client_name", length=255)
 	private String clientName;
 	
-	@Column(name="cod_order", length=32, updatable = false)
+	@Column(name="cod_order", length=32)
 	private String order;
 
 	@Column(name="dat_cancellation")
@@ -47,20 +45,20 @@ public class InvoiceIndexEntity implements Serializable{
 	public InvoiceIndexEntity(){
 	}
 	
-	public InvoiceIndexEntity(Invoice e, Client client){
+	public InvoiceIndexEntity(Invoice e){
 		this.order = e.getOrder();
 		this.date = e.getDate();
 		this.id = e.getId();
 		this.cancelDate = e.getCancelDate();
-		this.client = e.getClient();
+		this.client = e.getClient() == null? null : e.getClient().getId();
 		this.total = e.getTotal();
 		
-		if(client.getFirstName() != null) {
-			this.clientName = this.clientName + " " + client.getFirstName();
+		if(e.getClient().getFirstName() != null) {
+			this.clientName = this.clientName + " " + e.getClient().getFirstName();
 		}
 		
-		if(client.getLastName() != null) {
-			this.clientName = this.clientName + " " + client.getLastName();
+		if(e.getClient().getLastName() != null) {
+			this.clientName = this.clientName + " " + e.getClient().getLastName();
 		}
 		
 		this.clientName = StringUtil.toSearch(this.clientName);
@@ -115,24 +113,17 @@ public class InvoiceIndexEntity implements Serializable{
 		this.total = total;
 	}
 
-	public InvoiceResultSearch toEntity() {
+	public Invoice toEntity() {
 		return toEntity(null);
 	}
 	
-	public InvoiceResultSearch toEntity(InvoiceResultSearch e) {
+	public Invoice toEntity(Invoice e) {
 		
 		if(e == null) {
-			e = new InvoiceResultSearch(null, null);
+			e = new Invoice();
 		}
 		
-		Invoice i = new Invoice();
-		i.setId(id);
-		
-		Client client = new Client();
-		client.setId(this.client);
-		
-		e.setInvoice(i);
-		e.setOwner(client);
+		e.setId(id);
 		
 		return e;
 	}

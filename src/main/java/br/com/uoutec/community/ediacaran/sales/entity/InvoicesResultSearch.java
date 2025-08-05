@@ -10,9 +10,9 @@ public class InvoicesResultSearch {
 	
 	private int page;
 	
-	private List<InvoiceResultSearch> itens;
+	private List<Invoice> itens;
 
-	public InvoicesResultSearch(boolean hasNextPage, int maxPages, int page, List<InvoiceResultSearch> itens) {
+	public InvoicesResultSearch(boolean hasNextPage, int maxPages, int page, List<Invoice> itens) {
 		super();
 		this.maxPages = maxPages;
 		this.page = page;
@@ -44,11 +44,11 @@ public class InvoicesResultSearch {
 		this.page = page;
 	}
 
-	public List<InvoiceResultSearch> getItens() {
+	public List<Invoice> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<InvoiceResultSearch> itens) {
+	public void setItens(List<Invoice> itens) {
 		this.itens = itens;
 	}
 

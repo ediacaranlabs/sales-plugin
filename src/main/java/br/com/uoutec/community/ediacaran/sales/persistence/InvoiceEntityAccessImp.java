@@ -16,18 +16,13 @@ import javax.persistence.criteria.Root;
 
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceResultSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
-import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -153,46 +148,6 @@ public class InvoiceEntityAccessImp
     	}
 	}
 	
-	public void saveIndex(Invoice value, Client client) throws EntityAccessException {
-		try{
-			InvoiceIndexEntity pEntity = new InvoiceIndexEntity(value, client);
-			entityManager.persist(pEntity);
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-
-	public void updateIndex(Invoice value, Client client) throws EntityAccessException {
-		try{
-			InvoiceIndexEntity pEntity = new InvoiceIndexEntity(value, client);
-			entityManager.merge(pEntity);
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-
-	public void deleteIndex(Invoice value, Client client) throws EntityAccessException {
-		try{
-			InvoiceIndexEntity pEntity = new InvoiceIndexEntity(value, client);
-			entityManager.remove(pEntity);
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-
-	public boolean ifIndexExist(Invoice value) throws EntityAccessException {
-		try{
-			Object o = entityManager.find(InvoiceIndexEntity.class, value.getId());
-			return o != null;
-    	}
-    	catch(Throwable e){
-    		throw new EntityAccessException(e);
-    	}
-	}
-	
 	@Override
 	protected InvoiceEntity toPersistenceEntity(Invoice entity)
 			throws Throwable {
@@ -234,7 +189,6 @@ public class InvoiceEntityAccessImp
 		    		builder.createQuery(InvoiceEntity.class);
 		    Root<InvoiceEntity> from = criteria.from(InvoiceEntity.class);
 		    Join<InvoiceEntity, OrderEntity> orderJoin = from.join("order");
-		    Join<InvoiceEntity, SystemUserEntity> userJoin = from.join("client");
 		    
 		    criteria.select(from);
 
@@ -242,7 +196,7 @@ public class InvoiceEntityAccessImp
 	    	and.add(builder.equal(orderJoin.get("id"), order));
 		    
 	    	if(user != null) {
-		    	and.add(builder.equal(userJoin.get("id"), user.getId()));
+		    	and.add(builder.equal(from.get("client"), user.getId()));
 	    	}
 	    	
 		    if(!and.isEmpty()) {
@@ -330,110 +284,6 @@ public class InvoiceEntityAccessImp
 			throw new EntityAccessException(e);
 		}
 
-	}
-
-	public List<InvoiceResultSearch> search(InvoiceSearch value, Integer first, Integer max) throws EntityAccessException {
-		try {
-			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		    CriteriaQuery<InvoiceIndexEntity> criteria =	builder.createQuery(InvoiceIndexEntity.class);
-		    Root<InvoiceIndexEntity> from = criteria.from(InvoiceIndexEntity.class);
-		    
-		    criteria.select(from);
-		    
-		    List<Predicate> and = new ArrayList<Predicate>();
-
-		    if(value.getId() != null) {
-		    	and.add(builder.equal(from.get("id"), value.getId()));
-		    }
-
-		    if(value.getCanceled() != null) {
-		    	if(value.getCanceled()) {
-			    	and.add(builder.isNotNull(from.get("cancelDate")));
-		    	}
-		    	else {
-			    	and.add(builder.isNull(from.get("cancelDate")));
-		    	}
-		    }
-		    
-		    if(value.getOrder() != null) {
-		    	and.add(builder.equal(from.get("order"), value.getOrder()));
-		    }
-		    
-		    if(value.getStartDate() != null || value.getEndDate() != null) {
-		    	
-		    	if(value.getStartDate() != null && value.getEndDate() != null) {
-				    and.add(builder.between(from.get("date"), value.getStartDate(), value.getEndDate()));
-		    	}
-		    	else
-		    	if(value.getStartDate() != null) {
-				    and.add(builder.greaterThanOrEqualTo(from.get("date"), value.getStartDate()));
-		    	}
-		    	else
-		    	if(value.getEndDate() != null) {
-				    and.add(builder.lessThanOrEqualTo(from.get("date"), value.getEndDate()));
-		    	}
-		    	
-		    }
-
-		    if(value.getMinTotal() != null || value.getMaxTotal() != null) {
-		    	
-		    	if(value.getMinTotal() != null && value.getMaxTotal() != null) {
-				    and.add(builder.between(from.get("total"), value.getMinTotal(), value.getMaxTotal()));
-		    	}
-		    	else
-		    	if(value.getMinTotal() != null) {
-				    and.add(builder.greaterThanOrEqualTo(from.get("total"), value.getMinTotal()));
-		    	}
-		    	else
-		    	if(value.getMaxTotal() != null) {
-				    and.add(builder.lessThanOrEqualTo(from.get("total"), value.getMaxTotal()));
-		    	}
-		    	
-		    }
-		    
-		    if(value.getOwner() != null) {
-			    and.add(builder.equal(from.get("client"), value.getOwner()));
-		    }
-
-		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {
-			    and.add(builder.like(from.get("clientName"), "%" + StringUtil.normalize(value.getOwnerName(), "%") + "%" ));
-		    }
-		    
-		    if(!and.isEmpty()) {
-			    criteria.where(
-			    		builder.and(
-			    				and.stream().toArray(Predicate[]::new)
-    					)
-	    		);
-		    }
-		    
-	    	List<javax.persistence.criteria.Order> orderList = 
-	    			new ArrayList<javax.persistence.criteria.Order>();
-	    	orderList.add(builder.desc(from.get("date")));
-	    	
-		    TypedQuery<InvoiceIndexEntity> typed = entityManager.createQuery(criteria);
-
-
-		    if(first != null) {
-		    	typed.setFirstResult(first);
-		    }
-		    
-		    if(max != null) {
-			    typed.setMaxResults(max);		    	
-		    }
-		    
-		    List<InvoiceIndexEntity> list = (List<InvoiceIndexEntity>)typed.getResultList();
-		    List<InvoiceResultSearch> result = new ArrayList<InvoiceResultSearch>();
-    
-		    for(InvoiceIndexEntity e: list) {
-		    	result.add(e.toEntity());
-		    }
-		    
-			return result;
-		}
-		catch (Throwable e) {
-			throw new EntityAccessException(e);
-		}		
 	}
 	
 }
