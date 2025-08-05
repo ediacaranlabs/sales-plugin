@@ -146,6 +146,8 @@ public class InvoiceIndexEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
+	    	criteria.orderBy(orderList);
+	    	
 		    TypedQuery<InvoiceIndexEntity> typed = entityManager.createQuery(criteria);
 
 

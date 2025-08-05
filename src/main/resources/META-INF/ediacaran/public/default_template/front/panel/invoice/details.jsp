@@ -36,7 +36,7 @@
 			<ed:col>
 				<b><fmt:message key="invoice_id" bundle="${messages}"/>:</b> #${vars.invoice.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.invoice.toStringDate(locale)}<br>
-				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.invoice.client}<br>
+				<%--<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.invoice.client}<br>--%>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.invoice.order}<br>
 			</ed:col>
 		</ed:row>
@@ -46,7 +46,7 @@
 					<ec:table-header>
 						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>
+						<%--<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>--%>
 						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
@@ -58,12 +58,12 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>
+								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
+								<ec:table-col><center>${product.displaySubtotal}</center></ec:table-col>
+								<ec:table-col><center>${product.displayDiscount}</center></ec:table-col>
+								<ec:table-col><center>${product.displayTax}</center></ec:table-col>
+								<ec:table-col><center>${product.displayTotal}</center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -82,18 +82,19 @@
 				
 				<ec:description-list>
 					<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.subtotal}"/>
+						<span id="subtotal">${vars.invoice.displaySubtotal}</span>
 					</ec:description>
 					<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.discount}"/>
+						<span id="discounts">${vars.invoice.displayDiscount}</span>
 					</ec:description>
 					<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.tax}"/>
+						<span id="taxes">${vars.invoice.displayTax}</span>
 					</ec:description>
 					<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
-						${vars.invoice.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.invoice.total}"/>
+						<span id="total">${vars.invoice.displayTotal}</span>
 					</ec:description>
 				</ec:description-list>
+				
 			</ed:col>
 		</ed:row>
 	</ec:box-body>

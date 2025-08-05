@@ -140,6 +140,8 @@ public class ShippingIndexEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
 	    	
+	    	criteria.orderBy(orderList);
+	    	
 		    TypedQuery<ShippingIndexEntity> typed = entityManager.createQuery(criteria);
 
 
