@@ -74,10 +74,10 @@
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.subtotal}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.discount}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.tax}"/></center></ec:table-col>
-								<ec:table-col><center>${product.currency} <br> <fmt:formatNumber pattern="###,###,##0.00"  value="${product.total}"/></center></ec:table-col>
+								<ec:table-col><center>${product.displaySubtotal}</center></ec:table-col>
+								<ec:table-col><center>${product.displayDiscount}</center></ec:table-col>
+								<ec:table-col><center>${product.displayTax}</center></ec:table-col>
+								<ec:table-col><center>${product.displayTotal}</center></ec:table-col>
 							</ec:table-row>
 						</c:forEach>
 					</ec:table-body>
@@ -95,15 +95,26 @@
 			<ed:col size="8">
 				<ec:tabs>
 					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
+					
+						<ec:description-list>
+							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
+								${vars.order.displaySubtotal}
+							</ec:description>
+
+							<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
+								${vars.order.displayDiscount}
+							</ec:description>
+							
+							<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
+								${vars.order.displayTax}
+							</ec:description>
+						</ec:description-list>
+						
+						<%--
 						<ec:description-list>
 							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
 								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.value}"/>
 							</ec:description>
-							<%--
-							<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
-								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.discount}"/>
-							</ec:description>
-							--%>
 							<c:forEach items="${vars.order.taxes}" var="tax">
 							<ec:description title="${tax.name}" truncate="false">
 								<c:if test="${tax.type == 'UNIT'}">${vars.order.payment.currency}</c:if>
@@ -112,15 +123,11 @@
 								<c:if test="${tax.type == 'PERCENTAGE'}"> %</c:if>
 							</ec:description>
 							</c:forEach>
-							<%--
-							<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
-								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.tax}"/>
-							</ec:description>
-							--%>
 							<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
 								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.total}"/>
 							</ec:description>
 						</ec:description-list>
+						--%>
 					</ec:tabs-item>
 					<ec:tabs-item title="#{tabs.invoices.title}" bundle="${messages}">
 					
@@ -140,10 +147,10 @@
 								<ec:table-row>
 									<ec:table-col><center><small>${invoice.id}</small></center></ec:table-col>
 									<ec:table-col><center><small>${vars.order.toStringDate(locale)}</small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.subtotal}"/></small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.tax}"/></small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.discount}"/></small></center></ec:table-col>
-									<ec:table-col><center><small>${vars.order.payment.currency} <br> <fmt:formatNumber pattern="###,###,##0.00" value="${invoice.total}"/></small></center></ec:table-col>
+									<ec:table-col><center><small>${invoice.displaySubtotal}</small></center></ec:table-col>
+									<ec:table-col><center><small>${invoice.displayDiscount}</small></center></ec:table-col>
+									<ec:table-col><center><small>${invoice.displayTax}</small></center></ec:table-col>
+									<ec:table-col><center><small>${invoice.displayTotal}</small></center></ec:table-col>
 									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/invoices/show/${invoice.id}">
 										<fmt:message key="table_invoice.actions.details" bundle="${messages}"/>
 									</a></small></center></ec:table-col>
