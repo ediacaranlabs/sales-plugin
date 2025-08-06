@@ -38,7 +38,7 @@
 				<b><fmt:message key="invoice_id" bundle="${messages}"/>:</b> #${vars.invoice.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.invoice.toStringDate(locale)}<br>
 				<b><fmt:message key="canceled_in" bundle="${messages}"/>:</b> ${vars.invoice.toStringCancelDate(locale)}<br>
-				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.invoice.client}<br>
+				<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.invoice.client.firstName} ${vars.invoice.client.lastName}<br>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.invoice.order}<br>
 			</ed:col>
 		</ed:row>

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,7 +22,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestInvoiceEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.entityaccess.jpa.entity.SystemUserEntity;
@@ -53,8 +54,24 @@ public class InvoiceEntityAccessImp
 			
 			entityManager.persist(pEntity);
 			
-			List<ProductRequestEntity> list = pEntity.getItens();
+			List<ProductRequestInvoiceEntity> list = pEntity.getItens();
 			
+			if(list != null){
+				for(ProductRequestInvoiceEntity e: list){
+					e.setInvoice(pEntity);
+					entityManager.persist(e);
+					
+					ProductRequestEntity pr = entityManager.find(ProductRequestEntity.class, e.getId().getProductRequestID(), LockModeType.PESSIMISTIC_WRITE);
+					
+					if(pr != null) {
+						pr.setInvoice(pEntity);
+						pr = entityManager.merge(pr);
+					}
+					
+				}
+			}
+			
+			/*
 			if(list != null){
 				for(ProductRequestEntity e: list){
 					e.setInvoice(pEntity);
@@ -72,6 +89,7 @@ public class InvoiceEntityAccessImp
 					}
 				}
 			}
+			*/
 			
 			List<InvoiceTaxEntity> taxes = pEntity.getTaxes();
 			
@@ -95,8 +113,15 @@ public class InvoiceEntityAccessImp
 			InvoiceEntity pEntity = this.toPersistenceEntity(value);
 			pEntity = (InvoiceEntity)entityManager.merge(pEntity);
 			
-			List<ProductRequestEntity> list = pEntity.getItens();
+			List<ProductRequestInvoiceEntity> list = pEntity.getItens();
 			
+			if(list != null){
+				for(ProductRequestInvoiceEntity e: list){
+					e = entityManager.merge(e);
+				}
+			}
+			
+			/*
 			if(list != null){
 				for(ProductRequestEntity e: list){
 					if(e.getId() == null){
@@ -125,6 +150,7 @@ public class InvoiceEntityAccessImp
 					
 				}
 			}
+			*/
 			
 			List<InvoiceTaxEntity> taxes = pEntity.getTaxes();
 			

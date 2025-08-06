@@ -66,7 +66,7 @@ public class InvoiceEntity implements Serializable{
 	private String currency;
 	
 	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
-	private List<ProductRequestEntity> itens;
+	private List<ProductRequestInvoiceEntity> itens;
 
 	@OneToMany(mappedBy="invoice", fetch=FetchType.LAZY)
 	private List<InvoiceTaxEntity> taxes;
@@ -95,9 +95,9 @@ public class InvoiceEntity implements Serializable{
 		this.total = e.getTotal();
 		
 		if(e.getItens() != null){
-			this.itens = new ArrayList<ProductRequestEntity>();
+			this.itens = new ArrayList<ProductRequestInvoiceEntity>();
 			for(ProductRequest k: e.getItens()){
-				itens.add(new ProductRequestEntity(this, k));
+				itens.add(new ProductRequestInvoiceEntity(this, k));
 			}
 		}
 
@@ -173,11 +173,11 @@ public class InvoiceEntity implements Serializable{
 		this.total = total;
 	}
 
-	public List<ProductRequestEntity> getItens() {
+	public List<ProductRequestInvoiceEntity> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<ProductRequestEntity> itens) {
+	public void setItens(List<ProductRequestInvoiceEntity> itens) {
 		this.itens = itens;
 	}
 
@@ -238,7 +238,7 @@ public class InvoiceEntity implements Serializable{
 		
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();
-			for(ProductRequestEntity k: this.itens){
+			for(ProductRequestInvoiceEntity k: this.itens){
 				l.add(k.toEntity());
 			}
 			e.setItens(l);

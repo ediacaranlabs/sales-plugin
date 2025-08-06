@@ -84,6 +84,7 @@ public class ProductRequest implements Serializable {
 	}
 	
 	public ProductRequest(ProductRequest value) {
+		setId(value.getId());
 		setAddData(value.getAddData());
 		setAvailability(value.isAvailability());
 		setCost(value.getCost());
@@ -252,6 +253,11 @@ public class ProductRequest implements Serializable {
 	}
 	
 	public BigDecimal getSubtotal(){
+		
+		if(units < 1) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = getValue();
 		return value.multiply(new BigDecimal(this.units));
 	}
@@ -261,6 +267,10 @@ public class ProductRequest implements Serializable {
 	}
 	
 	public BigDecimal getDiscount() {
+		
+		if(units < 1) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		BigDecimal discount = BigDecimal.ZERO;
@@ -291,6 +301,10 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getTax() {
 		
+		if(units < 1) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		BigDecimal tax = BigDecimal.ZERO;
 		
@@ -320,6 +334,10 @@ public class ProductRequest implements Serializable {
 
 	public BigDecimal getTotalTax() {
 		
+		if(units < 1) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		BigDecimal tax = BigDecimal.ZERO;
 		
@@ -344,6 +362,10 @@ public class ProductRequest implements Serializable {
 	}
 	
 	public BigDecimal getTotal(){
+		
+		if(units < 1) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = getValue().multiply(new BigDecimal(this.units));
 		

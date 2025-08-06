@@ -73,6 +73,7 @@ public class InvoiceRegistryUtil {
 		
 		for(ProductRequest pr: values) {
 			ProductRequest tpr = new ProductRequest(pr);
+			//tpr.setId(null);
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		
@@ -332,7 +333,7 @@ public class InvoiceRegistryUtil {
 		try {
 			entityAccess.save(invoice);
 			
-			if(entityAccess.findById(invoice) != null) {
+			if(entityAccess.findById(invoice.getId()) != null) {
 				entityAccess.update(invoice);
 			}
 			else {

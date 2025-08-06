@@ -264,8 +264,32 @@ public class ProductRequestEntity implements Serializable{
 		this.shipping = shipping;
 	}
 
+	public BigDecimal getExchangeRate() {
+		return exchangeRate;
+	}
+
+	public void setExchangeRate(BigDecimal exchangeRate) {
+		this.exchangeRate = exchangeRate;
+	}
+
+	public String getExchangeCurrency() {
+		return exchangeCurrency;
+	}
+
+	public void setExchangeCurrency(String exchangeCurrency) {
+		this.exchangeCurrency = exchangeCurrency;
+	}
+
 	public ProductRequest toEntity(){
-		ProductRequest e = new ProductRequest();
+		return toEntity(null);
+	}
+	
+	public ProductRequest toEntity(ProductRequest e){
+		
+		if(e == null) {
+			e = new ProductRequest();
+		}
+		
 		e.setSerial(this.serial);
 		e.setName(this.name);
 		e.setCost(this.cost);

@@ -152,6 +152,11 @@ public class Invoice implements Serializable{
 	}
 	
 	public BigDecimal getSubtotal(){
+		
+		if(itens.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
 			value = value.add(pr.getSubtotal());
@@ -165,6 +170,10 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getDiscount() {
 
+		if(itens.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
 			value = value.add(pr.getDiscount());
@@ -174,6 +183,10 @@ public class Invoice implements Serializable{
 	}
 
 	private BigDecimal getDiscountBySubtotal() {
+		
+		if(itens.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = getSubtotal();
 		BigDecimal discount = BigDecimal.ZERO;
@@ -203,6 +216,10 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getTax() {
 		
+		if(itens.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = BigDecimal.ZERO;
 		for(ProductRequest pr: itens) {
 			value = value.add(pr.getTax());
@@ -215,6 +232,10 @@ public class Invoice implements Serializable{
 	}
 	
 	private BigDecimal getTaxBySubtotal() {
+		
+		if(itens.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = getSubtotal();
 		BigDecimal tax = BigDecimal.ZERO;
@@ -239,6 +260,10 @@ public class Invoice implements Serializable{
 	}
 	
 	public BigDecimal getTotal(){
+		
+		if(itens.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = BigDecimal.ZERO;
 		
