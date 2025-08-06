@@ -93,7 +93,7 @@
 											<ec:field-validator>
 												<ec:field-validator-rule name="notEmpty" message="#{product_table.form.units.validation.notEmpty}" bundle="${messages}"/>
 												<ec:field-validator-rule name="between" message="#{product_table.form.units.validation.between}" bundle="${messages}">
-														<ec:field-validator-param name="min">1</ec:field-validator-param>
+														<ec:field-validator-param name="min">0</ec:field-validator-param>
 														<ec:field-validator-param name="max">${product.units}</ec:field-validator-param>
 												</ec:field-validator-rule>
 											</ec:field-validator>

@@ -100,7 +100,7 @@ public class ShippingEntity implements Serializable{
 	private Float depth;
 	
 	@OneToMany(mappedBy = "shipping")
-	private List<ProductRequestEntity> products;
+	private List<ProductRequestShippingEntity> products;
 	
 	@Lob
 	private String addData;
@@ -134,7 +134,7 @@ public class ShippingEntity implements Serializable{
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
 			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestEntity(this, p));
+				this.products.add(new ProductRequestShippingEntity(this, p));
 			}
 		}
 		
@@ -266,11 +266,11 @@ public class ShippingEntity implements Serializable{
 		this.depth = depth;
 	}
 
-	public List<ProductRequestEntity> getProducts() {
+	public List<ProductRequestShippingEntity> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<ProductRequestEntity> products) {
+	public void setProducts(List<ProductRequestShippingEntity> products) {
 		this.products = products;
 	}
 
@@ -351,7 +351,7 @@ public class ShippingEntity implements Serializable{
 
 			if(this.products != null) {
 				List<ProductRequest> list = new ArrayList<>();
-				for(ProductRequestEntity p: this.products) {
+				for(ProductRequestShippingEntity p: this.products) {
 					list.add(p.toEntity());
 				}
 				e.setProducts(list);

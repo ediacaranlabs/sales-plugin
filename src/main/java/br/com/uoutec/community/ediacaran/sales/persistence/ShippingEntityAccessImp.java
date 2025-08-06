@@ -7,6 +7,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,7 +21,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestShippingEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ShippingEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -61,8 +62,24 @@ public class ShippingEntityAccessImp
 			
 			entityManager.persist(pEntity);
 
-			List<ProductRequestEntity> list = pEntity.getProducts();
+			List<ProductRequestShippingEntity> list = pEntity.getProducts();
 			
+			if(list != null){
+				for(ProductRequestShippingEntity e: list){
+					e.setShipping(pEntity);
+					entityManager.persist(e);
+					
+					ProductRequestEntity pr = entityManager.find(ProductRequestEntity.class, e.getId().getProductRequestID(), LockModeType.PESSIMISTIC_WRITE);
+					
+					if(pr != null) {
+						pr.setShipping(pEntity);
+						pr = entityManager.merge(pr);
+					}
+					
+				}
+			}
+			
+			/*
 			if(list != null){
 				
 				for(ProductRequestEntity e: list){
@@ -82,6 +99,7 @@ public class ShippingEntityAccessImp
 				}
 				
 			}
+			*/
 			
 			pEntity.toEntity(value);
     	}
@@ -116,8 +134,15 @@ public class ShippingEntityAccessImp
 			
 			pEntity = (ShippingEntity)entityManager.merge(pEntity);
 
-			List<ProductRequestEntity> list = pEntity.getProducts();
+			List<ProductRequestShippingEntity> list = pEntity.getProducts();
 			
+			if(list != null){
+				for(ProductRequestShippingEntity e: list){
+					e = entityManager.merge(e);
+				}
+			}
+			
+			/*
 			if(list != null){
 				for(ProductRequestEntity e: list){
 					if(e.getId() == null){
@@ -147,6 +172,7 @@ public class ShippingEntityAccessImp
 				}
 				
 			}
+			*/
 			
 			pEntity.toEntity(value);
     	}

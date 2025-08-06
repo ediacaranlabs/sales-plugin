@@ -78,6 +78,7 @@ public class ShippingRegistryUtil {
 			}
 			
 			ProductRequest tpr = new ProductRequest(pr);
+			//tpr.setId(null);
 			transientItens.put(pr.getSerial(), tpr);
 		}
 		
