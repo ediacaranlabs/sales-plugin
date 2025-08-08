@@ -44,7 +44,7 @@ public class OrderReport implements Serializable{
 	private List<ProductRequestReport> products;
 	
 	@NotNull(groups = DataValidation.class )
-	private ReportOrderStatus status;
+	private OrderReportStatus status;
 	
 	public OrderReport(){
 	}
@@ -89,11 +89,11 @@ public class OrderReport implements Serializable{
 		this.products = products;
 	}
 
-	public ReportOrderStatus getStatus() {
+	public OrderReportStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(ReportOrderStatus status) {
+	public void setStatus(OrderReportStatus status) {
 		this.status = status;
 	}
 

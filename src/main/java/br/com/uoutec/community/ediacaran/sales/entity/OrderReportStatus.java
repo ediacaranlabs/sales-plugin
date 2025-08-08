@@ -6,7 +6,7 @@ import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.MessageBundle;
 
-public enum ReportOrderStatus {
+public enum OrderReportStatus {
 
 	NEW_REQUEST,
 	
@@ -15,7 +15,7 @@ public enum ReportOrderStatus {
 	CLOSED;
 	
 	public static final String RESOURCE_BUNDLE = 
-			MessageBundle.toPackageID(ReportOrderStatus.class);
+			MessageBundle.toPackageID(OrderReportStatus.class);
 	
 	public String getName(Locale locale) {
 		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);

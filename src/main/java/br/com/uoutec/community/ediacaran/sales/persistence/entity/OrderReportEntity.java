@@ -21,7 +21,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
-import br.com.uoutec.community.ediacaran.sales.entity.ReportOrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 
 @Entity
 @Table(name="rw_order_report")
@@ -46,7 +46,7 @@ public class OrderReportEntity implements Serializable{
 
 	@Column(name="set_status")
 	@Enumerated(EnumType.STRING)
-	private ReportOrderStatus status;
+	private OrderReportStatus status;
 	
 	@OneToMany(mappedBy = "orderReport")
 	private List<ProductRequestOrderReportEntity> products;
@@ -107,11 +107,11 @@ public class OrderReportEntity implements Serializable{
 		this.date = date;
 	}
 
-	public ReportOrderStatus getStatus() {
+	public OrderReportStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(ReportOrderStatus status) {
+	public void setStatus(OrderReportStatus status) {
 		this.status = status;
 	}
 
