@@ -95,6 +95,10 @@ public class ProductRequestEntity implements Serializable{
 	public ProductRequestEntity(){
 	}
 	
+	public ProductRequestEntity(ProductRequest e){
+		this(null, null, null, e);
+	}
+	
 	public ProductRequestEntity(OrderEntity order, ProductRequest e){
 		this(order, null, null, e);
 	}
