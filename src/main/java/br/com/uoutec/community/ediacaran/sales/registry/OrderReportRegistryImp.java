@@ -16,6 +16,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -41,6 +42,8 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Inject
 	private ClientRegistry clientRegistry;
 	
+	@Inject
+	private OrderReportMessageEntityAccess orderReportMessageEntityAccess;
 	
 	@Inject
 	private ActionRegistry actionRegistry;

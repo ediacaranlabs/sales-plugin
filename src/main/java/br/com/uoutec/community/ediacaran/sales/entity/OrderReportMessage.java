@@ -1,16 +1,12 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -19,7 +15,7 @@ import org.hibernate.validator.constraints.Length;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
-public class OrderReport implements Serializable {
+public class OrderReportMessage implements Serializable {
 
 	private static final long serialVersionUID = -8250427147520718020L;
 
@@ -31,22 +27,15 @@ public class OrderReport implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
 	@Length(min = 10, max = 38, groups = DataValidation.class)
-	private String order;
-	
-	@NotNull(groups = DataValidation.class)
-	private Client client;
+	private String orderReport;
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
-
-	@NotNull(groups = DataValidation.class )
-	@Valid
-	private List<ProductRequestReport> products;
 	
-	@NotNull(groups = DataValidation.class )
-	private OrderReportStatus status;
+	@Length(min = 1, max = 128, groups = DataValidation.class)
+	private String message;
 	
-	public OrderReport(){
+	public OrderReportMessage(){
 	}
 
 	public String getId() {
@@ -57,12 +46,12 @@ public class OrderReport implements Serializable {
 		this.id = id;
 	}
 
-	public String getOrder() {
-		return order;
+	public String getOrderReport() {
+		return orderReport;
 	}
 
-	public void setOrder(String order) {
-		this.order = order;
+	public void setOrderReport(String orderReport) {
+		this.orderReport = orderReport;
 	}
 
 	public LocalDateTime getDate() {
@@ -73,28 +62,12 @@ public class OrderReport implements Serializable {
 		this.date = date;
 	}
 
-	public Client getClient() {
-		return client;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setClient(Client client) {
-		this.client = client;
-	}
-
-	public List<ProductRequestReport> getProducts() {
-		return products;
-	}
-
-	public void setProducts(List<ProductRequestReport> products) {
-		this.products = products;
-	}
-
-	public OrderReportStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderReportStatus status) {
-		this.status = status;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public String toStringDate(Locale locale) {
@@ -107,10 +80,6 @@ public class OrderReport implements Serializable {
 		return date.format(dateTimeFormatter);
 	}
 
-	public long getDaysAfterCreated() {
-		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
-	}
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -124,7 +93,7 @@ public class OrderReport implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OrderReport other = (OrderReport) obj;
+		OrderReportMessage other = (OrderReportMessage) obj;
 		return Objects.equals(id, other.id);
 	}
 	
