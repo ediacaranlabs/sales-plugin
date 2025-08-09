@@ -44,7 +44,7 @@ public class OrderReportEntity implements Serializable{
 	@Column(name="dat_created")
 	private LocalDateTime date;
 
-	@Column(name="set_status")
+	@Column(name="set_status", length=32)
 	@Enumerated(EnumType.STRING)
 	private OrderReportStatus status;
 	

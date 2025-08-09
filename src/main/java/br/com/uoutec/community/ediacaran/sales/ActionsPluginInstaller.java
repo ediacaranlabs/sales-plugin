@@ -10,15 +10,19 @@ import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class ActionsPluginInstaller {
 
-	public static final String NEW_ORDER_REGISTERED 	= "new_order_registered";
+	public static final String NEW_ORDER_REGISTERED 		= "new_order_registered";
 
-	public static final String NEW_INVOICE_REGISTERED 	= "new_invoice_registered";
+	public static final String NEW_INVOICE_REGISTERED 		= "new_invoice_registered";
 
-	public static final String NEW_SHIPPING_REGISTERED 	= "new_shipping_registered";
+	public static final String NEW_SHIPPING_REGISTERED 		= "new_shipping_registered";
+
+	public static final String CHANGE_ORDER_REPORT_STATUS	= "change_order_report_status";
+
+	public static final String NEW_ORDER_REPORT				= "new_order_report";
 	
-	public static final String REGISTER_PAYMENT_INFO 	= "register_payment_info";
+	public static final String REGISTER_PAYMENT_INFO 		= "register_payment_info";
 
-	public static final String CREATE_INVOICE 			= "create_invoice";
+	public static final String CREATE_INVOICE 				= "create_invoice";
 	
 	public ActionsPluginInstaller() {
 	}
