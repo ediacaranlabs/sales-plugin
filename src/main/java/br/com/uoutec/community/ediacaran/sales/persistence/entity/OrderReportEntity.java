@@ -17,10 +17,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 
 @Entity
@@ -38,8 +38,8 @@ public class OrderReportEntity implements Serializable{
 	@JoinColumn(name = "cod_order", referencedColumnName = "cod_order" )
 	private OrderEntity order;
 
-	@Column(name="cod_client",  updatable = false)
-	private Integer client;
+	@Column(name="cod_user")
+	private Integer user;
 	
 	@Column(name="dat_created")
 	private LocalDateTime date;
@@ -62,7 +62,7 @@ public class OrderReportEntity implements Serializable{
 		}
 		
 		this.id = e.getId();
-		this.client = e.getClient() == null? null : e.getClient().getId();
+		this.user = e.getUser() == null? null : e.getUser().getId();
 		this.status = e.getStatus();
 		this.date = e.getDate();
 		
@@ -91,12 +91,12 @@ public class OrderReportEntity implements Serializable{
 		this.order = order;
 	}
 
-	public Integer getClient() {
-		return client;
+	public Integer getUser() {
+		return user;
 	}
 
-	public void setClient(Integer client) {
-		this.client = client;
+	public void setUser(Integer user) {
+		this.user = user;
 	}
 
 	public LocalDateTime getDate() {
@@ -135,10 +135,10 @@ public class OrderReportEntity implements Serializable{
 		e.setId(this.id);
 		e.setDate(this.date);
 		
-		if(this.client != null) {
-			Client c = new Client();
-			c.setId(this.client);
-			e.setClient(c);
+		if(this.user != null) {
+			SystemUser c = new SystemUser();
+			c.setId(this.user);
+			e.setUser(c);
 		}
 		
 		if(this.order != null) {

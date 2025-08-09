@@ -16,6 +16,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -34,7 +35,7 @@ public class OrderReport implements Serializable {
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
-	private Client client;
+	private SystemUser user;
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
@@ -73,12 +74,12 @@ public class OrderReport implements Serializable {
 		this.date = date;
 	}
 
-	public Client getClient() {
-		return client;
+	public SystemUser getUser() {
+		return user;
 	}
 
-	public void setClient(Client client) {
-		this.client = client;
+	public void setUser(SystemUser user) {
+		this.user = user;
 	}
 
 	public List<ProductRequestReport> getProducts() {
