@@ -35,6 +35,8 @@ public class OrderReport implements Serializable {
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
+	private Client client;
+	
 	private SystemUser user;
 	
 	@NotNull(groups = DataValidation.class)
@@ -96,6 +98,14 @@ public class OrderReport implements Serializable {
 
 	public void setStatus(OrderReportStatus status) {
 		this.status = status;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	public String toStringDate(Locale locale) {

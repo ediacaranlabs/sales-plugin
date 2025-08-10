@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
@@ -40,6 +41,9 @@ public class OrderReportEntity implements Serializable{
 
 	@Column(name="cod_user")
 	private Integer user;
+
+	@Column(name="cod_client")
+	private Integer client;
 	
 	@Column(name="dat_created")
 	private LocalDateTime date;
@@ -63,6 +67,8 @@ public class OrderReportEntity implements Serializable{
 		
 		this.id = e.getId();
 		this.user = e.getUser() == null? null : e.getUser().getId();
+		this.client = e.getClient() == null? null : e.getClient().getId();
+		
 		this.status = e.getStatus();
 		this.date = e.getDate();
 		
@@ -139,6 +145,12 @@ public class OrderReportEntity implements Serializable{
 			SystemUser c = new SystemUser();
 			c.setId(this.user);
 			e.setUser(c);
+		}
+
+		if(this.client != null) {
+			Client c = new Client();
+			c.setId(this.user);
+			e.setClient(c);
 		}
 		
 		if(this.order != null) {

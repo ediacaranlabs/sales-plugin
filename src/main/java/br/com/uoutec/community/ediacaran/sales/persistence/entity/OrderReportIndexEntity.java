@@ -29,7 +29,13 @@ public class OrderReportIndexEntity implements Serializable{
 	@Column(name="cod_order", length=38)
 	private String order;
 
-	@Column(name="cod_client",  updatable = false)
+	@Column(name="cod_system_user", length=11)
+	private Integer user;
+	
+	@Column(name="dsc_user_name", length=255)
+	private String userName;
+	
+	@Column(name="cod_client")
 	private Integer client;
 	
 	@Column(name="dsc_client_name", length=255)
@@ -49,17 +55,26 @@ public class OrderReportIndexEntity implements Serializable{
 		this.order = e.getOrder();
 		this.id = e.getId();
 		this.date = e.getDate();
-		this.client = e.getClient() == null? null : e.getClient().getId();
+		this.user = e.getUser() == null? null : e.getUser().getId();
 		
+		this.client = e.getClient() == null? null : e.getClient().getId();
 		if(e.getClient().getFirstName() != null) {
 			this.clientName = this.clientName + " " + e.getClient().getFirstName();
 		}
-		
 		if(e.getClient().getLastName() != null) {
 			this.clientName = this.clientName + " " + e.getClient().getLastName();
 		}
-		
 		this.clientName = StringUtil.toSearch(this.clientName);
+
+		this.user = e.getUser() == null? null : e.getUser().getId();
+		if(e.getUser().getFirstName() != null) {
+			this.userName = this.userName + " " + e.getUser().getFirstName();
+		}
+		if(e.getUser().getLastName() != null) {
+			this.userName = this.userName + " " + e.getUser().getLastName();
+		}
+		this.userName = StringUtil.toSearch(this.userName);
+		
 		this.status = e.getStatus();
 		
 	}
@@ -110,6 +125,14 @@ public class OrderReportIndexEntity implements Serializable{
 
 	public void setStatus(OrderReportStatus status) {
 		this.status = status;
+	}
+
+	public Integer getUser() {
+		return user;
+	}
+
+	public void setUser(Integer user) {
+		this.user = user;
 	}
 
 	public OrderReport toEntity(){

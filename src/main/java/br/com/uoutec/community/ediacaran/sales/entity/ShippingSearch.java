@@ -3,7 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class ShippingSearch implements Serializable{
+public class ShippingSearch implements Serializable {
 	
 	private static final long serialVersionUID = 2549319270886774890L;
 

@@ -3,11 +3,15 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class OrderReportSearch implements Serializable{
+public class OrderReportSearch implements Serializable {
 	
 	private static final long serialVersionUID = 2549319270886774890L;
 
 	private String id;
+
+	private Integer user;
+
+	private String userName;
 	
 	private Integer client;
 
@@ -96,6 +100,22 @@ public class OrderReportSearch implements Serializable{
 
 	public void setStatus(OrderReportStatus status) {
 		this.status = status;
+	}
+
+	public Integer getUser() {
+		return user;
+	}
+
+	public void setUser(Integer user) {
+		this.user = user;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }
