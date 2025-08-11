@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
@@ -157,6 +161,37 @@ public class OrderReportRegistryUtil {
 					.withParameter("orderReport", e.getId())
 				.build()
 		);
+	}
+
+	public static OrderReport toOrderReport(Order order, OrderRegistry orderRegistry) throws OrderReportRegistryException {
+		
+		Order e;
+		
+		try {
+			e = orderRegistry.findById(order.getId());
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+		List<ProductRequestReport> list = new ArrayList<>();
+		
+		for(ProductRequest r: e.getItens()) {
+			ProductRequestReport pr = new ProductRequestReport(r);
+			pr.setCause(null);
+		}
+		
+		
+		OrderReport or = new OrderReport();
+		
+		or.setClient(e.getClient());
+		or.setDate(LocalDateTime.now());
+		or.setId(null);
+		or.setProducts(list);
+		or.setStatus(OrderReportStatus.NEW_REQUEST);
+		or.setUser(null);
+		
+		return or;
 	}
 	
 }

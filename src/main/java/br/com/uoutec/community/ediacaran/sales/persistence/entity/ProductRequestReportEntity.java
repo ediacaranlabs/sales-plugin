@@ -11,19 +11,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 
 @Entity
-@Table(name="rw_product_request_order_report")
+@Table(name="rw_product_request_report")
 @EntityListeners(ProductRequestOrderReportEntityListener.class)
-public class ProductRequestOrderReportEntity implements Serializable {
+public class ProductRequestReportEntity implements Serializable {
 
 	private static final long serialVersionUID = -6395849000853228077L;
 
 	@EmbeddedId
-	private ProductRequestOrderReportIDEntity id;
+	private ProductRequestReportIDEntity id;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_order_report", referencedColumnName="cod_order_report", insertable = false, updatable = false)
@@ -37,19 +36,19 @@ public class ProductRequestOrderReportEntity implements Serializable {
 	private ProductRequestReportCause cause;
 
 	
-	public ProductRequestOrderReportEntity(){
+	public ProductRequestReportEntity(){
 	}
 	
-	public ProductRequestOrderReportEntity(OrderReportEntity orderReport, ProductRequest e){
-		this.id                   = new ProductRequestOrderReportIDEntity(e.getId(), orderReport.getId());
+	public ProductRequestReportEntity(ProductRequestReport e){
+		this.id                   = new ProductRequestReportIDEntity(e.getId(), e.getOrderReport());
 		this.productRequestEntity = e == null? null : new ProductRequestEntity(e);
 	}
 	
-	public ProductRequestOrderReportIDEntity getId() {
+	public ProductRequestReportIDEntity getId() {
 		return id;
 	}
 
-	public void setId(ProductRequestOrderReportIDEntity id) {
+	public void setId(ProductRequestReportIDEntity id) {
 		this.id = id;
 	}
 
@@ -68,7 +67,7 @@ public class ProductRequestOrderReportEntity implements Serializable {
 	public void setOrderReport(OrderReportEntity orderReport) {
 		this.orderReport = orderReport;
 		this.id = 
-			new ProductRequestOrderReportIDEntity(
+			new ProductRequestReportIDEntity(
 				productRequestEntity == null? null : productRequestEntity.getId(), 
 				orderReport == null? null : orderReport.getId()
 			);
@@ -81,7 +80,7 @@ public class ProductRequestOrderReportEntity implements Serializable {
 	public void setProductRequestEntity(ProductRequestEntity productRequestEntity) {
 		this.productRequestEntity = productRequestEntity;
 		this.id = 
-				new ProductRequestOrderReportIDEntity(
+				new ProductRequestReportIDEntity(
 					productRequestEntity == null? null : this.productRequestEntity.getId(), 
 					orderReport == null? null : orderReport.getId()
 				);

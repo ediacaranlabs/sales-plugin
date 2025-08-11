@@ -53,7 +53,7 @@ public class OrderReportEntity implements Serializable{
 	private OrderReportStatus status;
 	
 	@OneToMany(mappedBy = "orderReport")
-	private List<ProductRequestOrderReportEntity> products;
+	private List<ProductRequestReportEntity> products;
 	
 	public OrderReportEntity(){
 	}
@@ -75,7 +75,7 @@ public class OrderReportEntity implements Serializable{
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
 			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestOrderReportEntity(this, p));
+				this.products.add(new ProductRequestReportEntity(this, p));
 			}
 		}
 		
@@ -121,11 +121,11 @@ public class OrderReportEntity implements Serializable{
 		this.status = status;
 	}
 
-	public List<ProductRequestOrderReportEntity> getProducts() {
+	public List<ProductRequestReportEntity> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<ProductRequestOrderReportEntity> products) {
+	public void setProducts(List<ProductRequestReportEntity> products) {
 		this.products = products;
 	}
 
@@ -159,7 +159,7 @@ public class OrderReportEntity implements Serializable{
 
 		if(this.products != null) {
 			List<ProductRequestReport> list = new ArrayList<>();
-			for(ProductRequestOrderReportEntity p: this.products) {
+			for(ProductRequestReportEntity p: this.products) {
 				list.add(p.toEntity());
 			}
 			e.setProducts(list);

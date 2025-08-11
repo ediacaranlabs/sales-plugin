@@ -6,7 +6,13 @@ public class ProductRequestReport extends ProductRequest {
 
 	private ProductRequestReportCause cause;
 
+	private String orderReport;
+	
 	public ProductRequestReport() {
+	}
+	
+	public ProductRequestReport(ProductRequest e) {
+		super(e);
 	}
 	
 	public ProductRequestReport(ProductRequestReport e) {
@@ -19,6 +25,14 @@ public class ProductRequestReport extends ProductRequest {
 
 	public void setCause(ProductRequestReportCause cause) {
 		this.cause = cause;
+	}
+
+	public String getOrderReport() {
+		return orderReport;
+	}
+
+	public void setOrderReport(String orderReport) {
+		this.orderReport = orderReport;
 	}
 	
 }

@@ -19,7 +19,7 @@ import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEn
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderReportEntity;
-import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestOrderReportEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestReportEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -51,10 +51,10 @@ public class OrderReportEntityAccessImp
 			
 			entityManager.persist(pEntity);
 
-			List<ProductRequestOrderReportEntity> list = pEntity.getProducts();
+			List<ProductRequestReportEntity> list = pEntity.getProducts();
 			
 			if(list != null){
-				for(ProductRequestOrderReportEntity e: list){
+				for(ProductRequestReportEntity e: list){
 					e.setOrderReport(pEntity);
 					entityManager.persist(e);
 				}
@@ -73,10 +73,10 @@ public class OrderReportEntityAccessImp
 			
 			pEntity = (OrderReportEntity)entityManager.merge(pEntity);
 
-			List<ProductRequestOrderReportEntity> list = pEntity.getProducts();
+			List<ProductRequestReportEntity> list = pEntity.getProducts();
 			
 			if(list != null){
-				for(ProductRequestOrderReportEntity e: list){
+				for(ProductRequestReportEntity e: list){
 					e = entityManager.merge(e);
 				}
 			}
