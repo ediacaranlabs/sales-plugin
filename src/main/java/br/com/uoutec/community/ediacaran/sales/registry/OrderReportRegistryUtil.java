@@ -16,6 +16,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.i18n.ValidationException;
@@ -163,6 +164,29 @@ public class OrderReportRegistryUtil {
 		);
 	}
 
+	public static ProductRequestReport getProductRequestReport(String id, OrderReport orderReport, ProductRequestReportEntityAccess productRequestReportEntityAccess) throws OrderReportRegistryException{
+		
+		try {
+			ProductRequestReport e = productRequestReportEntityAccess.findById(id);
+			return orderReport.getId().equals(e.getOrderReport())? e : null;
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+	}
+	
+	public static List<ProductRequestReport> getProductRequestReportByOrderReport(OrderReport orderReport, ProductRequestReportEntityAccess productRequestReportEntityAccess) throws OrderReportRegistryException{
+		
+		try {
+			return productRequestReportEntityAccess.getByOrderReport(orderReport.getId(), null, null);
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+	}
+	
 	public static OrderReport toOrderReport(Order order, OrderRegistry orderRegistry) throws OrderReportRegistryException {
 		
 		Order e;

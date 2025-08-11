@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -42,6 +43,9 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	
 	@Inject
 	private ClientRegistry clientRegistry;
+	
+	@Inject
+	private ProductRequestReportEntityAccess productRequestReportEntityAccess;
 	
 	//@Inject
 	//private OrderReportMessageEntityAccess orderReportMessageEntityAccess;
@@ -119,10 +123,10 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	}
 
 	@Override
-	public ProductRequestReport getProductRequestReport(String id, String reportID)
+	public ProductRequestReport getProductRequestReport(String id, OrderReport orderReport)
 			throws OrderReportRegistryException {
-		// TODO Auto-generated method stub
-		return null;
+
+		return OrderReportRegistryUtil.getProductRequestReport(id, orderReport, productRequestReportEntityAccess);
 	}
 
 	@Override

@@ -75,7 +75,7 @@ public class OrderReportEntity implements Serializable{
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
 			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestReportEntity(this, p));
+				this.products.add(new ProductRequestReportEntity(p, this));
 			}
 		}
 		

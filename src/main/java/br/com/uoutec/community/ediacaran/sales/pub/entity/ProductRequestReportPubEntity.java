@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.brandao.brutos.annotation.Constructor;
 
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
@@ -36,7 +37,10 @@ public class ProductRequestReportPubEntity extends ProductRequestPubEntity {
 	@Override
 	protected ProductRequest reloadEntity()	throws Throwable {
 		OrderReportRegistry registry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
-		return registry.getProductRequestReport(this.getId(), super.getOrderId());
+		OrderReport or = new OrderReport();
+		or.setId(super.getId());
+		
+		return registry.getProductRequestReport(this.getId(), or);
 	}
 
 	@Override

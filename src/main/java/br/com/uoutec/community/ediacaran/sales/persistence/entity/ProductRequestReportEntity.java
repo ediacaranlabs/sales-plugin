@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 
@@ -37,6 +38,11 @@ public class ProductRequestReportEntity implements Serializable {
 
 	
 	public ProductRequestReportEntity(){
+	}
+
+	public ProductRequestReportEntity(ProductRequest e, OrderReportEntity o){
+		this.id                   = new ProductRequestReportIDEntity(e.getId(), o.getId());
+		this.productRequestEntity = e == null? null : new ProductRequestEntity(e);
 	}
 	
 	public ProductRequestReportEntity(ProductRequestReport e){
