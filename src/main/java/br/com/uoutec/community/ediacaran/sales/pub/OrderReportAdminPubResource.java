@@ -24,11 +24,9 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchResultPubEntity;
@@ -134,53 +132,6 @@ public class OrderReportAdminPubResource {
 		}
 
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("orderReport", orderReport);
-		return map;
-	}
-	
-	@Action("/new/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/order/report/edit")
-	@Result("vars")
-	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.ORDER.CREATE)
-	public Map<String,Object> newEntity(
-			@DetachedName
-			OrderPubEntity orderPubEntity,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale
-	) throws InvalidRequestException{
-		
-		Order order;
-		
-		try{
-			order = orderPubEntity.rebuild(true, false, false);
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
-							OrderReportAdminPubResourceMessages.new_shipping.error.fail_load_entity, 
-							locale);
-			
-			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
-		}
-
-		OrderReport orderReport = null;
-		try{
-			orderReport = orderReportRegistry.toOrderReport(order);
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
-							OrderReportAdminPubResourceMessages.new_shipping.error.create_shipping, 
-							locale);
-			
-			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
-		}
-		
-		Map<String,Object> map = new HashMap<String, Object>();
-		//map.put("order", order);
 		map.put("orderReport", orderReport);
 		return map;
 	}

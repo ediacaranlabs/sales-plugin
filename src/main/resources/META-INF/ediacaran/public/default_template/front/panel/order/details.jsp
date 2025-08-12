@@ -84,7 +84,15 @@
 				</ec:table>
 			</ed:col>
 		</ed:row>
-
+		<ed:row>
+			<ed:col>
+				<ec:button label="Report a problem" align="right">
+					<ec:event type="click">
+						$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/new/${vars.order.id}');			
+					</ec:event>
+				</ec:button>
+			</ed:col>
+		</ed:row>
 		<ed:row>
 			<ed:col size="4">
 				<p>

@@ -32,6 +32,8 @@ public class AdminMenuListenerMessages {
 					
 					public static final String orders = "admin_menu.sales_menu.itens.orders";
 	
+					public static final String order_report = "admin_menu.sales_menu.itens.order_report";
+					
 					public static final String invoices = "admin_menu.sales_menu.itens.invoices";
 
 					public static final String shippings = "admin_menu.sales_menu.itens.shippings";
