@@ -41,8 +41,6 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Inject
 	private OrderReportIndexEntityAccess indexEntityAccess;
 	
-	@Inject
-	private ClientRegistry clientRegistry;
 	
 	@Inject
 	private ProductRequestReportEntityAccess productRequestReportEntityAccess;
@@ -94,7 +92,10 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getFindPermission());
 		
-		return OrderReportRegistryUtil.getOrderReportById(id, entityAccess, clientRegistry);
+		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		
+		return OrderReportRegistryUtil.getOrderReportById(id, entityAccess, clientRegistry, orderRegistry);
 	}
 	
 	@Override
@@ -103,7 +104,10 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getSearchPermission());
 		
-		return OrderReportRegistryUtil.searchOrderReport(value, indexEntityAccess, clientRegistry);
+		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		
+		return OrderReportRegistryUtil.searchOrderReport(value, indexEntityAccess, clientRegistry, orderRegistry);
 	}
 
 	@Override
@@ -112,11 +116,13 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getFindPermission());
 		
+		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		List<OrderReport> list = OrderReportRegistryUtil.findByOrder(order, entityAccess);
 		List<OrderReport> r = new ArrayList<>();
 		
 		for(OrderReport e: list) {
-			r.add(OrderReportRegistryUtil.reload(e, entityAccess, clientRegistry));
+			r.add(OrderReportRegistryUtil.reload(e, entityAccess, clientRegistry, orderRegistry));
 		}
 		
 		return r;

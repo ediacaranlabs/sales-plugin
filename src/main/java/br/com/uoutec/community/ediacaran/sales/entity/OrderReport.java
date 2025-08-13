@@ -32,7 +32,7 @@ public class OrderReport implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
 	@Length(min = 10, max = 38, groups = DataValidation.class)
-	private String order;
+	private Order order;
 	
 	@NotNull(groups = DataValidation.class)
 	private Client client;
@@ -60,11 +60,11 @@ public class OrderReport implements Serializable {
 		this.id = id;
 	}
 
-	public String getOrder() {
+	public Order getOrder() {
 		return order;
 	}
 
-	public void setOrder(String order) {
+	public void setOrder(Order order) {
 		this.order = order;
 	}
 

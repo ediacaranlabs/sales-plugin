@@ -52,7 +52,7 @@ public class OrderReportIndexEntity implements Serializable{
 	}
 	
 	public OrderReportIndexEntity(OrderReport e){
-		this.order = e.getOrder();
+		this.order = e.getOrder().getId();
 		this.id = e.getId();
 		this.date = e.getDate();
 		this.user = e.getUser() == null? null : e.getUser().getId();

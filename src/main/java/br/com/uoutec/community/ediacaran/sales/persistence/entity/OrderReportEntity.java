@@ -62,7 +62,7 @@ public class OrderReportEntity implements Serializable{
 		
 		if(e.getOrder() != null) {
 			this.order = new OrderEntity();
-			this.order.setId(e.getOrder());
+			this.order.setId(e.getOrder().getId());
 		}
 		
 		this.id = e.getId();
@@ -154,7 +154,7 @@ public class OrderReportEntity implements Serializable{
 		}
 		
 		if(this.order != null) {
-			e.setOrder(this.order.getId());
+			e.setOrder(this.order.toEntity());
 		}
 
 		if(this.products != null) {

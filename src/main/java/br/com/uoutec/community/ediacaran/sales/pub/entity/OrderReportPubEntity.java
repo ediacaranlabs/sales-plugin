@@ -60,7 +60,7 @@ public class OrderReportPubEntity extends AbstractPubEntity<OrderReport> {
 	
 	public OrderReportPubEntity(OrderReport e, Locale locale) {
 		this.id = e.getId() == null? null : SecretUtil.toProtectedID(e.getId());
-		this.order = e.getOrder() == null? null : SecretUtil.toProtectedID(e.getOrder());
+		this.order = e.getOrder() == null? null : SecretUtil.toProtectedID(e.getOrder().getId());
 		this.user = e.getUser() == null? null : e.getUser().getId();
 		this.date = e.getDate();
 		this.status = e.getStatus();
@@ -110,7 +110,11 @@ public class OrderReportPubEntity extends AbstractPubEntity<OrderReport> {
 			return;
 		}
 
-		o.setOrder(this.order);
+		if(this.order != null) {
+			o.setOrder(new Order());
+			o.getOrder().setId(order);
+		}
+
 		o.setStatus(this.status);
 		o.setDate(this.date);
 		
