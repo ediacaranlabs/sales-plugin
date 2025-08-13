@@ -214,6 +214,7 @@ public class OrderReportRegistryUtil {
 		or.setProducts(list);
 		or.setStatus(OrderReportStatus.NEW_REQUEST);
 		or.setUser(null);
+		or.setOrder(order.getId());
 		
 		return or;
 	}
