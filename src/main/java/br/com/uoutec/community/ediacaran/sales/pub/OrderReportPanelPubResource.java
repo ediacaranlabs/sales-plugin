@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
@@ -83,6 +85,7 @@ public class OrderReportPanelPubResource {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("orderReport", orderReport);
+		map.put("causeList", Arrays.asList(ProductRequestReportCause.values()));
 		return map;
 	}
 	

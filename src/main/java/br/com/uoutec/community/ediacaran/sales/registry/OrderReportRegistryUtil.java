@@ -206,6 +206,7 @@ public class OrderReportRegistryUtil {
 		for(ProductRequest r: e.getItens()) {
 			ProductRequestReport pr = new ProductRequestReport(r);
 			pr.setCause(null);
+			list.add(pr);
 		}
 		
 		
