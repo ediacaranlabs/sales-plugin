@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
@@ -61,6 +63,8 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		boolean newEntity = entity.getId() == null;
 		
 		if(newEntity) {
+			entity.setStatus(OrderReportStatus.NEW_REQUEST);
+			entity.setDate(LocalDateTime.now());
 			OrderReportRegistryUtil.validate(entity, saveValidations);
 			OrderReportRegistryUtil.save(entity, entityAccess);
 		}

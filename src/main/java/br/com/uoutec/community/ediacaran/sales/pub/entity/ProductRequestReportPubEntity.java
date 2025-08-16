@@ -3,6 +3,8 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.Locale;
 
 import org.brandao.brutos.annotation.Constructor;
+import org.brandao.brutos.annotation.Enumerated;
+import org.brandao.brutos.annotation.EnumerationType;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -15,6 +17,7 @@ public class ProductRequestReportPubEntity extends ProductRequestPubEntity {
 
 	private static final long serialVersionUID = 7608872251741536893L;
 
+	@Enumerated(EnumerationType.STRING)
 	private ProductRequestReportCause cause;
 	
 	@Constructor

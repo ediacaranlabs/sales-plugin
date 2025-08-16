@@ -6,8 +6,8 @@
 
 <ec:setBundle var="messages" locale="${locale}"/>
 <style>
-.qty{
-	width: 5em;
+.cause {
+	width: 35em;
 }
 </style>
 <section class="inner-headline">
@@ -63,20 +63,25 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col classStyle="form-group has-feedback" >
+								<ec:table-col classStyle="cause form-group has-feedback" >
 									<c:if test="${!empty vars.orderReport.id}">
 										<ec:center>${product.cause.getName(locale)}</ec:center>
 									</c:if>
 									<c:if test="${empty vars.orderReport.id}">
-										<ec:select name="cause">
-											<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
-											<c:forEach items="${vars.causeList}" var="cause">
-												<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
-											</c:forEach>
-											<ec:field-validator>
-												<ec:field-validator-rule name="notEmpty" message="#{product_table.form.cause.validation.notEmpty}" bundle="${messages}"/>
-											</ec:field-validator>
-										</ec:select>
+										<span formgroup="products" formgrouptype="index">
+											<input type="hidden" name="serial" value="${product.serial}">
+											<ec:select name="cause">
+												<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
+												<c:forEach items="${vars.causeList}" var="cause">
+													<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
+												</c:forEach>
+												<%--
+												<ec:field-validator>
+													<ec:field-validator-rule name="notEmpty" message="#{product_table.form.cause.validation.notEmpty}" bundle="${messages}"/>
+												</ec:field-validator>
+												--%>
+											</ec:select>
+										</span>
 									</c:if>
 								</ec:table-col>
 							</ec:table-row>

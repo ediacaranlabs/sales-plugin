@@ -30,8 +30,6 @@ public class OrderReport implements Serializable {
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(min = 10, max = 38, groups = DataValidation.class)
 	private Order order;
 	
 	@NotNull(groups = DataValidation.class)

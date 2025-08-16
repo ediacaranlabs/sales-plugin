@@ -12,6 +12,8 @@ import javax.validation.constraints.Pattern;
 
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
+import org.brandao.brutos.annotation.Enumerated;
+import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.hibernate.validator.constraints.Length;
 
@@ -47,6 +49,7 @@ public class OrderReportPubEntity extends AbstractPubEntity<OrderReport> {
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 	
+	@Enumerated(EnumerationType.STRING)
 	@NotNull(groups = DataValidation.class )
 	private OrderReportStatus status;
 	

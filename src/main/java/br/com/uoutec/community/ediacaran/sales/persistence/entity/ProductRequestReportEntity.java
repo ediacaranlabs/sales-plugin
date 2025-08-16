@@ -33,7 +33,7 @@ public class ProductRequestReportEntity implements Serializable {
 	@JoinColumn(name="cod_product_request", referencedColumnName="cod_product_request", insertable = false, updatable = false)
 	private ProductRequestEntity productRequestEntity;
 	
-	@Column(name="set_cause", length=11)
+	@Column(name="set_cause", length=32)
 	private ProductRequestReportCause cause;
 
 	
