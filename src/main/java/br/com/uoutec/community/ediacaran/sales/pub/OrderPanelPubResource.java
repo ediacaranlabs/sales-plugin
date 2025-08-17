@@ -28,6 +28,7 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
@@ -40,6 +41,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderResultSearchPubEn
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
@@ -65,6 +67,10 @@ public class OrderPanelPubResource {
 	@Transient
 	@Inject
 	private ClientRegistry clientRegistry;
+
+	@Transient
+	@Inject
+	private OrderReportRegistry orderReportRegistry;
 	
 	@Transient
 	@Inject
@@ -148,11 +154,14 @@ public class OrderPanelPubResource {
 		
 		Order order;
 		List<Invoice> invoices;
+		List<OrderReport> ordersReport;
+		
 		Client client;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			client = clientRegistry.findClientById(order.getClient().getId());
 			invoices = invoiceRegistry.findByOrder(order.getId(), SystemUserRegistry.CURRENT_USER);
+			ordersReport = orderReportRegistry.findByOrder(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -189,10 +198,11 @@ public class OrderPanelPubResource {
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("order",          order);
-		map.put("invoices",       invoices);
-		map.put("paymentGateway", paymentGateway);
-		map.put("payment_view",   view);
+		map.put("order",           order);
+		map.put("invoices",        invoices);
+		map.put("orderReportList", ordersReport);
+		map.put("paymentGateway",  paymentGateway);
+		map.put("payment_view",    view);
 		return map;
 	}
 	

@@ -19,7 +19,6 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
@@ -74,8 +73,8 @@ public class OrderReportEntity implements Serializable{
 		
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
-			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestReportEntity(p, this));
+			for(ProductRequestReport p: e.getProducts()) {
+				this.products.add(new ProductRequestReportEntity(p));
 			}
 		}
 		
@@ -140,6 +139,7 @@ public class OrderReportEntity implements Serializable{
 		
 		e.setId(this.id);
 		e.setDate(this.date);
+		e.setStatus(this.status);
 		
 		if(this.user != null) {
 			SystemUser c = new SystemUser();
@@ -149,7 +149,7 @@ public class OrderReportEntity implements Serializable{
 
 		if(this.client != null) {
 			Client c = new Client();
-			c.setId(this.user);
+			c.setId(this.client);
 			e.setClient(c);
 		}
 		

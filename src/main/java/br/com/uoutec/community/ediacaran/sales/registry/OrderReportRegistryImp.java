@@ -63,21 +63,33 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		boolean newEntity = entity.getId() == null;
 		
 		if(newEntity) {
-			entity.setStatus(OrderReportStatus.NEW_REQUEST);
-			entity.setDate(LocalDateTime.now());
-			OrderReportRegistryUtil.validate(entity, saveValidations);
-			OrderReportRegistryUtil.save(entity, entityAccess);
+			save(entity, entityAccess);
 		}
 		else {
-			OrderReportRegistryUtil.validate(entity, updateValidations);
-			OrderReportRegistryUtil.update(entity, entityAccess);
+			update(entity, entityAccess);
 		}
 		
-		OrderReportRegistryUtil.sendToRepository(entityAccess);
-		OrderReportRegistryUtil.registerOrderReportRegisterEvent(actionRegistry, entity, newEntity);
+		confirmRegistration(entity, newEntity, entityAccess, actionRegistry);
 		
 	}
 
+	private void save(OrderReport entity, OrderReportEntityAccess entityAccess) throws ValidationException, OrderReportRegistryException {
+		entity.setStatus(OrderReportStatus.NEW_REQUEST);
+		entity.setDate(LocalDateTime.now());
+		OrderReportRegistryUtil.validate(entity, saveValidations);
+		OrderReportRegistryUtil.save(entity, entityAccess);
+	}
+
+	private void update(OrderReport entity, OrderReportEntityAccess entityAccess) throws ValidationException, OrderReportRegistryException {
+		OrderReportRegistryUtil.validate(entity, updateValidations);
+		OrderReportRegistryUtil.update(entity, entityAccess);
+	}
+	
+	private void confirmRegistration(OrderReport entity, boolean newEntity, OrderReportEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderReportRegistryException {
+		OrderReportRegistryUtil.sendToRepository(entityAccess);
+		OrderReportRegistryUtil.registerOrderReportRegisterEvent(actionRegistry, entity, newEntity);
+	}
+	
 	@Override
 	@Transactional
 	@ActivateRequestContext

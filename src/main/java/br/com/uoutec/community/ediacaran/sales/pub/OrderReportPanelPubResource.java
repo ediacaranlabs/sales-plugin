@@ -92,6 +92,37 @@ public class OrderReportPanelPubResource {
 		return map;
 	}
 	
+	@Action("/show/{id}")
+	@View("${plugins.ediacaran.sales.template}/front/panel/order/report/edit")
+	@Result("vars")
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER, BasicRoles.CLIENT})
+	public Map<String,Object> showEntity(
+			@DetachedName
+			OrderReportClientPubEntity orderReportClientPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException {
+		
+		OrderReport orderReport = null;
+		
+		try{
+			orderReport = orderReportClientPubEntity.rebuild(true, false, false);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.new_shipping.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("orderReport", orderReport);
+		return map;
+	}
+	
 	@Action("/save")
 	@View("${plugins.ediacaran.sales.template}/front/panel/order/report/result")
 	@Result("vars")

@@ -168,6 +168,29 @@
 							</ec:table-body>
 						</ec:table>
 					</ec:tabs-item>
+					<ec:tabs-item title="#{tabs.order_report.title}" bundle="${messages}">
+					
+						<ec:table>
+							<ec:table-header>
+								<ec:table-col><center><small><fmt:message key="table_report.id" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_report.date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_report.status" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_report.actions" bundle="${messages}"/></small></center></ec:table-col>
+							</ec:table-header>
+							<ec:table-body>
+								<c:forEach items="${vars.orderReportList}" var="orderReport">
+								<ec:table-row>
+									<ec:table-col><center><small>${orderReport.id}</small></center></ec:table-col>
+									<ec:table-col><center><small>${orderReport.toStringDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${orderReport.status.getName(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/show/${orderReport.id}">
+										<fmt:message key="table_report.actions.details" bundle="${messages}"/>
+									</a></small></center></ec:table-col>
+								</ec:table-row>
+								</c:forEach>
+							</ec:table-body>
+						</ec:table>
+					</ec:tabs-item>
 					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
 						<span id="payment_type_tab">
 					    <c:if test="${!empty vars['payment_view']}">

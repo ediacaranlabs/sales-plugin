@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,6 +35,7 @@ public class ProductRequestReportEntity implements Serializable {
 	@JoinColumn(name="cod_product_request", referencedColumnName="cod_product_request", insertable = false, updatable = false)
 	private ProductRequestEntity productRequestEntity;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name="set_cause", length=32)
 	private ProductRequestReportCause cause;
 
@@ -40,14 +43,16 @@ public class ProductRequestReportEntity implements Serializable {
 	public ProductRequestReportEntity(){
 	}
 
-	public ProductRequestReportEntity(ProductRequest e, OrderReportEntity o){
+	public ProductRequestReportEntity(ProductRequest e, OrderReportEntity o, ProductRequestReportCause cause){
 		this.id                   = new ProductRequestReportIDEntity(e.getId(), o.getId());
 		this.productRequestEntity = e == null? null : new ProductRequestEntity(e);
+		this.cause                = cause;
 	}
 	
 	public ProductRequestReportEntity(ProductRequestReport e){
 		this.id                   = new ProductRequestReportIDEntity(e.getId(), e.getOrderReport());
 		this.productRequestEntity = e == null? null : new ProductRequestEntity(e);
+		this.cause = e.getCause();
 	}
 	
 	public ProductRequestReportIDEntity getId() {
