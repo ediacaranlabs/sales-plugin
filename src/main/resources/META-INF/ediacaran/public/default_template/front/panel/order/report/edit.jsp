@@ -43,6 +43,7 @@
 			<ed:col size="4">
 				<b><fmt:message key="report_code" bundle="${messages}"/>:</b> #${vars.orderReport.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.orderReport.toStringDate(locale)}<br>
+				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.orderReport.status.getName(locale)}<br>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.orderReport.order.id}<br>
 			</ed:col>
 			<ed:col size="4">
