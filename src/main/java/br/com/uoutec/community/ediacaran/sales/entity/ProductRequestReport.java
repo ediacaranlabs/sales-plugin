@@ -1,9 +1,14 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import javax.validation.constraints.NotNull;
+
+import br.com.uoutec.entity.registry.DataValidation;
+
 public class ProductRequestReport extends ProductRequest {
 
 	private static final long serialVersionUID = 6826735447143946102L;
 
+	@NotNull(groups = DataValidation.class )
 	private ProductRequestReportCause cause;
 
 	private String orderReport;

@@ -61,27 +61,30 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getRegisterPermission());
 		
 		boolean newEntity = entity.getId() == null;
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		
 		if(newEntity) {
-			save(entity, entityAccess);
+			save(entity, entityAccess, orderRegistry);
 		}
 		else {
-			update(entity, entityAccess);
+			update(entity, entityAccess, orderRegistry);
 		}
 		
 		confirmRegistration(entity, newEntity, entityAccess, actionRegistry);
 		
 	}
 
-	private void save(OrderReport entity, OrderReportEntityAccess entityAccess) throws ValidationException, OrderReportRegistryException {
+	private void save(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry) throws ValidationException, OrderReportRegistryException {
 		entity.setStatus(OrderReportStatus.NEW_REQUEST);
 		entity.setDate(LocalDateTime.now());
 		OrderReportRegistryUtil.validate(entity, saveValidations);
+		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
 		OrderReportRegistryUtil.save(entity, entityAccess);
 	}
 
-	private void update(OrderReport entity, OrderReportEntityAccess entityAccess) throws ValidationException, OrderReportRegistryException {
+	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry) throws ValidationException, OrderReportRegistryException {
 		OrderReportRegistryUtil.validate(entity, updateValidations);
+		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
 		OrderReportRegistryUtil.update(entity, entityAccess);
 	}
 	

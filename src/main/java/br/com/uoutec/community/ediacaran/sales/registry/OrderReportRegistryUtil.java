@@ -2,7 +2,10 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
@@ -21,6 +24,7 @@ import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBui
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
+import br.com.uoutec.persistence.EntityAccessException;
 
 public class OrderReportRegistryUtil {
 
@@ -227,6 +231,67 @@ public class OrderReportRegistryUtil {
 		}
 		
 		return or;
+	}
+
+	public static void checkOrderReportStatus(OrderReport e, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
+		
+		//check order not is closed
+		
+		Order order;
+		
+		try {
+			order = orderRegistry.findById(e.getOrder().getId());
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+		if(order.isClosed()) {
+			throw new OrderReportRegistryException("order is closed");
+		}
+		
+		//check if not exist reported product request
+		
+		Set<String> reportedProductRequest;
+		
+		try {
+			reportedProductRequest = getReportedProductRequest(e, order, entityAccess);
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+		Set<String> actualReportedProductRequest = e.getProducts().stream().map((i)->i.getSerial()).collect(Collectors.toSet());
+		
+		for(String s: reportedProductRequest) {
+			actualReportedProductRequest.remove(s);
+		}
+		
+		if(actualReportedProductRequest.isEmpty()) {
+			throw new OrderReportRegistryException("product request has been reported");
+		}
+		
+
+	}
+	
+	public static Set<String> getReportedProductRequest(OrderReport e, Order order, OrderReportEntityAccess entityAccess) throws EntityAccessException {
+		
+		Set<String> result = new HashSet<>();
+		List<OrderReport> list = entityAccess.findByOrder(e.getOrder().getId());
+		
+		for(OrderReport or: list) {
+			
+			if(or.isClosed()) {
+				continue;
+			}
+			
+			for(ProductRequestReport prr: or.getProducts()) {
+				result.add(prr.getSerial());
+			}
+			
+		}
+		
+		return result;
 	}
 	
 }

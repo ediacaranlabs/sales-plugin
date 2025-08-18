@@ -84,6 +84,7 @@
 				</ec:table>
 			</ed:col>
 		</ed:row>
+		<c:if test="${!vars.order.closed}">
 		<ed:row>
 			<ed:col>
 				<ec:button label="Report a problem" align="right">
@@ -93,6 +94,7 @@
 				</ec:button>
 			</ed:col>
 		</ed:row>
+		</c:if>
 		<ed:row>
 			<ed:col size="4">
 				<p>

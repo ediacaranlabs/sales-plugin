@@ -116,6 +116,10 @@ public class OrderReport implements Serializable {
 		return date.format(dateTimeFormatter);
 	}
 
+	public boolean isClosed() {
+		return status == OrderReportStatus.CLOSED;
+	}
+	
 	public long getDaysAfterCreated() {
 		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
 	}

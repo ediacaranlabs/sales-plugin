@@ -217,6 +217,13 @@ public class Order implements Serializable{
 		this.removed = removed;
 	}
 
+	public boolean isClosed() {
+		return 
+				status == OrderStatus.ARCHIVED || 
+				status == OrderStatus.CANCELED || 
+				status == OrderStatus.CLOSED || 
+				status == OrderStatus.COMPLETE;
+	}
 	public List<Tax> getTaxes() {
 		return taxes;
 	}
