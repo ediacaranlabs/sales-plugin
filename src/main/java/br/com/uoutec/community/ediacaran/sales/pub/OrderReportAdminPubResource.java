@@ -1,9 +1,9 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,6 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchResultPubEntity;
@@ -53,11 +54,16 @@ public class OrderReportAdminPubResource {
 	
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/index")
+	@Result("vars")
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.SHOW)
-	public void index(
+	public Map<String,Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("statusList", Arrays.asList(OrderReportStatus.values()));
+		return map;
 	}
 
 	@Action(value="/search")
@@ -164,11 +170,6 @@ public class OrderReportAdminPubResource {
 		}
 
 		try{
-			orderReport.setProducts(
-				orderReport.getProducts().stream()
-					.filter((e)->e.getUnits() > 0)
-					.collect(Collectors.toList())
-			);
 			orderReportRegistry.registerOrderReport(orderReport);
 		}
 		catch(Throwable ex){

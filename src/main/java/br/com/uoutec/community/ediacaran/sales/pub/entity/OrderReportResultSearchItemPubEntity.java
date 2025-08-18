@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.brandao.brutos.annotation.Constructor;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class OrderReportResultSearchItemPubEntity extends AbstractPubEntity<OrderReport>{
@@ -24,6 +25,7 @@ public class OrderReportResultSearchItemPubEntity extends AbstractPubEntity<Orde
 	
 	private String status;
 	
+	private Boolean closed;
 	
 	@Constructor
 	public OrderReportResultSearchItemPubEntity() {
@@ -35,6 +37,7 @@ public class OrderReportResultSearchItemPubEntity extends AbstractPubEntity<Orde
 		this.date = e.toStringDate(locale);
 		this.daysAfterCreated = e.getDaysAfterCreated();
 		this.status = e.getStatus() == null? null : e.getStatus().getName(locale);
+		this.closed = e.getStatus() == OrderReportStatus.CLOSED;
 	}
 
 	public String getId() {
@@ -75,6 +78,14 @@ public class OrderReportResultSearchItemPubEntity extends AbstractPubEntity<Orde
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public Boolean getClosed() {
+		return closed;
+	}
+
+	public void setClosed(Boolean closed) {
+		this.closed = closed;
 	}
 
 	public String getStatus() {

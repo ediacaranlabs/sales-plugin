@@ -20,14 +20,13 @@
 		<ed:col size="8">
 			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
-				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders"  bundle="${messages}"/>
-				<ec:breadcrumb-path text="#${vars.orderReport.order.id}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.orderReport.order.id}"/>
+				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report"  bundle="${messages}"/>
 			</ec:breadcrumb>
 		</ed:col>
 	</ed:row>
 </section>
 
-<ec:form id="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" method="POST" update="orderReportFormResult">
+<ec:form id="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" method="POST" update="orderReportFormResult">
 	<input type="hidden" name="order" value="${vars.orderReport.order.id}">
 	<input type="hidden" name="id" value="${vars.orderReport.id}">
 <ec:box>
@@ -100,11 +99,11 @@
 		<ec:button label="#{show_order.label}" actionType="button" style="light" 
 			align="right" bundle="${messages}">
 			<ec:event type="click">
-				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.orderReport.order.id}');			
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/show/${vars.orderReport.order.id}');			
 			</ec:event>
 		</ec:button>
 		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
-			bundle="${messages}" enabled="${empty vars.orderReport.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" />
+			bundle="${messages}" enabled="${empty vars.orderReport.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
 	</ec:box-footer>
 </ec:box>
 </ec:form>

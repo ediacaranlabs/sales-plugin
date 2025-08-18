@@ -115,7 +115,7 @@ public class OrderReportRegistryUtil {
 		}
 	}
 	
-	public static OrderReportResultSearch searchOrderReport(OrderReportSearch value, OrderReportIndexEntityAccess indexEntityAccess, ClientRegistry clientRegistry, OrderRegistry orderRegistry) throws OrderReportRegistryException {
+	public static OrderReportResultSearch searchOrderReport(OrderReportSearch value, OrderReportEntityAccess entityAccess, OrderReportIndexEntityAccess indexEntityAccess, ClientRegistry clientRegistry, OrderRegistry orderRegistry) throws OrderReportRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
 		
@@ -129,9 +129,7 @@ public class OrderReportRegistryUtil {
 			List<OrderReport> itens = new ArrayList<>();
 			
 			for(OrderReport e: list) {
-				e = indexEntityAccess.findById(e.getId());
-				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));
-				e.setOrder(e.getOrder() == null? null : orderRegistry.findById(e.getOrder().getId()));
+				e = reload(e, entityAccess, clientRegistry, orderRegistry);
 				itens.add(e);
 			}
 			

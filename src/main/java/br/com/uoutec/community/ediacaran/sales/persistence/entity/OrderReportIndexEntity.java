@@ -11,9 +11,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 @Entity
 @Table(name="rw_order_report_index")
@@ -23,7 +25,7 @@ public class OrderReportIndexEntity implements Serializable{
 	private static transient final long serialVersionUID = -5167928569154696530L;
 
 	@Id
-	@Column(name="cod_order_report", length=32)
+	@Column(name="cod_order_report", length=38)
 	private String id;
 	
 	@Column(name="cod_order", length=38)
@@ -146,6 +148,19 @@ public class OrderReportIndexEntity implements Serializable{
 		}
 		
 		e.setId(id);
+		
+		if(this.client != null) {
+			Client c = new Client();
+			c.setId(this.client);
+			e.setClient(c);
+		}
+
+		if(this.user != null) {
+			SystemUser c = new SystemUser();
+			c.setId(this.user);
+			e.setUser(c);
+		}
+		
 		return e;
 	}
 

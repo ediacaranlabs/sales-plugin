@@ -126,7 +126,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		
-		return OrderReportRegistryUtil.searchOrderReport(value, indexEntityAccess, clientRegistry, orderRegistry);
+		return OrderReportRegistryUtil.searchOrderReport(value, entityAccess, indexEntityAccess, clientRegistry, orderRegistry);
 	}
 
 	@Override
