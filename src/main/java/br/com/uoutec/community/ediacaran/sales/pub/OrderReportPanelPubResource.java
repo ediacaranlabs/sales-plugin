@@ -191,7 +191,6 @@ public class OrderReportPanelPubResource {
 			@Basic(bean="page") Integer page,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
-
 		
 		OrderReport orderReport;
 		try{
