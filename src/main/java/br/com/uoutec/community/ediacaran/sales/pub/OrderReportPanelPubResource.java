@@ -9,26 +9,33 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Controller;
 import org.brandao.brutos.annotation.DetachedName;
 import org.brandao.brutos.annotation.MappingTypes;
+import org.brandao.brutos.annotation.ResponseType;
 import org.brandao.brutos.annotation.Result;
 import org.brandao.brutos.annotation.ScopeType;
 import org.brandao.brutos.annotation.Transient;
 import org.brandao.brutos.annotation.View;
+import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
+import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportClientPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
@@ -170,6 +177,52 @@ public class OrderReportPanelPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("orderReport", orderReport);
 		return map;
+	}
+
+	@Action(value="/messages")
+	@RequestMethod("POST")
+	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
+	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.SEARCH)
+	@Result(mappingType = MappingTypes.OBJECT)
+	public OrderReportMessageSearchResultPubEntity getMessages(
+			@DetachedName OrderReportClientPubEntity orderReportPubEntity,
+			@Basic(bean="page") Integer page,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale){
+
+		
+		OrderReport orderReport;
+		try{
+			orderReport = orderReportPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportAdminPubResourceMessages.search.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		
+		try{
+			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(orderReport, page, null);
+			return result == null? null : new OrderReportMessageSearchResultPubEntity(result, locale);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportAdminPubResourceMessages.search.error.fail_load_entity,
+							
+							locale);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		
 	}
 	
 }
