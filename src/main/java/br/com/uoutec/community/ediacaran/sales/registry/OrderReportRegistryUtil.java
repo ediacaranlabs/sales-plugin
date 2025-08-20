@@ -12,6 +12,8 @@ import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
@@ -19,9 +21,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -97,6 +101,15 @@ public class OrderReportRegistryUtil {
 	}
 	
 	public static void sendToRepository(OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
+		try {
+			entityAccess.flush();
+		}
+		catch(Throwable x){
+			throw new OrderReportRegistryException(x);
+		}
+	}
+
+	public static void sendToRepository(OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException {
 		try {
 			entityAccess.flush();
 		}
@@ -290,6 +303,44 @@ public class OrderReportRegistryUtil {
 		}
 		
 		return result;
+	}
+
+	public static OrderReportMessage toOrderReportMessage(OrderReport e, String message, LocalDateTime date, SystemUser user) throws OrderReportRegistryException {
+		OrderReportMessage x = new OrderReportMessage();
+		x.setDate(date);
+		x.setMessage(message);
+		x.setOrderReport(e.getId());
+		x.setUser(user);
+		return x;
+	}
+	
+	public static void registerMessage(OrderReportMessage e, OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException {
+		try {
+			entityAccess.save(e);
+		}
+		catch(Throwable x){
+			throw new OrderReportRegistryException(
+				"order report error: " + e.getOrderReport(), x);
+		}
+	}
+
+	public static OrderReportMessageResultSearch getOrderReportMessageByOrderReport(OrderReport orderReport, 
+			Integer page, Integer maxItens, OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException{
+		
+		try{
+			page = page == null? 1 : page;
+			maxItens = maxItens == null? 10 : maxItens;
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			
+			List<OrderReportMessage> itens = entityAccess.getByOrderReport(orderReport.getId(), firstResult, maxResults);
+			return new OrderReportMessageResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+		}
+		catch(Throwable e){
+			throw new OrderReportRegistryException(e);
+		}
+		
 	}
 	
 }

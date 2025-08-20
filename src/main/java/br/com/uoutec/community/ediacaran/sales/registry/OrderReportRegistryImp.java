@@ -13,14 +13,18 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -36,6 +40,8 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
 	
+	@Inject
+	private OrderReportMessageEntityAccess orderReportMessageEntityAccess;
 	
 	@Inject
 	private OrderReportEntityAccess entityAccess;
@@ -163,4 +169,18 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		return OrderReportRegistryUtil.toOrderReport(order, orderRegistry);
 	}
 
+	@Override
+	@ActivateRequestContext
+	public void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException {
+		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(orderReport, message, LocalDateTime.now(), user);
+		OrderReportRegistryUtil.registerMessage(e, orderReportMessageEntityAccess);
+		OrderReportRegistryUtil.sendToRepository(orderReportMessageEntityAccess);
+	}
+
+	@Override
+	@ActivateRequestContext
+	public OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException {
+		return OrderReportRegistryUtil.getOrderReportMessageByOrderReport(orderReport, page, quantityPerPage, orderReportMessageEntityAccess);
+	}
+	
 }
