@@ -182,5 +182,10 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	public OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException {
 		return OrderReportRegistryUtil.getOrderReportMessageByOrderReport(orderReport, page, quantityPerPage, orderReportMessageEntityAccess);
 	}
+
+	@Override
+	public OrderReportMessage getMessageById(String id) throws OrderReportRegistryException {
+		return OrderReportRegistryUtil.findById(id, orderReportMessageEntityAccess);
+	}
 	
 }

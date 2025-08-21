@@ -342,5 +342,16 @@ public class OrderReportRegistryUtil {
 		}
 		
 	}
+
+	public static OrderReportMessage findById(String id, OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException{
+		
+		try{
+			return entityAccess.findById(id);
+		}
+		catch(Throwable e){
+			throw new OrderReportRegistryException(e);
+		}
+		
+	}
 	
 }
