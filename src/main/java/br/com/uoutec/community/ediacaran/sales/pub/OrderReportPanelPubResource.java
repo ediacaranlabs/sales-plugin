@@ -27,10 +27,12 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportClientPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
@@ -222,6 +224,52 @@ public class OrderReportPanelPubResource {
 		}
 		
 		
+	}
+
+	@Action("/sendMessage")
+	@View("${plugins.ediacaran.sales.template}/front/panel/order/report/result_message")
+	@Result("vars")
+	@RequestMethod("POST")
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER, BasicRoles.CLIENT})
+	public Map<String,Object> sendMessage(
+			@DetachedName
+			OrderReportMessageClientPubEntity orderReportMessageClientPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		OrderReportMessage orderReportMessage;
+		try{
+			orderReportMessage = orderReportMessageClientPubEntity.rebuild(false, true, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		try{
+			OrderReport or = new OrderReport();
+			or.setId(orderReportMessage.getOrderReport());
+			orderReportRegistry.sendMessage(or, orderReportMessage.getMessage(), orderReportMessage.getUser());
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("orderReportMessage", orderReportMessage);
+		return map;
 	}
 	
 }

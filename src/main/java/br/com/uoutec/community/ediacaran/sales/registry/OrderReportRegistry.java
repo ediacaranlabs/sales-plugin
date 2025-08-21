@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
@@ -29,6 +30,8 @@ public interface OrderReportRegistry extends PublicBean {
 	OrderReportResultSearch searchOrderReport(OrderReportSearch value) throws OrderReportRegistryException;
 	
 	void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException;
+
+	OrderReportMessage getMessageById(String id) throws OrderReportRegistryException;
 	
 	OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException;
 	
