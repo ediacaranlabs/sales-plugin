@@ -29,6 +29,12 @@
 <ec:form id="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" method="POST" update="orderReportFormResult">
 	<input type="hidden" name="order" value="${vars.orderReport.order.id}">
 	<input type="hidden" name="id" value="${vars.orderReport.id}">
+</ec:form>
+
+<ec:form id="sendMessageOrderReport" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/sendMessage" method="POST" update="orderReportFormResult">
+	<input type="hidden" name="orderReport" value="${vars.orderReport.id}">
+</ec:form>
+
 <ec:box>
 	<ec:box-header><b><fmt:message key="order_report_id" bundle="${messages}"/></b> #${vars.orderReport.id}</ec:box-header>
 	<ec:box-body>
@@ -69,8 +75,8 @@
 									</c:if>
 									<c:if test="${empty vars.orderReport.id}">
 										<span formgroup="products" formgrouptype="index">
-											<input type="hidden" name="serial" value="${product.serial}">
-											<ec:select name="cause">
+											<input type="hidden" form="orderReportForm" name="serial" value="${product.serial}">
+											<ec:select name="cause" form="orderReportForm">
 												<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
 												<c:forEach items="${vars.causeList}" var="cause">
 													<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
@@ -91,6 +97,46 @@
 			</ed:col>
 		</ed:row>
 		<ed:row>
+			<ed:col>
+			</ed:col>
+			<ed:col size="3">
+				<ec:box>
+					<ec:box-header>Messages</ec:box-header>
+					<ec:box-body>
+						<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/messages">
+							<input type="hidden" name="id" value="${vars.orderReport.id}">
+							<ec:data-result var="response">
+								<ec:forEach items="!{response.itens}" var="item">
+									<ed:row style="form">
+										<ed:col><b>!{item.date}</b></ed:col>
+									</ed:row>
+									<ed:row style="form">
+										<ed:col size="1"></ed:col>
+										<ed:col>!{item.message}</ed:col>
+									</ed:row>
+									<hr>
+								</ec:forEach>
+								<ed:row>
+									<ed:col><ec:textarea id="messageField" rows="2" name="message" form="sendMessageOrderReport"></ec:textarea></ed:col>
+								</ed:row>
+								<ed:row>
+									<ed:col>
+										<ec:button label="send" form="sendMessageOrderReport" actionType="submit" style="info" align="right"/>
+									</ed:col>
+								</ed:row>
+							</ec:data-result>
+						</ec:data-table>
+					</ec:box-body>
+				</ec:box>
+			</ed:col>
+		</ed:row>
+		<script type="text/javascript">
+			$.AppContext.onload(function(){
+				var $fr = $.AppContext.utils.getById('orderSearchForm');
+				$fr.submit();
+			});
+		</script>
+		<ed:row>
 			<ed:col id="orderReportFormResult">
 			</ed:col>
 		</ed:row>
@@ -103,7 +149,6 @@
 			</ec:event>
 		</ec:button>
 		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
-			bundle="${messages}" enabled="${empty vars.orderReport.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
+			bundle="${messages}" enabled="${empty vars.orderReport.id}" form="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
 	</ec:box-footer>
 </ec:box>
-</ec:form>

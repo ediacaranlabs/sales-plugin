@@ -13,9 +13,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderReportMessageEntity;
+import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @RequestScoped
@@ -30,6 +32,12 @@ public class OrderReportMessageEntityAccessImp
 	@Inject
 	public OrderReportMessageEntityAccessImp(EntityManager entityManager) {
 		super(entityManager);
+	}
+
+	@Override
+	public void save(OrderReportMessage value) throws EntityAccessException {
+		value.setId(IDGenerator.getUniqueOrderID('O', (int)SystemProperties.currentTimeMillis()));
+		super.save(value);
 	}
 	
 	@Override

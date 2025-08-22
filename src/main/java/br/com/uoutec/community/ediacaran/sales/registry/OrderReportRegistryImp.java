@@ -170,6 +170,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	}
 
 	@Override
+	@Transactional
 	@ActivateRequestContext
 	public void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException {
 		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(orderReport, message, LocalDateTime.now(), user);

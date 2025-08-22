@@ -19,7 +19,7 @@ public class OrderReportMessageEntity implements Serializable {
 	private static transient final long serialVersionUID = -5167928569154696530L;
 
 	@Id
-	@Column(name="cod_order_report_msg", length=32)
+	@Column(name="cod_order_report_msg", length=38)
 	private String id;
 	
 	@Column(name="cod_order_report")

@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -329,13 +330,15 @@ public class OrderReportRegistryUtil {
 		
 		try{
 			page = page == null? 1 : page;
-			maxItens = maxItens == null? 10 : maxItens;
+			maxItens = maxItens == null? 5 : maxItens;
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
 			
 			List<OrderReportMessage> itens = entityAccess.getByOrderReport(orderReport.getId(), firstResult, maxResults);
-			return new OrderReportMessageResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+			Collections.reverse(itens);
+			
+			return new OrderReportMessageResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(itens.size() - maxItens, itens.size()) : itens);
 		}
 		catch(Throwable e){
 			throw new OrderReportRegistryException(e);
