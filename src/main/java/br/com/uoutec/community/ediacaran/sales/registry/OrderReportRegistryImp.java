@@ -25,6 +25,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEnt
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -181,7 +182,10 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Override
 	@ActivateRequestContext
 	public OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException {
-		return OrderReportRegistryUtil.getOrderReportMessageByOrderReport(orderReport, page, quantityPerPage, orderReportMessageEntityAccess);
+		
+		SystemUserRegistry systemUserRegistry = EntityContextPlugin.getEntity(SystemUserRegistry.class);
+		
+		return OrderReportRegistryUtil.getOrderReportMessageByOrderReport(orderReport, page, quantityPerPage, orderReportMessageEntityAccess, systemUserRegistry);
 	}
 
 	@Override

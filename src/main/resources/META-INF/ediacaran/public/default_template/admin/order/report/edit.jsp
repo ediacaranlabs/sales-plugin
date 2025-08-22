@@ -7,7 +7,6 @@
 <ec:setBundle var="messages" locale="${locale}"/>
 <style>
 .owner-message {
-	background-color: #cccccc;
 }
 .cause {
 	width: 35em;
@@ -111,7 +110,7 @@
 							<ec:data-result var="response">
 								<ec:forEach items="!{response.itens}" var="item">
 									<ed:row style="form" classStyle="!{item.client? 'owner-message' : ''}">
-										<ed:col><b>!{item.date}</b></ed:col>
+										<ed:col><b>!{item.date}</b><br><small>!{item.userName}</small></ed:col>
 									</ed:row>
 									<ed:row style="form" classStyle="!{item.client? 'owner-message' : ''}">
 										<ed:col size="1"></ed:col>

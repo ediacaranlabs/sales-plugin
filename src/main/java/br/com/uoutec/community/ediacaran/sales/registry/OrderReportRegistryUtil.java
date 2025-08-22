@@ -27,6 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportE
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -326,7 +327,7 @@ public class OrderReportRegistryUtil {
 	}
 
 	public static OrderReportMessageResultSearch getOrderReportMessageByOrderReport(OrderReport orderReport, 
-			Integer page, Integer maxItens, OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException{
+			Integer page, Integer maxItens, OrderReportMessageEntityAccess entityAccess, SystemUserRegistry systemUserRegistry) throws OrderReportRegistryException{
 		
 		try{
 			page = page == null? 1 : page;
@@ -337,6 +338,12 @@ public class OrderReportRegistryUtil {
 			
 			List<OrderReportMessage> itens = entityAccess.getByOrderReport(orderReport.getId(), firstResult, maxResults);
 			Collections.reverse(itens);
+			
+			for(OrderReportMessage e: itens) {
+				if(e.getUser()!= null) {
+					e.setUser(systemUserRegistry.findById(e.getUser().getId()));
+				}
+			}
 			
 			return new OrderReportMessageResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(itens.size() - maxItens, itens.size()) : itens);
 		}
