@@ -10,6 +10,7 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -31,7 +32,7 @@ public class OrderReportMessageSearchResultPubEntity extends AbstractPubEntity<O
 	public OrderReportMessageSearchResultPubEntity() {
 	}
 	
-	public OrderReportMessageSearchResultPubEntity(OrderReportMessageResultSearch e, Locale locale) {
+	public OrderReportMessageSearchResultPubEntity(OrderReportMessageResultSearch e, OrderReport orderReport, Locale locale) {
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.getHasNextPage();
@@ -39,7 +40,7 @@ public class OrderReportMessageSearchResultPubEntity extends AbstractPubEntity<O
 		if(e.getItens() != null) {
 			DateTimeFormatter dtaFormt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.MEDIUM).withLocale(locale);
 			for(OrderReportMessage p: e.getItens()) {
-				OrderReportMessageResultSearchItemPubEntity x = new OrderReportMessageResultSearchItemPubEntity(p, locale, dtaFormt);
+				OrderReportMessageResultSearchItemPubEntity x = new OrderReportMessageResultSearchItemPubEntity(p, orderReport, locale, dtaFormt);
 				itens.add(x);
 			}
 		}

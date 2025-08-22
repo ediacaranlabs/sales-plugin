@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
+import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 
 @Entity
 @Table(name="rw_order_report_msg")
@@ -31,6 +32,9 @@ public class OrderReportMessageEntity implements Serializable {
 	@Column(name="dsc_message", length = 128)
 	private String message;
 	
+	@Column(name="cod_system_user", length=11)
+	private Integer user;
+	
 	public OrderReportMessageEntity(){
 	}
 	
@@ -39,6 +43,8 @@ public class OrderReportMessageEntity implements Serializable {
 		this.date = e.getDate();
 		this.orderReportID = e.getOrderReport();
 		this.message = e.getMessage();
+		this.user = e.getUser() == null? null : e.getUser().getId();
+		
 	}
 
 	public String getId() {
@@ -88,6 +94,12 @@ public class OrderReportMessageEntity implements Serializable {
 		e.setMessage(this.message);
 		e.setOrderReport(this.orderReportID);
 
+		if(this.user != null) {
+			SystemUser user = new SystemUser();
+			user.setId(this.user);
+			e.setUser(user);
+		}
+		
 		return e;
 	}
 

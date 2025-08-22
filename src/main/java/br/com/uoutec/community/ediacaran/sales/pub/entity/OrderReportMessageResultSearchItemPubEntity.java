@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.brandao.brutos.annotation.Constructor;
 
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -18,14 +19,25 @@ public class OrderReportMessageResultSearchItemPubEntity extends AbstractPubEnti
 	
 	private String message;
 	
+	private boolean client;
+	
 	@Constructor
 	public OrderReportMessageResultSearchItemPubEntity() {
 	}
 	
-	public OrderReportMessageResultSearchItemPubEntity(OrderReportMessage e, Locale locale, DateTimeFormatter dateTimeFormatter) {
+	public OrderReportMessageResultSearchItemPubEntity(OrderReportMessage e, OrderReport orderReport, Locale locale, DateTimeFormatter dateTimeFormatter) {
 		this.userName = e.getUser() == null? null : e.getUser().getFirstName() + " " + e.getUser().getLastName();
 		this.date = e.toStringDate(locale);
 		this.message = e.getMessage();
+		this.client = e.getUser() == null || orderReport.getClient() == null? false : e.getUser().getId().equals(orderReport.getClient().getId());
+	}
+
+	public boolean isClient() {
+		return client;
+	}
+
+	public void setClient(boolean client) {
+		this.client = client;
 	}
 
 	public String getUserName() {

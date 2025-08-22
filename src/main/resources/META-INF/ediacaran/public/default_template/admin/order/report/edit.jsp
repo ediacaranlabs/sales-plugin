@@ -6,6 +6,9 @@
 
 <ec:setBundle var="messages" locale="${locale}"/>
 <style>
+.owner-message {
+	background-color: #cccccc;
+}
 .cause {
 	width: 35em;
 }
@@ -99,7 +102,7 @@
 		<ed:row>
 			<ed:col>
 			</ed:col>
-			<ed:col size="3">
+			<ed:col size="4">
 				<ec:box>
 					<ec:box-header>Messages</ec:box-header>
 					<ec:box-body>
@@ -107,10 +110,10 @@
 							<input type="hidden" name="id" value="${vars.orderReport.id}">
 							<ec:data-result var="response">
 								<ec:forEach items="!{response.itens}" var="item">
-									<ed:row style="form">
+									<ed:row style="form" classStyle="!{item.client? 'owner-message' : ''}">
 										<ed:col><b>!{item.date}</b></ed:col>
 									</ed:row>
-									<ed:row style="form">
+									<ed:row style="form" classStyle="!{item.client? 'owner-message' : ''}">
 										<ed:col size="1"></ed:col>
 										<ed:col>!{item.message}</ed:col>
 									</ed:row>

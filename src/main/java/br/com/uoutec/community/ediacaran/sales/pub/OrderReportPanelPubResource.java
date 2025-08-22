@@ -211,7 +211,7 @@ public class OrderReportPanelPubResource {
 		
 		try{
 			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(orderReport, page, null);
-			return result == null? null : new OrderReportMessageSearchResultPubEntity(result, locale);
+			return result == null? null : new OrderReportMessageSearchResultPubEntity(result, orderReport, locale);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
