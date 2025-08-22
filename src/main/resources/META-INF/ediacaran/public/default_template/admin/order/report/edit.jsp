@@ -117,13 +117,26 @@
 									<hr>
 								</ec:forEach>
 								<ed:row>
-									<ed:col><ec:textarea id="messageField" rows="2" name="message" form="sendMessageOrderReport"></ec:textarea></ed:col>
-								</ed:row>
-								<ed:row>
-									<ed:col>
-										<ec:button label="send" form="sendMessageOrderReport" actionType="submit" style="info" align="right"/>
+									<ed:col classStyle="qty form-group has-feedback">
+										<ec:textarea maxlength="128" id="messageField" rows="2" name="message" form="sendMessageOrderReport"></ec:textarea>
+										<ec:field-validator form="sendMessageOrderReport" field="messageField">
+											<ec:field-validator-rule name="notEmpty" message="#{product_table.form.message.validation.notEmpty}" bundle="${messages}"/>
+											<%--
+											<ec:field-validator-rule name="between" message="#{product_table.form.message.validation.between}" bundle="${messages}">
+													<ec:field-validator-param name="min">0</ec:field-validator-param>
+													<ec:field-validator-param name="max">128</ec:field-validator-param>
+											</ec:field-validator-rule>
+											--%>
+										</ec:field-validator>
 									</ed:col>
 								</ed:row>
+								<%--
+								<ed:row>
+									<ed:col>
+										<ec:button label="#{product_table.form.button_message.label}" form="sendMessageOrderReport" bundle="${messages}" actionType="submit" style="info" align="right"/>
+									</ed:col>
+								</ed:row>
+								 --%>
 							</ec:data-result>
 						</ec:data-table>
 					</ec:box-body>
@@ -148,7 +161,12 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/show/${vars.orderReport.order.id}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
-			bundle="${messages}" enabled="${empty vars.orderReport.id}" form="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
+		<c:if test="${empty vars.orderReport.id}">
+			<ec:button actionType="submit" label="#{save.label}" align="right" style="success"
+				bundle="${messages}" enabled="${empty vars.orderReport.id}" form="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
+		</c:if>
+		<c:if test="${!empty vars.orderReport.id}">
+			<ec:button label="#{product_table.form.button_message.label}" form="sendMessageOrderReport" style="success" bundle="${messages}" actionType="submit" align="right"/>
+		</c:if>		
 	</ec:box-footer>
 </ec:box>

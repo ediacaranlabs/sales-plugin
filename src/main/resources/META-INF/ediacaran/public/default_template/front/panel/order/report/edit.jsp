@@ -101,7 +101,9 @@
 						</ec:forEach>
 						<ed:row>
 							<ed:col><input type="hidden" name="orderReport" value="${vars.orderReport.id}"></ed:col>
-							<ed:col><ec:textarea rows="4" name="message"></ec:textarea></ed:col>
+							<ed:col>
+								<ec:textarea id="messageField" rows="4" name="message"></ec:textarea>
+							</ed:col>
 						</ed:row>
 					</ec:data-result>
 				</ec:data-table>
