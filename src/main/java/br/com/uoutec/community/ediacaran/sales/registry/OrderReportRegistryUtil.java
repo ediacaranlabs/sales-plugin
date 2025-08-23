@@ -286,6 +286,41 @@ public class OrderReportRegistryUtil {
 		
 
 	}
+
+	public static void checkUpdateOrderReportStatus(OrderReport e, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess, ClientRegistry clientRegistry) throws OrderReportRegistryException {
+		
+		//check order not is closed
+		
+		Order order;
+		
+		try {
+			order = orderRegistry.findById(e.getOrder().getId());
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+		if(order.isClosed()) {
+			throw new OrderReportRegistryException("order is closed");
+		}
+		
+		OrderReport current = reload(e, entityAccess, clientRegistry, orderRegistry);
+		
+		//check if not exist reported product request
+		
+		Set<String> currentProductRequest = current.getProducts().stream().map((i)->i.getSerial()).collect(Collectors.toSet());
+		Set<String> actualReportedProductRequest = e.getProducts().stream().map((i)->i.getSerial()).collect(Collectors.toSet());
+		
+		for(String s: currentProductRequest) {
+			actualReportedProductRequest.remove(s);
+		}
+		
+		if(!actualReportedProductRequest.isEmpty()) {
+			throw new OrderReportRegistryException("product request list can't be changed");
+		}
+		
+
+	}
 	
 	public static Set<String> getReportedProductRequest(OrderReport e, Order order, OrderReportEntityAccess entityAccess) throws EntityAccessException {
 		
@@ -306,7 +341,7 @@ public class OrderReportRegistryUtil {
 		
 		return result;
 	}
-
+	
 	public static OrderReportMessage toOrderReportMessage(OrderReport e, String message, LocalDateTime date, SystemUser user) throws OrderReportRegistryException {
 		OrderReportMessage x = new OrderReportMessage();
 		x.setDate(date);

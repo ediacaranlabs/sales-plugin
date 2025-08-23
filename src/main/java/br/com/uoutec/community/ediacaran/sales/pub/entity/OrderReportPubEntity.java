@@ -17,12 +17,15 @@ import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
+import br.com.uoutec.community.ediacaran.security.Subject;
+import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -109,42 +112,51 @@ public class OrderReportPubEntity extends AbstractPubEntity<OrderReport> {
 	@Override
 	protected void copyTo(OrderReport o, boolean reload, boolean override, boolean validate) throws Throwable {
 		
-		if(this.id != null) {
-			return;
-		}
-
-		if(this.order != null) {
+		SubjectProvider subjectProvider = EntityContextPlugin.getEntity(SubjectProvider.class); 
+		Subject subject = subjectProvider.getSubject();
+		
+		
+		if(o.getOrder() == null && this.order != null) {
 			o.setOrder(new Order());
 			o.getOrder().setId(order);
 		}
 
-		o.setStatus(this.status);
-		o.setDate(this.date);
-		
-		if(this.products != null) {
-			
-			Map<String,ProductRequestReportCause> units = new HashMap<>();
-			for(ProductRequestReportPubEntity e: this.products) {
-				ProductRequestReport p = (ProductRequestReport) e.rebuild(false, true, false);
-				if(p.getSerial() != null) {
-					units.put(p.getSerial(), e.getCause());
-				}
-			}
-			
-			if(o.getProducts() != null) {
-				for(ProductRequestReport p: o.getProducts()) {
-					ProductRequestReportCause u = units.get(p.getSerial());
-					p.setCause(u);
-				}
-			}
-			
+		if(subject.isPermitted(SalesUserPermissions.ORDER.REPORT.FIELDS.STATUS)) {
+			o.setStatus(this.status);
 		}
-		else {
-			if(o.getProducts() != null) {
-				for(ProductRequestReport p: o.getProducts()) {
-					p.setCause(null);
+		
+		if(subject.isPermitted(SalesUserPermissions.ORDER.REPORT.FIELDS.DATE) && o.getDate() == null) {
+			o.setDate(this.date);
+		}
+		
+		if(subject.isPermitted(SalesUserPermissions.ORDER.REPORT.FIELDS.PRODUCTS) && (o.getProducts() == null || o.getProducts().isEmpty())) {
+			
+			if(this.products != null) {
+				
+				Map<String,ProductRequestReportCause> units = new HashMap<>();
+				for(ProductRequestReportPubEntity e: this.products) {
+					ProductRequestReport p = (ProductRequestReport) e.rebuild(false, true, false);
+					if(p.getSerial() != null) {
+						units.put(p.getSerial(), e.getCause());
+					}
+				}
+				
+				if(o.getProducts() != null) {
+					for(ProductRequestReport p: o.getProducts()) {
+						ProductRequestReportCause u = units.get(p.getSerial());
+						p.setCause(u);
+					}
+				}
+				
+			}
+			else {
+				if(o.getProducts() != null) {
+					for(ProductRequestReport p: o.getProducts()) {
+						p.setCause(null);
+					}
 				}
 			}
+			
 		}
 		
 	}

@@ -25,9 +25,13 @@ import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessagePubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchResultPubEntity;
@@ -55,8 +59,8 @@ public class OrderReportAdminPubResource {
 	@Action("/")
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/index")
 	@Result("vars")
-	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.SHIPPING.SHOW)
+	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.SHOW)
 	public Map<String,Object> index(
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException{
@@ -71,7 +75,7 @@ public class OrderReportAdminPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.ORDER.SEARCH)
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.SEARCH)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public OrderReportSearchResultPubEntity search(
 			@DetachedName OrderReportSearchPubEntity request,
@@ -114,8 +118,8 @@ public class OrderReportAdminPubResource {
 	@Action("/edit/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/edit")
 	@Result("vars")
-	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.ORDER.SHOW)
+	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.SHOW)
 	public Map<String,Object> detailedEntity(
 			@DetachedName
 			OrderReportPubEntity orderReportPubEntity,
@@ -139,6 +143,7 @@ public class OrderReportAdminPubResource {
 
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("orderReport", orderReport);
+		map.put("statusList", Arrays.asList(OrderReportStatus.values()));
 		return map;
 	}
 	
@@ -146,8 +151,8 @@ public class OrderReportAdminPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/result")
 	@Result("vars")
 	@RequestMethod("POST")
-	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.ORDER.SAVE)
+	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.SAVE)
 	public Map<String,Object> save(
 			@DetachedName
 			OrderReportPubEntity orderReportPubEntity,
@@ -184,6 +189,98 @@ public class OrderReportAdminPubResource {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("orderReport", orderReport);
+		return map;
+	}
+
+	@Action(value="/messages")
+	@RequestMethod("POST")
+	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
+	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
+	@Result(mappingType = MappingTypes.OBJECT)
+	public OrderReportMessageSearchResultPubEntity getMessages(
+			@DetachedName OrderReportPubEntity orderReportPubEntity,
+			@Basic(bean="page") Integer page,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale){
+		
+		OrderReport orderReport;
+		try{
+			orderReport = orderReportPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportAdminPubResourceMessages.search.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		
+		try{
+			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(orderReport, page, null);
+			return result == null? null : new OrderReportMessageSearchResultPubEntity(result, orderReport, locale);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportAdminPubResourceMessages.search.error.fail_load_entity,
+							
+							locale);
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		
+	}
+
+	@Action("/sendMessage")
+	@View("${plugins.ediacaran.sales.template}/admin/order/report/result_message")
+	@Result("vars")
+	@RequestMethod("POST")
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
+	public Map<String,Object> sendMessage(
+			@DetachedName
+			OrderReportMessagePubEntity orderReportMessagePubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		OrderReportMessage orderReportMessage;
+		try{
+			orderReportMessage = orderReportMessagePubEntity.rebuild(false, true, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		try{
+			OrderReport or = new OrderReport();
+			or.setId(orderReportMessage.getOrderReport());
+			orderReportRegistry.sendMessage(or, orderReportMessage.getMessage(), orderReportMessage.getUser());
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("orderReportMessage", orderReportMessage);
 		return map;
 	}
 	

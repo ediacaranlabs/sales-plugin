@@ -33,14 +33,26 @@
 	<input type="hidden" name="id" value="${vars.orderReport.id}">
 </ec:form>
 
-<ec:form id="sendMessageOrderReport" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/sendMessage" method="POST" update="orderReportFormResult">
+<ec:form id="sendMessageOrderReport" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/sendMessage" method="POST" update="orderReportFormResult">
 	<input type="hidden" name="orderReport" value="${vars.orderReport.id}">
 </ec:form>
 
 <ec:box>
-	<ec:box-header><b><fmt:message key="order_report_id" bundle="${messages}"/></b> #${vars.orderReport.id}</ec:box-header>
+	<ec:box-header>
+		<ed:row style="form">
+			<ed:col>
+				<b><fmt:message key="order_report_id" bundle="${messages}"/></b><br>#${vars.orderReport.id}
+			</ed:col>
+			<ed:col size="3">
+				<ec:select name="status" form="orderReportForm" align="right" readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:ORDER:REPORT:FIELDS:STATUS']) || vars.orderReport.status == 'CLOSED' }">
+					<c:forEach items="${vars.statusList}" var="status">
+						<ec:option value="${status}" selected="${vars.orderReport.status == status}">${status.getName(locale)}</ec:option>
+					</c:forEach>
+				</ec:select>
+			</ed:col>
+		</ed:row>
+	</ec:box-header>
 	<ec:box-body>
-	
 		<ed:row>
 			<ed:col>
 				<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.orderReport.toStringDate(locale)}</h3>
@@ -50,7 +62,7 @@
 			<ed:col size="4">
 				<b><fmt:message key="report_code" bundle="${messages}"/>:</b> #${vars.orderReport.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.orderReport.toStringDate(locale)}<br>
-				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.orderReport.status.getName(locale)}<br>
+				<%--<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.orderReport.status.getName(locale)}<br>--%>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.orderReport.order.id}<br>
 			</ed:col>
 			<ed:col size="4">
@@ -105,7 +117,7 @@
 				<ec:box>
 					<ec:box-header>Messages</ec:box-header>
 					<ec:box-body>
-						<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/messages">
+						<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/messages">
 							<input type="hidden" name="id" value="${vars.orderReport.id}">
 							<ec:data-result var="response">
 								<ec:forEach items="!{response.itens}" var="item">
@@ -120,7 +132,7 @@
 								</ec:forEach>
 								<ed:row>
 									<ed:col classStyle="qty form-group has-feedback">
-										<ec:textarea maxlength="128" id="messageField" rows="2" name="message" form="sendMessageOrderReport"></ec:textarea>
+										<ec:textarea maxlength="128" id="messageField" rows="2" name="message" form="sendMessageOrderReport" readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:ORDER:REPORT:MESSAGE'])}" ></ec:textarea>
 										<ec:field-validator form="sendMessageOrderReport" field="messageField">
 											<ec:field-validator-rule name="notEmpty" message="#{product_table.form.message.validation.notEmpty}" bundle="${messages}"/>
 											<%--
@@ -132,13 +144,13 @@
 										</ec:field-validator>
 									</ed:col>
 								</ed:row>
-								<%--
 								<ed:row>
 									<ed:col>
-										<ec:button label="#{product_table.form.button_message.label}" form="sendMessageOrderReport" bundle="${messages}" actionType="submit" style="info" align="right"/>
+										<ec:button label="#{product_table.form.button_message.label}" form="sendMessageOrderReport" style="success" bundle="${messages}"
+											enabled="${pageContext.request.userPrincipal.isGranted(['SALES:ORDER:REPORT:MESSAGE']) && vars.orderReport.status != 'CLOSED'}" 
+											actionType="submit" align="right"/>
 									</ed:col>
 								</ed:row>
-								 --%>
 							</ec:data-result>
 						</ec:data-table>
 					</ec:box-body>
@@ -163,12 +175,7 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/show/${vars.orderReport.order.id}');			
 			</ec:event>
 		</ec:button>
-		<c:if test="${empty vars.orderReport.id}">
-			<ec:button actionType="submit" label="#{save.label}" align="right" style="success"
-				bundle="${messages}" enabled="${empty vars.orderReport.id}" form="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
-		</c:if>
-		<c:if test="${!empty vars.orderReport.id}">
-			<ec:button label="#{product_table.form.button_message.label}" form="sendMessageOrderReport" style="success" bundle="${messages}" actionType="submit" align="right"/>
-		</c:if>		
+		<ec:button actionType="submit" label="#{save.label}" align="right" style="success"
+			bundle="${messages}" enabled="${pageContext.request.userPrincipal.isGranted(['SALES:ORDER:REPORT:SAVE'])}" form="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/report/save" />
 	</ec:box-footer>
 </ec:box>

@@ -14,7 +14,7 @@
 	</ec:alert>
 	<script type="text/javascript">
 	$.AppContext.onload(function(){
-		$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.orderReport.order.id}');
+		$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.orderReport.order.id}');
 	});
 	</script>
 </c:if>

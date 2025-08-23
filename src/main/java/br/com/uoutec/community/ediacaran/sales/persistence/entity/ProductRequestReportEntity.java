@@ -112,6 +112,7 @@ public class ProductRequestReportEntity implements Serializable {
 		}
 		
 		e.setCause(this.cause);
+		e.setOrderReport(this.id.getOrderReportID());
 		
 		return e;
 	}

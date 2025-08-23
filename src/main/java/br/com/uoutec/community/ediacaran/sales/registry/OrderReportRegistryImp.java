@@ -69,19 +69,19 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		
 		boolean newEntity = entity.getId() == null;
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-		
+		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
 		if(newEntity) {
-			save(entity, entityAccess, orderRegistry);
+			save(entity, entityAccess, orderRegistry, clientRegistry);
 		}
 		else {
-			update(entity, entityAccess, orderRegistry);
+			update(entity, entityAccess, orderRegistry, clientRegistry);
 		}
 		
 		confirmRegistration(entity, newEntity, entityAccess, actionRegistry);
 		
 	}
 
-	private void save(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry) throws ValidationException, OrderReportRegistryException {
+	private void save(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, ClientRegistry clientRegistry) throws ValidationException, OrderReportRegistryException {
 		entity.setStatus(OrderReportStatus.NEW_REQUEST);
 		entity.setDate(LocalDateTime.now());
 		OrderReportRegistryUtil.validate(entity, saveValidations);
@@ -89,9 +89,9 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.save(entity, entityAccess);
 	}
 
-	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry) throws ValidationException, OrderReportRegistryException {
+	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, ClientRegistry clientRegistry) throws ValidationException, OrderReportRegistryException {
 		OrderReportRegistryUtil.validate(entity, updateValidations);
-		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
+		OrderReportRegistryUtil.checkUpdateOrderReportStatus(entity, orderRegistry, entityAccess, clientRegistry);
 		OrderReportRegistryUtil.update(entity, entityAccess);
 	}
 	

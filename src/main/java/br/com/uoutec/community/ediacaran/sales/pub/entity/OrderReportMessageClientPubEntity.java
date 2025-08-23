@@ -9,7 +9,7 @@ import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryExcepti
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
-public class OrderReportMessageClientPubEntity extends OrderReportMessagePubEntity{
+public class OrderReportMessageClientPubEntity extends OrderReportMessagePubEntity {
 
 	private static final long serialVersionUID = 7678016257006479355L;
 
