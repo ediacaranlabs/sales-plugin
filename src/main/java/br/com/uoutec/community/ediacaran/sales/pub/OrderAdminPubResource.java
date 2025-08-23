@@ -28,6 +28,7 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
@@ -41,6 +42,7 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderResultSearchPubEn
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
@@ -74,6 +76,10 @@ public class OrderAdminPubResource {
 	@Transient
 	@Inject
 	private InvoiceRegistry invoiceRegistry;
+	
+	@Transient
+	@Inject
+	private OrderReportRegistry orderReportRegistry;
 	
 	@Transient
 	@Inject
@@ -211,11 +217,14 @@ public class OrderAdminPubResource {
 		List<Invoice> invoices;
 		Client client;
 		List<Shipping> shippings;
+		List<OrderReport> ordersReport;
+		
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
 			client = clientRegistry.findClientById(order.getClient().getId());
 			shippings = shippingRegistry.findByOrder(order.getId());
+			ordersReport = orderReportRegistry.findByOrder(order);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -254,6 +263,7 @@ public class OrderAdminPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order",          order);
 		map.put("invoices",       invoices);
+		map.put("orderReportList",ordersReport);
 		map.put("shippings",      shippings);
 		map.put("paymentGateway", paymentGateway);
 		map.put("payment_view",   view);

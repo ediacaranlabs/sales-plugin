@@ -132,7 +132,7 @@
 								</ec:forEach>
 								<ed:row>
 									<ed:col classStyle="qty form-group has-feedback">
-										<ec:textarea maxlength="128" id="messageField" rows="2" name="message" form="sendMessageOrderReport" readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:ORDER:REPORT:MESSAGE'])}" ></ec:textarea>
+										<ec:textarea maxlength="128" id="messageField" rows="2" name="message" form="sendMessageOrderReport" readonly="${!pageContext.request.userPrincipal.isGranted(['SALES:ORDER:REPORT:MESSAGE']) || vars.orderReport.status == 'CLOSED'}" ></ec:textarea>
 										<ec:field-validator form="sendMessageOrderReport" field="messageField">
 											<ec:field-validator-rule name="notEmpty" message="#{product_table.form.message.validation.notEmpty}" bundle="${messages}"/>
 											<%--
@@ -172,7 +172,7 @@
 		<ec:button label="#{show_order.label}" actionType="button" style="light" 
 			align="right" bundle="${messages}">
 			<ec:event type="click">
-				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/show/${vars.orderReport.order.id}');			
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.orderReport.order.id}');			
 			</ec:event>
 		</ec:button>
 		<ec:button actionType="submit" label="#{save.label}" align="right" style="success"
