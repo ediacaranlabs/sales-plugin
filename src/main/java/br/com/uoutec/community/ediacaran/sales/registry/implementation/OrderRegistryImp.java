@@ -118,14 +118,16 @@ public class OrderRegistryImp
 		
 	}
 
-	private void registryNewOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
+	private void registryNewOrder(Order entity) throws ValidationException, OrderRegistryException {
 		OrderRegistryUtil.validateOrder(entity, saveValidations);
+		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		OrderRegistryUtil.save(entity, orderEntityAccess);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}
 	
-	private void updateOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
+	private void updateOrder(Order entity) throws ValidationException, OrderRegistryException {
 		OrderRegistryUtil.validateOrder(entity, updateValidations);
+		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		OrderRegistryUtil.update(entity, orderEntityAccess);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}

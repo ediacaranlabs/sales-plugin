@@ -11,6 +11,8 @@ import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
@@ -19,10 +21,12 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -70,29 +74,70 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		boolean newEntity = entity.getId() == null;
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
-		if(newEntity) {
-			save(entity, entityAccess, orderRegistry, clientRegistry);
+		InvoiceRegistry invoiceRegistry	= EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		ShippingRegistry shippingRegistry	= EntityContextPlugin.getEntity(ShippingRegistry.class);
+		ProductTypeRegistry productTypeRegistry	= EntityContextPlugin.getEntity(ProductTypeRegistry.class);
+		
+		try {
+			if(newEntity) {
+				save(entity, entityAccess, orderRegistry, clientRegistry, shippingRegistry, invoiceRegistry, productTypeRegistry);
+			}
+			else {
+				update(entity, entityAccess, orderRegistry, clientRegistry, shippingRegistry, invoiceRegistry, productTypeRegistry);
+			}
 		}
-		else {
-			update(entity, entityAccess, orderRegistry, clientRegistry);
+		catch(OrderReportRegistryException ex) {
+			throw ex;
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
 		}
 		
 		confirmRegistration(entity, newEntity, entityAccess, actionRegistry);
 		
 	}
 
-	private void save(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, ClientRegistry clientRegistry) throws ValidationException, OrderReportRegistryException {
+	private void save(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, 
+			InvoiceRegistry invoiceRegistry, ProductTypeRegistry productTypeRegistry) throws ValidationException, OrderReportRegistryException, OrderRegistryException, ShippingRegistryException, InvoiceRegistryException, ProductTypeRegistryException {
+		
 		entity.setStatus(OrderReportStatus.NEW_REQUEST);
 		entity.setDate(LocalDateTime.now());
+		
 		OrderReportRegistryUtil.validate(entity, saveValidations);
 		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
+		
+		Order order = new Order();
+		order.setId(entity.getOrder().getId());
+		
+		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
+		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
+		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
+		List<Invoice> actualInvoices	= InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
+		List<OrderReport> actualReports = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
+		
 		OrderReportRegistryUtil.save(entity, entityAccess);
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, null, actualInvoices, actualShippings, actualReports, orderRegistry, productTypeRegistry);
 	}
 
-	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, ClientRegistry clientRegistry) throws ValidationException, OrderReportRegistryException {
+	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, 
+			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, 
+			InvoiceRegistry invoiceRegistry, ProductTypeRegistry productTypeRegistry) throws ValidationException, OrderReportRegistryException, OrderRegistryException, 
+			ShippingRegistryException, InvoiceRegistryException, ProductTypeRegistryException {
+
 		OrderReportRegistryUtil.validate(entity, updateValidations);
 		OrderReportRegistryUtil.checkUpdateOrderReportStatus(entity, orderRegistry, entityAccess, clientRegistry);
+		
+		Order order = new Order();
+		order.setId(entity.getOrder().getId());
+		
+		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
+		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
+		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
+		List<Invoice> actualInvoices	= InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
+		List<OrderReport> actualReports = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
+		
 		OrderReportRegistryUtil.update(entity, entityAccess);
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, null, actualInvoices, actualShippings, actualReports, orderRegistry, productTypeRegistry);
 	}
 	
 	private void confirmRegistration(OrderReport entity, boolean newEntity, OrderReportEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderReportRegistryException {

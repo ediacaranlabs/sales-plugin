@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -123,6 +124,16 @@ public class OrderReportRegistryUtil {
 	public static List<OrderReport> findByOrder(Order e, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
 		try {
 			return entityAccess.findByOrder(e.getId());
+		}
+		catch(Throwable x){
+			throw new OrderReportRegistryException(
+				"order report error: " + e.getId(), x);
+		}
+	}
+
+	public static List<OrderReport> findByOrder(Order e, OrderReportRegistry registry) throws OrderReportRegistryException {
+		try {
+			return registry.findByOrder(e);
 		}
 		catch(Throwable x){
 			throw new OrderReportRegistryException(
@@ -397,6 +408,26 @@ public class OrderReportRegistryUtil {
 			throw new OrderReportRegistryException(e);
 		}
 		
+	}
+
+	public static boolean isCompletedOrderReport(Order order, Collection<OrderReport> reportList) {
+		
+		if(reportList.isEmpty()) {
+			return true;
+		}
+		
+		boolean isComplete = true;
+		
+		for(OrderReport or: reportList) {
+
+			if(!or.isClosed()) {
+				isComplete = false;
+				break;
+			}
+			
+		}
+		
+		return isComplete;
 	}
 	
 }

@@ -13,6 +13,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
@@ -36,6 +37,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
@@ -538,7 +540,7 @@ public class OrderRegistryUtil {
 		orderRegistry.updateStatus(order, orderStatus);
 	}
 	
-	public static void markAsCompleteOrder(Order order, Invoice invoice, List<Invoice> invoices, List<Shipping> shipping, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+	public static void markAsCompleteOrder(Order order, Invoice invoice, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
 			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 		
 		List<Invoice> allInvoices = new ArrayList<>(invoices);
@@ -548,7 +550,7 @@ public class OrderRegistryUtil {
 		}
 		
 		
-		markAsCompleteOrder(order, allInvoices, shipping, orderRegistry, productTypeRegistry); 
+		markAsCompleteOrder(order, allInvoices, shipping, reportList, orderRegistry, productTypeRegistry); 
 			
 	}
 
@@ -558,7 +560,7 @@ public class OrderRegistryUtil {
 		}
 	}
 
-	public static void markAsCompleteOrder(Order order, Invoice invoice, Shipping shipping, List<Invoice> invoices, List<Shipping> shippings, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+	public static void markAsCompleteOrder(Order order, Invoice invoice, Shipping shipping, List<Invoice> invoices, List<Shipping> shippings, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
 			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 
 		List<Invoice> allInvoices = new ArrayList<>(invoices);
@@ -573,13 +575,17 @@ public class OrderRegistryUtil {
 			allShippings.add(shipping);
 		}
 		
-		markAsCompleteOrder(order, allInvoices, allShippings, orderRegistry, productTypeRegistry);
+		markAsCompleteOrder(order, allInvoices, allShippings, reportList, orderRegistry, productTypeRegistry);
 	}
 			
-	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
+	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
 			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 
-		if(InvoiceRegistryUtil.isCompletedInvoice(order, invoices) && !ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry)) {
+		if(
+		   InvoiceRegistryUtil.isCompletedInvoice(order, invoices) && 
+		   ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry) &&
+		   OrderReportRegistryUtil.isCompletedOrderReport(order, reportList)		   
+		) {
 
 			if(isCompletedOrder(order, productTypeRegistry)) {
 
