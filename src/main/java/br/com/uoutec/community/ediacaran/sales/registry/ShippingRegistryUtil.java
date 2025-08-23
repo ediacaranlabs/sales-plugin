@@ -46,7 +46,7 @@ public class ShippingRegistryUtil {
 			return false;
 		}
 		
-		boolean isInvoiceComplete = true;
+		boolean isComplete = true;
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens(), productTypeRegistry);
 		 loadShippingsToCalculateUnits(shippingList, null,map);
@@ -54,13 +54,20 @@ public class ShippingRegistryUtil {
 		for(ProductRequest tpr: map.values()) {
 
 			if(tpr.getUnits() > 0) {
-				isInvoiceComplete = false;
+				isComplete = false;
 				break;
 			}
 			
 		}
 		
-		return isInvoiceComplete;
+		for(Shipping shipping: shippingList) {
+			if(shipping.getReceivedDate() == null) {
+				isComplete = false;
+				break;
+			}
+		}
+		
+		return isComplete;
 	}
 	
 	public static Map<String, ProductRequest> toMap(Collection<ProductRequest> values, 

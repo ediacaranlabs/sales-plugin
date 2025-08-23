@@ -37,7 +37,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
@@ -578,14 +577,14 @@ public class OrderRegistryUtil {
 		markAsCompleteOrder(order, allInvoices, allShippings, reportList, orderRegistry, productTypeRegistry);
 	}
 			
-	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
-			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
+	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, 
+			OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 
-		if(
-		   InvoiceRegistryUtil.isCompletedInvoice(order, invoices) && 
-		   ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry) &&
-		   OrderReportRegistryUtil.isCompletedOrderReport(order, reportList)		   
-		) {
+		boolean completedInvoice = InvoiceRegistryUtil.isCompletedInvoice(order, invoices);
+		boolean completedShipping = ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry);
+		//boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
+		
+		if(completedInvoice && completedShipping) {
 
 			if(isCompletedOrder(order, productTypeRegistry)) {
 
