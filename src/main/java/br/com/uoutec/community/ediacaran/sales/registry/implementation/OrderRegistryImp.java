@@ -136,12 +136,6 @@ public class OrderRegistryImp
 		OrderRegistryUtil.registerEvent("Pedido criado #" + entity.getId(), entity, orderEntityAccess);
 		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, entity);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
-
-		
-		//OrderRegistryUtil.validateOrder(entity, saveValidations);
-		//OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
-		//OrderRegistryUtil.save(entity, orderEntityAccess);
-		//OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}
 	
 	private void updateOrder(Order entity) throws Throwable {
