@@ -37,6 +37,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
@@ -489,8 +490,7 @@ public class OrderRegistryUtil {
 	}
 	
 	public static void checkNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
-		
-		if(!order.getStatus().isValidNextStatus(newStatus)){
+		if(order.getStatus() != newStatus && !order.getStatus().isValidNextStatus(newStatus)){
 			throw new OrderStatusNotAllowedRegistryException(
 					"invalid status #" + order.getId() + ": " + 
 					order.getStatus() + " -> " + newStatus);
@@ -625,10 +625,10 @@ public class OrderRegistryUtil {
 			OrderEntityAccess orderEntityAccess, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException, EntityAccessException {
 
 		boolean completedInvoice = InvoiceRegistryUtil.isCompletedInvoice(order, invoices);
-		boolean completedShipping = ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry);
-		//boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
+		boolean completedShipping = ShippingRegistryUtil.isCompletedShippingAndReceived(order, shipping, productTypeRegistry);
+		boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
 		
-		if(completedInvoice && completedShipping) {
+		if(completedInvoice && completedShipping && completedReport) {
 
 			if(isCompletedOrder(order, productTypeRegistry)) {
 

@@ -434,22 +434,6 @@ public class OrderRegistryImp
 		OrderRegistryUtil.checkCartToRegistry(cart, payment, paymentGateway, productTypeRegistry, orderEntityAccess);
 		OrderRegistryUtil.saveAddressIfNecessary(cart, clientRegistry);
 
-		/*
-		//Client actualClient   = cart.getClient();//OrderRegistryUtil.getActualClient(cart.getClient(), clientRegistry);
-		//Order order           = OrderRegistryUtil.createOrder(cart, actualClient, paymentGateway);
-		Order order           = OrderRegistryUtil.createOrder(cart, paymentGateway);
-		Payment actualPayment = OrderRegistryUtil.getPayment(payment, order, paymentGateway);
-		
-		OrderRegistryUtil.checkCurrency(order, order.getCurrency());
-		OrderRegistryUtil.preOrder(order, productTypeRegistry);
-		OrderRegistryUtil.saveAddressIfNecessary(order, clientRegistry);
-		OrderRegistryUtil.registerNewOrder(order, order.getClient(), actualPayment, message, paymentGateway, orderEntityAccess);
-		OrderRegistryUtil.postOrder(order, productTypeRegistry);
-		OrderRegistryUtil.registerEvent(message == null? "Pedido criado #" + order.getId() : message, order, orderEntityAccess);
-		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, order);
-		OrderRegistryUtil.saveOrUpdateIndex(order, indexEntityAccess);
-		*/
-		
 		Order order = OrderRegistryUtil.createOrder(cart, paymentGateway);
 		registerOrder(order);
 		return order;

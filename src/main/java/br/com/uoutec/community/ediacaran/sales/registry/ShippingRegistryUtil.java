@@ -60,14 +60,33 @@ public class ShippingRegistryUtil {
 			
 		}
 		
+		/*
 		for(Shipping shipping: shippingList) {
 			if(shipping.getReceivedDate() == null) {
 				isComplete = false;
 				break;
 			}
 		}
+		*/
 		
 		return isComplete;
+	}
+
+	public static boolean isCompletedShippingAndReceived(Order order, Collection<Shipping> shippingList,
+			ProductTypeRegistry productTypeRegistry) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+		
+		if(!isCompletedShipping(order, shippingList, productTypeRegistry)) {
+			return false;
+		}
+		
+		for(Shipping shipping: shippingList) {
+			if(shipping.getReceivedDate() == null) {
+				return false;
+			}
+		}
+		
+		
+		return true;
 	}
 	
 	public static Map<String, ProductRequest> toMap(Collection<ProductRequest> values, 
@@ -248,10 +267,11 @@ public class ShippingRegistryUtil {
 			ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
 		if(isCompletedShipping(order, shippings, productTypeRegistry)) {
-			OrderRegistryUtil.updateStatus(order, OrderStatus.COMPLETE, orderRegistry);
+			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_SHIPPED, orderRegistry);
 			order.setCompleteShipping(LocalDateTime.now());
 		}
 		else {
+			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
 			order.setCompleteShipping(null);
 		}
 		
@@ -433,5 +453,5 @@ public class ShippingRegistryUtil {
 		shipping.setCancelDate(null);
 		shipping.setCancelJustification(null);
 	}
-	
+
 }

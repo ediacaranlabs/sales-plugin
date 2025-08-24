@@ -416,7 +416,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-		//OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, actualReports, orderRegistry, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
 		
@@ -429,7 +428,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		//InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		//OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		
-		Order actualOrder                = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
+		//Order actualOrder                = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient              = ShippingRegistryUtil.getActualClient(order, order.getClient(), clientRegistry);
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		//List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
@@ -440,10 +439,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.checkShipping(order, actualShippings, shipping, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
-		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, EntityContextPlugin.getEntity(OrderRegistry.class), productTypeRegistry);
+		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-		//OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, shipping, actualInvoices, actualShippings, actualReports, orderRegistry, productTypeRegistry);
-		OrderRegistryUtil.updateOrder(actualOrder, orderRegistry);
 	}
 	
 	private void validateShipping(Shipping e, Class<?> ... groups) throws ValidationException{
