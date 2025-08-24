@@ -30,7 +30,6 @@
 <ec:form id="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" method="POST" update="orderReportFormResult">
 	<input type="hidden" name="order" value="${vars.orderReport.order.id}">
 	<input type="hidden" name="id" value="${vars.orderReport.id}">
-</ec:form>
 <ec:box>
 	<ec:box-header><b><fmt:message key="order_report_id" bundle="${messages}"/></b> #${vars.orderReport.id}</ec:box-header>
 	<ec:box-body>
@@ -88,32 +87,6 @@
 			</ed:col>
 		</ed:row>
 		<ed:row>
-			<ed:col>
-			</ed:col>
-			<ed:col>
-				<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/messages">
-					<ec:data-result var="response">
-						<ec:forEach items="!{response.data}" var="item">
-						<ed:row>
-							<ed:col>!{item.date}</ed:col>
-							<ed:col>!{item.message}</ed:col>
-						</ed:row>
-						</ec:forEach>
-						<ed:row>
-							<ed:col><input type="hidden" name="orderReport" value="${vars.orderReport.id}"></ed:col>
-							<ed:col>
-								<ec:textarea id="messageField" rows="4" name="message"></ec:textarea>
-							</ed:col>
-						</ed:row>
-					</ec:data-result>
-				</ec:data-table>
-				<ed:row>
-					<ed:col></ed:col>
-					<ed:col><ec:button label="send" form="orderSearchForm" style="info" actionType="submit" align="right"/></ed:col>
-				</ed:row>
-			</ed:col>
-		</ed:row>
-		<ed:row>
 			<ed:col id="orderReportFormResult">
 			</ed:col>
 		</ed:row>
@@ -126,6 +99,7 @@
 			</ec:event>
 		</ec:button>
 		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
-			bundle="${messages}" enabled="${empty vars.orderReport.id}" form="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" />
+			bundle="${messages}" enabled="${empty vars.orderReport.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" />
 	</ec:box-footer>
 </ec:box>
+</ec:form>

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
@@ -79,6 +80,20 @@ public class OrderReportRegistryUtil {
 		}
 	}
 
+	public static void saveOrUpdateIndex(OrderReport e, OrderReportIndexEntityAccess indexEntityAccess) throws ShippingRegistryException {
+		try {
+			if(indexEntityAccess.findById(e.getId()) == null) {
+				indexEntityAccess.save(e);
+			}
+			else {
+				indexEntityAccess.update(e);
+			}
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+	}
+	
 	public static OrderReport getOrderReportById(String id, OrderReportEntityAccess entityAccess, ClientRegistry clientRegistry, OrderRegistry orderRegistry) throws OrderReportRegistryException{
 		try {
 			OrderReport e = entityAccess.findById(id);
@@ -422,6 +437,27 @@ public class OrderReportRegistryUtil {
 		}
 		
 		return isComplete;
+	}
+
+	public static Order getActualOrder(OrderReport orderReport, OrderRegistry orderRegistry) throws OrderRegistryException {
+		Order order = new Order();
+		order.setId(orderReport.getOrder().getId());
+		
+		return orderRegistry.findById(order.getId());		
+	}
+	
+	public static void reloadClient(OrderReport orderReport, ClientRegistry systemUserRegistry) throws OrderReportRegistryException {
+		
+		Client actuaClient;
+		
+		try{
+			actuaClient = systemUserRegistry.findClientById(orderReport.getClient().getId());
+		}
+		catch(Throwable e){
+			throw new OrderReportRegistryException("client not found: " + orderReport.getClient());
+		}
+		
+		orderReport.setClient(actuaClient);
 	}
 	
 }

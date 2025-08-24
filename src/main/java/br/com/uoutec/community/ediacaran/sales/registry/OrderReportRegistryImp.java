@@ -103,18 +103,13 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.validate(entity, saveValidations);
 		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
 		
-		Order order = new Order();
-		order.setId(entity.getOrder().getId());
-		
-		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		//Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
-		//List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
-		//List<Invoice> actualInvoices	= InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
-		//List<OrderReport> actualReports = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
 		
 		OrderReportRegistryUtil.save(entity, entityAccess);
+		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
+		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
-		//OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, null, actualInvoices, actualShippings, actualReports, orderRegistry, productTypeRegistry);
+		
+		Order actualOrder = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
 		OrderRegistryUtil.updateOrder(actualOrder, orderRegistry);
 	}
 
@@ -126,20 +121,13 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.validate(entity, updateValidations);
 		OrderReportRegistryUtil.checkUpdateOrderReportStatus(entity, orderRegistry, entityAccess, clientRegistry);
 		
-		Order order = new Order();
-		order.setId(entity.getOrder().getId());
-		
-		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		//Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
-		//List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
-		//List<Invoice> actualInvoices	= InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
-		//List<OrderReport> actualReports = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
-		
 		OrderReportRegistryUtil.update(entity, entityAccess);
+		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
+		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
-		OrderRegistryUtil.updateOrder(actualOrder, orderRegistry);
 		
-		//OrderRegistryUtil.markAsCompleteOrder(actualOrder, null, null, actualInvoices, actualShippings, actualReports, orderRegistry, productTypeRegistry);
+		Order actualOrder = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
+		OrderRegistryUtil.updateOrder(actualOrder, orderRegistry);
 	}
 	
 	private void confirmRegistration(OrderReport entity, boolean newEntity, OrderReportEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderReportRegistryException {

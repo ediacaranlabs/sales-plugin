@@ -59,23 +59,34 @@ public class OrderReportIndexEntity implements Serializable{
 		this.date = e.getDate();
 		this.user = e.getUser() == null? null : e.getUser().getId();
 		
-		this.client = e.getClient() == null? null : e.getClient().getId();
-		if(e.getClient().getFirstName() != null) {
-			this.clientName = this.clientName + " " + e.getClient().getFirstName();
+		if(e.getClient() != null) {
+			
+			this.client = e.getClient() == null? null : e.getClient().getId();
+			
+			if(e.getClient().getFirstName() != null) {
+				this.clientName = e.getClient().getFirstName();
+			}
+			
+			if(e.getClient().getLastName() != null) {
+				this.clientName = this.clientName + " " + e.getClient().getLastName();
+			}
+			
+			this.clientName = StringUtil.toSearch(this.clientName);
 		}
-		if(e.getClient().getLastName() != null) {
-			this.clientName = this.clientName + " " + e.getClient().getLastName();
+		
+		if(e.getUser() != null) {
+			
+			this.user = e.getUser() == null? null : e.getUser().getId();
+			
+			if(e.getUser().getFirstName() != null) {
+				this.userName = e.getUser().getFirstName();
+			}
+			
+			if(e.getUser().getLastName() != null) {
+				this.userName = this.userName + " " + e.getUser().getLastName();
+			}
+			this.userName = StringUtil.toSearch(this.userName);
 		}
-		this.clientName = StringUtil.toSearch(this.clientName);
-
-		this.user = e.getUser() == null? null : e.getUser().getId();
-		if(e.getUser().getFirstName() != null) {
-			this.userName = this.userName + " " + e.getUser().getFirstName();
-		}
-		if(e.getUser().getLastName() != null) {
-			this.userName = this.userName + " " + e.getUser().getLastName();
-		}
-		this.userName = StringUtil.toSearch(this.userName);
 		
 		this.status = e.getStatus();
 		
