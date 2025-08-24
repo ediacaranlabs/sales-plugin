@@ -15,6 +15,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
@@ -31,14 +32,18 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusRegistryException;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
@@ -118,17 +123,48 @@ public class OrderRegistryImp
 		
 	}
 
-	private void registryNewOrder(Order entity) throws ValidationException, OrderRegistryException {
+	private void registryNewOrder(Order entity) throws Throwable {
+		
+		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(entity, paymentGatewayRegistry);
+		Payment actualPayment         = OrderRegistryUtil.getPayment(new Payment(), entity, paymentGateway);
+		
 		OrderRegistryUtil.validateOrder(entity, saveValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
-		OrderRegistryUtil.save(entity, orderEntityAccess);
+		OrderRegistryUtil.preOrder(entity, productTypeRegistry);
+		OrderRegistryUtil.registerNewOrder(entity, entity.getClient(), actualPayment, "Predido criado", paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.postOrder(entity, productTypeRegistry);
+		OrderRegistryUtil.registerEvent("Pedido criado #" + entity.getId(), entity, orderEntityAccess);
+		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, entity);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
+
+		
+		//OrderRegistryUtil.validateOrder(entity, saveValidations);
+		//OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
+		//OrderRegistryUtil.save(entity, orderEntityAccess);
+		//OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}
 	
-	private void updateOrder(Order entity) throws ValidationException, OrderRegistryException {
+	private void updateOrder(Order entity) throws Throwable {
+		
+		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		ShippingRegistry shippingRegistry	    = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		
+		Order actualOrder                = OrderRegistryUtil.getActualOrder(entity, orderEntityAccess);
+		Client actualClient              = OrderRegistryUtil.getActualClient(entity.getClient(), clientRegistry);
+		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(entity, actualClient, shippingRegistry);
+		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
+		List<OrderReport> actualReports  = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
+		
 		OrderRegistryUtil.validateOrder(entity, updateValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
+		
+		if(!actualOrder.isClosed()) {
+			OrderRegistryUtil.markAsCompleteOrder(actualOrder, actualInvoices, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
+		}
+		
 		OrderRegistryUtil.update(entity, orderEntityAccess);
+		OrderRegistryUtil.registerEvent("Pedido alterado #" + entity.getId(), entity, orderEntityAccess);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}
 
@@ -395,22 +431,27 @@ public class OrderRegistryImp
 			SystemUserRegistryException, ClientRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, PaymentGatewayException, ValidationException {
 
 		OrderRegistryUtil.updateClient(cart.getClient(), clientRegistry);
-		
 		OrderRegistryUtil.checkCartToRegistry(cart, payment, paymentGateway, productTypeRegistry, orderEntityAccess);
-		
-		Client actualClient   = cart.getClient();//OrderRegistryUtil.getActualClient(cart.getClient(), clientRegistry);
-		Order order           = OrderRegistryUtil.createOrder(cart, actualClient, paymentGateway);
-		Payment actualPayment = OrderRegistryUtil.getPayment(payment, order, paymentGateway, cart);
+		OrderRegistryUtil.saveAddressIfNecessary(cart, clientRegistry);
+
+		/*
+		//Client actualClient   = cart.getClient();//OrderRegistryUtil.getActualClient(cart.getClient(), clientRegistry);
+		//Order order           = OrderRegistryUtil.createOrder(cart, actualClient, paymentGateway);
+		Order order           = OrderRegistryUtil.createOrder(cart, paymentGateway);
+		Payment actualPayment = OrderRegistryUtil.getPayment(payment, order, paymentGateway);
 		
 		OrderRegistryUtil.checkCurrency(order, order.getCurrency());
-		OrderRegistryUtil.preOrder(order, cart, productTypeRegistry);
-		OrderRegistryUtil.saveAddressIfNecessary(cart, clientRegistry);
-		OrderRegistryUtil.registerNewOrder(order, actualClient, actualPayment, message, paymentGateway, orderEntityAccess);
-		OrderRegistryUtil.postOrder(order, cart, productTypeRegistry);
+		OrderRegistryUtil.preOrder(order, productTypeRegistry);
+		OrderRegistryUtil.saveAddressIfNecessary(order, clientRegistry);
+		OrderRegistryUtil.registerNewOrder(order, order.getClient(), actualPayment, message, paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.postOrder(order, productTypeRegistry);
 		OrderRegistryUtil.registerEvent(message == null? "Pedido criado #" + order.getId() : message, order, orderEntityAccess);
 		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, order);
 		OrderRegistryUtil.saveOrUpdateIndex(order, indexEntityAccess);
+		*/
 		
+		Order order = OrderRegistryUtil.createOrder(cart, paymentGateway);
+		registerOrder(order);
 		return order;
 	}
 	

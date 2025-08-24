@@ -246,13 +246,7 @@ public class OrderReportRegistryUtil {
 		or.setProducts(list);
 		or.setStatus(OrderReportStatus.NEW_REQUEST);
 		or.setUser(null);
-		
-		try {
-			or.setOrder(orderRegistry.findById(order.getId()));
-		}
-		catch(Throwable ex) {
-			throw new OrderReportRegistryException(ex);
-		}
+		or.setOrder(e);;
 		
 		return or;
 	}

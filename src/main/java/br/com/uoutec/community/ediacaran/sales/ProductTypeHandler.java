@@ -34,12 +34,20 @@ public interface ProductTypeHandler extends PublicBean{
 
 	String getDescription(ProductRequest productRequest) throws ProductTypeHandlerException;
 	
+	/*
 	void preRegisterOrder(SystemUser user, Cart cart, ProductRequest productRequest) throws
 		ProductTypeHandlerException;
 	
 	void postRegisterOrder(SystemUser user, Cart cart, ProductRequest productRequest) throws
 		ProductTypeHandlerException;
+   */
 
+	void preRegisterOrder(SystemUser user, Order order, ProductRequest productRequest) throws
+	ProductTypeHandlerException;
+
+void postRegisterOrder(SystemUser user, Order order, ProductRequest productRequest) throws
+	ProductTypeHandlerException;
+	
 	/* registry */
 	
 	void registryItem(SystemUser user, Order order, ProductRequest productRequest)

@@ -58,6 +58,7 @@ import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
+import br.com.uoutec.persistence.EntityAccessException;
 
 public class OrderRegistryUtil {
 
@@ -67,16 +68,16 @@ public class OrderRegistryUtil {
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
 	
-	public static Order createOrder(Cart cart, Client client, PaymentGateway paymentGateway) {
+	public static Order createOrder(Cart cart, PaymentGateway paymentGateway) {
 
-		Address defaultAddress = getDefaultAddress(client);
+		Address defaultAddress = getDefaultAddress(cart.getClient());
 		
 		Order order = new Order();
 		order.setDate(LocalDateTime.now());
 		order.setCartID(cart.getId());
 		order.setStatus(OrderStatus.NEW);
 		order.setId(null);
-		order.setClient(client);
+		order.setClient(cart.getClient());
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());
@@ -98,17 +99,18 @@ public class OrderRegistryUtil {
 			
 	}
 	
-	public static void preOrder(Order order, Cart cart, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ProductTypeRegistryException, ProductTypeHandlerException {
+	public static void preOrder(Order order, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ProductTypeRegistryException, ProductTypeHandlerException {
 		for(ProductRequest pr: order.getItens()){
 			ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 			ProductTypeHandler productTypeHandler = productType.getHandler();
-			productTypeHandler.preRegisterOrder(cart.getClient(), cart, pr);
+			productTypeHandler.preRegisterOrder(order.getClient(), order, pr);
 		}
 	}
 	
 	public static void registerNewOrder(Order order, Client client, Payment payment, String message, 
 			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException, ValidationException {
 		
+			order.setStatus(OrderStatus.NEW);
 			order.setPayment(payment);
 			
 			save(order, entityAccess);
@@ -166,12 +168,12 @@ public class OrderRegistryUtil {
 		}
 		
 	}
-	public static void postOrder(Order order, Cart cart, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException {
+	public static void postOrder(Order order, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException {
 		try{
 			for(ProductRequest pr: order.getItens()){
 				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.postRegisterOrder(cart.getClient(), cart, pr);
+				productTypeHandler.postRegisterOrder(order.getClient(), order, pr);
 			}
 		}
 		catch(Throwable e){
@@ -180,14 +182,14 @@ public class OrderRegistryUtil {
 		
 	}
 	
-	public static Payment getPayment(Payment payment, Order order, PaymentGateway paymentGateway, Cart cart) {
+	public static Payment getPayment(Payment payment, Order order, PaymentGateway paymentGateway) {
 		payment.setStatus(PaymentStatus.NEW);
 		payment.setPaymentType(paymentGateway.getId());
-		payment.setTax(cart.getTotalTax());
-		payment.setDiscount(cart.getTotalDiscount());
+		payment.setTax(order.getTax());
+		payment.setDiscount(order.getDiscount());
 		payment.setCurrency(order.getItens().get(0).getCurrency());
-		payment.setValue(cart.getSubtotal());
-		payment.setTotal(cart.getTotal());
+		payment.setValue(order.getSubtotal());
+		payment.setTotal(order.getTotal());
 		
 		order.setPayment(payment);
 		
@@ -481,6 +483,10 @@ public class OrderRegistryUtil {
 		checkNewOrderStatus(order, newStatus);
 		order.setStatus(newStatus);
 	}
+
+	public static boolean acceptNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
+		return order.getStatus().isValidNextStatus(newStatus);
+	}
 	
 	public static void checkNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		
@@ -538,7 +544,12 @@ public class OrderRegistryUtil {
 	public static void updateStatus(Order order, OrderStatus orderStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
 		orderRegistry.updateStatus(order, orderStatus);
 	}
+
+	public static void updateOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.registerOrder(order);
+	}
 	
+	/*
 	public static void markAsCompleteOrder(Order order, Invoice invoice, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
 			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 		
@@ -552,13 +563,15 @@ public class OrderRegistryUtil {
 		markAsCompleteOrder(order, allInvoices, shipping, reportList, orderRegistry, productTypeRegistry); 
 			
 	}
-
+    */
+	
 	public static void checkPayment(Order order) throws InvoiceRegistryException {
 		if(order.getPayment().getReceivedFrom() == null) {
 			throw new InvoiceRegistryException("payment has not yet been made");
 		}
 	}
 
+	/*
 	public static void markAsCompleteOrder(Order order, Invoice invoice, Shipping shipping, List<Invoice> invoices, List<Shipping> shippings, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
 			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
 
@@ -600,6 +613,38 @@ public class OrderRegistryUtil {
 				}
 				
 				orderRegistry.registerOrder(order);
+				
+			}
+			
+		}
+			
+	}
+    */
+	
+	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, 
+			OrderEntityAccess orderEntityAccess, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException, EntityAccessException {
+
+		boolean completedInvoice = InvoiceRegistryUtil.isCompletedInvoice(order, invoices);
+		boolean completedShipping = ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry);
+		//boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
+		
+		if(completedInvoice && completedShipping) {
+
+			if(isCompletedOrder(order, productTypeRegistry)) {
+
+				if(OrderRegistryUtil.acceptNewOrderStatus(order, OrderStatus.COMPLETE)) {
+					order.setStatus(OrderStatus.COMPLETE);
+				}
+				
+				LocalDateTime now = LocalDateTime.now();
+				
+				if(order.getCompleteInvoice() == null) {
+					order.setCompleteInvoice(now);
+				}
+				
+				if(order.getCompleteShipping() == null) {
+					order.setCompleteShipping(now);
+				}
 				
 			}
 			
