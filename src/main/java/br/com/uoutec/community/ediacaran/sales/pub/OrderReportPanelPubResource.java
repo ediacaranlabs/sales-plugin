@@ -102,7 +102,7 @@ public class OrderReportPanelPubResource {
 	}
 	
 	@Action("/show/{id}")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/report/edit")
+	@View("${plugins.ediacaran.sales.template}/front/panel/order/report/show")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER, BasicRoles.CLIENT})
 	public Map<String,Object> showEntity(
@@ -181,22 +181,23 @@ public class OrderReportPanelPubResource {
 		return map;
 	}
 
+	
 	@Action(value="/messages")
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.ORDER.SEARCH)
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public OrderReportMessageSearchResultPubEntity getMessages(
-			@DetachedName OrderReportClientPubEntity orderReportPubEntity,
+			@DetachedName OrderReportClientPubEntity orderReportClientPubEntity,
 			@Basic(bean="page") Integer page,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
 		
 		OrderReport orderReport;
 		try{
-			orderReport = orderReportPubEntity.rebuild(true, false, true);
+			orderReport = orderReportClientPubEntity.rebuild(true, false, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -227,10 +228,11 @@ public class OrderReportPanelPubResource {
 	}
 
 	@Action("/sendMessage")
-	@View("${plugins.ediacaran.sales.template}/front/panel/order/report/result_message")
+	@View("${plugins.ediacaran.sales.template}/admin/order/report/result_message")
 	@Result("vars")
 	@RequestMethod("POST")
-	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER, BasicRoles.CLIENT})
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
 	public Map<String,Object> sendMessage(
 			@DetachedName
 			OrderReportMessageClientPubEntity orderReportMessageClientPubEntity,

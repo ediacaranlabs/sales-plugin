@@ -170,6 +170,40 @@
 							</ec:table-body>
 						</ec:table>
 					</ec:tabs-item>
+					<ec:tabs-item title="#{tabs.shipping.title}" bundle="${messages}">
+					
+						<ec:table>
+							<ec:table-header>
+								<ec:table-col><center><small><fmt:message key="table_shipping.id" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_shipping.date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_shipping.cancel_date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_shipping.type" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><small><fmt:message key="table_shipping.dest" bundle="${messages}"/></small></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_shipping.actions" bundle="${messages}"/></small></center></ec:table-col>
+							</ec:table-header>
+							<ec:table-body>
+								<c:forEach items="${vars.shippings}" var="shipping">
+								<ec:table-row style="${shipping.cancelDate != null? 'danger' : ''}">
+									<ec:table-col><center><small>${shipping.id}</small></center></ec:table-col>
+									<ec:table-col><center><small>${shipping.toStringDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${shipping.toStringCancelDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${shipping.shippingType}</small></center></ec:table-col>
+									<ec:table-col>
+										<small>
+											${shipping.dest.firstName} ${vars.shipping.dest.lastName}<br>
+											${shipping.dest.addressLine1}<br>
+											${shipping.dest.addressLine2}<br>
+											${shipping.dest.zip} ${shipping.dest.city} ${shipping.dest.region} ${shipping.dest.country.name}
+										</small>
+									</ec:table-col>
+									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/edit/${shipping.id}">
+										<fmt:message key="table_shipping.actions.details" bundle="${messages}"/>
+									</a></small></center></ec:table-col>
+								</ec:table-row>
+								</c:forEach>
+							</ec:table-body>
+						</ec:table>
+					</ec:tabs-item>
 					<ec:tabs-item title="#{tabs.order_report.title}" bundle="${messages}">
 					
 						<ec:table>
