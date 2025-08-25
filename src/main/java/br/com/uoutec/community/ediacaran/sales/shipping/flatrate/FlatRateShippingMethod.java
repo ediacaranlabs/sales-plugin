@@ -90,7 +90,8 @@ public class FlatRateShippingMethod implements ShippingMethod{
 
 	@Override
 	public String getOwnerView(Shipping value) {
-		return null;
+		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
+		return varParser.getValue("${plugins.ediacaran.sales.web_path}:/default_template/front/panel/shipping/basic_shipping_type.jsp");
 	}
 
 	@Override

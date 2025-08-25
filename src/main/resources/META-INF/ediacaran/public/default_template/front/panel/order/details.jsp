@@ -196,7 +196,7 @@
 											${shipping.dest.zip} ${shipping.dest.city} ${shipping.dest.region} ${shipping.dest.country.name}
 										</small>
 									</ec:table-col>
-									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/edit/${shipping.id}">
+									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/show/${shipping.id}">
 										<fmt:message key="table_shipping.actions.details" bundle="${messages}"/>
 									</a></small></center></ec:table-col>
 								</ec:table-row>
