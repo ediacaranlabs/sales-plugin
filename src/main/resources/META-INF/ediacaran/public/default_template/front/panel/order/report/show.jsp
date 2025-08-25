@@ -22,6 +22,7 @@
 		<ed:col size="8">
 			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
+				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders"  bundle="${messages}"/>
 				<ec:breadcrumb-path text="#${vars.orderReport.order.id}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.orderReport.order.id}"  bundle="${messages}"/>
 			</ec:breadcrumb>
 		</ed:col>
