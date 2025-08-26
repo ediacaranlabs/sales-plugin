@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -148,6 +149,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		Client client = shipping.getClient();
 		
+		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		
 		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		Order actualOrder       = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient     = ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);
@@ -169,8 +172,18 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		shippingList.add(actualShipping);
 
+		List<OrderReport> orderReportList;
+		
 		try {
-			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry)) {
+			orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+		try {
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry) &&
+				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
 				orderRegistry.updateStatus(order, OrderStatus.COMPLETE);
 			}
 		}

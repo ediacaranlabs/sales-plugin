@@ -80,7 +80,7 @@ public class ShippingRegistryUtil {
 		}
 		
 		for(Shipping shipping: shippingList) {
-			if(shipping.getReceivedDate() == null) {
+			if(shipping.getCancelDate() == null && shipping.getReceivedDate() == null) {
 				return false;
 			}
 		}

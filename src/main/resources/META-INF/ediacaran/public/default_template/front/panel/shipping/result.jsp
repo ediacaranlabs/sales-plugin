@@ -1,6 +1,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core"                   prefix="c"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
+<ec:setBundle var="sys_messages" locale="${locale}"/>
 <c:if test="${!empty exception}">
 	<ec:alert style="danger">
 		<div id="exceptionMessage">${exception.message}</div>
