@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -144,15 +146,36 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Order order = new Order();
 		order.setId(shipping.getOrder());
 		
+		Client client = shipping.getClient();
+		
 		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
+		Order actualOrder       = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
+		Client actualClient     = ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);
 		
 		if(actualShipping != null && !actualShipping.isClosed()) {
 			ShippingRegistryUtil.confirmShipping(actualShipping, entityAccess);
-			ShippingRegistryUtil.update(actualShipping, order, entityAccess);
+			ShippingRegistryUtil.update(actualShipping, actualOrder, entityAccess);
 			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-			
-			Order actualOrder = OrderRegistryUtil.getActualOrder(order, orderRegistry);
-			orderRegistry.registerOrder(actualOrder);
+		}
+		
+		List<Shipping> shippingList;
+		
+		try {
+			shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+		shippingList.add(actualShipping);
+
+		try {
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry)) {
+				orderRegistry.updateStatus(order, OrderStatus.COMPLETE);
+			}
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
 		}
 		
 	}

@@ -268,21 +268,22 @@ public class InvoiceRegistryUtil {
 		
 		if(isCompletedInvoice(order, invoices)) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
-			order.setCompleteInvoice(LocalDateTime.now());
+			//order.setCompleteInvoice(LocalDateTime.now());
 		}
 		else {
 			OrderRegistryUtil.updateStatus(order,OrderRegistryUtil.toOrderStatus(order.getPayment().getStatus()), orderRegistry);
-			order.setCompleteShipping(null);
-			order.setCompleteInvoice(null);
+			//order.setCompleteShipping(null);
+			//order.setCompleteInvoice(null);
 		}
 		
+		/*
 		try {
 			orderRegistry.registerOrder(order);
 		}
 		catch(Throwable ex) {
 			throw new InvoiceRegistryException(ex);
 		}
-			
+		*/
 	}
 
 	public static void checkIfExistsShipping(Order order, ShippingRegistry shippingRegistry

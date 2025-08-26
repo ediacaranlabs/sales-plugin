@@ -278,20 +278,21 @@ public class ShippingRegistryUtil {
 		
 		if(isCompletedShipping(order, shippings, productTypeRegistry)) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_SHIPPED, orderRegistry);
-			order.setCompleteShipping(LocalDateTime.now());
+			//order.setCompleteShipping(LocalDateTime.now());
 		}
 		else {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
-			order.setCompleteShipping(null);
+			//order.setCompleteShipping(null);
 		}
 		
+		/*
 		try {
 			orderRegistry.registerOrder(order);
 		}
 		catch(Throwable ex) {
 			throw new ShippingRegistryException(ex);
 		}
-			
+		*/
 	}
 	
 	public static Address getOrigin() throws CountryRegistryException {
