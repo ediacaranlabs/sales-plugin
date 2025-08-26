@@ -135,6 +135,29 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
+	@Transactional
+	@ActivateRequestContext
+	public void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getConfirmPermission());
+
+		Order order = new Order();
+		order.setId(shipping.getOrder());
+		
+		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
+		
+		if(actualShipping != null && !actualShipping.isClosed()) {
+			ShippingRegistryUtil.confirmShipping(actualShipping, entityAccess);
+			ShippingRegistryUtil.update(actualShipping, order, entityAccess);
+			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
+			
+			Order actualOrder = OrderRegistryUtil.getActualOrder(order, orderRegistry);
+			orderRegistry.registerOrder(actualOrder);
+		}
+		
+	}
+	
+	@Override
 	@ActivateRequestContext
 	public Shipping findById(String id) throws ShippingRegistryException {
 		
@@ -459,5 +482,6 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 		return ()->jaaPrincipal.getName();
 	}
+
 	
 }

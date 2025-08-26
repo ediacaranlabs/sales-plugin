@@ -20,14 +20,14 @@
 		<ed:col size="8">
 			<ec:breadcrumb title="#{title}" bundle="${messages}">
 				<ec:breadcrumb-path icon="home" text="" lnk="#" />
-				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings"  bundle="${messages}"/>
+				<ec:breadcrumb-path text="#{origin_menu}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders"  bundle="${messages}"/>
 				<ec:breadcrumb-path text="#${vars.shipping.order}" lnk="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.shipping.order}"/>
 			</ec:breadcrumb>
 		</ed:col>
 	</ed:row>
 </section>
 
-<ec:form id="invoiceForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/shippings/save" method="POST" update="shippingFormResult">
+<ec:form id="shippingForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/confirm" method="POST" update="shippingFormResult">
 	<input type="hidden" name="id" value="${vars.shipping.id}">
 <ec:box>
 	<ec:box-header><b><fmt:message key="shipping_id" bundle="${messages}"/></b> #${vars.shipping.id}</ec:box-header>
@@ -122,6 +122,7 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.shipping.order}');			
 			</ec:event>
 		</ec:button>
+		<ec:button label="#{confirm.label}" actionType="submit" style="light" align="right" bundle="${messages}"/>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

@@ -191,8 +191,13 @@ public class ShippingRegistryUtil {
 		
 	}
 
-	public static Shipping getActualShipping(String id, ShippingEntityAccess entityAccess) throws EntityAccessException{
-		return entityAccess.findById(id);		
+	public static Shipping getActualShipping(String id, ShippingEntityAccess entityAccess) throws ShippingRegistryException{
+		try {
+			return entityAccess.findById(id);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
 	}
 
 	public static List<Shipping> getActualShippings(Order order, Client client, ShippingRegistry registry) throws ShippingRegistryException{
@@ -201,6 +206,11 @@ public class ShippingRegistryUtil {
 	
 	public static List<Shipping> getActualShippings(Order order, Client client, ShippingEntityAccess entityAccess) throws EntityAccessException{
 		return entityAccess.findByOrder(order.getId(), client);		
+	}
+
+	public static void confirmShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
+		shipping.setReceivedDate(LocalDateTime.now());
+		shipping.setClosed(true);
 	}
 	
 	public static Client getActualClient(Order order, Client user, ClientRegistry systemUserRegistry) throws OrderRegistryException, ShippingRegistryException {

@@ -1,0 +1,18 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/core"                   prefix="c"%>
+<%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
+<c:if test="${!empty exception}">
+	<ec:alert style="danger">
+		<div id="exceptionMessage">${exception.message}</div>
+	</ec:alert>
+</c:if>
+<c:if test="${empty exception}">
+	<ec:alert style="success">
+		<fmt:message key="result.success" bundle="${sys_messages}" />
+	</ec:alert>
+	<script type="text/javascript">
+	$.AppContext.onload(function(){
+		$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/show/${vars.shipping.id}');
+	});
+	</script>
+</c:if>
