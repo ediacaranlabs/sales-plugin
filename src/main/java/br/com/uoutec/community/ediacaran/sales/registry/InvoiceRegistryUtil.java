@@ -372,6 +372,10 @@ public class InvoiceRegistryUtil {
 		}
 	}
 	
+	public static final void checkActualStatus(Order order) {
+		
+	}
+	
 	public static Order getActualOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		return orderRegistry.findById(order.getId());		
 	}

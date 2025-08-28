@@ -91,6 +91,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			throw new InvoiceRegistryException("order not found #" + entity.getOrder());
 		}
 		
+		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
+		
 		if(entity.getId() == null){
 			InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
 			registryNewInvoice(entity, order);

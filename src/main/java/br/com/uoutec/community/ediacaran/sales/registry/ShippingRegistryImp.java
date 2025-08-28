@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -92,6 +93,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			if(order == null) {
 				throw new InvoiceRegistryException("order not found #" + entity.getOrder());
 			}
+			
+			OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
 			
 			if(entity.getId() == null){
 				validateShipping(entity, saveValidations);
