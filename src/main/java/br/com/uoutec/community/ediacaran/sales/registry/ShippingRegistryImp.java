@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
@@ -18,8 +17,6 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -161,36 +158,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		}
 		
-		List<Shipping> shippingList;
-		
-		try {
-			shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
-		
-		shippingList.add(actualShipping);
-
-		List<OrderReport> orderReportList;
-		
-		try {
-			orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
-		
-		try {
-			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry) &&
-				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
-				orderRegistry.updateStatus(order, OrderStatus.COMPLETE);
-			}
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
-		
+		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, actualShipping, orderReportRegistry, orderRegistry, productTypeRegistry, entityAccess);
 	}
 	
 	@Override
@@ -460,7 +428,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private void registryNewShipping(Shipping shipping, Order order
 			) throws OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException, OrderReportRegistryException {
 		
-		OrderRegistry orderRegistry     = EntityContextPlugin.getEntity(OrderRegistry.class);
+		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
+		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		
 		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
@@ -473,16 +442,19 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
+		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, shipping, orderReportRegistry, orderRegistry, productTypeRegistry, entityAccess);
 		
 	}
 
 	private void updateShipping(Shipping shipping, Order order
 			) throws ShippingRegistryException, EntityAccessException, OrderRegistryException, ProductTypeRegistryException, InvoiceRegistryException, OrderReportRegistryException {
 		
-		OrderRegistry orderRegistry      = EntityContextPlugin.getEntity(OrderRegistry.class);
+		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
+		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		
+		Order actualOrder                = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient              = ShippingRegistryUtil.getActualClient(order, order.getClient(), clientRegistry);
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
-		
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
 		ShippingRegistryUtil.checkShipping(order, actualShippings, shipping, productTypeRegistry);
@@ -490,6 +462,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
+		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, actualShipping, orderReportRegistry, orderRegistry, productTypeRegistry, entityAccess);
+		
 	}
 	
 	private void validateShipping(Shipping e, Class<?> ... groups) throws ValidationException{

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
@@ -16,6 +17,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
@@ -229,6 +231,41 @@ public class ShippingRegistryUtil {
 		return actuaClient;
 	}
 
+	public static void updateOrderStatus(Order actualOrder, Client actualClient, Shipping actualShipping, OrderReportRegistry orderReportRegistry, OrderRegistry orderRegistry, 
+			ProductTypeRegistry productTypeRegistry, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
+		
+		List<Shipping> shippingList;
+		
+		try {
+			shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+		shippingList.add(actualShipping);
+
+		List<OrderReport> orderReportList;
+		
+		try {
+			orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+		try {
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry) &&
+				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
+				orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
+			}
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+	}
+	
 	public static void markAsComplete(Order order, Shipping shipping, List<Shipping> shippings, 
 			OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		

@@ -20,8 +20,10 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSe
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
+import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
@@ -127,6 +129,42 @@ public class OrderReportRegistryUtil {
 		}
 	}
 
+	public static void updateOrderStatus(OrderReport entity,OrderRegistry orderRegistry, 
+			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, ProductTypeRegistry productTypeRegistry, OrderReportEntityAccess entityAccess) throws OrderRegistryException, ShippingRegistryException {
+		Order actualOrder   = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
+		Client actualClient = OrderReportRegistryUtil.getActualClient(entity, actualOrder, clientRegistry);
+		List<OrderReport> orderReportList;
+		
+		try {
+			orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+		orderReportList.add(entity);
+
+
+		List<Shipping> shippingList;
+		
+		try {
+			shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+		
+		try {
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry) &&
+				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
+				orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
+			}
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}		
+	}
 	public static void sendToRepository(OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException {
 		try {
 			entityAccess.flush();
@@ -444,6 +482,22 @@ public class OrderReportRegistryUtil {
 		order.setId(orderReport.getOrder().getId());
 		
 		return orderRegistry.findById(order.getId());		
+	}
+	
+	public static Client getActualClient(OrderReport orderReport, Order order, ClientRegistry systemUserRegistry) throws OrderRegistryException, ShippingRegistryException {
+		Client actuaClient;
+		try{
+			actuaClient = systemUserRegistry.findClientById(order.getClient().getId());
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException("usuário não encontrado: " + order.getClient());
+		}
+		
+		if(actuaClient.getId() != orderReport.getClient().getId()) {
+			throw new ShippingRegistryException("invalid user: " + actuaClient.getId()+ " != " + orderReport.getClient().getId());
+		}
+		
+		return actuaClient;
 	}
 	
 	public static void reloadClient(OrderReport orderReport, ClientRegistry systemUserRegistry) throws OrderReportRegistryException {

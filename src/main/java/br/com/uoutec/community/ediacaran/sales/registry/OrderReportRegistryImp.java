@@ -23,7 +23,6 @@ import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAcce
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -103,14 +102,11 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.validate(entity, saveValidations);
 		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
 		
-		
 		OrderReportRegistryUtil.save(entity, entityAccess);
 		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
-		
-		Order actualOrder = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
-		OrderRegistryUtil.updateOrder(actualOrder, orderRegistry);
+		OrderReportRegistryUtil.updateOrderStatus(entity, orderRegistry, clientRegistry, shippingRegistry, productTypeRegistry, entityAccess);
 	}
 
 	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, 
@@ -125,9 +121,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
-		
-		Order actualOrder = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
-		OrderRegistryUtil.updateOrder(actualOrder, orderRegistry);
+		OrderReportRegistryUtil.updateOrderStatus(entity, orderRegistry, clientRegistry, shippingRegistry, productTypeRegistry, entityAccess);
 	}
 	
 	private void confirmRegistration(OrderReport entity, boolean newEntity, OrderReportEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderReportRegistryException {
