@@ -91,14 +91,10 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 			throw new InvoiceRegistryException("order not found #" + entity.getOrder());
 		}
 		
-		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
-		
 		if(entity.getId() == null){
-			InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
 			registryNewInvoice(entity, order);
 		}
 		else{
-			InvoiceRegistryUtil.validateInvoice(entity, updateValidations);
 			updateInvoice(entity, order);
 		}
 	}
@@ -232,6 +228,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		try {
 			return unsafeCreateInvoice(order, itens, message);
 		}
+		catch(ValidationException e){
+			throw new PersistenceOrderRegistryException(e);
+		}
 		catch(EntityAccessException e){
 			throw new PersistenceOrderRegistryException(e);
 		}
@@ -350,7 +349,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	private Invoice unsafeCreateInvoice(Order order, Map<String, Integer> itens, String message
-			) throws RegistryException, EntityAccessException, ProductTypeHandlerException{
+			) throws RegistryException, EntityAccessException, ProductTypeHandlerException, ValidationException{
 
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -391,7 +390,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private void registryNewInvoice(Invoice entity, Order order
-			) throws RegistryException, EntityAccessException, ProductTypeHandlerException {
+			) throws RegistryException, EntityAccessException, ProductTypeHandlerException, ValidationException {
+		
+		InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
 		
 		ClientRegistry clientRegistry           = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -414,7 +415,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private void updateInvoice(Invoice entity, Order order
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException, OrderReportRegistryException {
+			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException, OrderReportRegistryException, ValidationException {
+		
+		InvoiceRegistryUtil.validateInvoice(entity, updateValidations);
 		
 		ClientRegistry clientRegistry            = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry              = EntityContextPlugin.getEntity(OrderRegistry.class);
@@ -424,6 +427,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Invoice actualInvoice              = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(order, actualClient, entityAccess);
 		
+		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
 		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, entityAccess);
