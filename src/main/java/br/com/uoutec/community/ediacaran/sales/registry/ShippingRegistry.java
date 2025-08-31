@@ -11,10 +11,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
+import br.com.uoutec.i18n.ValidationException;
 
 public interface ShippingRegistry extends PublicBean{
 
-	void registerShipping(Shipping entity) throws ShippingRegistryException;
+	void registerShipping(Shipping entity) throws ShippingRegistryException, OrderRegistryException, ValidationException;
 	
 	void removeShipping(Shipping entity) throws ShippingRegistryException;
 	

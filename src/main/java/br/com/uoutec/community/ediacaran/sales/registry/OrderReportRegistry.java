@@ -15,7 +15,7 @@ import br.com.uoutec.i18n.ValidationException;
 
 public interface OrderReportRegistry extends PublicBean {
 
-	void registerOrderReport(OrderReport entity) throws  OrderReportRegistryException, ValidationException;
+	void registerOrderReport(OrderReport entity) throws  OrderReportRegistryException, ValidationException, OrderStatusNotAllowedRegistryException;
 	
 	void removeOrderReport(OrderReport entity) throws OrderReportRegistryException;
 	

@@ -78,7 +78,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void registerShipping(Shipping entity) throws ShippingRegistryException {
+	public void registerShipping(Shipping entity) throws ShippingRegistryException, OrderRegistryException, ValidationException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRegisterPermission());
 		
@@ -101,8 +101,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 				this.updateShipping(entity, order);
 			}
 		}
-		catch(ValidationException e){
-			throw new ShippingRegistryException(e.getMessage(), e);
+		catch(OrderRegistryException e){
+			throw e;
 		}
 		catch(ShippingRegistryException e){
 			throw e;
@@ -425,7 +425,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 	
 	private void registryNewShipping(Shipping shipping, Order order
-			) throws OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException, OrderReportRegistryException, ValidationException {
+			) throws ValidationException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException {
 		
 		validateShipping(shipping, saveValidations);
 		
@@ -449,7 +449,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	private void updateShipping(Shipping shipping, Order order
-			) throws ShippingRegistryException, EntityAccessException, OrderRegistryException, ProductTypeRegistryException, InvoiceRegistryException, OrderReportRegistryException, ValidationException {
+			) throws ValidationException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException {
 		
 		validateShipping(shipping, updateValidations);
 		

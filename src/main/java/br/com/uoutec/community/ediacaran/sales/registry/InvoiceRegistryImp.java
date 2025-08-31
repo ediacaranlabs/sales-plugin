@@ -389,8 +389,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		return InvoiceRegistryUtil.toInvoice(order, invoiceItens);
 	}
 
-	private void registryNewInvoice(Invoice entity, Order order
-			) throws RegistryException, EntityAccessException, ProductTypeHandlerException, ValidationException {
+	private void registryNewInvoice(Invoice entity, Order order) throws ValidationException, InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, OrderRegistryException {
 		
 		InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
 		
@@ -415,7 +414,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private void updateInvoice(Invoice entity, Order order
-			) throws OrderRegistryException, InvoiceRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException, OrderReportRegistryException, ValidationException {
+			) throws ValidationException, OrderRegistryException, InvoiceRegistryException, EntityAccessException  {
 		
 		InvoiceRegistryUtil.validateInvoice(entity, updateValidations);
 		

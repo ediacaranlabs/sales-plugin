@@ -63,7 +63,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Override
 	@Transactional
 	@ActivateRequestContext
-	public void registerOrderReport(OrderReport entity) throws OrderReportRegistryException, ValidationException {
+	public void registerOrderReport(OrderReport entity) throws OrderReportRegistryException, ValidationException, OrderStatusNotAllowedRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getRegisterPermission());
 		
@@ -81,6 +81,9 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 			else {
 				update(entity, entityAccess, orderRegistry, clientRegistry, shippingRegistry, invoiceRegistry, productTypeRegistry);
 			}
+		}
+		catch(OrderStatusNotAllowedRegistryException ex) {
+			throw ex;
 		}
 		catch(OrderReportRegistryException ex) {
 			throw ex;
