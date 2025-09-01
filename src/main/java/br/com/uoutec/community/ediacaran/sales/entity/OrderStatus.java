@@ -26,6 +26,8 @@ public interface OrderStatus {
 
 	public static final OrderStatus REFOUND = OrderStatusValue.REFOUND;
 	
+	String getCode();
+	
 	String getName(Locale locale);
 
 	boolean isValidNextStatus(OrderStatus newStatus);

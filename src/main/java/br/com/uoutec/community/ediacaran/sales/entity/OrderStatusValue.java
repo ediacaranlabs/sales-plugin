@@ -233,5 +233,10 @@ public enum OrderStatusValue implements OrderStatus {
 	public boolean isAllowedChangeOrderReport() {
 		return false;
 	}
+
+	@Override
+	public String getCode() {
+		return name();
+	}
 	
 }

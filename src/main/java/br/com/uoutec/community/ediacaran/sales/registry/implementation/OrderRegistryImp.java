@@ -153,13 +153,13 @@ public class OrderRegistryImp
 		OrderRegistryUtil.validateOrder(entity, updateValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		
-		if(!actualOrder.isClosed()) {
-			OrderRegistryUtil.markAsCompleteOrder(actualOrder, actualInvoices, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
-		}
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, actualInvoices, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
 		
-		OrderRegistryUtil.update(entity, orderEntityAccess);
-		OrderRegistryUtil.registerEvent("Pedido alterado #" + entity.getId(), entity, orderEntityAccess);
-		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
+		if(!actualOrder.getStatus().isClosed()) {
+			OrderRegistryUtil.update(entity, orderEntityAccess);
+			OrderRegistryUtil.registerEvent("Pedido alterado #" + entity.getId(), entity, orderEntityAccess);
+			OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
+		}
 	}
 
 	private void deleteOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
