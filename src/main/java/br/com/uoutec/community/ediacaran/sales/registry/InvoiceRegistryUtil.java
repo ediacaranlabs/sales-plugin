@@ -150,6 +150,18 @@ public class InvoiceRegistryUtil {
 		
 	}
 
+	public static void checkAllowedCreateInvoice(Order order) throws OrderStatusNotAllowedRegistryException {
+		if(!order.getStatus().isAllowedCreateInvoice()) {
+			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
+		}
+	}
+	
+	public static void checkAllowedUpdateInvoice(Order order) throws OrderStatusNotAllowedRegistryException {
+		if(!order.getStatus().isAllowedChangeInvoice()) {
+			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
+		}
+	}
+	
 	public static void checkInvoice(Order order, List<Invoice> actualInvoices, Invoice invoice,
 			Invoice actualInvoice) throws ItemNotFoundOrderRegistryException, 
 		InvalidUnitsOrderRegistryException, InvoiceRegistryException {

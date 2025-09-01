@@ -436,6 +436,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
 		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
 		
+		ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
 		ShippingRegistryUtil.checkShipping(actualOrder, actualShippings, shipping, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
@@ -461,6 +462,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
+		ShippingRegistryUtil.checkAllowedUpdateShipping(actualOrder);
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
 		ShippingRegistryUtil.checkShipping(order, actualShippings, shipping, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);

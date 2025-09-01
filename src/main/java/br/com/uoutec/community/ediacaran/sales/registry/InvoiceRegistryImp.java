@@ -400,6 +400,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, entityAccess);
 		
+		InvoiceRegistryUtil.checkAllowedCreateInvoice(actualOrder);
 		OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
 		OrderRegistryUtil.checkPayment(actualOrder);
 		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
@@ -426,6 +427,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		Invoice actualInvoice              = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(order, actualClient, entityAccess);
 		
+		InvoiceRegistryUtil.checkAllowedUpdateInvoice(actualOrder);
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
 		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
