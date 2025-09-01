@@ -316,19 +316,10 @@ public class OrderReportRegistryUtil {
 		}
 	}
 	
-	public static void checkOrderReportStatus(OrderReport e, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException, OrderStatusNotAllowedRegistryException {
+	public static void checkOrderReportStatus(OrderReport e, Order order, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException, OrderStatusNotAllowedRegistryException {
 		
 		//check order not is closed
 		
-		Order order;
-		
-		try {
-			order = orderRegistry.findById(e.getOrder().getId());
-		}
-		catch(Throwable ex) {
-			throw new OrderReportRegistryException(ex);
-		}
-
 		if(order.getStatus().isClosed()) {
 			throw new OrderReportRegistryException("order is closed");
 		}
@@ -356,18 +347,9 @@ public class OrderReportRegistryUtil {
 		
 	}
 
-	public static void checkUpdateOrderReportStatus(OrderReport e, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess, ClientRegistry clientRegistry) throws OrderReportRegistryException, OrderStatusNotAllowedRegistryException {
+	public static void checkUpdateOrderReportStatus(OrderReport e, Order order, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess, ClientRegistry clientRegistry) throws OrderReportRegistryException, OrderStatusNotAllowedRegistryException {
 		
 		//check order not is closed
-		
-		Order order;
-		
-		try {
-			order = orderRegistry.findById(e.getOrder().getId());
-		}
-		catch(Throwable ex) {
-			throw new OrderReportRegistryException(ex);
-		}
 		
 		if(order.getStatus().isClosed()) {
 			throw new OrderReportRegistryException("order is closed");

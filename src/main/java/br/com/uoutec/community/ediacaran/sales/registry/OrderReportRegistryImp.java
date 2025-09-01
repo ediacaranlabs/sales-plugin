@@ -103,8 +103,10 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		entity.setDate(LocalDateTime.now());
 		
 		OrderReportRegistryUtil.validate(entity, saveValidations);
-		OrderReportRegistryUtil.checkOrderReportStatus(entity, orderRegistry, entityAccess);
 		
+		Order actualOrder = ShippingRegistryUtil.getActualOrder(entity.getOrder(), orderRegistry);
+		OrderReportRegistryUtil.checkAllowedCreateOrderReport(actualOrder);
+		OrderReportRegistryUtil.checkOrderReportStatus(entity, actualOrder, orderRegistry, entityAccess);
 		OrderReportRegistryUtil.save(entity, entityAccess);
 		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
@@ -117,9 +119,13 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 			InvoiceRegistry invoiceRegistry, ProductTypeRegistry productTypeRegistry) throws ValidationException, OrderReportRegistryException, OrderRegistryException, 
 			ShippingRegistryException, InvoiceRegistryException, ProductTypeRegistryException {
 
-		OrderReportRegistryUtil.validate(entity, updateValidations);
-		OrderReportRegistryUtil.checkUpdateOrderReportStatus(entity, orderRegistry, entityAccess, clientRegistry);
 		
+		OrderReportRegistryUtil.validate(entity, updateValidations);
+		
+		Order actualOrder = ShippingRegistryUtil.getActualOrder(entity.getOrder(), orderRegistry);
+		
+		OrderReportRegistryUtil.checkAllowedCreateOrderReport(actualOrder);
+		OrderReportRegistryUtil.checkUpdateOrderReportStatus(entity, actualOrder, orderRegistry, entityAccess, clientRegistry);
 		OrderReportRegistryUtil.update(entity, entityAccess);
 		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
