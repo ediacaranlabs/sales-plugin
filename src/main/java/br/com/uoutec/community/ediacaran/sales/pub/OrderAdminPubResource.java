@@ -102,7 +102,7 @@ public class OrderAdminPubResource {
 		try{
 			List<Order> orders = this.orderRegistry.getOrders(null, null);
 			vars.put("orders", orders);
-			vars.put("statusList", Arrays.asList(OrderStatus.values()));
+			vars.put("statusList", Arrays.asList(OrderStatus.getValues()));
 			
 			return vars;
 		}

@@ -1,6 +1,5 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -380,44 +379,6 @@ public class OrderRegistryImp
 		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 		OrderRegistryUtil.checkNewOrderStatus(order, status);
 		order.setStatus(status);
-		
-		switch (status) {
-		case NEW:
-			order.setCompleteShipping(null);
-			order.setCompleteInvoice(null);
-			break;
-		case ON_HOLD:
-			order.setCompleteShipping(null);
-			order.setCompleteInvoice(null);
-			break;
-		case PENDING_PAYMENT:
-			order.setCompleteShipping(null);
-			order.setCompleteInvoice(null);
-			break;
-		case PAYMENT_RECEIVED:
-			order.setCompleteShipping(null);
-			order.setCompleteInvoice(null);
-			break;
-		case ORDER_INVOICED:
-			order.setCompleteInvoice(LocalDateTime.now());
-			order.setCompleteShipping(null);
-			break;
-		case ORDER_SHIPPED:
-			order.setCompleteShipping(LocalDateTime.now());
-			break;
-		case CANCELED:
-			break;
-		case REFOUND:
-			break;
-		case COMPLETE:
-			break;
-		case CLOSED:
-			break;
-		case ARCHIVED:
-			break;
-		default:
-			break;
-		}
 	
 		try {
 			OrderRegistryUtil.update(order, orderEntityAccess);

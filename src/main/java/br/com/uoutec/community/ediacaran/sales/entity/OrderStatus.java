@@ -1,129 +1,51 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
-import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
-import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
-import br.com.uoutec.i18n.MessageBundle;
+public interface OrderStatus {
 
-public enum OrderStatus {
+	public static final OrderStatus NEW = OrderStatusValue.NEW;
+	
+	public static final OrderStatus ON_HOLD = OrderStatusValue.ON_HOLD;
+	
+	public static final OrderStatus PENDING_PAYMENT = OrderStatusValue.PENDING_PAYMENT;
+	
+	public static final OrderStatus PAYMENT_RECEIVED = OrderStatusValue.PAYMENT_RECEIVED;
+	
+	public static final OrderStatus ORDER_INVOICED = OrderStatusValue.ORDER_INVOICED;
+	
+	public static final OrderStatus ORDER_SHIPPED = OrderStatusValue.ORDER_SHIPPED;
 
-	NEW,
+	public static final OrderStatus COMPLETE = OrderStatusValue.COMPLETE;
 	
-	ON_HOLD,
+	public static final OrderStatus CLOSED = OrderStatusValue.CLOSED;
 	
-	PENDING_PAYMENT,
+	public static final OrderStatus ARCHIVED = OrderStatusValue.ARCHIVED;
 	
-	PAYMENT_RECEIVED,
-	
-	ORDER_INVOICED,
-	
-	ORDER_SHIPPED,
+	public static final OrderStatus CANCELED = OrderStatusValue.CANCELED;
 
-	COMPLETE,
+	public static final OrderStatus REFOUND = OrderStatusValue.REFOUND;
 	
-	CLOSED,
+	String getName(Locale locale);
+
+	boolean isValidNextStatus(OrderStatus newStatus);
+
+	boolean isAllowedCreateInvoice();
 	
-	ARCHIVED,
+	boolean isAllowedChangeInvoice();
+
+	boolean isAllowedCreateShipping();
 	
-	CANCELED,
+	boolean isAllowedChangeShipping();
 
-	REFOUND;
+	boolean isAllowedCreateOrderReport();
 	
-	public static final String RESOURCE_BUNDLE = 
-			MessageBundle.toPackageID(OrderStatus.class);
+	boolean isAllowedChangeOrderReport();
+
+	boolean isClosed();
 	
-	public String getName(Locale locale) {
-		I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
-		return i18nRegistry
-					.getString(
-							RESOURCE_BUNDLE,
-							name().toLowerCase(), 
-							locale
-					);		
-	}
-
-	public boolean isValidNextStatus(OrderStatus newStatus) {
-		return StatusCheck.isValid(this, newStatus);
-	}
-	
-	private static class StatusCheck {
-		
-		private static final Map<OrderStatus, Set<OrderStatus>> nextState;
-		
-		static{
-			nextState = new HashMap<OrderStatus, Set<OrderStatus>>();
-			
-			nextState.put(OrderStatus.NEW, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.PENDING_PAYMENT,
-							OrderStatus.CANCELED,
-							OrderStatus.ON_HOLD))
-				);
-			
-			nextState.put(OrderStatus.ON_HOLD, 
-				new HashSet<OrderStatus>(Arrays.asList(OrderStatus.values()))
-			);
-			
-			nextState.put(OrderStatus.PENDING_PAYMENT, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.CANCELED,
-							OrderStatus.PAYMENT_RECEIVED))
-				);
-
-			nextState.put(OrderStatus.PAYMENT_RECEIVED, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.REFOUND,
-							OrderStatus.ORDER_INVOICED))
-				);
-
-			nextState.put(OrderStatus.ORDER_INVOICED, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.PAYMENT_RECEIVED,
-							OrderStatus.ORDER_SHIPPED,
-							OrderStatus.COMPLETE))
-				);
-
-			nextState.put(OrderStatus.ORDER_SHIPPED, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.ORDER_INVOICED,
-							OrderStatus.COMPLETE))
-				);
-
-			nextState.put(OrderStatus.REFOUND, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.CLOSED))
-				);
-			
-			nextState.put(OrderStatus.CLOSED, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.ARCHIVED))
-				);
-
-			nextState.put(OrderStatus.COMPLETE, 
-					new HashSet<OrderStatus>(Arrays.asList(
-							OrderStatus.ARCHIVED))
-				);
-			
-			nextState.put(OrderStatus.CANCELED, 
-					new HashSet<OrderStatus>(Arrays.asList())
-				);
-			
-		}
-		
-		public static boolean isValid(OrderStatus currentStatus, OrderStatus newStatus){
-			if(currentStatus.equals(newStatus)) {
-				return true;
-			}
-			Set<OrderStatus> nextStatus = nextState.get(currentStatus);
-			return nextStatus != null && nextStatus.contains(newStatus);
-		}
-		
-	}
+	public static OrderStatus[] getValues() {
+		return  OrderStatusValue.values();
+	};
 	
 }

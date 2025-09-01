@@ -304,19 +304,6 @@ public class OrderReportRegistryUtil {
 		return or;
 	}
 
-	public static void checkOrderStatus(Order order) throws OrderStatusNotAllowedRegistryException {
-		
-		switch (order.getStatus()) {
-		case ORDER_SHIPPED:
-		case ORDER_INVOICED:
-			return;
-		default:
-			throw new OrderStatusNotAllowedRegistryException(
-					"invalid status #" + order.getId() + ": " + 
-					order.getStatus());
-		}
-	}
-	
 	public static void checkOrderReportStatus(OrderReport e, OrderRegistry orderRegistry, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException, OrderStatusNotAllowedRegistryException {
 		
 		//check order not is closed
@@ -330,10 +317,12 @@ public class OrderReportRegistryUtil {
 			throw new OrderReportRegistryException(ex);
 		}
 
-		OrderReportRegistryUtil.checkOrderStatus(order);
-		
-		if(order.isClosed()) {
+		if(order.getStatus().isClosed()) {
 			throw new OrderReportRegistryException("order is closed");
+		}
+
+		if(!order.getStatus().isAllowedCreateOrderReport()) {
+			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
 		}
 		
 		//check if not exist reported product request
@@ -372,10 +361,12 @@ public class OrderReportRegistryUtil {
 			throw new OrderReportRegistryException(ex);
 		}
 		
-		OrderReportRegistryUtil.checkOrderStatus(order);
-		
-		if(order.isClosed()) {
+		if(order.getStatus().isClosed()) {
 			throw new OrderReportRegistryException("order is closed");
+		}
+
+		if(!order.getStatus().isAllowedChangeOrderReport()) {
+			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
 		}
 		
 		OrderReport current = reload(e, entityAccess, clientRegistry, orderRegistry);
