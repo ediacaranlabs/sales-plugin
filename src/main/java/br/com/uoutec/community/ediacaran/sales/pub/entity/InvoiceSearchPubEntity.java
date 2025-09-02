@@ -7,7 +7,6 @@ import javax.resource.spi.IllegalStateException;
 import javax.validation.constraints.Max;
 
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
@@ -24,8 +23,6 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 	
 	private LocalDate endDate;
 	
-	private OrderStatus status;
-
 	private BigDecimal minTotal;
 
 	private BigDecimal maxTotal;
@@ -77,14 +74,6 @@ public class InvoiceSearchPubEntity extends AbstractPubEntity<InvoiceSearch> {
 
 	public void setCanceled(Boolean canceled) {
 		this.canceled = canceled;
-	}
-
-	public OrderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderStatus status) {
-		this.status = status;
 	}
 
 	public BigDecimal getMinTotal() {

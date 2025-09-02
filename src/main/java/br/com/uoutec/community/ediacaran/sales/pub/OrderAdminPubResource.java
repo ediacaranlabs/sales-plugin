@@ -162,7 +162,7 @@ public class OrderAdminPubResource {
 
 	@Action("/payment/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/payment_result")
-	@Result("order")
+	@Result(value = "order", mappingType = MappingTypes.VALUE)
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.ORDER.PAYMENT)
 	public Order payment(

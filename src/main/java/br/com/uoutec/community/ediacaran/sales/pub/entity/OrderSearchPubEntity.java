@@ -24,7 +24,7 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 	
 	private LocalDate endDate;
 	
-	private OrderStatus status;
+	private String status;
 
 	private BigDecimal minTotal;
 
@@ -69,11 +69,11 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 		this.endDate = endDate;
 	}
 
-	public OrderStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(OrderStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -160,7 +160,7 @@ public class OrderSearchPubEntity extends AbstractPubEntity<OrderSearch> {
 		o.setPage(page);
 		o.setResultPerPage(resultPerPage);
 		o.setStartDate(startDate);
-		o.setStatus(status);
+		o.setStatus(OrderStatus.toOrderStatus(this.status));
 		o.setOwnerName(ownerName);
 	}
 	

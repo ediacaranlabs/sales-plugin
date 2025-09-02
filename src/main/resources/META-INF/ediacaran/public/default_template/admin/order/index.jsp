@@ -55,7 +55,7 @@
 					<ec:select label="#{form.status.label}" name="status" bundle="${messages}">
 						<ec:option value=""></ec:option>
 						<c:forEach items="${vars.statusList}" var="status">
-						<ec:option value="${status}">${status.getName(locale)}</ec:option>
+						<ec:option value="${status.code}">${status.getName(locale)}</ec:option>
 						</c:forEach>
 					</ec:select>
 				</ed:col>

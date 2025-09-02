@@ -503,13 +503,13 @@ public class ShippingRegistryUtil {
 	}
 
 	public static void checkAllowedCreateShipping(Order order) throws OrderStatusNotAllowedRegistryException {
-		if(!order.getStatus().isAllowedCreateInvoice()) {
+		if(!order.getStatus().isAllowedCreateShipping()) {
 			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
 		}
 	}
 	
 	public static void checkAllowedUpdateShipping(Order order) throws OrderStatusNotAllowedRegistryException {
-		if(!order.getStatus().isAllowedChangeInvoice()) {
+		if(!order.getStatus().isAllowedChangeShipping()) {
 			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
 		}
 	}

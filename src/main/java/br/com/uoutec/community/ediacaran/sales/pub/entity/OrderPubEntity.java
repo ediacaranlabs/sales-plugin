@@ -11,8 +11,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Constructor;
-import org.brandao.brutos.annotation.Enumerated;
-import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.Transient;
 import org.hibernate.validator.constraints.Length;
 
@@ -40,8 +38,7 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 	private LocalDateTime date;
 
 	@NotNull(groups = DataValidation.class)
-	@Enumerated(EnumerationType.STRING)
-	private OrderStatus status;
+	private String status;
 
 	@Valid
 	@NotNull(groups = DataValidation.class)
@@ -59,7 +56,7 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 		this.date = order.getDate();
 		this.id = order.getId();
 		this.payment = order.getPayment() == null? null : new PaymentPubEntity(order.getPayment(), locale).getType();
-		this.status = order.getStatus();
+		this.status = order.getStatus() == null? null : order.getStatus().getCode();
 		if(order.getItens() != null) {
 			this.itens = new ArrayList<>();
 			for(ProductRequest pr: order.getItens()) {
@@ -84,11 +81,11 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 		this.date = date;
 	}
 
-	public OrderStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(OrderStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -144,7 +141,7 @@ public class OrderPubEntity extends AbstractPubEntity<Order> {
 		o.setPayment(this.payment == null ? null : this.payment.rebuild(
 				o.getPayment(), override, validate));
 		o.setRemoved(false);
-		o.setStatus(this.status);
+		o.setStatus(this.status == null? null : OrderStatus.toOrderStatus(this.status));
 	}
 
 	@Override

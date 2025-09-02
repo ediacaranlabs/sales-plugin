@@ -84,7 +84,7 @@
 				</ec:table>
 			</ed:col>
 		</ed:row>
-		<c:if test="${!vars.order.closed}">
+		<c:if test="${vars.order.status.allowedCreateOrderReport}">
 		<ed:row>
 			<ed:col>
 				<ec:button label="Report a problem" align="right">

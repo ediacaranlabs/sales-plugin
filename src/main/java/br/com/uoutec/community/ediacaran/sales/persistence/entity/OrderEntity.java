@@ -9,8 +9,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -44,9 +42,8 @@ public class OrderEntity implements /*PublicType, */Serializable {
 	@Column(name="dat_registry")
 	private LocalDateTime date;
 	
-	@Enumerated(EnumType.STRING)
 	@Column(name="set_status", length=28)
-	private OrderStatus status;
+	private String status;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_payment", updatable = false, referencedColumnName="cod_payment")
@@ -124,7 +121,7 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		
 		this.payment = e.getPayment() == null? null : new PaymentEntity(e.getPayment(), e);
 		this.removed = e.isRemoved();
-		this.status = e.getStatus();
+		this.status = e.getStatus() == null? null : e.getStatus().getCode();
 		
 		List<Tax> list = e.getTaxes();
 		
@@ -161,11 +158,11 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		this.date = date;
 	}
 
-	public OrderStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(OrderStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -310,7 +307,7 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		
 		e.setPayment(this.payment == null? null : this.payment.toEntity());
 		e.setRemoved(this.removed == null? false : this.removed);
-		e.setStatus(this.status);
+		e.setStatus(this.status == null? null : OrderStatus.toOrderStatus(this.status));
 		e.setCartID(this.cartID);
 		e.setPaymentType(this.paymentType);
 		e.setCurrency(this.currency);

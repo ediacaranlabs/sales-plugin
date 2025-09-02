@@ -46,8 +46,12 @@ public interface OrderStatus {
 
 	boolean isClosed();
 	
+	public static OrderStatus toOrderStatus(String value) {
+		return  value == null? null : OrderStatusValue.valueOf(value);
+	};
+	
 	public static OrderStatus[] getValues() {
 		return  OrderStatusValue.values();
-	};
+	}
 	
 }

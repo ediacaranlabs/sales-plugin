@@ -8,14 +8,11 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity
@@ -41,9 +38,8 @@ public class OrderIndexEntity implements Serializable {
 	@Column(name="dat_registry")
 	private LocalDateTime date;
 	
-	@Enumerated(EnumType.STRING)
 	@Column(name="set_status", length=28)
-	private OrderStatus status;
+	private String status;
 	
 	@Column(name="vlr_total", scale=3, precision=12)
 	private BigDecimal total;
@@ -56,7 +52,7 @@ public class OrderIndexEntity implements Serializable {
 		this.cartID = e.getCartID();
 		this.id = e.getId();
 		this.total = e.getTotal();
-		this.status = e.getStatus();
+		this.status = e.getStatus() == null? null : e.getStatus().getCode();
 		this.client = e.getClient().getId();
 		this.clientName = "";
 		
@@ -112,11 +108,11 @@ public class OrderIndexEntity implements Serializable {
 		this.date = date;
 	}
 
-	public OrderStatus getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(OrderStatus status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

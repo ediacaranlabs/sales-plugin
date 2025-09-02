@@ -85,11 +85,11 @@ public enum OrderStatusValue implements OrderStatus {
 	ORDER_SHIPPED(){
 		
 		public boolean isAllowedCreateOrderReport() {
-			return false;
+			return true;
 		}
 		
 		public boolean isAllowedChangeOrderReport() {
-			return false;
+			return true;
 		}
 		
 		@Override
