@@ -31,7 +31,7 @@ public interface OrderReportRegistry extends PublicBean {
 	
 	void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException;
 
-	OrderReportMessage getMessageById(String id) throws OrderReportRegistryException;
+	OrderReportMessage getMessageById(String id, OrderReport orderReport) throws OrderReportRegistryException;
 	
 	OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException;
 	

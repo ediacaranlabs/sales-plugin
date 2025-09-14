@@ -9,6 +9,7 @@ import javax.validation.constraints.Pattern;
 import org.brandao.brutos.annotation.Constructor;
 import org.hibernate.validator.constraints.Length;
 
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -26,7 +27,7 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 	@Length(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
-	@NotNull(groups = DataValidation.class)
+	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
 	@Length(min = 10, max = 38, groups = DataValidation.class)
 	private String orderReport;
@@ -105,7 +106,9 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 	@Override
 	protected OrderReportMessage reloadEntity() throws Throwable {
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
-		return orderReportRegistry.getMessageById(id);
+		OrderReport orderReport = new OrderReport();
+		orderReport.setId(this.orderReport);
+		return orderReportRegistry.getMessageById(id, orderReport);
 	}
 
 	@Override

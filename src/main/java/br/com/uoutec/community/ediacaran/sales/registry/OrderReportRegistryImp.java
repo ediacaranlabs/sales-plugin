@@ -227,8 +227,9 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	}
 
 	@Override
-	public OrderReportMessage getMessageById(String id) throws OrderReportRegistryException {
-		return OrderReportRegistryUtil.findById(id, orderReportMessageEntityAccess);
+	public OrderReportMessage getMessageById(String id, OrderReport orderReport) throws OrderReportRegistryException {
+		OrderReportMessage e = OrderReportRegistryUtil.findById(id, orderReportMessageEntityAccess);
+		return e.getOrderReport().equals(orderReport.getId())? e : null;
 	}
 	
 }
