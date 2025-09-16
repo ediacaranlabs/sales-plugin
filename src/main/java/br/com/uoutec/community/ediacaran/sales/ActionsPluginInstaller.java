@@ -45,6 +45,11 @@ public class ActionsPluginInstaller {
 			String shipping = request.getParameter("shipping");
 			response.setParameter("shipping", shipping);
 		});
+
+		actionRegistry.registerAction(NEW_ORDER_REPORT, 3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String orderReport = request.getParameter("orderReport");
+			response.setParameter("orderReport", orderReport);
+		});
 		
 		actionRegistry.registerAction(REGISTER_PAYMENT_INFO, 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(RegisterPaymntInfoAction.class));
 		actionRegistry.registerAction(CREATE_INVOICE,			3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(CreateInvoiceAction.class));
@@ -61,6 +66,7 @@ public class ActionsPluginInstaller {
 		actionRegistry.removeAction(NEW_INVOICE_REGISTERED);
 		actionRegistry.removeAction(NEW_SHIPPING_REGISTERED);
 		actionRegistry.removeAction(REGISTER_PAYMENT_INFO);
+		actionRegistry.removeAction(NEW_ORDER_REPORT);
 		actionRegistry.removeAction(CREATE_INVOICE);
 	}
 	

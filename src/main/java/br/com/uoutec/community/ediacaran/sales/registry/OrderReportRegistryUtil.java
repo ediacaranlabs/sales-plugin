@@ -129,6 +129,15 @@ public class OrderReportRegistryUtil {
 		}
 	}
 
+	public static void registerNewOrderReportEvent(ActionRegistry actionRegistry, OrderReport orderReport) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.NEW_ORDER_REPORT, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("orderReport", orderReport.getId())
+				.build()
+		);
+	}
+	
 	public static void updateOrderStatus(OrderReport entity,OrderRegistry orderRegistry, 
 			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, ProductTypeRegistry productTypeRegistry, OrderReportEntityAccess entityAccess) throws OrderRegistryException, ShippingRegistryException {
 		Order actualOrder   = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);

@@ -111,6 +111,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
+		OrderReportRegistryUtil.registerNewOrderReportEvent(actionRegistry, entity);
 		OrderReportRegistryUtil.updateOrderStatus(entity, orderRegistry, clientRegistry, shippingRegistry, productTypeRegistry, entityAccess);
 	}
 
