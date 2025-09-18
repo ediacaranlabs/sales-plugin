@@ -311,7 +311,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setTags(this.tagsString != null? StringUtil.toSet(this.tagsString, ",") : tags);
 		o.setShortDescription(this.shortDescription);
 		o.setMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
-		o.setDisplay(this.display == null? false : this.display);
+		o.setDisplay(this.display);
 		
 		if(this.images != null) {
 			List<ProductImage> list = new ArrayList<>();

@@ -85,7 +85,7 @@ public class ProductEntity implements Serializable {
 		this.id               = e.getId() <= 0? null : e.getId();
 		this.name             = e.getName();
 		this.shortDescription = e.getShortDescription();
-		this.display          = e.isDisplay();
+		this.display          = e.getDisplay();
 		this.metadata         = e.getMetadata() <= 0? null : e.getMetadata();
 		
 		if(e.getTags() != null) {
@@ -220,7 +220,7 @@ public class ProductEntity implements Serializable {
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
 		e.setShortDescription(this.shortDescription);
-		e.setDisplay(this.display == null? false : this.display);
+		e.setDisplay(this.display);
 		e.setMetadata(this.metadata == null? 0 : this.metadata);
 		
 		if(this.tags != null) {

@@ -58,7 +58,7 @@ public class Product implements Serializable {
 	@Size(max=256)
 	protected String shortDescription;
 	
-	protected boolean display;
+	protected Boolean display;
 
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.WORD_NUM, groups = DataValidation.class)
@@ -196,13 +196,17 @@ public class Product implements Serializable {
 	}
 
 	public boolean isDisplay() {
-		return display;
+		return display != null && display.booleanValue();
 	}
 
-	public void setDisplay(boolean display) {
+	public void setDisplay(Boolean display) {
 		this.display = display;
 	}
 
+	public Boolean getDisplay() {
+		return display;
+	}
+	
 	protected volatile List<ProductImage> images;
  
 	protected volatile boolean imagesLoaded;
