@@ -141,9 +141,9 @@
 			label="#{product.form.display.label}" 
 			name="display" 
 			bundle="${messages}">
-			<ec:option value=""></ec:option>
-			<ec:option value="true" selected="${vars.entity.display}"><fmt:message key="product.form.display.options.show" bundle="${messages}" /></ec:option>
-			<ec:option value="false" selected="${!vars.entity.display}"><fmt:message key="product.form.display.options.hide" bundle="${messages}" /></ec:option>
+			<ec:option value=""><fmt:message key="product.form.display.options.disabled" bundle="${messages}" /></ec:option>
+			<ec:option value="true" selected="${vars.entity.getDisplay() != null && vars.entity.display}"><fmt:message key="product.form.display.options.show" bundle="${messages}" /></ec:option>
+			<ec:option value="false" selected="${vars.entity.getDisplay() != null && !vars.entity.display}"><fmt:message key="product.form.display.options.hide" bundle="${messages}" /></ec:option>
 			<ec:field-validator>
 				<ec:field-validator-rule name="notEmpty"
 					message="#{product.form.display.notEmpty}" bundle="${messages}" />
