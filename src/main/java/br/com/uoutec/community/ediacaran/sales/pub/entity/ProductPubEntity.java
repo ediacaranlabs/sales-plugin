@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -87,6 +88,10 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String currency;
 
+	protected LocalDate offerDate;
+	
+	protected BigDecimal offerDiscount;
+	
 	@Size(max = 600)
 	@Pattern(regexp="^([^\"\',]+)(,([^\"\',]+))*$")
 	private String tagsString;
@@ -119,6 +124,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.tags = e.getTags();
 		this.shortDescription = e.getShortDescription();
 		this.display = e.isDisplay();
+		this.offerDate = e.getOfferDate();
+		this.offerDiscount = e.getOfferDiscount();
 	}
 	
 	public String getProtectedID() {
@@ -265,6 +272,22 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.productMetadataID = productMetadataID;
 	}
 
+	public LocalDate getOfferDate() {
+		return offerDate;
+	}
+
+	public void setOfferDate(LocalDate offerDate) {
+		this.offerDate = offerDate;
+	}
+
+	public BigDecimal getOfferDiscount() {
+		return offerDiscount;
+	}
+
+	public void setOfferDiscount(BigDecimal offerDiscount) {
+		this.offerDiscount = offerDiscount;
+	}
+
 	@Override
 	protected void preRebuild(Product instance, boolean reload, boolean override, boolean validate) {
 		try {
@@ -312,6 +335,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setShortDescription(this.shortDescription);
 		o.setMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
 		o.setDisplay(this.display);
+		o.setOfferDate(this.offerDate);
+		o.setOfferDiscount(this.offerDiscount);
 		
 		if(this.images != null) {
 			List<ProductImage> list = new ArrayList<>();
@@ -405,6 +430,8 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.attributes = x.getAttributes();
 		this.display = x.display;
 		this.images = x.images;
+		this.offerDate = x.offerDate;
+		this.offerDiscount = x.offerDiscount;
 	}
 	
 }

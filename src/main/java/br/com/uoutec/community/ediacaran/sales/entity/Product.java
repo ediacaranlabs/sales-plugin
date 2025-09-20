@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,6 +90,10 @@ public class Product implements Serializable {
 	
 	protected String exchangeCurrency;
 	
+	protected LocalDate offerDate;
+	
+	protected BigDecimal offerDiscount;
+	
 	public Product() {
 		this.attributes = new HashMap<>();
 		this.display = true;
@@ -115,6 +120,8 @@ public class Product implements Serializable {
 		this.shortDescription = e.shortDescription;
 		this.tags = e.tags;
 		this.thumb = e.thumb;
+		this.offerDate = e.offerDate;
+		this.offerDiscount = e.offerDiscount;
 	}
 	
 	public String getProtectedID() {
@@ -361,6 +368,22 @@ public class Product implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public LocalDate getOfferDate() {
+		return offerDate;
+	}
+
+	public void setOfferDate(LocalDate offerDate) {
+		this.offerDate = offerDate;
+	}
+
+	public BigDecimal getOfferDiscount() {
+		return offerDiscount;
+	}
+
+	public void setOfferDiscount(BigDecimal offerDiscount) {
+		this.offerDiscount = offerDiscount;
 	}
 
 	public String getPublicThumb() {

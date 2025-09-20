@@ -135,21 +135,7 @@
 	</ed:col>
 </ed:row>
 <ed:row style="form">
-	<ed:col size="6" classStyle="form-group has-feedback">
-		<ec:select
-			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:DISPLAY')}" 
-			label="#{product.form.display.label}" 
-			name="display" 
-			bundle="${messages}">
-			<ec:option value=""><fmt:message key="product.form.display.options.disabled" bundle="${messages}" /></ec:option>
-			<ec:option value="true" selected="${vars.entity.getDisplay() != null && vars.entity.display}"><fmt:message key="product.form.display.options.show" bundle="${messages}" /></ec:option>
-			<ec:option value="false" selected="${vars.entity.getDisplay() != null && !vars.entity.display}"><fmt:message key="product.form.display.options.hide" bundle="${messages}" /></ec:option>
-			<ec:field-validator>
-				<ec:field-validator-rule name="notEmpty"
-					message="#{product.form.display.notEmpty}" bundle="${messages}" />
-			</ec:field-validator>
-		</ec:select>
-	</ed:col>
+
 	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:label><fmt:message key="product.form.cost.label" bundle="${messages}"/></ec:label>
 		<ec:field-group>
@@ -174,7 +160,7 @@
 						message="#{product.form.cost.notEmpty}" bundle="${messages}" />
 					<ec:field-validator-rule name="regexp"
 						message="#{product.form.cost.regex}" bundle="${messages}">
-						<ec:field-validator-param name="regexp" raw="true">/[0-9]{1,10}(\.[0-9]{2,2})?/</ec:field-validator-param>
+						<ec:field-validator-param name="regexp" raw="true">/^[0-9]{1,10}(\.[0-9]{2,2})?$/</ec:field-validator-param>
 					</ec:field-validator-rule>
 				</ec:field-validator>
 			</ec:textfield>
@@ -192,9 +178,44 @@
 			</ec:append-field>
 		</ec:field-group>
 	</ed:col>
+	
+	
+	
+	<ed:col size="3" classStyle="form-group has-feedback">
+		<ec:label>Offer Discount</ec:label>
+		<ec:field-group>
+			<ec:textfield name="offerDiscount"
+				readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:OFFER_DISCOUNT')}"
+				value="${vars.entity.offerDiscount}">
+				<ec:field-validator>
+					<ec:field-validator-rule name="regexp"
+						message="Invalid percent format" bundle="${messages}">
+						<ec:field-validator-param name="regexp" raw="true">/^[0-9]{1,3}$/</ec:field-validator-param>
+					</ec:field-validator-rule>
+					<ec:field-validator-rule name="between" 
+						message="Invalid percent value" bundle="${messages}">
+							<ec:field-validator-param name="min">0</ec:field-validator-param>
+							<ec:field-validator-param name="max">100</ec:field-validator-param>
+					</ec:field-validator-rule>
+				</ec:field-validator>
+			</ec:textfield>
+			<ec:append-field>
+				<ec:prepend-field-item>%</ec:prepend-field-item>
+			</ec:append-field>
+		</ec:field-group>
+	</ed:col>
+
+	<ed:col size="3" classStyle="form-group has-feedback">
+		<ec:dateField label="Offer Date" 
+			name="offerDate" 
+			value="${vars.entity.offerDate}"
+			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:OFFER_DATE')}"/>
+	</ed:col>
+	
 </ed:row>
 <ed:row>
-	<ed:col size="12" classStyle="form-group has-feedback">
+	
+	<ed:col size="6" classStyle="form-group has-feedback">
 		<ec:textfield name="tagsString" label="#{product.form.tags.label}"
 			align="center" value="${vars.entity.tagsString}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:TAGS')}"
@@ -211,5 +232,22 @@
 			</ec:field-validator>
 		</ec:textfield>
 	</ed:col>
+	
+	<ed:col size="6" classStyle="form-group has-feedback">
+		<ec:select
+			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:DISPLAY')}" 
+			label="#{product.form.display.label}" 
+			name="display" 
+			bundle="${messages}">
+			<ec:option value=""><fmt:message key="product.form.display.options.disabled" bundle="${messages}" /></ec:option>
+			<ec:option value="true" selected="${vars.entity.getDisplay() != null && vars.entity.display}"><fmt:message key="product.form.display.options.show" bundle="${messages}" /></ec:option>
+			<ec:option value="false" selected="${vars.entity.getDisplay() != null && !vars.entity.display}"><fmt:message key="product.form.display.options.hide" bundle="${messages}" /></ec:option>
+			<ec:field-validator>
+				<ec:field-validator-rule name="notEmpty"
+					message="#{product.form.display.notEmpty}" bundle="${messages}" />
+			</ec:field-validator>
+		</ec:select>
+	</ed:col>
+	
 </ed:row>
 <span id="afterProduct"></span>

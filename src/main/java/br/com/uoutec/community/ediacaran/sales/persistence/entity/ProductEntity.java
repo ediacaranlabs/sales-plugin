@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -67,6 +68,12 @@ public class ProductEntity implements Serializable {
 	@Column(name="vlr_cost", scale=2, precision=12)
 	private BigDecimal cost;
 	
+	@Column(name="dat_offer")
+	protected LocalDate offerDate;
+	
+	@Column(name="vlr_offer", scale=2, precision=12)
+	protected BigDecimal offerDiscount;
+	
 	@Column(name="dsc_currency", length=3)
 	private String currency;
 
@@ -87,6 +94,8 @@ public class ProductEntity implements Serializable {
 		this.shortDescription = e.getShortDescription();
 		this.display          = e.getDisplay();
 		this.metadata         = e.getMetadata() <= 0? null : e.getMetadata();
+		this.offerDate        = e.getOfferDate();
+		this.offerDiscount    = e.getOfferDiscount();
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -222,6 +231,8 @@ public class ProductEntity implements Serializable {
 		e.setShortDescription(this.shortDescription);
 		e.setDisplay(this.display);
 		e.setMetadata(this.metadata == null? 0 : this.metadata);
+		e.setOfferDate(this.offerDate);
+		e.setOfferDiscount(this.offerDiscount);
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))

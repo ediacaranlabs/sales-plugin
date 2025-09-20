@@ -156,6 +156,34 @@ public final class SalesUserPermissions {
 
 		public static final String DELETE	= ALL + ":DELETE";
 		
+		public static final class FIELDS {
+
+			public static final String ALL 					= SalesUserPermissions.PRODUCT.ALL +  ":FIELDS";
+
+			public static final String NAME 				= ALL +  ":NAME";
+
+			public static final String PRODUCT_METADATA 	= ALL +  ":PRODUCT_METADATA";
+
+			public static final String SHORT_DESCRIPTION	= ALL +  ":SHORT_DESCRIPTION";
+			
+			public static final String DESCRIPTION 			= ALL +  ":DESCRIPTION";
+			
+			public static final String CURRENCY 			= ALL +  ":CURRENCY";
+			
+			public static final String COST 				= ALL +  ":COST";
+			
+			public static final String MEASUREMENT_UNIT 	= ALL +  ":MEASUREMENT_UNIT";
+			
+			public static final String OFFER_DISCOUNT 		= ALL +  ":OFFER_DISCOUNT";
+			
+			public static final String OFFER_DATE 			= ALL +  ":OFFER_DATE";
+			
+			public static final String TAGS 				= ALL +  ":TAGS";
+			
+			public static final String DISPLAY 				= ALL +  ":DISPLAY";
+			
+		}
+		
 	}
 
 	public static final class PRODUCT_METADATA {
