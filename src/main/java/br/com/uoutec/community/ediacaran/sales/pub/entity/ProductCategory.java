@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
-import br.com.uoutec.community.ediacaran.persistence.entity.Language;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.CategoryRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -29,8 +28,6 @@ public class ProductCategory implements Serializable {
 	@Length(max = 128, groups = DataValidation.class)
 	private String name;
 
-	private Language language;
-	
 	protected volatile transient boolean imageLoaded;
 	
 	private transient Path thumb;
@@ -70,14 +67,6 @@ public class ProductCategory implements Serializable {
 
 	public void setThumb(Path thumb) {
 		this.thumb = thumb;
-	}
-
-	public Language getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(Language language) {
-		this.language = language;
 	}
 
 	private synchronized void loadImage() {
