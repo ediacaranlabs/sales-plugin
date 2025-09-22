@@ -35,6 +35,12 @@ public class ProductCategoryEntity implements Serializable {
 	@Column(name="dsc_description", length=2048)
 	private String description;
 
+	@Column(name="dsc_resource_bundle", length=256)
+	private String resourceBundle;
+
+	@Column(name="dsc_template", length=256)
+	private String template;
+	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "cod_parent", referencedColumnName = "cod_category" )
 	private ProductCategoryEntity parent;
@@ -54,6 +60,8 @@ public class ProductCategoryEntity implements Serializable {
 		this.description      = e.getDescription();
 		this.id               = e.getId() <= 0? null : e.getId();
 		this.name             = e.getName();
+		this.resourceBundle   = e.getResourceBundle();
+		this.template         = e.getTemplate();
 		
 		if(e.getParent() != null) {
 			this.parent = new ProductCategoryEntity(e.getParent());
@@ -130,6 +138,8 @@ public class ProductCategoryEntity implements Serializable {
 		e.setDescription(this.description);
 		e.setId(this.id == null? 0 : this.id);
 		e.setName(this.name);
+		e.setResourceBundle(this.resourceBundle);
+		e.setTemplate(this.template);
 		
 		if(this.parent != null) {
 			ProductCategory c = new ProductCategory();

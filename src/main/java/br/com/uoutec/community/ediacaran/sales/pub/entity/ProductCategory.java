@@ -32,6 +32,10 @@ public class ProductCategory implements Serializable {
 	
 	private transient Path thumb;
 
+	private String resourceBundle;
+
+	private String template;
+	
 	@NotNull(groups = DataValidation.class)
 	@Size(groups = DataValidation.class, max=2048)
 	private String description;
@@ -56,6 +60,22 @@ public class ProductCategory implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getResourceBundle() {
+		return resourceBundle;
+	}
+
+	public void setResourceBundle(String resourceBundle) {
+		this.resourceBundle = resourceBundle;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 	public Path getThumb() {
