@@ -12,8 +12,8 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity
-@Table(name="rw_product_category")
-@EntityListeners(ProductCategoryEntityListener.class)
+@Table(name="rw_product_category_index")
+@EntityListeners(ProductCategoryIndexEntityListener.class)
 public class ProductCategoryIndexEntity implements Serializable {
 
 	private static final long serialVersionUID = 7360107228997614767L;
