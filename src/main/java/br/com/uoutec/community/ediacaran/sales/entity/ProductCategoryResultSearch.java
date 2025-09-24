@@ -14,6 +14,9 @@ public class ProductCategoryResultSearch {
 	
 	private List<ProductCategory> itens;
 
+	public ProductCategoryResultSearch() {
+	}
+	
 	public ProductCategoryResultSearch(boolean hasNextPage, int maxPages, int page, List<ProductCategory> itens) {
 		super();
 		this.maxPages = maxPages;
