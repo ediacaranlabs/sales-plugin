@@ -2,8 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.List;
 
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
-
 public class ProductCategoryResultSearch {
 
 	private Boolean hasNextPage;

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 
 public class ProductCategoryUtil {
 

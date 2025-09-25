@@ -8,7 +8,7 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategoryResultSearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -68,16 +68,6 @@ public class ProductCategoryResultSearchPubEntity extends AbstractPubEntity<Prod
 
 	@Override
 	protected void copyTo(ProductCategoryResultSearch o, boolean reload, boolean override, boolean validate) throws Throwable {
-		o.setHasNextPage(this.hasNextPage == null? false: this.hasNextPage.booleanValue());
-		o.setMaxPages(this.maxPages == null? -1 : this.maxPages.intValue());
-		o.setPage(this.page == null? -1 : this.page.intValue());
-		
-		if(this.itens != null) {
-			List<Product> list = new ArrayList<>();
-			for(ProductPubEntity p: this.itens) {
-				list.add(p.rebuild(reload, override, validate));
-			}
-		}
 	}
 
 	public Boolean getHasNextPage() {

@@ -14,9 +14,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategorySearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductCategoryIndexEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.persistence.EntityAccessException;
 

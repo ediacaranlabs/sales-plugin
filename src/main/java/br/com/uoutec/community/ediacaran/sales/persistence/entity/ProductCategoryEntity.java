@@ -14,7 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 
 @Entity
 @Table(name="rw_product_category")

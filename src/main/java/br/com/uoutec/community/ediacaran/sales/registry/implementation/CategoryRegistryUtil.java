@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import br.com.uoutec.application.io.Path;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 
 public class CategoryRegistryUtil {

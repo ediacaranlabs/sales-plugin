@@ -1,4 +1,4 @@
-package br.com.uoutec.community.ediacaran.sales.pub.entity;
+package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 
@@ -12,6 +12,7 @@ import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.CategoryRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
+import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -46,6 +47,14 @@ public class ProductCategory implements Serializable {
 	
 	private ProductCategory parent2;
 
+	public String getProtectedID() {
+		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
+	}
+
+	public void setProtectedID(String protectedID) {
+		this.id = protectedID == null? 0 : Integer.parseInt(SecretUtil.toID(protectedID));		
+	}
+	
 	public int getId() {
 		return id;
 	}

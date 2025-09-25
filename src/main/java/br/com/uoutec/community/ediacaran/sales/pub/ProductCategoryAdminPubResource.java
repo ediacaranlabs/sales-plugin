@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.brandao.brutos.ResultAction;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
@@ -25,17 +24,14 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebResultAction;
-import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategoryResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategorySearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategoryPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategoryResultSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategorySearchPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryException;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
@@ -81,7 +77,7 @@ public class ProductCategoryAdminPubResource {
 	@Result(mappingType = MappingTypes.OBJECT)
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.CATEGORY.SEARCH)
-	public ProductsSearchResultPubEntity searchProduct(
+	public ProductCategoryResultSearchPubEntity searchProduct(
 			@DetachedName
 			ProductCategorySearchPubEntity productCategorySearch,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -115,32 +111,26 @@ public class ProductCategoryAdminPubResource {
 			throw new InvalidRequestException(error, ex);
 		}
 		
-		return new ProductsSearchResultPubEntity(result, locale);		
+		return new ProductCategoryResultSearchPubEntity(result, locale);		
 	}
 	
-	@Action({
-		"/edit/{product.productType:[^/\\s//]+}",
-		"/edit/{product.productType:[^/\\s//]+}/{product.protectedID:[^/\\s//]+}"
-	})
-	@View("${plugins.ediacaran.sales.template}/admin/product/edit")
+	@Action("/edit/{productCategory.protectedID:[^/\\s//]+}")
+	@View("${plugins.ediacaran.sales.template}/admin/product/category/edit")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
 	public Map<String,Object> edit(
-			@Basic(bean = "product")
-			ProductPubEntity productPubEntity,
+			@Basic(bean = "productCategory")
+			ProductCategoryPubEntity productCategoryPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
 		Map<String,Object> map = new HashMap<>();
-		Product product;
+		ProductCategory productCategory;
 		
 		try {
-			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			map.put("product_view", productType.getViewHandler().edit(product, locale));
+			productCategory = productCategoryPubEntity.rebuild(productCategoryPubEntity.getProtectedID() != null, false, true);
+			map.put("product_category", productCategory);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -154,120 +144,61 @@ public class ProductCategoryAdminPubResource {
 		return map;
 	}
 
-	@Action({"/show/{product.productType:[^/\\s//]+}/{area}"})
-	@RequestMethod("POST")
-	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.PRODUCT.SHOW)
-	public WebResultAction show(
-			@Basic(bean="product")
-			ProductPubEntity productPubEntity,
-			@Basic(bean="area")
-			String area,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale) throws InvalidRequestException {
-
-		Product product = null;
-		
-		try {
-			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ProductAdminPubResourceMessages.edit.error.fail_load_request, 
-							locale);
-			WebResultAction ra = new WebResultActionImp();
-			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			ra.setReason(error);
-			return ra;
-			
-		}
-		
-		try {
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().updateView(product, area, locale);
-		}
-		catch(Throwable ex) {
-			WebResultAction ra = new WebResultActionImp();
-			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			ra.setReason("product viewer misconfiguration");
-			return ra;
-		}		
-		
-	}
-	
 	@Action({"/save/{product.productType:[^/\\s//]+}"})
 	@RequestMethod("POST")
+	@View("${plugins.ediacaran.sales.template}/admin/product/category/result")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)
-	public ResultAction save(
-			@Basic(bean="product")
-			ProductPubEntity productPubEntity,
+	public Map<String,Object> save(
+			@Basic(bean="productCategory")
+			ProductCategoryPubEntity productCategoryPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
-		Product product = null;
+		ProductCategory productCategory = null;
 		Throwable exception = null;
 		
 		try {
-			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
-			productRegistry.registerProduct(product);
+			productCategory = productCategoryPubEntity.rebuild(productCategoryPubEntity.getProtectedID() != null, true, true);
+			productCategoryRegistry.registerProductCategory(productCategory);
 		}
 		catch(Throwable ex){
 			exception = ex;
 		}
 		
-		try {
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().save(product, exception, locale);
-		}
-		catch(Throwable ex) {
-			WebResultAction ra = new WebResultActionImp();
-			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			ra.setReason("product viewer misconfiguration");
-			return ra;
-		}
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("product_category", productCategory);
+		map.put("exception", exception);
+		return map;
 		
 	}
 
 	@Action({"/delete"})
 	@RequestMethod("POST")
+	@View("${plugins.ediacaran.sales.template}/admin/product/category/result")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.DELETE)
-	public ResultAction remove(
-			@Basic(bean="product")
-			ProductPubEntity productPubEntity,
+	public Map<String,Object> remove(
+			@Basic(bean="productCategory")
+			ProductCategoryPubEntity productCategoryPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
-		Product product = null;
+		ProductCategory productCategory = null;
 		Throwable exception = null;
 		
 		try {
-			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
-			productRegistry.removeProduct(product);
+			productCategory = productCategoryPubEntity.rebuild(productCategoryPubEntity.getProtectedID() != null, false, true);
+			productCategoryRegistry.removeProductCategory(productCategory);
 		}
 		catch(Throwable ex){
 			exception = ex;
 		}
 		
-		try {
-			String type = productPubEntity.getProductType();
-			ProductType productType = productTypeRegistry.getProductType(type);
-			return productType.getViewHandler().remove(product, exception, locale);
-		}
-		catch(Throwable ex) {
-			WebResultAction ra = new WebResultActionImp();
-			ra.setResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-			ra.setReason("product viewer misconfiguration");
-			return ra;
-		}
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("product_category", productCategory);
+		map.put("exception", exception);
+		return map;
 		
 	}
 	

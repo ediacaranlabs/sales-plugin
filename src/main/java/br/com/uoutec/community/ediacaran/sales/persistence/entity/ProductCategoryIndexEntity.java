@@ -8,7 +8,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategory;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity

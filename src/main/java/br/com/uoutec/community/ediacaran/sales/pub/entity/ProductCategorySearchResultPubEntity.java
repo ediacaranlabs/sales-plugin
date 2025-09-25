@@ -3,56 +3,81 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.Locale;
 
 import org.brandao.brutos.annotation.Constructor;
-import org.brandao.brutos.annotation.Transient;
 
-import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
+import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class ProductCategorySearchResultPubEntity extends GenericPubEntity<ProductCategory>{
+public class ProductCategorySearchResultPubEntity extends AbstractPubEntity<ProductCategory>{
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
 	private String thumbnail;
 	
-	private String cost;
+	private String name;
 
-	private String tags;
+	private String description;
 	
 	@Constructor
 	public ProductCategorySearchResultPubEntity(){
 	}
 
 	public ProductCategorySearchResultPubEntity(ProductCategory e, Locale locale){
-		this.thumbnail = e.getPublicThumb();
-		this.cost = e.getCostString(locale);
-		this.tags = e.getTagsString();
+		this.thumbnail   = e.getPublicThumb();
+		this.name        = e.getName();
+		this.description = e.getDescription();
 	}
 
-	public String getThumbnailPath() {
+	@Override
+	protected boolean isEqualId(ProductCategory instance) throws Throwable {
+		return false;
+	}
+
+	@Override
+	protected boolean hasId(ProductCategory instance) throws Throwable {
+		return false;
+	}
+
+	@Override
+	protected ProductCategory reloadEntity() throws Throwable {
+		return null;
+	}
+
+	@Override
+	protected ProductCategory createNewInstance() throws Throwable {
+		return null;
+	}
+	
+	@Override
+	protected void throwReloadEntityFail() throws Throwable {
+		throw new IllegalStateException();
+	}
+
+	@Override
+	protected void copyTo(ProductCategory o, boolean reload, boolean override, boolean validate) throws Throwable {
+	}
+
+	public String getThumbnail() {
 		return thumbnail;
 	}
 
-	@Transient
-	public void setThumbnailPath(String thumbnail) {
+	public void setThumbnail(String thumbnail) {
 		this.thumbnail = thumbnail;
 	}
 
-	public String getCostString() {
-		return cost;
+	public String getName() {
+		return name;
 	}
 
-	@Transient
-	public void setCostString(String cost) {
-		this.cost = cost;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getTagsString() {
-		return tags;
+	public String getDescription() {
+		return description;
 	}
 
-	@Transient
-	public void setTagsString(String tags) {
-		this.tags = tags;
-		super.setTagsString(tags);
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	
+
 }
