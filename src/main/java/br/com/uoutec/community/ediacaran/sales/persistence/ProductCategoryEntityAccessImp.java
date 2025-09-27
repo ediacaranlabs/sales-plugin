@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -72,12 +73,21 @@ public class ProductCategoryEntityAccessImp
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<ProductCategoryEntity> criteria = builder.createQuery(ProductCategoryEntity.class);
 		    Root<ProductCategoryEntity> from = criteria.from(ProductCategoryEntity.class);
-		    Join<ProductCategoryEntity, ProductCategoryEntity> parent = from.join("parent");
+		    Join<ProductCategoryEntity, ProductCategoryEntity> parent = from.join("parent", JoinType.LEFT);
+		    Join<ProductCategoryEntity, ProductCategoryEntity> parent1 = from.join("parent1", JoinType.LEFT);
+		    Join<ProductCategoryEntity, ProductCategoryEntity> parent2 = from.join("parent2", JoinType.LEFT);
 		    
 		    criteria.select(from);
 
 		    List<Predicate> and = new ArrayList<Predicate>();
-	    	and.add(builder.equal(parent.get("id"), parentCategory.getId()));
+		    if(parentCategory == null) {
+		    	and.add(builder.isNull(parent.get("id")));
+		    	and.add(builder.isNull(parent1.get("id")));
+		    	and.add(builder.isNull(parent2.get("id")));
+		    }
+		    else {
+		    	and.add(builder.equal(parent.get("id"), parentCategory.getId()));
+		    }
 		    
 		    if(!and.isEmpty()) {
 			    criteria.where(

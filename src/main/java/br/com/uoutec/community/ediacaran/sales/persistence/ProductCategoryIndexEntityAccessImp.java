@@ -99,12 +99,6 @@ public class ProductCategoryIndexEntityAccessImp
 	    		);
 		    }
 		    
-	    	List<javax.persistence.criteria.Order> orderList = 
-	    			new ArrayList<javax.persistence.criteria.Order>();
-	    	orderList.add(builder.desc(from.get("date")));
-	    	
-	    	criteria.orderBy(orderList);
-	    	
 		    TypedQuery<ProductCategoryIndexEntity> typed = entityManager.createQuery(criteria);
 
 

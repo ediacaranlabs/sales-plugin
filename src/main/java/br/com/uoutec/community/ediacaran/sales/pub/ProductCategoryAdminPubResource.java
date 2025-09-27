@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -113,8 +114,57 @@ public class ProductCategoryAdminPubResource {
 		
 		return new ProductCategoryResultSearchPubEntity(result, locale);		
 	}
+
+	@Action("/productCategory/{productCategory.protectedID}")
+	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
+	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@Result(mappingType = MappingTypes.OBJECT)
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
+	@RequiresPermissions(SalesUserPermissions.PRODUCT.CATEGORY.SEARCH)
+	public List<ProductCategoryPubEntity> getProduct(
+			@Basic(bean = "productCategory")
+			ProductCategoryPubEntity productCategoryPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		ProductCategory productCategory = null;
+		
+		try{
+			productCategory = productCategoryPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.search_product.error.fail_load_request, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+
+		List<ProductCategory> list;
+		List<ProductCategoryPubEntity> result;
+		
+		try{
+			list = productCategoryRegistry.findByParent(productCategory);
+			result = new ArrayList<>();
+			for(ProductCategory pc: list) {
+				result.add(new ProductCategoryPubEntity(pc, locale));
+			}
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ProductAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ProductAdminPubResourceMessages.search_product.error.fail_search, 
+							locale);
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return result;		
+	}
 	
-	@Action("/edit/{productCategory.protectedID:[^/\\s//]+}")
+	@Action({"/edit","/edit/{productCategory.protectedID:[^/\\s//]+}"})
 	@View("${plugins.ediacaran.sales.template}/admin/product/category/edit")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
@@ -127,10 +177,27 @@ public class ProductCategoryAdminPubResource {
 		
 		Map<String,Object> map = new HashMap<>();
 		ProductCategory productCategory;
+		List<ProductCategory> parent2 = null;
+		List<ProductCategory> parent1 = null;
 		
 		try {
+			if(productCategoryPubEntity == null) {
+				productCategoryPubEntity = new ProductCategoryPubEntity();
+			}
+			
 			productCategory = productCategoryPubEntity.rebuild(productCategoryPubEntity.getProtectedID() != null, false, true);
-			map.put("product_category", productCategory);
+			
+			if(productCategory.getParent1() != null) {
+				parent1 = productCategoryRegistry.findByParent(null);
+			}
+			
+			if(productCategory.getParent2() != null) {
+				parent2 = productCategoryRegistry.findByParent(productCategory.getParent1());
+			}
+			
+			map.put("categories1", parent1);
+			map.put("categories2", parent2);
+			map.put("entity", productCategory);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

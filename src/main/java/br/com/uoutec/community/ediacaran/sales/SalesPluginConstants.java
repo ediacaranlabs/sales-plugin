@@ -6,9 +6,9 @@ public interface SalesPluginConstants {
 	
 	public static final String IMAGES_DRIVER_PATH = "/images";
 
-	public static final String CATEGORY_DRIVER_NAME = "categories";
+	public static final String CATEGORY_DRIVER_NAME = "products";
 	
-	public static final String IMAGES_CATEGORY_DRIVER_PATH = "/images";
+	public static final String IMAGES_CATEGORY_DRIVER_PATH = "/images/categories";
 	
 	public static final int WIDTH_PRODUCT_IMAGE = 960;
 	

@@ -11,6 +11,8 @@ public class ProductCategorySearchResultPubEntity extends AbstractPubEntity<Prod
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
+	private String id;
+	
 	private String thumbnail;
 	
 	private String name;
@@ -22,6 +24,7 @@ public class ProductCategorySearchResultPubEntity extends AbstractPubEntity<Prod
 	}
 
 	public ProductCategorySearchResultPubEntity(ProductCategory e, Locale locale){
+		this.id          = e.getProtectedID();
 		this.thumbnail   = e.getPublicThumb();
 		this.name        = e.getName();
 		this.description = e.getDescription();
@@ -54,6 +57,14 @@ public class ProductCategorySearchResultPubEntity extends AbstractPubEntity<Prod
 
 	@Override
 	protected void copyTo(ProductCategory o, boolean reload, boolean override, boolean validate) throws Throwable {
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getThumbnail() {

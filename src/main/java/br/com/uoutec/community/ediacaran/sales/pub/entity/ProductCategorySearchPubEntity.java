@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 
 import org.brandao.brutos.annotation.Transient;
 
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategorySearch;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
@@ -17,6 +18,8 @@ public class ProductCategorySearchPubEntity extends AbstractPubEntity<ProductCat
 	private Integer id;
 	
 	private String name;
+
+	private String parent;
 	
 	private Integer page;
 	
@@ -56,6 +59,13 @@ public class ProductCategorySearchPubEntity extends AbstractPubEntity<ProductCat
 		o.setId(this.id);
 		o.setName(this.name);
 		o.setPage(this.page);
+		
+		if(parent != null) {
+			ProductCategory c = new ProductCategory();
+			c.setProtectedID(this.parent);
+			o.setParent(c);
+		}
+		
 		o.setResultPerPage(this.resultPerPage);
 	}
 
@@ -99,5 +109,12 @@ public class ProductCategorySearchPubEntity extends AbstractPubEntity<ProductCat
 		this.locale = locale;
 	}
 
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
 	
 }

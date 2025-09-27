@@ -6,6 +6,8 @@ public class ProductCategorySearch {
 	
 	private String name;
 	
+	private ProductCategory parent;
+	
 	private Integer page;
 	
 	private Integer resultPerPage;
@@ -32,6 +34,14 @@ public class ProductCategorySearch {
 
 	public void setPage(Integer page) {
 		this.page = page;
+	}
+
+	public ProductCategory getParent() {
+		return parent;
+	}
+
+	public void setParent(ProductCategory parent) {
+		this.parent = parent;
 	}
 
 	public Integer getResultPerPage() {

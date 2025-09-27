@@ -42,6 +42,8 @@ public class AdminMenuListenerMessages {
 					
 					public static final String products = "admin_menu.sales_menu.itens.products";
 
+					public static final String product_cetegory = "admin_menu.sales_menu.itens.product_category";
+					
 					public static final String product_metadata = "admin_menu.sales_menu.itens.product_metadata";
 					
 				}
