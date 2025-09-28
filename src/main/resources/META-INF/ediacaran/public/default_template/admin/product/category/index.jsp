@@ -6,6 +6,13 @@
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
 
+<style>
+.product_image_thumb {
+	width: 128px;
+	aspect-ratio: 1/1;
+}
+</style>
+
 <section class="inner-headline">
 	<ed:row>
 		<ed:col size="4">

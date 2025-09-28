@@ -13,6 +13,8 @@ public class ProductSearch {
 
 	private BigDecimal maxCost;
 
+	private ProductCategory category;
+	
 	private Set<ProductSearchFilter> filters;
 	
 	private String productType;
@@ -93,6 +95,14 @@ public class ProductSearch {
 
 	public void setDisplay(Boolean display) {
 		this.display = display;
+	}
+
+	public ProductCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ProductCategory category) {
+		this.category = category;
 	}
 
 }

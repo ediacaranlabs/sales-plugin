@@ -488,6 +488,10 @@ public class ProductEntityAccessImp
 	    	
 	    }
 
+	    if(value.getCategory() != null) {
+		    and.add(builder.equal(from.get("category"), value.getCategory().getId()));
+	    }
+	    
 	    if(value.getProductType() != null) {
 		    and.add(builder.equal(from.get("productType"), value.getProductType()));
 	    }

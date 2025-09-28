@@ -66,7 +66,14 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 				entityAccess.update(entity);
 			}
 			
+			if(indexEntityAccess.findById(entity.getId()) == null) {
+				indexEntityAccess.save(entity);
+			}
+			else {
+				indexEntityAccess.update(entity);
+			}
 			entityAccess.flush();
+			indexEntityAccess.flush();
 			
 			if(entity.getThumb() != null) {
 				String path = ProductCategoryUtil.getThumbPath(entity);
@@ -168,7 +175,7 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.CATEGORY.getListPermission());
 
 		try {
-			return entityAccess.findAll();
+			return entityAccess.getAll();
 		}
 		catch(Throwable ex){
 			throw new ProductCategoryRegistryException(ex);

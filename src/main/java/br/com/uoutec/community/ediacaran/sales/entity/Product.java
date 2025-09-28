@@ -76,6 +76,9 @@ public class Product implements Serializable {
 	protected int metadata;
 	
 	@NotNull(groups = DataValidation.class)
+	protected ProductCategory category;
+	
+	@NotNull(groups = DataValidation.class)
 	protected BigDecimal cost;
 	
 	@NotNull(groups = DataValidation.class)
@@ -101,6 +104,7 @@ public class Product implements Serializable {
 
 	public Product(Product e) {
 		this.attributes = e.attributes;
+		this.category = e.category;
 		this.cost = e.cost;
 		this.currency = e.currency;
 		this.defaultProductMetadata = e.defaultProductMetadata;
@@ -338,6 +342,14 @@ public class Product implements Serializable {
 		return exchangeRate == null? cost : cost.multiply(exchangeRate);
 	}
 	
+	public ProductCategory getCategory() {
+		return category;
+	}
+
+	public void setCategory(ProductCategory category) {
+		this.category = category;
+	}
+
 	public BigDecimal getExchangeRate() {
 		return exchangeRate;
 	}

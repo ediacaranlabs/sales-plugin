@@ -119,4 +119,44 @@ public class ProductCategoryEntityAccessImp
 		return super.findById(id);
 	}
 
+	@Override
+	public List<ProductCategory> getAll() throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductCategoryEntity> criteria = builder.createQuery(ProductCategoryEntity.class);
+		    Root<ProductCategoryEntity> from = criteria.from(ProductCategoryEntity.class);
+		    Join<ProductCategoryEntity, ProductCategoryEntity> parent1 = from.join("parent1", JoinType.LEFT);
+		    Join<ProductCategoryEntity, ProductCategoryEntity> parent2 = from.join("parent2", JoinType.LEFT);
+		    
+		    criteria.select(from);
+
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	
+	    	orderList.add(builder.asc(parent1.get("name")));
+	    	orderList.add(builder.asc(parent2.get("name")));
+	    	orderList.add(builder.asc(from.get("name")));
+		    
+	    	criteria.orderBy(orderList);
+	    	
+		    
+		    TypedQuery<ProductCategoryEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<ProductCategoryEntity> list = (List<ProductCategoryEntity>)typed.getResultList();
+		    List<ProductCategory> result = new ArrayList<ProductCategory>();
+    
+		    for(ProductCategoryEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
 }

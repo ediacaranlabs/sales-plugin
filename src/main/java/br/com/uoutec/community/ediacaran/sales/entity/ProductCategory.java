@@ -128,6 +128,7 @@ public class ProductCategory implements Serializable {
 
 	public void setThumb(Path thumb) {
 		this.thumb = thumb;
+		this.imageLoaded = true;
 	}
 
 	private synchronized void loadImage() {

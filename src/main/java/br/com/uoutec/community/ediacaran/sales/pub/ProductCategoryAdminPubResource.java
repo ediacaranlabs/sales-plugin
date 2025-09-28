@@ -211,6 +211,7 @@ public class ProductCategoryAdminPubResource {
 	@Action({"/save"})
 	@RequestMethod("POST")
 	@View("${plugins.ediacaran.sales.template}/admin/product/category/result")
+	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)
 	public Map<String,Object> save(

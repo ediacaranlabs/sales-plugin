@@ -19,6 +19,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -48,6 +49,9 @@ public class ProductEntity implements Serializable {
 
 	@Column(name="dsc_short_description", length=256)
 	private String shortDescription;
+
+	@JoinColumn(name = "cod_category", referencedColumnName = "cod_category")
+	private ProductCategoryEntity category;
 	
 	@Column(name = "dsc_tags", length = 256)
 	private String tags;
@@ -96,6 +100,10 @@ public class ProductEntity implements Serializable {
 		this.metadata         = e.getMetadata() <= 0? null : e.getMetadata();
 		this.offerDate        = e.getOfferDate();
 		this.offerDiscount    = e.getOfferDiscount();
+		
+		if(e.getCategory() != null) {
+			this.category = new ProductCategoryEntity(e.getCategory());
+		}
 		
 		if(e.getTags() != null) {
 			this.tags = e.getTags().stream()
@@ -233,6 +241,10 @@ public class ProductEntity implements Serializable {
 		e.setMetadata(this.metadata == null? 0 : this.metadata);
 		e.setOfferDate(this.offerDate);
 		e.setOfferDiscount(this.offerDiscount);
+		
+		if(this.category != null) {
+			e.setCategory(this.category.toEntity());
+		}
 		
 		if(this.tags != null) {
 			e.setTags(Arrays.stream(this.tags.split("\\;"))
