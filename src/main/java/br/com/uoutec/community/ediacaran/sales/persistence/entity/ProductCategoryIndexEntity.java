@@ -28,6 +28,9 @@ public class ProductCategoryIndexEntity implements Serializable {
 	@Column(name="dsc_description", length=255)
 	private String description;
 
+	@Column(name="cod_parent", length=11)
+	private Integer parent;
+	
 	public ProductCategoryIndexEntity(){
 	}
 	
@@ -41,6 +44,10 @@ public class ProductCategoryIndexEntity implements Serializable {
 		if(e.getDescription() != null) {
 			this.description = StringUtil.toSearch(e.getDescription());
 			this.description = this.description.length() > 255? this.description.substring(0, 253) : this.description;
+		}
+		
+		if(e.getParent() != null) {
+			this.parent = e.getParent().getId();
 		}
 		
 	}

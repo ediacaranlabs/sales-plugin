@@ -65,7 +65,7 @@ public class ProductCategoryAdminPubResource {
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale ) throws ProductCategoryRegistryException {
 		
-		List<ProductCategory> list = productCategoryRegistry.findByParent(null);
+		List<ProductCategory> list = productCategoryRegistry.getAll();
 		Map<String,Object> map = new HashMap<>();
 		map.put("categories", list);
 		return map;
@@ -232,7 +232,7 @@ public class ProductCategoryAdminPubResource {
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("product_category", productCategory);
+		map.put("entity", productCategory);
 		map.put("exception", exception);
 		return map;
 		

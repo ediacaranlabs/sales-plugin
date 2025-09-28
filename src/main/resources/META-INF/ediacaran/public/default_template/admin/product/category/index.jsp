@@ -32,7 +32,7 @@
 					<ec:select label="Category" name="parent" bundle="${messages}">
 						<ec:option value=""></ec:option>
 						<c:forEach items="${vars.categories}" var="category">
-							<ec:option label="${category.name}">${category.protectedID}</ec:option>
+							<ec:option label="${category.toPathString(locale)}">${category.protectedID}</ec:option>
 						</c:forEach>
 					</ec:select>
 				</ed:col>

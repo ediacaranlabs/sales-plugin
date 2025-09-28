@@ -87,8 +87,13 @@ public class ProductCategoryIndexEntityAccessImp
 		    	and.add(builder.equal(from.get("id"), value.getId()));
 		    }
 
+		    if(value.getParent() != null) {
+		    	and.add(builder.equal(from.get("parent"), value.getParent().getId()));
+		    }
+		    
 		    if(value.getName() != null && !value.getName().trim().isEmpty()) {
-			    and.add(builder.like(from.get("name"), "%" + StringUtil.normalize(value.getName(), "%") + "%" ));
+		    	String v = "%" + StringUtil.normalize(value.getName(), "%") + "%";
+			    and.add(builder.like(from.get("name"), v));
 		    }
 		    
 		    if(!and.isEmpty()) {

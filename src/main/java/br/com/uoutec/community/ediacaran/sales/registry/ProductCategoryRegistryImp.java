@@ -162,5 +162,17 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 			throw new ProductCategoryRegistryException(ex);
 		}
 	}
+
+	@Override
+	public List<ProductCategory> getAll() throws ProductCategoryRegistryException {
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.CATEGORY.getListPermission());
+
+		try {
+			return entityAccess.findAll();
+		}
+		catch(Throwable ex){
+			throw new ProductCategoryRegistryException(ex);
+		}
+	}
 	
 }

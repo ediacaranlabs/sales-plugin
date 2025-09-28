@@ -28,11 +28,11 @@
 	<ec:box-body>
 		<ec:form method="POST" id="product_category_form" enctype="multipart/form-data"
 			update="result_product_category_form" 
-			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/category/save/${vars.entity.protectedID}" >
-			<input type="hidden" name="protectedID" value="${vars.entity.protectedID}">
+			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/category/save">
 			<ed:row>
 				<ed:col>
 					<span formgroup="productCategory">
+						<input type="hidden" name="protectedID" value="${vars.entity.protectedID}">
 						<ed:row style="form">
 							<ed:col size="3" classStyle="form-group has-feedback">
 								<ec:imagefield name="thumbnail"

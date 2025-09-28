@@ -173,9 +173,10 @@ public class ProductCategoryPubEntity extends AbstractPubEntity<ProductCategory>
 	protected void copyTo(ProductCategory o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setDescription(this.description);
-		o.setId(this.id == null? 0 : this.id);
 		o.setName(this.name);
 		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
+		o.setTemplate(this.template);
+		o.setResourceBundle(this.resourceBundle);
 		
 		if(this.parent != null) {
 			ProductCategory p = new ProductCategory();

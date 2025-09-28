@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import org.hibernate.validator.constraints.Length;
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.CategoryRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -55,6 +57,22 @@ public class ProductCategory implements Serializable {
 		this.id = protectedID == null? 0 : Integer.parseInt(SecretUtil.toID(protectedID));		
 	}
 	
+	public String toPathString(Locale locale) {
+		StringBuilder b = new StringBuilder();
+		
+		if(parent1 != null) {
+			b.append(parent1.getFullName(locale));
+		}
+
+		if(parent2 != null) {
+			b.append(b.length() == 0? "" : " / ").append(parent2.getFullName(locale));
+		}
+
+		b.append(b.length() == 0? "" : " / ").append(getFullName(locale));
+		
+		return b.toString();
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -63,6 +81,20 @@ public class ProductCategory implements Serializable {
 		this.id = id;
 	}
 
+	public String getFullName(Locale locale) {
+		if(resourceBundle != null) {
+			I18nRegistry i18nRegistry = EntityContextPlugin.getEntity(I18nRegistry.class);
+			return i18nRegistry
+						.getString(
+								resourceBundle,
+								template.toLowerCase(), 
+								locale
+						);		
+		}
+		
+		return name;
+	}
+	
 	public String getName() {
 		return name;
 	}

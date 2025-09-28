@@ -16,6 +16,8 @@ public interface ProductCategoryRegistry extends PublicBean {
 	ProductCategory findById(int id) throws ProductCategoryRegistryException;
 
 	List<ProductCategory> findByParent(ProductCategory parent) throws ProductCategoryRegistryException;
+
+	List<ProductCategory> getAll() throws ProductCategoryRegistryException;
 	
 	ProductCategoryResultSearch searchProductCategory(ProductCategorySearch value) throws ProductCategoryRegistryException;
 	
