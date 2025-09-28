@@ -81,6 +81,18 @@
 											<ec:event type="change">
 												let $source = $event.source;
 												let $form = $source.getForm();
+												let $field = $form.getField($source.getProperty('name'));
+												
+												$.AppContext.utils.updateContent(
+													'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/category/productCategory/' + $field.getValue(),
+													false,
+													function($response){
+												
+														let $parent2Select = $.AppContext.utils.applyTemplate("parent2Template", $response);
+														$.AppContext.utils.content.update("parent2Area", $parent2Select);
+													
+													}
+												);
 											</ec:event>
 										</ec:select>
 									</ed:col>
@@ -88,20 +100,30 @@
 
 								<ed:row style="form">
 									<ed:col size="12" classStyle="form-group has-feedback">
-										<ec:select 
-											name="parent2" 
-											label="#{form.parent2.label}"
-											readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:CATEGORY:FIELDS:PARENT2')}"
-											bundle="${messages}">
-											<ec:option value=""></ec:option>
-											<c:forEach items="${vars.categories2}" var="category">
-												<ec:option value="${category.protectedID}" selected="${category.id == vars.entity.parent2.id}">${category.name}</ec:option>
-											</c:forEach>
-											<ec:event type="change">
-												let $source = $event.source;
-												let $form = $source.getForm();
-											</ec:event>
-										</ec:select>
+										<span id="parent2Area">
+											<ec:select 
+												name="parent2" 
+												label="#{form.parent2.label}"
+												readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:CATEGORY:FIELDS:PARENT2')}"
+												bundle="${messages}">
+												<ec:option value=""></ec:option>
+												<c:forEach items="${vars.categories2}" var="category">
+													<ec:option value="${category.protectedID}" selected="${category.id == vars.entity.parent2.id}">${category.name}</ec:option>
+												</c:forEach>
+											</ec:select>
+										</span>
+										<ec:template var="response" id="parent2Template">
+											<ec:select 
+												name="parent2" 
+												label="#{form.parent2.label}"
+												readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:CATEGORY:FIELDS:PARENT2')}"
+												bundle="${messages}">
+												<ec:option value=""></ec:option>
+												<ec:forEach items="!{response}" var="category">
+													<ec:option value="!{category.protectedID}">!{category.name}</ec:option>
+												</ec:forEach>
+											</ec:select>
+										</ec:template>			
 									</ed:col>
 								</ed:row>
 
@@ -177,7 +199,6 @@
 					</span>
 				</ed:col>
 			</ed:row>
-			
 			<ed:row>
 				<ed:col id="result_product_category_form">
 				</ed:col>
@@ -193,7 +214,8 @@
 			</ed:row>
 		</ec:form>
 	</ec:box-body>
-</ec:box>				    
+</ec:box>
+				    
 <script type="text/javascript">
 $.AppContext.onload(function(){
 	let $form = $.AppContext.utils.getById('product_category_form');

@@ -116,7 +116,6 @@ public class ProductCategoryAdminPubResource {
 	}
 
 	@Action("/productCategory/{productCategory.protectedID}")
-	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@Result(mappingType = MappingTypes.OBJECT)
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
