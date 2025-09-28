@@ -90,8 +90,8 @@
 									<ed:col size="12" classStyle="form-group has-feedback">
 										<ec:select 
 											name="parent2" 
-											label="#{product.form.parent2.label}"
-											readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:CATEGORY:FIELDS:PARENT1')}"
+											label="#{form.parent2.label}"
+											readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:CATEGORY:FIELDS:PARENT2')}"
 											bundle="${messages}">
 											<ec:option value=""></ec:option>
 											<c:forEach items="${vars.categories2}" var="category">

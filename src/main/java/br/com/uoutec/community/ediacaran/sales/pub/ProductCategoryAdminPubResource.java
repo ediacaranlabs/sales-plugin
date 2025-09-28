@@ -187,9 +187,7 @@ public class ProductCategoryAdminPubResource {
 			
 			productCategory = productCategoryPubEntity.rebuild(productCategoryPubEntity.getProtectedID() != null, false, true);
 			
-			if(productCategory.getParent1() != null) {
-				parent1 = productCategoryRegistry.findByParent(null);
-			}
+			parent1 = productCategoryRegistry.findByParent(null);
 			
 			if(productCategory.getParent2() != null) {
 				parent2 = productCategoryRegistry.findByParent(productCategory.getParent1());
@@ -211,7 +209,7 @@ public class ProductCategoryAdminPubResource {
 		return map;
 	}
 
-	@Action({"/save/{product.productType:[^/\\s//]+}"})
+	@Action({"/save"})
 	@RequestMethod("POST")
 	@View("${plugins.ediacaran.sales.template}/admin/product/category/result")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})

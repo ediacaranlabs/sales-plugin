@@ -49,6 +49,13 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.CATEGORY.getRegisterPermission());
 		
+		if(entity.getParent2() != null) {
+			entity.setParent(entity.getParent2());
+		}
+		else{
+			entity.setParent(entity.getParent1());
+		}
+		
 		try {
 			if(entity.getId() <= 0) {
 				ValidatorBean.validate(entity, saveValidations);
