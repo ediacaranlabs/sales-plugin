@@ -142,24 +142,15 @@ public class ProductCategoryEntity implements Serializable {
 		e.setTemplate(this.template);
 		
 		if(this.parent != null) {
-			ProductCategory c = new ProductCategory();
-			c.setId(this.parent.getId());
-			c.setName(this.parent.getName());
-			e.setParent(c);
+			e.setParent(this.parent.toEntity());
 		}
 
 		if(this.parent1 != null) {
-			ProductCategory c = new ProductCategory();
-			c.setId(this.parent1.getId());
-			c.setName(this.parent1.getName());
-			e.setParent1(c);
+			e.setParent1(this.parent1.toEntity());
 		}
 
 		if(this.parent2 != null) {
-			ProductCategory c = new ProductCategory();
-			c.setId(this.parent2.getId());
-			c.setName(this.parent2.getName());
-			e.setParent2(c);
+			e.setParent2(this.parent2.toEntity());
 		}
 		
 		return e;

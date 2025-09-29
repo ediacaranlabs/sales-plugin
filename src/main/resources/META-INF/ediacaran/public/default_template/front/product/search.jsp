@@ -163,7 +163,7 @@
 										<ec:data-result var="response" from="search_form">
 											<ed:row>
 												<script type="text/javascript">
-													var $tmpObjStr = '!{JSON.stringify(response.filters)}';
+													var $tmpObjStr = '!{JSON.stringify(response)}';
 													
 													if($tmpObjStr.length == 0){
 														$tmpObjStr = '[]';
@@ -173,7 +173,7 @@
 													var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
 													var $pageBody = $.AppContext.utils.getById('pageBody');
 
-													if($tmpObj.length > 0){
+													if($tmpObj.filters.length > 0){
 														var $tmp = $.AppContext.utils.applyTemplate("filterTemplate", JSON.parse($tmpObjStr));
 														$.AppContext.utils.content.update("detachedFilters", $tmp);
 														$filter_toggler.setVisible(true);
@@ -237,10 +237,26 @@
 		</ec:sidebar-group>
 	</ec:data-table>
 
-	<ec:template var="filtersGroup" id="filterTemplate">
+	<ec:template var="response" id="filterTemplate">
+		<b>Categories</b>
+		<hr>
+		<ed:row>
+			<ed:col>
+				<ec:forEach items="!{response.categories}" var="category">
+					<span class="filter">
+						<span class="filter_title">!{category.title}</span><br>
+						<ec:forEach items="!{category.subcategories}" var="subCategory">
+							<span class="filter_option">!{subCategory.title}<br></span>
+						</ec:forEach>
+					</span>
+				</ec:forEach>
+			</ed:col>
+		</ed:row>
+		
 		<b><fmt:message key="search.filters.title" bundle="${messages}"/></b>
 		<hr>
-		<ec:forEach items="!{filtersGroup}" var="group">
+		
+		<ec:forEach items="!{response.filters}" var="group">
 			<span formgroup="filters" formgrouptype="index" class="filter_group">
 				<input type="hidden" name="protectedID" value="!{group.protectedID}">
 				<%--<span class="group_title">!{group.title}</span><br>--%>

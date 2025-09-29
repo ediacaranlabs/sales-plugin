@@ -26,6 +26,7 @@ import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
@@ -72,7 +73,12 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@NotNull(groups=DataValidation.class)
 	private String productMetadata;
 
+	@NotNull(groups=DataValidation.class)
+	private String category;
+	
 	private Integer productMetadataID;
+
+	private Integer productCategoryID;
 	
 	@NotNull(groups=DataValidation.class)
 	@Enumerated(EnumerationType.STRING)
@@ -126,6 +132,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.display = e.isDisplay();
 		this.offerDate = e.getOfferDate();
 		this.offerDiscount = e.getOfferDiscount();
+		this.category = e.getCategory() == null? null : e.getCategory().getProtectedID();
 	}
 	
 	public String getProtectedID() {
@@ -216,6 +223,14 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		this.currency = currency;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	public List<ProductImagePubEntity> getImages() {
 		return images;
 	}
@@ -301,6 +316,13 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		}
 		catch(Throwable ex){
 		}
+		
+		try {
+			this.productCategoryID = Integer.parseInt(SecretUtil.toID(this.category));
+		}
+		catch(Throwable ex){
+		}
+		
 	}
 	
 	@Override
@@ -337,6 +359,12 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setDisplay(this.display);
 		o.setOfferDate(this.offerDate);
 		o.setOfferDiscount(this.offerDiscount);
+		
+		if(this.productCategoryID != null) {
+			ProductCategory c = new ProductCategory();
+			c.setId(this.productCategoryID);
+			o.setCategory(c);
+		}
 		
 		if(this.images != null) {
 			List<ProductImage> list = new ArrayList<>();

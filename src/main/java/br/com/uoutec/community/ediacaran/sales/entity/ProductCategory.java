@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -179,6 +180,23 @@ public class ProductCategory implements Serializable {
 
 	public void setParent2(ProductCategory parent2) {
 		this.parent2 = parent2;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductCategory other = (ProductCategory) obj;
+		return id == other.id;
 	}
 	
 }

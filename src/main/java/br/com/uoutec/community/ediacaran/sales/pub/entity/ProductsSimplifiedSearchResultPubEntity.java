@@ -9,8 +9,9 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResultFilter;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategoryFilter;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResultFilter;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class ProductsSimplifiedSearchResultPubEntity 
@@ -28,6 +29,9 @@ public class ProductsSimplifiedSearchResultPubEntity
 	private List<ProductSimplifiedSearchResultPubEntity> itens;
 
 	@Basic(mappingType = MappingTypes.OBJECT)
+	private List<ProductCategoryFilterPubEntity> categories;
+	
+	@Basic(mappingType = MappingTypes.OBJECT)
 	private List<ProductSearchResultFilterPubEntity> filters;
 	
 	@Constructor
@@ -38,6 +42,13 @@ public class ProductsSimplifiedSearchResultPubEntity
 		this.maxPages = e.getMaxPages();
 		this.page = e.getPage();
 		this.hasNextPage = e.isHasNextPage();
+		
+		if(e.getCategories() != null) {
+			this.categories = new ArrayList<>();
+			for(ProductCategoryFilter x: e.getCategories()) {
+				this.categories.add(new ProductCategoryFilterPubEntity(x, locale));
+			}
+		}
 		
 		if(e.getItens() != null) {
 			this.itens = new ArrayList<>();

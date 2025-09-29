@@ -21,6 +21,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -50,6 +51,7 @@ public class ProductEntity implements Serializable {
 	@Column(name="dsc_short_description", length=256)
 	private String shortDescription;
 
+	@ManyToOne
 	@JoinColumn(name = "cod_category", referencedColumnName = "cod_category")
 	private ProductCategoryEntity category;
 	

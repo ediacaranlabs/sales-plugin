@@ -13,6 +13,7 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
@@ -24,6 +25,8 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 	private String name;
 	
 	private String description;
+
+	private String category;
 	
 	private BigDecimal minCost;
 
@@ -79,6 +82,12 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 		o.setProductType(this.productType);
 		o.setResultPerPage(resultPerPage);
 		o.setDisplay(display);
+		
+		if(this.category != null) {
+			ProductCategory c = new ProductCategory();
+			c.setProtectedID(this.category);
+			o.setCategory(c);
+		}
 		
 		if(this.filters != null) {
 			Set<ProductSearchFilter> set = new HashSet<>();

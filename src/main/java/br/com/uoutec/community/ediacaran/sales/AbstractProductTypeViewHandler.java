@@ -14,11 +14,13 @@ import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.MeasurementUnit;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttribute;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductImagePubEntity;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductMetadataRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.ediacaran.core.VarParser;
@@ -39,6 +41,7 @@ public abstract class AbstractProductTypeViewHandler
 	@Override
 	public WebResultAction edit(Product entity, Locale locale) throws InvalidRequestException {
 		
+		ProductCategoryRegistry productCategoryRegistry = EntityContextPlugin.getEntity(ProductCategoryRegistry.class);
 		ProductRegistry productRegistry = EntityContextPlugin.getEntity(ProductRegistry.class);
 		ProductMetadataRegistry productMetadataRegistry = EntityContextPlugin.getEntity(ProductMetadataRegistry.class);
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
@@ -47,6 +50,7 @@ public abstract class AbstractProductTypeViewHandler
 		Map<Integer, ProductMetadataAttribute> attributesMetadata;
 		List<ProductMetadata> productMetadataList;
 		List<Currency> currencyList;
+		List<ProductCategory> categoryList;
 		
 		Throwable exception = null;
 
@@ -57,6 +61,7 @@ public abstract class AbstractProductTypeViewHandler
 			
 			images = productRegistry.getImagesByProduct(entity);
 			productMetadataList = productMetadataRegistry.getAllProductMetadata();
+			categoryList = productCategoryRegistry.getAll();
 			
 			ProductMetadata productMetadata = productMetadataRegistry.findProductMetadataById(entity.getMetadata());
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
@@ -88,6 +93,7 @@ public abstract class AbstractProductTypeViewHandler
 		}
 		
 		ra.add("entity", entity);
+		ra.add("categories", categoryList);
 		ra.add("attributesMetadata", attributesMetadata);
 		ra.add("productMetadataList", productMetadataList);
 		ra.add("images", images);

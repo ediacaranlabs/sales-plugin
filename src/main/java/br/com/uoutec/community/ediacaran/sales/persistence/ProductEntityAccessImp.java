@@ -192,6 +192,7 @@ public class ProductEntityAccessImp
 		    int count = 0;
 		    
 		    Map<Integer,ProductMetadataSearchResultEntityFilter> productGroupFilter = new HashMap<>();
+		    ProductCategorySearchResultEntityFilter categoryFilters = new ProductCategorySearchResultEntityFilter();
 		    
 		    for(ProductAttributeValueIndexEntity e: list) {
 		    	
@@ -200,6 +201,11 @@ public class ProductEntityAccessImp
 		    		
 			    	if((first == null || (count >= first)) && (max == null || ids.size() < max)) {
 			    		ids.add(e.getId().getProductID());
+			    		
+			    		if(e.getProductIndex().getCategory() != null) {
+			    			categoryFilters.getCategories().add(e.getProductIndex().getCategory().toEntity());
+			    		}
+			    		
 			    	}
 		    		
 			    	count++;
@@ -272,6 +278,7 @@ public class ProductEntityAccessImp
 		    ProductEntitySearchResult result = new ProductEntitySearchResult();
 		    result.setFilters(productGroupFilter);
 		    result.setItens(itens);
+		    result.setCategoryFilters(categoryFilters);
 			return result;
 		}
 		catch (Throwable e) {

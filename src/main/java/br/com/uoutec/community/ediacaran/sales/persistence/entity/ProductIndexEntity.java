@@ -13,7 +13,10 @@ import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -44,8 +47,9 @@ public class ProductIndexEntity implements Serializable {
 	@Column(name="cod_product_type")
 	private String productType;
 
-	@Column(name="cod_product_category")
-	private Integer category;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="cod_category", referencedColumnName = "cod_category")
+	private ProductCategoryEntity category;
 	
 	@Column(name="bit_display", length=1)
 	private Boolean display;
@@ -61,7 +65,7 @@ public class ProductIndexEntity implements Serializable {
 	
 	public ProductIndexEntity(Product e){
 		this.cost           = e.getCost();
-		this.category       = e.getCategory() != null? e.getCategory().getId() : null;
+		this.category       = e.getCategory() != null? new ProductCategoryEntity(e.getCategory()) : null;
 		this.productType    = e.getProductType();
 		this.description    = e.getDescription();
 		this.id             = e.getId() <= 0? null : e.getId();
@@ -148,11 +152,11 @@ public class ProductIndexEntity implements Serializable {
 		this.cost = cost;
 	}
 
-	public Integer getCategory() {
+	public ProductCategoryEntity getCategory() {
 		return category;
 	}
 
-	public void setCategory(Integer category) {
+	public void setCategory(ProductCategoryEntity category) {
 		this.category = category;
 	}
 

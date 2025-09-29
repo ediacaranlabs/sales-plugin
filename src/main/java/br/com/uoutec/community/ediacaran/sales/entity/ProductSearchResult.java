@@ -15,17 +15,20 @@ public class ProductSearchResult implements Serializable{
 	
 	private List<ProductSearchResultFilter> filters;
 	
+	private List<ProductCategoryFilter> categories;
+	
 	private List<Product> itens;
 
 	public ProductSearchResult() {
 	}
 	
-	public ProductSearchResult(boolean hasNextPage, int maxPages, int page, List<Product> itens, List<ProductSearchResultFilter> filters) {
+	public ProductSearchResult(boolean hasNextPage, int maxPages, int page, List<Product> itens, List<ProductSearchResultFilter> filters, List<ProductCategoryFilter> categories) {
 		this.hasNextPage = hasNextPage;
 		this.maxPages = maxPages;
 		this.page = page;
 		this.itens = itens;
 		this.filters = filters;
+		this.categories = categories;
 	}
 
 	public List<ProductSearchResultFilter> getFilters() {
@@ -66,6 +69,14 @@ public class ProductSearchResult implements Serializable{
 
 	public void setItens(List<Product> itens) {
 		this.itens = itens;
+	}
+
+	public List<ProductCategoryFilter> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<ProductCategoryFilter> categories) {
+		this.categories = categories;
 	}
 
 }

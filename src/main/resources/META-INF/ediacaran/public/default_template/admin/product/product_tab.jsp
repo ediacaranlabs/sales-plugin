@@ -40,6 +40,28 @@
 		</ec:textfield>
 	</ed:col>
 </ed:row>
+
+<ed:row style="form">
+	<ed:col size="12" classStyle="form-group has-feedback">
+		<ec:select 
+			name="category" 
+			label="#{product.form.category.label}"
+			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:CATEGORY')}"
+			bundle="${messages}">
+			<ec:option value=""></ec:option>
+			<c:forEach items="${vars.categories}" var="category">
+				<ec:option value="${category.protectedID}" selected="${category.id == vars.entity.category.id}">${category.toPathString(locale)}</ec:option>
+			</c:forEach>
+			<ec:field-validator>
+				<ec:field-validator-rule 
+					name="notEmpty" 
+					message="#{product.form.category.notEmpty}" 
+					bundle="${messages}"/>
+			</ec:field-validator>
+		</ec:select>
+	</ed:col>
+</ed:row>
+
 <ed:row style="form">
 	<ed:col size="12" classStyle="form-group has-feedback">
 		<ec:select 

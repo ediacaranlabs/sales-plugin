@@ -14,6 +14,8 @@ public class ProductEntitySearchResult {
 	
 	private Map<Integer,ProductMetadataSearchResultEntityFilter> filters;
 
+	private ProductCategorySearchResultEntityFilter categoryFilters;
+	
 	public ProductEntitySearchResult() {
 	}
 	
@@ -33,12 +35,25 @@ public class ProductEntitySearchResult {
 		this.filters = filters;
 	}
 	
+	public ProductCategorySearchResultEntityFilter getCategoryFilters() {
+		return categoryFilters;
+	}
+
+	public void setCategoryFilters(ProductCategorySearchResultEntityFilter categoryFilters) {
+		this.categoryFilters = categoryFilters;
+	}
+
 	public ProductSearchResult toEntity(int maxItens, int maxPages, int page) {
+		
 		ProductSearchResult e = new ProductSearchResult();
 		e.setHasNextPage(itens.size() > maxItens);
 		e.setMaxPages(maxPages);
 		e.setPage(page);
 		e.setItens(itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+		
+		if(categoryFilters != null) {
+			e.setCategories(categoryFilters.toEntity());
+		}
 		
 		if(this.filters != null) {
 			List<ProductSearchResultFilter> list = new ArrayList<>();
