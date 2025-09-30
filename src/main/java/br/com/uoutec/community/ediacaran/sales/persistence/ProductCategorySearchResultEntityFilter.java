@@ -29,16 +29,16 @@ public class ProductCategorySearchResultEntityFilter {
 	public List<ProductCategoryFilter> toEntity() {
 		
 		Map<Integer, ProductCategoryFilter> map = new HashMap<>();
-		List<ProductCategoryFilter> result = new ArrayList<>();
+		Set<ProductCategoryFilter> result = new HashSet<>();
 		
 		for(ProductCategory pc: categories) {
 			createProductCategoryFilter(pc, result, map);
 		}
 		
-		return result;
+		return new ArrayList<>();
 	}
 	
-	private void createProductCategoryFilter(ProductCategory productCategory, List<ProductCategoryFilter> root, Map<Integer, ProductCategoryFilter> cache) {
+	private void createProductCategoryFilter(ProductCategory productCategory, Set<ProductCategoryFilter> root, Map<Integer, ProductCategoryFilter> cache) {
 		
 		ProductCategoryFilter pcf = cache.get(productCategory.getId());
 		

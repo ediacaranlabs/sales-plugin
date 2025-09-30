@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class ProductCategoryFilter implements Serializable {
 
@@ -36,6 +37,22 @@ public class ProductCategoryFilter implements Serializable {
 	public void setSubcategories(List<ProductCategoryFilter> subcategories) {
 		this.subcategories = subcategories;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(productCategory);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProductCategoryFilter other = (ProductCategoryFilter) obj;
+		return productCategory == other.productCategory;
+	}
 	
 }
