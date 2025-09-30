@@ -88,7 +88,7 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 			c.setProtectedID(this.category);
 			o.setCategory(c);
 		}
-		
+
 		if(this.filters != null) {
 			Set<ProductSearchFilter> set = new HashSet<>();
 			for(ProductSearchFilterPubEntity x: this.filters) {

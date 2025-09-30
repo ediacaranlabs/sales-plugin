@@ -25,9 +25,11 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategoryPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
@@ -60,15 +62,28 @@ public class ProductPubResource {
 	@Inject
 	private ProductViewerRegistry productViewerRegistry;
 	
-	@Action("/")
+	@Action({"/","/category/{productCategory.protectedID}"})
 	public WebResultAction index(
+			@Basic(bean = "productCategory")
+			ProductCategoryPubEntity productCategoryPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 			) {
 		
+		ProductCategory productCategory = null;
+
+		try {
+			if(productCategoryPubEntity != null) {
+				productCategory = productCategoryPubEntity.rebuild(true, false, true);
+			}
+		}
+		catch(Throwable ex) {
+		}
+		
 		try {
 			WebResultAction ra = new WebResultActionImp();
 			ra.setView("${plugins.ediacaran.sales.template}/front/product/search");
+			ra.add("category", productCategory);
 			return ra;
 		}
 		catch(Throwable ex) {

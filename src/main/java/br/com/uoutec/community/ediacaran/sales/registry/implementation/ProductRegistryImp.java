@@ -21,9 +21,11 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ProductEntitySearchRe
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductImageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductMetadataEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.AbstractRegistry;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -153,6 +155,11 @@ public class ProductRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getListPermission());
 		
 		try{
+			if(value.getCategory() != null) {
+				ProductCategoryRegistry productCategoryRegistry = EntityContextPlugin.getEntity(ProductCategoryRegistry.class);
+				value.setCategory(productCategoryRegistry.findById(value.getCategory().getId()));
+			}
+			
 			int page = value.getPage() == null? 0 : value.getPage().intValue();
 			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
 			

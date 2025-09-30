@@ -201,9 +201,17 @@ public class ProductEntityAccessImp
 		    		
 			    	if((first == null || (count >= first)) && (max == null || ids.size() < max)) {
 			    		ids.add(e.getId().getProductID());
-			    		
-			    		if(e.getProductIndex().getCategory() != null) {
-			    			categoryFilters.getCategories().add(e.getProductIndex().getCategory().toEntity());
+
+			    		if(e.getProductIndex().getCategory3() != null) {
+			    			categoryFilters.getCategories().add(e.getProductIndex().getCategory3().toEntity());
+			    		}
+			    		else
+			    		if(e.getProductIndex().getCategory2() != null) {
+			    			categoryFilters.getCategories().add(e.getProductIndex().getCategory2().toEntity());
+			    		}
+			    		else
+			    		if(e.getProductIndex().getCategory1() != null) {
+			    			categoryFilters.getCategories().add(e.getProductIndex().getCategory1().toEntity());
 			    		}
 			    		
 			    	}
@@ -495,14 +503,18 @@ public class ProductEntityAccessImp
 	    	
 	    }
 
+	    if(value.getCategory().getParent2() != null) {
+		    and.add(builder.equal(from.get("category3"), value.getCategory().getId()));
+	    }
+	    else
+	    if(value.getCategory().getParent1() != null) {
+		    and.add(builder.equal(from.get("category2"), value.getCategory().getId()));
+	    }
+	    else
 	    if(value.getCategory() != null) {
-		    and.add(builder.equal(from.get("category"), value.getCategory().getId()));
+		    and.add(builder.equal(from.get("category1"), value.getCategory().getId()));
 	    }
 	    
-	    if(value.getProductType() != null) {
-		    and.add(builder.equal(from.get("productType"), value.getProductType()));
-	    }
-		
 	}
 	
 	private Set<AttributeFilter> productFilterToFilterSet(ProductSearch productSearch){

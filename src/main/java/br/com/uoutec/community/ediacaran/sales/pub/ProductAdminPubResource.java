@@ -222,6 +222,7 @@ public class ProductAdminPubResource {
 			productRegistry.registerProduct(product);
 		}
 		catch(Throwable ex){
+			ex.printStackTrace();
 			exception = ex;
 		}
 		

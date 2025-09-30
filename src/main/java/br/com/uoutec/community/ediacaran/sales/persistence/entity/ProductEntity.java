@@ -54,7 +54,7 @@ public class ProductEntity implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cod_category", referencedColumnName = "cod_category")
 	private ProductCategoryEntity category;
-	
+
 	@Column(name = "dsc_tags", length = 256)
 	private String tags;
 	

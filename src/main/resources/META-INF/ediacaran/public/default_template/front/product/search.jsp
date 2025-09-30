@@ -125,6 +125,7 @@
 					    				--%>
 										<ed:row>
 											<ed:col size="12">
+												<input type="hidden" name="category" value="${category.protectedID}">
 												<ec:field-group>
 													<ec:prepend-field id="filter_toggler">
 														<ec:prepend-field-item>
