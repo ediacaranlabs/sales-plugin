@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +36,9 @@ public class ProductCategorySearchResultEntityFilter {
 			createProductCategoryFilter(pc, result, map);
 		}
 		
-		return new ArrayList<>();
+		List<ProductCategoryFilter> list = new ArrayList<>(result);
+		Collections.sort(list, (a,b)->a.getTitle().compareTo(b.getTitle()));
+		return list;
 	}
 	
 	private void createProductCategoryFilter(ProductCategory productCategory, Set<ProductCategoryFilter> root, Map<Integer, ProductCategoryFilter> cache) {

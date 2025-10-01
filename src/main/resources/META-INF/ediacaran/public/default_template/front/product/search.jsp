@@ -245,9 +245,9 @@
 			<ed:col>
 				<ec:forEach items="!{response.categories}" var="category">
 					<span class="filter">
-						<span class="filter_title">!{category.title}</span><br>
+						<a class="filter_title" href="${plugins.ediacaran.sales.web_path}/products/category/!{category.protectedID}">!{category.title}</a><br>
 						<ec:forEach items="!{category.subcategories}" var="subCategory">
-							<span class="filter_option">!{subCategory.title}<br></span>
+							<a class="filter_option" href="${plugins.ediacaran.sales.web_path}/products/category/!{subCategory.protectedID}">> !{subCategory.title}</a><br>
 						</ec:forEach>
 					</span>
 				</ec:forEach>

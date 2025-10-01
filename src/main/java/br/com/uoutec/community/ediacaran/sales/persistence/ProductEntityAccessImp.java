@@ -503,16 +503,18 @@ public class ProductEntityAccessImp
 	    	
 	    }
 
-	    if(value.getCategory().getParent2() != null) {
-		    and.add(builder.equal(from.get("category3"), value.getCategory().getId()));
-	    }
-	    else
-	    if(value.getCategory().getParent1() != null) {
-		    and.add(builder.equal(from.get("category2"), value.getCategory().getId()));
-	    }
-	    else
 	    if(value.getCategory() != null) {
-		    and.add(builder.equal(from.get("category1"), value.getCategory().getId()));
+		    if(value.getCategory().getParent2() != null) {
+			    and.add(builder.equal(from.get("category3"), value.getCategory().getId()));
+		    }
+		    else
+		    if(value.getCategory().getParent1() != null) {
+			    and.add(builder.equal(from.get("category2"), value.getCategory().getId()));
+		    }
+		    else
+		    if(value.getCategory() != null) {
+			    and.add(builder.equal(from.get("category1"), value.getCategory().getId()));
+		    }
 	    }
 	    
 	}
