@@ -274,85 +274,90 @@
 	</ec:data-table>
 
 	<ec:template var="response" id="filterTemplate">
-		<b>Categories</b>
-		<hr>
-		<ed:row>
-			<ed:col id="category_filter">
-				<ec:forEach items="!{response.categories}" var="category">
-					<span class="filter">
-						<span class="filter_title !{response.selectedCategory == category.protectedID? 'selected' : '' }">
-							<a id="cat_!{category.protectedID}" href="#">!{category.title}</a><br>
-							<ec:event componentName="cat_!{category.protectedID}" type="click">
-									let $form = $.AppContext.utils.getById('search_form');
-									let $categoryField = $form.getField('category');
-									
-									$categoryField.setValue('!{category.protectedID}');
-									$form.submit();
-							</ec:event>
-						</span>
-						
-						<ec:forEach items="!{category.subcategories}" var="subCategory">
-							<span class="filter_option !{response.selectedCategory == subCategory.protectedID? 'selected' : '' }">
-								<span class="category-check">
-								
-									<a id="cat_!{subCategory.protectedID}" class="" href="#">!{subCategory.title}</a><br>
-									<ec:event componentName="cat_!{subCategory.protectedID}" type="click">
+		<ec:if test="!{response.categories.length > 0}">
+			<b>Categories</b>
+			<hr>
+			<ed:row>
+				<ed:col id="category_filter">
+					<ec:forEach items="!{response.categories}" var="category">
+						<span class="filter">
+							<span class="filter_title !{response.selectedCategory == category.protectedID? 'selected' : '' }">
+								<a id="cat_!{category.protectedID}" href="#">!{category.title}</a><br>
+								<ec:event componentName="cat_!{category.protectedID}" type="click">
 										let $form = $.AppContext.utils.getById('search_form');
 										let $categoryField = $form.getField('category');
 										
-										$categoryField.setValue('!{subCategory.protectedID}');
+										$categoryField.setValue('!{category.protectedID}');
 										$form.submit();
-									</ec:event>
-								
+								</ec:event>
+							</span>
+							
+							<ec:forEach items="!{category.subcategories}" var="subCategory">
+								<span class="filter_option !{response.selectedCategory == subCategory.protectedID? 'selected' : '' }">
+									<span class="category-check">
+									
+										<a id="cat_!{subCategory.protectedID}" class="" href="#">!{subCategory.title}</a><br>
+										<ec:event componentName="cat_!{subCategory.protectedID}" type="click">
+											let $form = $.AppContext.utils.getById('search_form');
+											let $categoryField = $form.getField('category');
+											
+											$categoryField.setValue('!{subCategory.protectedID}');
+											$form.submit();
+										</ec:event>
+									
+									</span>
 								</span>
-							</span>
-							
-						</ec:forEach>
+								
+							</ec:forEach>
+						</span>
+					</ec:forEach>
+					
+					<span class="filter_clear !{response.selectedCategory != ''? 'show' : '' }">
+						<a id="cat_clear" class="filter_option" href="#">Remove filter</a><br>
+						<ec:event componentName="cat_clear" type="click">
+								let $form = $.AppContext.utils.getById('search_form');
+								let $categoryField = $form.getField('category');
+								let $categoryValue = $categoryField.getValue();
+								
+								$categoryField.setValue('');
+								$form.submit();
+						</ec:event>
 					</span>
-				</ec:forEach>
-				
-				<span class="filter_clear !{response.selectedCategory != ''? 'show' : '' }">
-					<a id="cat_clear" class="filter_option" href="#">Remove filter X</a><br>
-					<ec:event componentName="cat_clear" type="click">
-							let $form = $.AppContext.utils.getById('search_form');
-							let $categoryField = $form.getField('category');
-							let $categoryValue = $categoryField.getValue();
+					
+				</ed:col>
+			</ed:row>
+		</ec:if>
+		
+		<ec:if test="!{response.selectedCategory != ''}">
+			<b><fmt:message key="search.filters.title" bundle="${messages}"/></b>
+			<hr>
+			
+			<ec:forEach items="!{response.filters}" var="group">
+				<span formgroup="filters" formgrouptype="index" class="filter_group">
+					<input type="hidden" name="protectedID" value="!{group.protectedID}">
+					<%--<span class="group_title">!{group.title}</span><br>--%>
+					<ec:forEach items="!{group.filters}" var="filter">
+						<span formgroup="filters" formgrouptype="index" class="filter">
+							<input type="hidden" name="protectedID" value="!{filter.protectedID}">
+							<span class="filter_title">!{filter.title} (!{group.title})</span>
 							
-							$categoryField.setValue('');
-							$form.submit();
-					</ec:event>
-				</span>
-				
-			</ed:col>
-		</ed:row>
+							<ec:forEach items="!{filter.options}" var="option">
+								<span class="filter_option">
+									<ec:checkbox label="!{option.description}" name="values" selected="!{option.selected}" value="!{option.value}">
+										<ec:event type="click">
+											var $form = $.AppContext.utils.getById('search_form');
+											$form.submit();
+										</ec:event>
+									</ec:checkbox>
+								</span>
+							</ec:forEach>
+						</span>
+						<br>
+					</ec:forEach>
+				</span>		
+			</ec:forEach>	
+		</ec:if>
 		
-		<b><fmt:message key="search.filters.title" bundle="${messages}"/></b>
-		<hr>
-		
-		<ec:forEach items="!{response.filters}" var="group">
-			<span formgroup="filters" formgrouptype="index" class="filter_group">
-				<input type="hidden" name="protectedID" value="!{group.protectedID}">
-				<%--<span class="group_title">!{group.title}</span><br>--%>
-				<ec:forEach items="!{group.filters}" var="filter">
-					<span formgroup="filters" formgrouptype="index" class="filter">
-						<input type="hidden" name="protectedID" value="!{filter.protectedID}">
-						<span class="filter_title">!{filter.title} (!{group.title})</span>
-						
-						<ec:forEach items="!{filter.options}" var="option">
-							<span class="filter_option">
-								<ec:checkbox label="!{option.description}" name="values" selected="!{option.selected}" value="!{option.value}">
-									<ec:event type="click">
-										var $form = $.AppContext.utils.getById('search_form');
-										$form.submit();
-									</ec:event>
-								</ec:checkbox>
-							</span>
-						</ec:forEach>
-					</span>
-					<br>
-				</ec:forEach>
-			</span>		
-		</ec:forEach>	
 	</ec:template>
 	
 	<ec:include uri="/includes/footer.jsp"/>
