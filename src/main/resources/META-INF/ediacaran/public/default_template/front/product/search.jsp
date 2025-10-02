@@ -31,6 +31,29 @@
 #filter_toggler button{
 	padding: 0px 0px;
 }
+
+#category_filter a {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#category_filter .filter_clear {
+	display: none;
+	color: red;
+}
+
+#category_filter .filter_clear.show{
+	display: block;
+}
+
+#category_filter .filter_option a{
+	color: inherit;
+}
+
+#category_filter .filter_title a{
+	color: inherit;
+}
+
 /*
 .sidebar-group .sidebar {
 	width: 200px;
@@ -61,8 +84,14 @@
 	color: #acacac;
 	text-transform: uppercase;
 }
+
 .filter_option .form-check {
 	padding-left: 1.8rem;
+	padding-bottom: 0.3rem;
+}
+
+.filter_option .category-check {
+	padding-left: 0.3rem;
 	padding-bottom: 0.3rem;
 }
 
@@ -164,19 +193,25 @@
 										<ec:data-result var="response" from="search_form">
 											<ed:row>
 												<script type="text/javascript">
-													var $tmpObjStr = '!{JSON.stringify(response)}';
+													var $tmpResponse = '!{JSON.stringify(response)}';
+													var response = JSON.parse($tmpResponse);
 													
-													if($tmpObjStr.length == 0){
-														$tmpObjStr = '[]';
-													}
-													
-													var $tmpObj = JSON.parse($tmpObjStr);
 													var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
 													var $pageBody = $.AppContext.utils.getById('pageBody');
 
-													if($tmpObj.filters.length > 0){
-														var $tmp = $.AppContext.utils.applyTemplate("filterTemplate", JSON.parse($tmpObjStr));
+													if(response.filters.length > 0 || response.categories.length > 0){
+
+														/* get selected category */
+														
+														let $form = $.AppContext.utils.getById('search_form');
+														let $categoryField = $form.getField('category');
+														response.selectedCategory = $categoryField.getValue();
+														
+														/* apply filters template */
+														let $tmp = $.AppContext.utils.applyTemplate("filterTemplate", response);
 														$.AppContext.utils.content.update("detachedFilters", $tmp);
+														
+														/* show filters */
 														$filter_toggler.setVisible(true);
 														$pageBody.addClass('show');
 													}
@@ -242,15 +277,52 @@
 		<b>Categories</b>
 		<hr>
 		<ed:row>
-			<ed:col>
+			<ed:col id="category_filter">
 				<ec:forEach items="!{response.categories}" var="category">
 					<span class="filter">
-						<a class="filter_title" href="${plugins.ediacaran.sales.web_path}/products/category/!{category.protectedID}">!{category.title}</a><br>
+						<span class="filter_title !{response.selectedCategory == category.protectedID? 'selected' : '' }">
+							<a id="cat_!{category.protectedID}" href="#">!{category.title}</a><br>
+							<ec:event componentName="cat_!{category.protectedID}" type="click">
+									let $form = $.AppContext.utils.getById('search_form');
+									let $categoryField = $form.getField('category');
+									
+									$categoryField.setValue('!{category.protectedID}');
+									$form.submit();
+							</ec:event>
+						</span>
+						
 						<ec:forEach items="!{category.subcategories}" var="subCategory">
-							<a class="filter_option" href="${plugins.ediacaran.sales.web_path}/products/category/!{subCategory.protectedID}">> !{subCategory.title}</a><br>
+							<span class="filter_option !{response.selectedCategory == subCategory.protectedID? 'selected' : '' }">
+								<span class="category-check">
+								
+									<a id="cat_!{subCategory.protectedID}" class="" href="#">!{subCategory.title}</a><br>
+									<ec:event componentName="cat_!{subCategory.protectedID}" type="click">
+										let $form = $.AppContext.utils.getById('search_form');
+										let $categoryField = $form.getField('category');
+										
+										$categoryField.setValue('!{subCategory.protectedID}');
+										$form.submit();
+									</ec:event>
+								
+								</span>
+							</span>
+							
 						</ec:forEach>
 					</span>
 				</ec:forEach>
+				
+				<span class="filter_clear !{response.selectedCategory != ''? 'show' : '' }">
+					<a id="cat_clear" class="filter_option" href="#">Remove filter X</a><br>
+					<ec:event componentName="cat_clear" type="click">
+							let $form = $.AppContext.utils.getById('search_form');
+							let $categoryField = $form.getField('category');
+							let $categoryValue = $categoryField.getValue();
+							
+							$categoryField.setValue('');
+							$form.submit();
+					</ec:event>
+				</span>
+				
 			</ed:col>
 		</ed:row>
 		
