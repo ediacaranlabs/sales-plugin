@@ -16,28 +16,8 @@
 	min-height: 120px !important;
 }
 
-@media screen and (min-width: 1200px) {
-    .sidebar-group .sidebar-content {
-        margin-left: 350px;
-    }
-}
-
-.sidebar-group .sidebar {
-    width: 350px;
-}
-
-.sidebar-group:not(.show) .sidebar {
-    margin-left: -350px;
-}
-
-#content-body{
-	padding-left: 1em;
-	padding-right: 1em;
-	background-color: #fcfcfc;
-}
-
 #detachedFilters{
-	/*border-right: 1px solid #dcdcdc;*/
+	border-right: 1px solid #dcdcdc;
 	height: 100%;
 	padding-left: 1.5rem;
 	padding-right: 1.5rem;
@@ -74,41 +54,17 @@
 	color: inherit;
 }
 
-#category_filter .selected {
-	color: red;
+/*
+.sidebar-group .sidebar {
+	width: 200px;
 }
 
-.product {
-	border: 1px solid #f5f5f5;
-	display: inline-grid;
-	border-radius: 4px;
-	padding: 1em 1em;
+@media screen and (min-width: 1200px) {
+    .sidebar-group .sidebar-content {
+        margin-left: 200px;
+    }
 }
-
-.product  a{
-	color: #000000;
-	text-decoration: none;
-}
-
-.product  a:hover {
-	color: inherit;
-	text-decoration: none;
-}
-
-.product .image img {
-	max-width: 256px;
-	aspect-ratio: 1/1;
-}
-
-.product .title {
-	font-size: 16px;
-    line-height: 24px;
-}
-
-.product .price {
-	font-size: 28px;
-}
-    
+*/
 .filter_group .card-body {
 	max-height: 300px;
 	overflow-y: auto;
@@ -125,9 +81,8 @@
 }
 
 .filter_title {
-	/*color: #acacac;*/
-	/*text-transform: uppercase;*/
-	font-weight: bold;
+	color: #acacac;
+	text-transform: uppercase;
 }
 
 .filter_option .form-check {
@@ -181,127 +136,139 @@
 				</ec:body>
 			</ec:sidebar>
 			<ec:sidebar-content>
+				<ed:container>
 					<ec:body id="content-body">
-	    				<ed:row>
-	    					<ed:col>
-								<!-- start search form  -->
-								<%--
-			    				<ed:row id="filter_toggler">
+						<ec:box>
+							<ec:box-body>
+			    				<ed:row>
 			    					<ed:col>
-						 				<ec:menu-toggler menuID="pageBody">
-											<ec:icon icon="bars" size="1" />
-										</ec:menu-toggler>
+										<!-- start search form  -->
+										<%--
+					    				<ed:row id="filter_toggler">
+					    					<ed:col>
+								 				<ec:menu-toggler menuID="pageBody">
+													<ec:icon icon="bars" size="1" />
+												</ec:menu-toggler>
+					    					</ed:col>
+					    				</ed:row>
+					    				--%>
+										<ed:row>
+											<ed:col size="12">
+												<input type="hidden" name="category" value="${category.protectedID}">
+												<ec:field-group>
+													<ec:prepend-field id="filter_toggler">
+														<ec:prepend-field-item>
+														
+											 				<ec:menu-toggler menuID="pageBody">
+																<ec:icon icon="bars" size="1" />
+															</ec:menu-toggler>
+														
+														</ec:prepend-field-item>
+													</ec:prepend-field>
+													<ec:textfield 
+														name="name" 
+														placeholder="#{search.placeholder}" 
+														value="${text}"
+														bundle="${messages}"/>
+													<ec:append-field>
+														<ec:button 
+															actionType="submit" 
+															icon="search" 
+															bundle="${messages}"/>
+														<%--
+														<ec:button 
+															actionType="submit" 
+															icon="search" 
+															label="#{search.button}"
+															bundle="${messages}"/>
+														--%>
+													</ec:append-field>
+												</ec:field-group>
+											</ed:col>
+										</ed:row>
+					    				<span style="display:none" id="filters">
+					    				</span>
+										<!-- end search form  -->
+										<!-- start search result  -->
+										<ec:data-result var="response" from="search_form">
+											<ed:row>
+												<script type="text/javascript">
+													var $tmpResponse = '!{JSON.stringify(response)}';
+													var response = JSON.parse($tmpResponse);
+													
+													var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
+													var $pageBody = $.AppContext.utils.getById('pageBody');
+
+													if(response.filters.length > 0 || response.categories.length > 0){
+
+														/* get selected category */
+														
+														let $form = $.AppContext.utils.getById('search_form');
+														let $categoryField = $form.getField('category');
+														response.selectedCategory = $categoryField.getValue();
+														
+														/* apply filters template */
+														let $tmp = $.AppContext.utils.applyTemplate("filterTemplate", response);
+														$.AppContext.utils.content.update("detachedFilters", $tmp);
+														
+														/* show filters */
+														$filter_toggler.setVisible(true);
+														$pageBody.addClass('show');
+													}
+													else{
+														$pageBody.removeClass('show');
+														$filter_toggler.setVisible(false);
+													}
+													
+												</script>
+												<ec:forEach items="!{response.itens}" var="item">
+													<ed:col size="3">
+														<ec:box>
+															<ec:box-body>
+																<ed:row style="form">
+																	<ed:col size="12">
+																		<a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">
+																		<ec:if test="!{item.thumbnail == null}">
+																			<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid"/>
+																		</ec:if>
+																		<ec:if test="!{item.thumbnail != null}">
+																			<ec:image src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" style="fluid"/>
+																		</ec:if>
+																		</a>
+																	</ed:col>
+																</ed:row>
+																<ed:row>
+																	<ed:col size="12">
+																		<h5>!{item.name}</h5><br>
+																		<b>!{item.cost}</b><br>
+																		!{item.shortDescription}<br>
+																	</ed:col>
+																</ed:row>
+																<ed:row>
+																	<ed:col size="12">
+																		<ec:button 
+																			label="#{result.add_cart.label}" 
+																			align="right"
+																			bundle="${messages}">
+																			<ec:event type="click">
+																				location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{item.protectedID}'; 
+																			</ec:event>
+																		</ec:button>
+																	</ed:col>
+																</ed:row>
+															</ec:box-body>
+														</ec:box>
+													</ed:col>
+												</ec:forEach>
+											</ed:row>
+										</ec:data-result>
+										<!-- end search result  -->
 			    					</ed:col>
 			    				</ed:row>
-			    				--%>
-								<ed:row>
-									<ed:col size="12">
-										<input type="hidden" name="category" value="${category.protectedID}">
-										<input type="hidden" name="resultPerPage" value="9">
-										<ec:field-group>
-											<ec:prepend-field id="filter_toggler">
-												<ec:prepend-field-item>
-												
-									 				<ec:menu-toggler menuID="pageBody">
-														<ec:icon icon="bars" size="1" />
-													</ec:menu-toggler>
-												
-												</ec:prepend-field-item>
-											</ec:prepend-field>
-											<ec:textfield 
-												name="name" 
-												placeholder="#{search.placeholder}" 
-												value="${text}"
-												bundle="${messages}"/>
-											<ec:append-field>
-												<ec:button 
-													actionType="submit" 
-													icon="search"
-													style="secondary" 
-													bundle="${messages}"/>
-												<%--
-												<ec:button 
-													actionType="submit" 
-													icon="search" 
-													label="#{search.button}"
-													bundle="${messages}"/>
-												--%>
-											</ec:append-field>
-										</ec:field-group>
-									</ed:col>
-								</ed:row>
-			    				<span style="display:none" id="filters">
-			    				</span>
-								<!-- end search form  -->
-								<!-- start search result  -->
-								<ec:data-result var="response" from="search_form">
-									<ed:row>
-										<script type="text/javascript">
-											var $tmpResponse = '!{JSON.stringify(response)}';
-											var response = JSON.parse($tmpResponse);
-											
-											var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
-											var $pageBody = $.AppContext.utils.getById('pageBody');
-
-											if(response.filters.length > 0 || response.categories.length > 0){
-
-												/* get selected category */
-												
-												let $form = $.AppContext.utils.getById('search_form');
-												let $categoryField = $form.getField('category');
-												response.selectedCategory = $categoryField.getValue();
-												
-												/* apply filters template */
-												let $tmp = $.AppContext.utils.applyTemplate("filterTemplate", response);
-												$.AppContext.utils.content.update("detachedFilters", $tmp);
-												
-												/* show filters */
-												$filter_toggler.setVisible(true);
-												$pageBody.addClass('show');
-											}
-											else{
-												$pageBody.removeClass('show');
-												$filter_toggler.setVisible(false);
-											}
-											
-										</script>
-										<ec:forEach items="!{response.itens}" var="item">
-											<ed:col size="3">
-												<%--<ec:box classStyle="product">
-													<ec:box-body>--%>
-													<span class="product">
-														<ed:row style="form">
-															<ed:col size="12">
-																<a class="image" href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">
-																<ec:if test="!{item.thumbnail == null}">
-																	<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid" align="center"/>
-																</ec:if>
-																<ec:if test="!{item.thumbnail != null}">
-																	<ec:image src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" style="fluid" align="center"/>
-																</ec:if>
-																</a>
-															</ed:col>
-														</ed:row>
-														<ed:row>
-															<ed:col size="12">
-																<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
-																<span class="price">!{item.cost}</span><br>
-															</ed:col>
-														</ed:row>
-													</span>
-													<%--</ec:box-body>
-												</ec:box>--%>
-											</ed:col>
-										</ec:forEach>
-									</ed:row>
-								</ec:data-result>
-								<!-- end search result  -->
-	    					</ed:col>
-	    				</ed:row>
-					
-					
-					
+							</ec:box-body>
+						</ec:box>
 					</ec:body>
+				</ed:container>
 			</ec:sidebar-content>
 		</ec:sidebar-group>
 	</ec:data-table>

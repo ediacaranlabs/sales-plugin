@@ -109,15 +109,11 @@
 				</ed:row>
 				<ed:row>
 					<ed:col size="12">
-						<ed:row>
-							<ed:col>
-								<h3><fmt:message key="tabs.details" bundle="${messages}"/></h3>
+						<ec:tabs>
+							<ec:tabs-item title="#{tabs.details}" bundle="${messages}" active="true">
 								${entity.description}
-							</ed:col>
-						</ed:row>
-						<ed:row>
-							<ed:col>
-								<h3><fmt:message key="tabs.characteristics" bundle="${messages}"/></h3>
+							</ec:tabs-item>
+							<ec:tabs-item title="#{tabs.characteristics}" bundle="${messages}">
 								<ec:table style="striped">
 									<c:forEach var="prop" items="${entity.getProductAttributes(true)}">
 										<ec:table-row>
@@ -130,20 +126,15 @@
 										</ec:table-row>
 									</c:forEach>
 								</ec:table>
-							</ed:col>
-						</ed:row>
-						
-						<c:forEach items="${tabs}" var="tab">
-						<!-- tab (${tab.id}) -->
-						<ed:row>
-							<ed:col>
-								<h3>${tab.title}</h3>
+							</ec:tabs-item>
+							<c:forEach items="${tabs}" var="tab">
+							<!-- tab (${tab.id}) -->
+							<ec:tabs-item title="${tab.title}">
 								<ec:sectionView section="${tab.content}"/>
-							</ed:col>
-						</ed:row>
-						<!-- /tab (${tab.id}) -->
-						</c:forEach>
-						
+							</ec:tabs-item>
+							<!-- /tab (${tab.id}) -->
+							</c:forEach>
+						</ec:tabs>
 					</ed:col>
 				</ed:row>
 				<ed:row>
