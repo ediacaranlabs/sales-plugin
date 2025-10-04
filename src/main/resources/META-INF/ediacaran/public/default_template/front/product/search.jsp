@@ -30,6 +30,20 @@
     margin-left: -350px;
 }
 
+.btn-default {
+    color: #fff;
+    background-color: #e9ecef;;
+    border-color: #ced4da;
+}
+
+.btn-default .fa:not([class*="fa-inverse"]) {
+    color: #000000;
+}
+
+.navbar-toggler .fa:not([class*="fa-inverse"]) {
+    color: #000000;
+}
+
 #content-body{
 	padding-left: 1em;
 	padding-right: 1em;
@@ -96,7 +110,7 @@
 }
 
 .product .image img {
-	max-width: 256px;
+	max-height: 220px;
 	aspect-ratio: 1/1;
 }
 
@@ -217,7 +231,7 @@
 												<ec:button 
 													actionType="submit" 
 													icon="search"
-													style="secondary" 
+													style="default" 
 													bundle="${messages}"/>
 												<%--
 												<ec:button 
@@ -285,7 +299,7 @@
 														<ed:row>
 															<ed:col size="12">
 																<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
-																<span class="price">!{item.cost}</span><br>
+																!{item.costParts[0]}<span class="price">!{item.costParts[1]}</span>!{item.costParts[2]}<br>
 															</ed:col>
 														</ed:row>
 													</span>

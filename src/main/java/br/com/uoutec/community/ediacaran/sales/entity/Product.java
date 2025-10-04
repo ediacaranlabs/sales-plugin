@@ -321,6 +321,13 @@ public class Product implements Serializable {
 					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
 					//DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
 	}
+
+	public String[] getCostPartsString(Locale locale) {
+		return 
+			cost == null || currency == null? 
+					new String[] {"","",""} :
+					CurrencyUtil.toStringArray(currency, getValue());
+	}
 	
 	public String getDisplayValue() {
 		return CurrencyUtil.toString(currency, getValue());

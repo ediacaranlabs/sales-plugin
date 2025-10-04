@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +37,26 @@ public class CurrencyUtil {
 		}
 		
 		return (currency == null? "" : currency + " ") + value.setScale(2, BigDecimal.ROUND_UNNECESSARY);
+	}
+	
+	public static String[] toStringArray(String currency, BigDecimal value) {
+
+		Locale locale = currency == null? null : locales.get(currency);
+		NumberFormat nb = NumberFormat.getNumberInstance();
+		nb.setMinimumIntegerDigits(2);
+		
+		value = value.setScale(2, BigDecimal.ROUND_UNNECESSARY);
+		BigDecimal val = value.setScale(0, BigDecimal.ROUND_UNNECESSARY);
+		
+		BigDecimal dec = value.subtract(val);
+		dec = dec.multiply(BigDecimal.valueOf(100));
+		dec = dec.setScale(0, BigDecimal.ROUND_UNNECESSARY);
+		
+		return new String[] {
+				locale == null? "" : Currency.getInstance(locale).getSymbol(),
+				val.toString(),
+				nb.format(dec.doubleValue())
+		};
 	}
 	
 }
