@@ -31,7 +31,6 @@
 }
 
 .btn-default {
-    color: #fff;
     background-color: #e9ecef;;
     border-color: #ced4da;
 }
@@ -299,9 +298,24 @@
 														<ed:row>
 															<ed:col size="12">
 																<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
-																!{item.costParts[0]}<span class="price">!{item.costParts[1]}</span>!{item.costParts[2]}<br>
+																!{item.productCurrency.symbol}<span class="price">!{item.productCurrency.wholeNumberString}</span>!{item.productCurrency.fractionalPartString}<br>
 															</ed:col>
 														</ed:row>
+														<ed:row>
+															<ed:col size="12">
+																<ec:button 
+																	label="#{result.add_cart.label}" 
+																	align="right"
+																	size="small"
+																	style="default"
+																	bundle="${messages}">
+																	<ec:event type="click">
+																		location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{item.protectedID}'; 
+																	</ec:event>
+																</ec:button>
+															</ed:col>
+														</ed:row>
+														
 													</span>
 													<%--</ec:box-body>
 												</ec:box>--%>

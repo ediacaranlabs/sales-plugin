@@ -17,6 +17,10 @@ public class CurrencyUtil {
 		locales.put("BRL", new Locale("pt", "BR"));
 		locales.put("USD", new Locale("en", "US"));
 	}
+
+	public static Locale toLocale(String currency) {
+		return currency == null? null : locales.get(currency);
+	}
 	
 	public static String getSymbol(String currency) {
 		Locale locale = currency == null? null : locales.get(currency);

@@ -1,17 +1,14 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
-import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
-import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductCurrency;
 
-public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
+public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 
 	private static final long serialVersionUID = -5240855789107084675L;
 
@@ -21,8 +18,7 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 	
 	private String cost;
 
-	@Basic(mappingType = MappingTypes.OBJECT)
-	private List<String> costParts;
+	private ProductCurrency productCurrency;
 	
 	private String tags;
 	
@@ -33,7 +29,7 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 	public ProductSimplifiedSearchResultPubEntity(Product e, Locale locale){
 		super(e, locale);
 		this.thumbnail = e.getPublicThumb();
-		this.costParts = Arrays.asList(e.getCostPartsString(locale));
+		this.productCurrency = new ProductCurrency(e.getCurrency(), e.getValue());
 		this.cost = e.getCostString(locale);
 		this.tags = null;
 		this.publicID = e.getPublicID();
@@ -53,12 +49,12 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity{
 		return cost;
 	}
 
-	public List<String> getCostParts() {
-		return costParts;
+	public ProductCurrency getProductCurrency() {
+		return productCurrency;
 	}
 
-	public void setCostParts(List<String> costParts) {
-		this.costParts = costParts;
+	public void setProductCurrency(ProductCurrency productCurrency) {
+		this.productCurrency = productCurrency;
 	}
 
 	@Transient
