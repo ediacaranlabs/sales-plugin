@@ -170,8 +170,22 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 		}
 	}
 
+	public List<ProductCategory> getAll(int first, int max) throws ProductCategoryRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.CATEGORY.getListPermission());
+
+		try {
+			return entityAccess.findAll(first, max);
+		}
+		catch(Throwable ex){
+			throw new ProductCategoryRegistryException(ex);
+		}
+		
+	}
+	
 	@Override
 	public List<ProductCategory> getAll() throws ProductCategoryRegistryException {
+		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.CATEGORY.getListPermission());
 
 		try {
@@ -180,6 +194,7 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 		catch(Throwable ex){
 			throw new ProductCategoryRegistryException(ex);
 		}
+		
 	}
 	
 }

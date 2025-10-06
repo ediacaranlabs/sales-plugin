@@ -19,7 +19,9 @@ public interface ProductCategoryEntityAccess {
 	
 	List<ProductCategory> findAll() throws EntityAccessException;
 	
-	public List<ProductCategory> getAll() throws EntityAccessException;
+	List<ProductCategory> getAll() throws EntityAccessException;
+	
+	List<ProductCategory> findAll(int first, int max) throws EntityAccessException;
 	
 	void flush();
 	

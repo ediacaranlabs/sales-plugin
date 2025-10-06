@@ -23,7 +23,7 @@ import br.com.uoutec.persistence.EntityAccessException;
 @RequestScoped
 public class ProductCategoryEntityAccessImp 
 	extends AbstractEntityAccess<ProductCategory, ProductCategoryEntity>
-	implements ProductCategoryEntityAccess{
+	implements ProductCategoryEntityAccess {
 
 	public ProductCategoryEntityAccessImp() {
 		super(null);

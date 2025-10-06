@@ -18,6 +18,8 @@ public interface ProductCategoryRegistry extends PublicBean {
 	List<ProductCategory> findByParent(ProductCategory parent) throws ProductCategoryRegistryException;
 
 	List<ProductCategory> getAll() throws ProductCategoryRegistryException;
+
+	List<ProductCategory> getAll(int first, int max) throws ProductCategoryRegistryException;
 	
 	ProductCategoryResultSearch searchProductCategory(ProductCategorySearch value) throws ProductCategoryRegistryException;
 	
