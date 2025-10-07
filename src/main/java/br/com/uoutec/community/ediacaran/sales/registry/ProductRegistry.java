@@ -18,6 +18,8 @@ public interface ProductRegistry extends PublicBean{
 	Product findProductById(int id) throws ProductRegistryException;
 	
 	List<Product> getProductByType(ProductType serviceType) throws ProductRegistryException;
+
+	List<Product> getAll(int first, int maxItens) throws ProductRegistryException;
 	
 	ProductSearchResult search(ProductSearch value)	throws ProductRegistryException;
 

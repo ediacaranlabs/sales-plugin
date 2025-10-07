@@ -82,5 +82,11 @@ public class ProductProtalService implements PublicBean {
 		void setProductCategory(List<ProductCategory> value);
 		
 	}
+
+	public static interface ProductOfferUpdate {
+		
+		void setProductCategory(List<Product> value);
+		
+	}
 	
 }
