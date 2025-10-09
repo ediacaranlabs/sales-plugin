@@ -2,25 +2,27 @@ package br.com.uoutec.community.ediacaran.sales.service.concurrent;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Singleton;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
-import br.com.uoutec.community.ediacaran.sales.service.ProductProtalService.ProductOfferUpdate;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
-import br.com.uoutec.ediacaran.core.plugins.PluginType;
 
+@Singleton
 public class SelectProductPortalExecutorService 
 	implements Runnable {
 
-	private ProductOfferUpdate productOfferUpdate;
+	private volatile List<Product> products;
 	
 	private volatile boolean active;
 	
-	public SelectProductPortalExecutorService(ProductOfferUpdate productOfferUpdate) {
-		this.productOfferUpdate = productOfferUpdate;
+	public SelectProductPortalExecutorService() {
+		this.products = Collections.unmodifiableList(new ArrayList<>());
 		this.active = false;
 	}
 	
@@ -28,17 +30,18 @@ public class SelectProductPortalExecutorService
 	public void run() {
 		
 		try {
-			active = true;
-			
-			if(checkActive()) {
+			if(isActive()) {
 				safeAction();
 			}
-			
 		}
 		finally {
 			active = false;
 		}
 		
+	}
+
+	public List<Product> getProducts() {
+		return products;
 	}
 
 	public void setActive(boolean value) {
@@ -48,31 +51,6 @@ public class SelectProductPortalExecutorService
 	public boolean isActive() {
 		return active;
 	}
-	
-	private boolean checkActive() {
-		try {
-			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
-			return pluginType.getConfiguration().getBoolean("portal_service");
-		}
-		catch(Throwable ex) {
-			ex.printStackTrace();
-			return false;
-		}
-	}
-
-	/*
-	private long getSleepTime() {
-		try {
-			PluginType pluginType = EntityContextPlugin.getEntity(PluginType.class);
-			int secs = pluginType.getConfiguration().getInt("portal_service_sleep_time");
-			return TimeUnit.SECONDS.toMillis(secs);
-		}
-		catch(Throwable ex) {
-			ex.printStackTrace();
-			return TimeUnit.MINUTES.toMillis(3);
-		}
-	}
-	*/
 	
 	private void safeAction() {
 		try {
@@ -115,7 +93,7 @@ public class SelectProductPortalExecutorService
 			
 		}
 		
-		productOfferUpdate.setProductCategory(result);
+		this.products = Collections.unmodifiableList(result);
 		
 	}
 	

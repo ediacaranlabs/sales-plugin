@@ -283,5 +283,18 @@ public class ProductRegistryImp
 			throw new ProductRegistryException(ex);
 		}
 	}
+
+	@Override
+	public List<Product> getAll(int first, int maxItens) throws ProductRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.PRODUCT.getListPermission());
+		
+		try{
+			return entityAccess.findAll(first, maxItens);
+		}
+		catch(Throwable e){
+			throw new ProductRegistryException(e);
+		}
+	}
 	
 }

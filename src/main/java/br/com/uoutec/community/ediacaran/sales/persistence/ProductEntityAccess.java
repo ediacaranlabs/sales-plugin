@@ -18,6 +18,8 @@ public interface ProductEntityAccess {
 
 	Product findById(Serializable id) throws EntityAccessException;
 	
+	List<Product> findAll(int first, int max) throws EntityAccessException;
+	
 	List<Product> getProductByType(ProductType serviceType) throws EntityAccessException;
 	
 	ProductEntitySearchResult searchProduct(ProductSearch value, Integer first, Integer max) throws EntityAccessException;
