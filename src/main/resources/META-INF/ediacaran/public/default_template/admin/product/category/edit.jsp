@@ -38,7 +38,7 @@
 								<ec:imagefield name="thumbnail"
 									src="${plugins.ediacaran.sales.image_prefix_address}${empty vars.entity.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : vars.entity.publicThumb}"
 									button="Select" 
-									bundle="${messages}" width="200" height="200" border="squad"/>
+									bundle="${messages}" width="200" height="200" border="circle"/>
 							</ed:col>
 							<ed:col size="9">
 							

@@ -120,7 +120,7 @@ section.body{
 							<ec:image src="${plugins.ediacaran.front.image_logo}"/>
 						</c:if>
 					</ed:col>
-					<ed:col size="9">
+					<ed:col size="8">
 						<ec:center>
 								<input type="hidden" name="resultPerPage" value="9">
 								<ec:field-group>
@@ -138,16 +138,15 @@ section.body{
 								</ec:field-group>					
 						</ec:center>
 					</ed:col>
-				</ed:row>
-				<ed:row classStyle="line-cart">
-					<ed:col size="12">
-						<ec:right><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>
+					<ed:col size="1">
+						<ec:center><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:center>
 					</ed:col>
 				</ed:row>
 			</form>
 		</ed:container>
 	</section>
 
+	<c:if test="${!empty vars.categories}">
 	<section class="body">
 		<ed:container>
 			<h3>Categorias</h3>
@@ -165,8 +164,9 @@ section.body{
 			</ec:carousel>
 		</ed:container>		
 	</section>
+	</c:if>
 	
-	
+	<c:if test="${!empty vars.offers}">
 	<section class="body">
 		<ed:container>
 			<h3>Offers</h3>
@@ -215,7 +215,9 @@ section.body{
 			
 		</ed:container>		
 	</section>
+	</c:if>
 	
+	<c:if test="${!empty vars.products}">
 	<section class="body">
 		<ed:container>
 			<h3>Products</h3>
@@ -261,10 +263,9 @@ section.body{
 					</ed:col>
 				</c:forEach>
 			</ed:row>				
-			
 		</ed:container>		
 	</section>
-	
+	</c:if>
 
 	
 	<ec:include uri="/includes/footer.jsp"/>
