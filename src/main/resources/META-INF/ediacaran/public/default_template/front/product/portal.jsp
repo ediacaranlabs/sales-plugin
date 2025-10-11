@@ -11,7 +11,6 @@
 <ec:include uri="/includes/head.jsp"/>
 <style type="text/css">
 
-
 .btn-default {
     background-color: #e9ecef;;
     border-color: #ced4da;
@@ -22,13 +21,22 @@
 }
 
 .inner-headline {
-	padding-top: 3em;
-	padding-bottom: 3em;
+	padding-top: 1em;
+	padding-bottom: 1em;
 }
 
 .category img {
 	max-height: 100px;
 	aspect-ratio: 1/1;
+}
+
+.category a {
+	color: #000000;
+}
+
+.category a:hover {
+	color: #000000;
+	text-decoration: none;
 }
 
 .product {
@@ -39,7 +47,6 @@
 }
 
 .product  a{
-	color: #000000;
 	text-decoration: none;
 }
 
@@ -62,7 +69,37 @@
 	font-size: 28px;
 }
     
+.navbar-brand{
+	display: none;
+} 
     
+#top_menu{
+	padding: 0px 0px;
+	background-color: #252525;
+}
+
+#top_menu a{
+	color: #FFFFFF;
+}
+
+.icondefault.fa:not([class*="fa-inverse"]) {
+	color: #ffffff;
+}
+
+.line-cart{
+	padding-top: 1em;
+}
+
+.form {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+section.body{
+	padding-top: 1em;
+}
+
 </style>
 <title>Product Plugin - Ediacaran application</title>
 </head>
@@ -73,32 +110,45 @@
 	
 	<section class="inner-headline">
 		<ed:container>
-			<ed:row>
-				<ed:col size="12">
-					<ec:center>
-						<form action="${plugins.ediacaran.sales.web_path}/products/search" method="post">
-							<input type="hidden" name="resultPerPage" value="9">
-							<ec:field-group>
-								<ec:textfield 
-									name="name" 
-									value="${text}"
-									bundle="${messages}"/>
-								<ec:append-field>
-									<ec:button 
-										actionType="submit" 
-										icon="search"
-										style="default" 
+			<form action="${plugins.ediacaran.sales.web_path}/products/search" method="post">
+				<ed:row classStyle="form">
+					<ed:col size="3">
+						<c:if test="${empty plugins.ediacaran.front.image_logo}">
+							<h1>${plugins.ediacaran.front.text_logo}</h1>
+						</c:if>
+						<c:if test="${!empty plugins.ediacaran.front.image_logo}">
+							<ec:image src="${plugins.ediacaran.front.image_logo}"/>
+						</c:if>
+					</ed:col>
+					<ed:col size="9">
+						<ec:center>
+								<input type="hidden" name="resultPerPage" value="9">
+								<ec:field-group>
+									<ec:textfield 
+										name="name" 
+										value="${text}"
 										bundle="${messages}"/>
-								</ec:append-field>
-							</ec:field-group>					
-						</form>
-					</ec:center>
-				</ed:col>
-			</ed:row>
+									<ec:append-field>
+										<ec:button 
+											actionType="submit" 
+											icon="search"
+											style="default" 
+											bundle="${messages}"/>
+									</ec:append-field>
+								</ec:field-group>					
+						</ec:center>
+					</ed:col>
+				</ed:row>
+				<ed:row classStyle="line-cart">
+					<ed:col size="12">
+						<ec:right><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>
+					</ed:col>
+				</ed:row>
+			</form>
 		</ed:container>
 	</section>
 
-	<section>
+	<section class="body">
 		<ed:container>
 			<h3>Categorias</h3>
 			<ec:carousel>
@@ -117,7 +167,7 @@
 	</section>
 	
 	
-	<section>
+	<section class="body">
 		<ed:container>
 			<h3>Offers</h3>
 			
@@ -166,7 +216,7 @@
 		</ed:container>		
 	</section>
 	
-	<section>
+	<section class="body">
 		<ed:container>
 			<h3>Products</h3>
 			
