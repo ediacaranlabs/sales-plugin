@@ -413,6 +413,10 @@ public class Product implements Serializable {
 		return name == null? null : ProductUtil.getPublicID(this);
 	}
 	
+	public ProductCurrency getProductCurrency() {
+		return new ProductCurrency(getCurrency(), getValue());
+	}
+	
 	public Object getAttribute(String code) {
 		return this.attributes.get(code);
 	}

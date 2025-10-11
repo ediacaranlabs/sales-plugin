@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Singleton;
 
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -27,11 +29,15 @@ public class SelectProductPortalExecutorService
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public void run() {
 		
 		try {
 			if(isActive()) {
-				safeAction();
+				ContextSystemSecurityCheck.doPrivileged(()->{
+					safeAction();
+					return null;
+				});
 			}
 		}
 		finally {
@@ -73,11 +79,11 @@ public class SelectProductPortalExecutorService
 
 			for(Product p: list) {
 
-				if(p.getOfferDiscount() == null || p.getOfferDiscount().doubleValue() == 0) {
+				if(p.getOfferDiscount() != null) {
 					continue;
 				}
 
-				if(p.getOfferDate() == null || p.getOfferDate().isAfter(LocalDate.now())) {
+				if(p.getOfferDate() != null && !p.getOfferDate().isAfter(LocalDate.now())) {
 					continue;
 				}
 				

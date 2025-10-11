@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Singleton;
 
+import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
@@ -29,11 +29,15 @@ public class SelectProductCategoryPortalExecutorService
 	}
 	
 	@Override
+	@ActivateRequestContext
 	public void run() {
-		
+
 		try {
 			if(isActive()) {
-				safeAction();
+				ContextSystemSecurityCheck.doPrivileged(()->{
+					safeAction();
+					return null;
+				});
 			}
 		}
 		finally {
@@ -72,14 +76,17 @@ public class SelectProductCategoryPortalExecutorService
 		int itens = 10;
 		int index = 0;
 		
-		list: while(!(list = pcr.getAll(index, itens)).isEmpty()) {
-
+		//list: while(!(list = pcr.getAll(index, itens)).isEmpty()) {
+		while(!(list = pcr.getAll(index, itens)).isEmpty()) {
 			for(ProductCategory c: list) {
 
 				if(c.getParent1() != null || c.getParent2() != null) {
 					continue;
 				}
 				
+				result.add(c);
+				
+				/*
 				ProductSearch ps = new ProductSearch();
 				ps.setCategory(c);
 				ps.setPage(0);
@@ -94,7 +101,7 @@ public class SelectProductCategoryPortalExecutorService
 				if(result.size() >= 12) {
 					break list;
 				}
-				
+				*/
 			}
 			
 			index += list.size();

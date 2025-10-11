@@ -29,7 +29,7 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 	public ProductSimplifiedSearchResultPubEntity(Product e, Locale locale){
 		super(e, locale);
 		this.thumbnail = e.getPublicThumb();
-		this.productCurrency = new ProductCurrency(e.getCurrency(), e.getValue());
+		this.productCurrency = e.getProductCurrency();
 		this.cost = e.getCostString(locale);
 		this.tags = null;
 		this.publicID = e.getPublicID();

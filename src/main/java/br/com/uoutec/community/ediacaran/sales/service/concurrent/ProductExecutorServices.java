@@ -3,11 +3,13 @@ package br.com.uoutec.community.ediacaran.sales.service.concurrent;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import br.com.uoutec.community.ediacaran.system.concurrent.ThreadGroupManager;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.core.plugins.PluginType;
 
+@Singleton
 public class ProductExecutorServices 
 	implements Runnable {
 
