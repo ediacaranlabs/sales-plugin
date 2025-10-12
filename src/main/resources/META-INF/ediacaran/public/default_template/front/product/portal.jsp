@@ -27,7 +27,7 @@
 .inner-headline {
 	padding-top: 0em;
 	padding-bottom: 3em;
-	background: transparent;	
+	background: linear-gradient(-180deg, #313030, #5b5b5b);
 }
 
 .category img {
@@ -81,7 +81,7 @@
 #top_menu{
 	padding: 0px 0px;
 	/*background-color: #252525;*/
-	background: transparent;
+	background: #313030;
 }
 
 #top_menu .nav-link {
@@ -116,46 +116,45 @@ section.body{
 
 <body>
 
-	<div class="top">
-		<ec:include uri="/includes/header.jsp"/>
-		<section class="inner-headline">
-			<ed:container>
-				<form action="${plugins.ediacaran.sales.web_path}/products/search" method="post">
-					<ed:row classStyle="form">
-						<ed:col size="3">
-							<c:if test="${empty plugins.ediacaran.front.image_logo}">
-								<h1>${plugins.ediacaran.front.text_logo}</h1>
-							</c:if>
-							<c:if test="${!empty plugins.ediacaran.front.image_logo}">
-								<ec:image src="${plugins.ediacaran.front.image_logo}"/>
-							</c:if>
-						</ed:col>
-						<ed:col size="8">
-							<ec:center>
-									<input type="hidden" name="resultPerPage" value="9">
-									<ec:field-group>
-										<ec:textfield 
-											name="name" 
-											value="${text}"
+	<ec:include uri="/includes/header.jsp"/>
+	
+	<section class="inner-headline">
+		<ed:container>
+			<form action="${plugins.ediacaran.sales.web_path}/products/search" method="post">
+				<ed:row classStyle="form">
+					<ed:col size="3">
+						<c:if test="${empty plugins.ediacaran.front.image_logo}">
+							<h1>${plugins.ediacaran.front.text_logo}</h1>
+						</c:if>
+						<c:if test="${!empty plugins.ediacaran.front.image_logo}">
+							<ec:image src="${plugins.ediacaran.front.image_logo}"/>
+						</c:if>
+					</ed:col>
+					<ed:col size="8">
+						<ec:center>
+								<input type="hidden" name="resultPerPage" value="9">
+								<ec:field-group>
+									<ec:textfield 
+										name="name" 
+										value="${text}"
+										bundle="${messages}"/>
+									<ec:append-field>
+										<ec:button 
+											actionType="submit" 
+											icon="search"
+											style="default" 
 											bundle="${messages}"/>
-										<ec:append-field>
-											<ec:button 
-												actionType="submit" 
-												icon="search"
-												style="default" 
-												bundle="${messages}"/>
-										</ec:append-field>
-									</ec:field-group>					
-							</ec:center>
-						</ed:col>
-						<ed:col size="1">
-							<ec:center><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:center>
-						</ed:col>
-					</ed:row>
-				</form>
-			</ed:container>
-		</section>
-	</div>
+									</ec:append-field>
+								</ec:field-group>					
+						</ec:center>
+					</ed:col>
+					<ed:col size="1">
+						<ec:center><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:center>
+					</ed:col>
+				</ed:row>
+			</form>
+		</ed:container>
+	</section>
 	
 
 	<c:if test="${!empty vars.categories}">

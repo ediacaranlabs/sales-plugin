@@ -36,7 +36,10 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	private PortalEntitiesPluginInstaller portalEntitiesPluginInstaller;
 	
+	private ThemesPluginInstaller themesPluginInstaller;
+	
 	public PluginInstaller() {
+		this.themesPluginInstaller = new ThemesPluginInstaller();
 		this.portalEntitiesPluginInstaller = new PortalEntitiesPluginInstaller();
 		this.securityPluginInstaller = new SecurityPluginInstaller();
 		this.i18nPluginInstaller = new I18nPluginInstaller();
@@ -55,6 +58,7 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	@Override
 	public void install() throws Throwable {
+		themesPluginInstaller.install();
 		portalEntitiesPluginInstaller.install();
 		securityPluginInstaller.install();
 		i18nPluginInstaller.install();
@@ -73,6 +77,7 @@ public class PluginInstaller extends AbstractPlugin {
 
 	@Override
 	public void uninstall() throws Throwable {
+		themesPluginInstaller.uninstall();
 		portalEntitiesPluginInstaller.uninstall();
 		simplePaymentGatewayInstaller.uninstall();
 		shippingMethodInstaller.uninstall();
