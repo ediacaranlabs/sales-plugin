@@ -12,6 +12,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <ec:include uri="/includes/head.jsp"/>
 <style type="text/css">
+
+.top {
+	background: linear-gradient(-180deg, #313030, #5b5b5b);
+}
+
+.inner-headline {
+	padding-top: 0em;
+	padding-bottom: 3em;
+	background: transparent;	
+}
+
+#top_menu{
+	padding: 0px 0px;
+	/*background-color: #252525;*/
+	background: transparent;
+}
+
+#top_menu .nav-link {
+    text-transform: capitalize;
+}
+
+#top_menu a{
+	color: #FFFFFF;
+}
+
+.navbar-brand{
+	display: none;
+} 
+
 .box-body {
 	min-height: 120px !important;
 }
@@ -153,6 +182,12 @@
 	padding-bottom: 0.3rem;
 }
 
+.form {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
 </style>
 <title><fmt:message key="header.title" bundle="${messages}"/></title>
 </head>
@@ -165,27 +200,36 @@
 		});
 	</script>
 
-	<ec:include uri="/includes/header.jsp"/>
-	
-	<section class="inner-headline">
-		<ed:container>
-			<ed:row>
-				<ed:col size="4">
-					<div class="inner-heading">
-						<h2><fmt:message key="header.title" bundle="${messages}"/></h2>
-					</div>
-				</ed:col>
-				<ed:col size="8">
-					<ec:breadcrumb title="#{header.title}" bundle="${messages}">
-						<ec:breadcrumb-path 
-							icon="home" 
-							text="" 
-							lnk="${plugins.ediacaran.sales.web_path}"/>
-					</ec:breadcrumb>
-				</ed:col>
-			</ed:row>
-		</ed:container>
-	</section>
+	<div class="top">
+		<ec:include uri="/includes/header.jsp"/>
+		<section class="inner-headline">
+			<ed:container>
+				<ed:row classStyle="form">
+					<ed:col size="4">
+						<c:if test="${empty plugins.ediacaran.front.image_logo}">
+							<h1>${plugins.ediacaran.front.text_logo}</h1>
+						</c:if>
+						<c:if test="${!empty plugins.ediacaran.front.image_logo}">
+							<ec:image src="${plugins.ediacaran.front.image_logo}"/>
+						</c:if>
+						<%--
+						<div class="inner-heading">
+							<h2><fmt:message key="header.title" bundle="${messages}"/></h2>
+						</div>
+						--%>
+					</ed:col>
+					<ed:col size="8">
+						<ec:breadcrumb title="#{header.title}" bundle="${messages}">
+							<ec:breadcrumb-path 
+								icon="home" 
+								text="" 
+								lnk="${plugins.ediacaran.sales.web_path}"/>
+						</ec:breadcrumb>
+					</ed:col>
+				</ed:row>
+			</ed:container>
+		</section>
+	</div>
 
 	<ec:data-table id="search_form" action="${plugins.ediacaran.sales.web_path}/products/search">
 		<ec:sidebar-group id="pageBody" show="true">
