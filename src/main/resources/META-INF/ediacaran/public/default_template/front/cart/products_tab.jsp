@@ -16,7 +16,7 @@
 <ed:row>
 	<ed:col>
 		<div id="result-checkout" class="result-check"></div>
-		<ec:button id="checkout_page_button" align="right" actionType="button" label="#{checkout.label}" bundle="${messages}">
+		<ec:button id="checkout_page_button" align="right" style="default" actionType="button" label="#{checkout.label}" bundle="${messages}">
 			<ec:event type="click">
 				location.href = '${plugins.ediacaran.sales.web_path}/cart/checkout';
 			</ec:event>

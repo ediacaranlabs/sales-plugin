@@ -26,23 +26,21 @@
 	
 	<section class="inner-headline">
 		<ed:container>
-			<ed:row>
-				<ed:col size="4">
+			<ed:row style="form">
+				<ed:col size="12">
 					<div class="inner-heading">
-						<ed:row>
-							<h2><fmt:message key="cart_review.title" bundle="${messages}"/></h2>
-						</ed:row>
+						<ec:left><h4><fmt:message key="cart_review.title" bundle="${messages}"/></h4></ec:left>
+						<ec:right>
+							<ec:breadcrumb title="#{cart_review.title}" bundle="${messages}">
+								<ec:breadcrumb-path icon="home" text="" lnk="/" />
+							</ec:breadcrumb>
+						</ec:right>
 					</div>
-				</ed:col>
-				<ed:col size="8">
-					<ec:breadcrumb title="#{cart_review.title}" bundle="${messages}">
-						<ec:breadcrumb-path icon="home" text="" lnk="/" />
-					</ec:breadcrumb>
 				</ed:col>
 			</ed:row>
 		</ed:container>
 	</section>
-
+	
 	<section>
 		<ed:container>
 			<ed:row>

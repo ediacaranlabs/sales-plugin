@@ -13,38 +13,6 @@
 <ec:include uri="/includes/head.jsp"/>
 <style type="text/css">
 
-.top {
-	background: linear-gradient(-180deg, #313030, #5b5b5b);
-}
-
-.inner-headline {
-	padding-top: 0em;
-	padding-bottom: 3em;
-	background: linear-gradient(-180deg, #313030, #5b5b5b);
-}
-
-#top_menu{
-	padding: 0px 0px;
-	/*background-color: #252525;*/
-	background: #313030;
-}
-
-#top_menu .nav-link {
-    text-transform: capitalize;
-}
-
-#top_menu a{
-	color: #FFFFFF;
-}
-
-.navbar-brand{
-	display: none;
-} 
-
-.box-body {
-	min-height: 120px !important;
-}
-
 @media screen and (min-width: 1200px) {
     .sidebar-group .sidebar-content {
         margin-left: 350px;
@@ -57,15 +25,6 @@
 
 .sidebar-group:not(.show) .sidebar {
     margin-left: -350px;
-}
-
-.btn-default {
-    background-color: #e9ecef;;
-    border-color: #ced4da;
-}
-
-.btn-default .fa:not([class*="fa-inverse"]) {
-    color: #000000;
 }
 
 .navbar-toggler .fa:not([class*="fa-inverse"]) {
@@ -120,37 +79,6 @@
 	color: red;
 }
 
-.product {
-	border: 1px solid #f5f5f5;
-	display: inline-grid;
-	border-radius: 4px;
-	padding: 1em 1em;
-}
-
-.product  a{
-	color: #000000;
-	text-decoration: none;
-}
-
-.product  a:hover {
-	color: inherit;
-	text-decoration: none;
-}
-
-.product .image img {
-	max-height: 220px;
-	aspect-ratio: 1/1;
-}
-
-.product .title {
-	font-size: 16px;
-    line-height: 24px;
-}
-
-.product .price {
-	font-size: 28px;
-}
-    
 .filter_group .card-body {
 	max-height: 300px;
 	overflow-y: auto;
@@ -182,12 +110,6 @@
 	padding-bottom: 0.3rem;
 }
 
-.form {
-  height: 50px;
-  display: flex;
-  align-items: center;
-}
-
 </style>
 <title><fmt:message key="header.title" bundle="${messages}"/></title>
 </head>
@@ -201,29 +123,22 @@
 	</script>
 
 	<ec:include uri="/includes/header.jsp"/>
+	
 	<section class="inner-headline">
 		<ed:container>
-			<ed:row classStyle="form">
-				<ed:col size="4">
-					<c:if test="${empty plugins.ediacaran.front.image_logo}">
-						<h1>${plugins.ediacaran.front.text_logo}</h1>
-					</c:if>
-					<c:if test="${!empty plugins.ediacaran.front.image_logo}">
-						<ec:image src="${plugins.ediacaran.front.image_logo}"/>
-					</c:if>
-					<%--
+			<ed:row style="form">
+				<ed:col size="12">
 					<div class="inner-heading">
-						<h2><fmt:message key="header.title" bundle="${messages}"/></h2>
+						<ec:left><h4><fmt:message key="header.title" bundle="${messages}"/></h4></ec:left>
+						<ec:right>
+							<ec:breadcrumb title="#{header.title}" bundle="${messages}">
+								<ec:breadcrumb-path 
+									icon="home" 
+									text="" 
+									lnk="${plugins.ediacaran.sales.web_path}"/>
+							</ec:breadcrumb>
+						</ec:right>
 					</div>
-					--%>
-				</ed:col>
-				<ed:col size="8">
-					<ec:breadcrumb title="#{header.title}" bundle="${messages}">
-						<ec:breadcrumb-path 
-							icon="home" 
-							text="" 
-							lnk="${plugins.ediacaran.sales.web_path}"/>
-					</ec:breadcrumb>
 				</ed:col>
 			</ed:row>
 		</ed:container>

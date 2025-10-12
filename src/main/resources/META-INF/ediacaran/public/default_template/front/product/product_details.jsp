@@ -48,24 +48,24 @@
 	
 	<section class="inner-headline">
 		<ed:container>
-			<ed:row>
-				<ed:col size="4">
+			<ed:row style="form">
+				<ed:col size="12">
 					<div class="inner-heading">
-						<h2>${entity.name}</h2>
+						<ec:left><h4>${entity.name}</h4></ec:left>
+						<ec:right>
+							<ec:breadcrumb title="${entity.name}">
+								<ec:breadcrumb-path 
+									icon="home" 
+									text="" 
+									lnk="${plugins.ediacaran.sales.web_path}" />
+								<ec:breadcrumb-path 
+									text="#{header.breadcrumb.parent}" 
+									lnk="${plugins.ediacaran.sales.web_path}/products"
+									bundle="${messages}"
+									/>
+							</ec:breadcrumb>
+						</ec:right>
 					</div>
-				</ed:col>
-				<ed:col size="8">
-					<ec:breadcrumb title="${entity.name}">
-						<ec:breadcrumb-path 
-							icon="home" 
-							text="" 
-							lnk="${plugins.ediacaran.sales.web_path}" />
-						<ec:breadcrumb-path 
-							text="#{header.breadcrumb.parent}" 
-							lnk="${plugins.ediacaran.sales.web_path}/products"
-							bundle="${messages}"
-							/>
-					</ec:breadcrumb>
 				</ed:col>
 			</ed:row>
 		</ed:container>
@@ -151,6 +151,7 @@
 						<ec:button 
 							label="#{form.add_cart.label}" 
 							align="right"
+							style="default"
 							bundle="${messages}">
 							<ec:event type="click">
 								location.href = '${plugins.ediacaran.sales.web_path}/cart/add/${entity.protectedID}'; 
