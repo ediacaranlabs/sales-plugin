@@ -12,6 +12,16 @@
     color: #000000;
 }
 
+.btn-primary, .btn-primary:hover, .btn-primary:active {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #212529;
+}
+
+.btn-primary .fa:not([class*="fa-inverse"]) {
+    color: #000000;
+}
+
 header {
 	background: #f53d2d;
 }
@@ -110,6 +120,20 @@ header {
 }
 
 #top_menu a{
+	color: #FFFFFF;
+}
+
+#panel_menu{
+	padding: 0px 0px;
+	/*background-color: #252525;*/
+	background: transparent;
+}
+
+#panel_menu .nav-link {
+    text-transform: capitalize;
+}
+
+#panel_menu a{
 	color: #FFFFFF;
 }
 
