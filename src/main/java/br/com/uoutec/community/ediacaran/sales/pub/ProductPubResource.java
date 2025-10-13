@@ -25,11 +25,9 @@ import org.brandao.brutos.web.WebResultAction;
 import org.brandao.brutos.web.WebResultActionImp;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchResult;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductCategoryPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductsSimplifiedSearchResultPubEntity;
@@ -62,28 +60,33 @@ public class ProductPubResource {
 	@Inject
 	private ProductViewerRegistry productViewerRegistry;
 	
-	@Action({"/","/category/{productCategory.protectedID}"})
+	@Action({"/","/category/{category}"})
+	@RequestMethod({"POST", "GET"})
 	public WebResultAction index(
-			@Basic(bean = "productCategory")
-			ProductCategoryPubEntity productCategoryPubEntity,
+			@DetachedName
+			ProductSearchPubEntity productSearch,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 			) {
 		
-		ProductCategory productCategory = null;
+		ProductSearch search = null;
 
 		try {
-			if(productCategoryPubEntity != null) {
-				productCategory = productCategoryPubEntity.rebuild(true, false, true);
+			
+			if(productSearch == null) {
+				productSearch = new ProductSearchPubEntity();
 			}
+			
+			search = productSearch.rebuild(false, true, false);
 		}
 		catch(Throwable ex) {
+			search = new ProductSearch();
 		}
 		
 		try {
 			WebResultAction ra = new WebResultActionImp();
 			ra.setView("${plugins.ediacaran.sales.template}/front/product/search");
-			ra.add("category", productCategory);
+			ra.add("productSearch", search);
 			return ra;
 		}
 		catch(Throwable ex) {

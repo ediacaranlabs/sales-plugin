@@ -155,19 +155,16 @@
 	    				<ed:row>
 	    					<ed:col>
 								<!-- start search form  -->
-								<%--
-			    				<ed:row id="filter_toggler">
-			    					<ed:col>
+								<ed:row>
+									<ed:col size="12">
+										<input type="hidden" name="name" value="${productSearch.name}">
+										<input type="hidden" name="category" value="${productSearch.category.protectedID}">
+										<input type="hidden" name="resultPerPage" value="9">
 						 				<ec:menu-toggler menuID="pageBody">
 											<ec:icon icon="bars" size="1" />
 										</ec:menu-toggler>
-			    					</ed:col>
-			    				</ed:row>
-			    				--%>
-								<ed:row>
-									<ed:col size="12">
-										<input type="hidden" name="category" value="${category.protectedID}">
-										<input type="hidden" name="resultPerPage" value="9">
+										
+										<%--
 										<ec:field-group>
 											<ec:prepend-field id="filter_toggler">
 												<ec:prepend-field-item>
@@ -181,7 +178,7 @@
 											<ec:textfield 
 												name="name" 
 												placeholder="#{search.placeholder}" 
-												value="${text}"
+												value="${name}"
 												bundle="${messages}"/>
 											<ec:append-field>
 												<ec:button 
@@ -189,15 +186,9 @@
 													icon="search"
 													style="default" 
 													bundle="${messages}"/>
-												<%--
-												<ec:button 
-													actionType="submit" 
-													icon="search" 
-													label="#{search.button}"
-													bundle="${messages}"/>
-												--%>
 											</ec:append-field>
 										</ec:field-group>
+										--%>
 									</ed:col>
 								</ed:row>
 			    				<span style="display:none" id="filters">

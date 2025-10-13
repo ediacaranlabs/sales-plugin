@@ -84,7 +84,7 @@
 		</ec:menu-bar>
 		<section class="inner-headline top-header">
 			<ed:container>
-				<form action="${plugins.ediacaran.sales.web_path}/products/search" method="post">
+				<form action="${plugins.ediacaran.sales.web_path}/products/" method="post">
 					<ed:row classStyle="form">
 						<ed:col size="2">
 							<c:if test="${empty plugins.ediacaran.front.image_logo}">
@@ -100,7 +100,7 @@
 									<ec:field-group>
 										<ec:textfield 
 											name="name" 
-											value="${text}"
+											value="${productSearch.name}"
 											bundle="${messages}"/>
 										<ec:append-field>
 											<ec:button 
