@@ -319,25 +319,22 @@ public class Product implements Serializable {
 		return 
 			cost == null || currency == null? 
 					"" :
-					CurrencyUtil.toString(currency, getValue());
-					//getSymbol() + " " + getValue().setScale(2, BigDecimal.ROUND_UNNECESSARY);
-					//currency + " " + cost.setScale(2, BigDecimal.ROUND_UNNECESSARY);
-					//DecimalFormat.getCurrencyInstance(locale).format(cost.setScale(2, BigDecimal.ROUND_UNNECESSARY));
+					CurrencyUtil.toString(getCurrencyValue(), getValue());
 	}
 
 	public String[] getCostPartsString(Locale locale) {
 		return 
 			cost == null || currency == null? 
 					new String[] {"","",""} :
-					CurrencyUtil.toStringArray(currency, getValue());
+					CurrencyUtil.toStringArray(getCurrencyValue(), getValue());
 	}
 	
 	public String getDisplayValue() {
-		return CurrencyUtil.toString(currency, getValue());
+		return CurrencyUtil.toString(getCurrencyValue(), getValue());
 	}
 	
 	public String getSymbol() {
-		return CurrencyUtil.getSymbol(currency);
+		return CurrencyUtil.getSymbol(getCurrencyValue());
 	}
 	
 	public String getTagsString() {
@@ -347,9 +344,37 @@ public class Product implements Serializable {
 	public BigDecimal getOrigialValue() {
 		return cost;
 	}
+
+	public BigDecimal getDiscount() {
+		
+		if(hasDiscount()) {
+			BigDecimal value = exchangeRate == null? cost : cost.multiply(exchangeRate);
+			return offerDiscount.divide(new BigDecimal(100)).multiply(value);
+		}
+		
+		return BigDecimal.ZERO;
+	}
 	
 	public BigDecimal getValue() {
-		return exchangeRate == null? cost : cost.multiply(exchangeRate);
+		return getValue(true);
+	}
+	
+	public String getCurrencyValue() {
+		return exchangeRate == null? currency : exchangeCurrency;
+	}
+	
+	public BigDecimal getValue(boolean withDiscount) {
+		BigDecimal value = exchangeRate == null? cost : cost.multiply(exchangeRate);
+		
+		if(withDiscount) {
+			value = value.subtract(getDiscount());
+		}
+		
+		return value;
+	}
+
+	public boolean hasDiscount() {
+		return offerDate != null && offerDiscount.doubleValue() > 0  && offerDate.isAfter(LocalDate.now());
 	}
 	
 	public ProductCategory getCategory() {
@@ -435,8 +460,16 @@ public class Product implements Serializable {
 		return name == null? null : ProductUtil.getPublicID(this);
 	}
 	
-	public ProductCurrency getProductCurrency() {
-		return new ProductCurrency(getCurrency(), getValue());
+	public ProductPrice getProductValue(boolean withDiscount) {
+		return new ProductPrice(getCurrencyValue(), getValue(withDiscount));
+	}
+	
+	public ProductPrice getProductValue() {
+		return getProductValue(true);
+	}
+
+	public ProductPrice getProductDiscount() {
+		return new ProductPrice(getCurrencyValue(), getDiscount());
 	}
 	
 	public Object getAttribute(String code) {

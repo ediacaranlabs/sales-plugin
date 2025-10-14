@@ -13,6 +13,7 @@
 <ec:include uri="/includes/head.jsp"/>
 <style type="text/css">
 
+
 @media screen and (min-width: 1200px) {
     .sidebar-group .sidebar-content {
         margin-left: 350px;
@@ -38,7 +39,6 @@
 }
 
 #detachedFilters{
-	/*border-right: 1px solid #dcdcdc;*/
 	height: 100%;
 	padding-left: 1.5rem;
 	padding-right: 1.5rem;
@@ -95,8 +95,6 @@
 }
 
 .filter_title {
-	/*color: #acacac;*/
-	/*text-transform: uppercase;*/
 	font-weight: bold;
 }
 
@@ -123,7 +121,7 @@
 	</script>
 
 	<ec:include uri="/includes/header.jsp"/>
-	
+
 	<section class="inner-headline">
 		<ed:container>
 			<ed:row style="form">
@@ -164,31 +162,6 @@
 											<ec:icon icon="bars" size="1" />
 										</ec:menu-toggler>
 										
-										<%--
-										<ec:field-group>
-											<ec:prepend-field id="filter_toggler">
-												<ec:prepend-field-item>
-												
-									 				<ec:menu-toggler menuID="pageBody">
-														<ec:icon icon="bars" size="1" />
-													</ec:menu-toggler>
-												
-												</ec:prepend-field-item>
-											</ec:prepend-field>
-											<ec:textfield 
-												name="name" 
-												placeholder="#{search.placeholder}" 
-												value="${name}"
-												bundle="${messages}"/>
-											<ec:append-field>
-												<ec:button 
-													actionType="submit" 
-													icon="search"
-													style="default" 
-													bundle="${messages}"/>
-											</ec:append-field>
-										</ec:field-group>
-										--%>
 									</ed:col>
 								</ed:row>
 			    				<span style="display:none" id="filters">
@@ -228,8 +201,6 @@
 										</script>
 										<ec:forEach items="!{response.itens}" var="item">
 											<ed:col size="3">
-												<%--<ec:box classStyle="product">
-													<ec:box-body>--%>
 													<span class="product">
 														<ed:row style="form">
 															<ed:col size="12">
@@ -246,7 +217,10 @@
 														<ed:row>
 															<ed:col size="12">
 																<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
-																!{item.productCurrency.symbol}<span class="price">!{item.productCurrency.wholeNumberString}</span>!{item.productCurrency.fractionalPartString}<br>
+																<ec:if test="!{item.hasDiscount}">
+																	<span class="discount">!{item.productValueWithoutDiscount.symbol}!{item.productValueWithoutDiscount.wholeNumberString}!{item.productValueWithoutDiscount.fractionalPartString}</span><br>
+																</ec:if>
+																!{item.productValue.symbol}<span class="price">!{item.productValue.wholeNumberString}</span>!{item.productValue.fractionalPartString}<br>
 															</ed:col>
 														</ed:row>
 														<ed:row>
@@ -265,8 +239,6 @@
 														</ed:row>
 														
 													</span>
-													<%--</ec:box-body>
-												</ec:box>--%>
 											</ed:col>
 										</ec:forEach>
 									</ed:row>
@@ -344,7 +316,6 @@
 			<ec:forEach items="!{response.filters}" var="group">
 				<span formgroup="filters" formgrouptype="index" class="filter_group">
 					<input type="hidden" name="protectedID" value="!{group.protectedID}">
-					<%--<span class="group_title">!{group.title}</span><br>--%>
 					<ec:forEach items="!{group.filters}" var="filter">
 						<span formgroup="filters" formgrouptype="index" class="filter">
 							<input type="hidden" name="protectedID" value="!{filter.protectedID}">

@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,6 +16,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
+import br.com.uoutec.community.ediacaran.sales.entity.TaxType;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -171,6 +174,25 @@ public class CartRegistryImp
 		ProductTypeHandler productTypeHandler = productType.getHandler();
 		
 		ProductRequest productRequest = new ProductRequest();
+		
+		if(product.hasDiscount()) {
+			
+			if(productRequest.getTaxes() == null) {
+				productRequest.setTaxes(new ArrayList<>());
+			}
+			
+			Tax discountTax = new Tax();
+			discountTax.setCurrency(product.getCurrency());
+			discountTax.setDiscount(true);
+			discountTax.setExchangeCurrency(product.getExchangeCurrency());
+			discountTax.setExchangeRate(product.getExchangeRate());
+			discountTax.setType(TaxType.PERCENTAGE);
+			discountTax.setId("discount");
+			discountTax.setName("Product discount");
+			discountTax.setValue(product.getOfferDiscount());
+			productRequest.getTaxes().add(discountTax);
+		}
+		
 		productRequest.setAvailability(true);
 		productRequest.setAddData(addData);
 		productRequest.setCost(product.getCost());

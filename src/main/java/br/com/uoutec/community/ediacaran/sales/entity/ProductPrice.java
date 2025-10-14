@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 
-public class ProductCurrency implements Serializable {
+public class ProductPrice implements Serializable {
 
 	private static final long serialVersionUID = -236635229202714493L;
 
@@ -27,7 +27,7 @@ public class ProductCurrency implements Serializable {
 
 	private BigDecimal value;
 	
-	public ProductCurrency(String currency, BigDecimal value) {
+	public ProductPrice(String currency, BigDecimal value) {
 		this.currency = currency;
 		this.symbol = CurrencyUtil.getSymbol(currency);
 		this.wholeNumber = value.setScale(0, BigDecimal.ROUND_UNNECESSARY);

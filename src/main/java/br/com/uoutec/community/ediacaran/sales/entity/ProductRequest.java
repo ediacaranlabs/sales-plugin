@@ -176,6 +176,10 @@ public class ProductRequest implements Serializable {
 		this.exchangeCurrency = exchangeCurrency;
 	}
 
+	public ProductPrice getProductValue() {
+		return new ProductPrice(getCurrencyValue(), getValue());
+	}
+	
 	public BigDecimal getCost() {
 		return cost;
 	}
@@ -247,9 +251,17 @@ public class ProductRequest implements Serializable {
 	public BigDecimal getOrigialValue() {
 		return cost;
 	}
+
+	public String getCurrencyValue() {
+		return exchangeRate == null? currency : exchangeCurrency;
+	}
 	
 	public BigDecimal getValue() {
 		return exchangeRate == null? cost : cost.multiply(exchangeRate);
+	}
+	
+	public ProductPrice getProductSubtotal() {
+		return new ProductPrice(getCurrencyValue(), getSubtotal());
 	}
 	
 	public BigDecimal getSubtotal(){

@@ -71,7 +71,10 @@
 							<ed:row>
 								<ed:col size="12">
 									<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">${item.name}</a></span><br>
-									${item.productCurrency.symbol}<span class="price">${item.productCurrency.wholeNumberString}</span>${item.productCurrency.fractionalPartString}<br>
+									<c:if test="${item.hasDiscount()}">
+										<span class="discount">${item.getProductValue(false)}</span><br>
+									</c:if>
+									${item.productValue.symbol}<span class="price">${item.productValue.wholeNumberString}</span>${item.productValue.fractionalPartString}<br>
 								</ed:col>
 							</ed:row>
 							<ed:row>
@@ -122,7 +125,10 @@
 							<ed:row>
 								<ed:col size="12">
 									<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">${item.name}</a></span><br>
-									${item.productCurrency.symbol}<span class="price">${item.productCurrency.wholeNumberString}</span>${item.productCurrency.fractionalPartString}<br>
+									<c:if test="${item.hasDiscount()}">
+										<span class="discount">${item.getProductValue(false).symbol}${item.getProductValue(false).wholeNumberString}${item.getProductValue(false).fractionalPartString}</span><br>
+									</c:if>
+									${item.productValue.symbol}<span class="price">${item.productValue.wholeNumberString}</span>${item.productValue.fractionalPartString}<br>
 								</ed:col>
 							</ed:row>
 							<ed:row>

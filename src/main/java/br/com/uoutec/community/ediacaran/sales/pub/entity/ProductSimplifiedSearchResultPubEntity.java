@@ -6,7 +6,7 @@ import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductCurrency;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductPrice;
 
 public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 
@@ -18,7 +18,11 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 	
 	private String cost;
 
-	private ProductCurrency productCurrency;
+	private Boolean hasDiscount;
+	
+	private ProductPrice productValue;
+	
+	private ProductPrice productValueWithoutDiscount;
 	
 	private String tags;
 	
@@ -29,7 +33,9 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 	public ProductSimplifiedSearchResultPubEntity(Product e, Locale locale){
 		super(e, locale);
 		this.thumbnail = e.getPublicThumb();
-		this.productCurrency = e.getProductCurrency();
+		this.hasDiscount = e.hasDiscount();
+		this.productValue = e.getProductValue();
+		this.productValueWithoutDiscount = e.getProductValue(false);
 		this.cost = e.getCostString(locale);
 		this.tags = null;
 		this.publicID = e.getPublicID();
@@ -49,12 +55,28 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 		return cost;
 	}
 
-	public ProductCurrency getProductCurrency() {
-		return productCurrency;
+	public Boolean getHasDiscount() {
+		return hasDiscount;
 	}
 
-	public void setProductCurrency(ProductCurrency productCurrency) {
-		this.productCurrency = productCurrency;
+	public void setHasDiscount(Boolean hasDiscount) {
+		this.hasDiscount = hasDiscount;
+	}
+
+	public ProductPrice getProductValue() {
+		return productValue;
+	}
+
+	public void setProductValue(ProductPrice productValue) {
+		this.productValue = productValue;
+	}
+
+	public ProductPrice getProductValueWithoutDiscount() {
+		return productValueWithoutDiscount;
+	}
+
+	public void setProductValueWithoutDiscount(ProductPrice productValueWithoutDiscount) {
+		this.productValueWithoutDiscount = productValueWithoutDiscount;
 	}
 
 	@Transient

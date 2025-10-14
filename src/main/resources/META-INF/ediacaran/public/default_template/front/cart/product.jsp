@@ -73,7 +73,7 @@
 					</ed:col>
 					<ed:col id="cart_item_value_${step.index}">
 						<ec:center>
-							${productRequest.product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+							${productRequest.productSubtotal}
 						</ec:center>
 					</ed:col>
 					<ed:col id="cart_item_description_${step.index}">
@@ -151,7 +151,7 @@
 			</ed:col>
 			<ed:col id="cart_item_value_${step.index}"  size="2">
 				<ec:center>
-						${productRequest.product.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${productRequest.subtotal}"/>
+					${productRequest.productSubtotal}
 				</ec:center>
 			</ed:col>
 			<ed:col id="cart_item_description_${step.index}"  size="1">

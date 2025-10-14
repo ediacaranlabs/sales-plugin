@@ -6,6 +6,8 @@
 <%@page trimDirectiveWhitespaces="true" %>
 
 <ec:setBundle var="messages" locale="${locale}"/>
+<!DOCTYPE html>
+<html>
 
 <head>
 <meta charset="utf-8">
@@ -32,30 +34,31 @@ $.AppContext.onload(function(){
 });
 </script>
 </head>
+<body>
 
 	<ec:include uri="/includes/header.jsp"/>
 	
+
 	<section class="inner-headline">
 		<ed:container>
-			<ed:row>
-				<ed:col size="4">
+			<ed:row style="form">
+				<ed:col size="12">
 					<div class="inner-heading">
-						<ed:row>
-							<h2><fmt:message key="cart_review.title" bundle="${messages}"/></h2>
-						</ed:row>
+						<ec:left><h4><fmt:message key="cart_review.title" bundle="${messages}"/></h4></ec:left>
+						<ec:right>
+							<ec:breadcrumb title="#{cart_review.title}" bundle="${messages}">
+								<ec:breadcrumb-path icon="home" text="" lnk="/" />
+								<ec:breadcrumb-path text="#{cart_review.back.title}" lnk="${plugins.ediacaran.sales.web_path}/cart" bundle="${messages}"/>
+							</ec:breadcrumb>
+						</ec:right>
 					</div>
-				</ed:col>
-				<ed:col size="8">
-					<ec:breadcrumb title="#{cart_review.title}" bundle="${messages}">
-						<ec:breadcrumb-path icon="home" text="" lnk="/" />
-						<ec:breadcrumb-path text="#{cart_review.back.title}" lnk="${plugins.ediacaran.sales.web_path}/cart" bundle="${messages}"/>
-					</ec:breadcrumb>
 				</ed:col>
 			</ed:row>
 		</ed:container>
 	</section>
 
-	<section>
+	
+	<section class="content">
 		<ed:container>
 			<ed:row>
 				<ed:col size="9">
@@ -100,7 +103,6 @@ $.AppContext.onload(function(){
 			</ed:row>		
 		</ed:container>
 	</section>
-
 
 	<ec:include uri="/includes/footer.jsp"/>
  

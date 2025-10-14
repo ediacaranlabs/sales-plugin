@@ -80,6 +80,10 @@ header {
 	padding: 1em 1em;
 }
 
+.product .discount, .discount {
+	text-decoration: line-through;
+}
+
 .product  a{
 	color: #000000;
 	text-decoration: none;
