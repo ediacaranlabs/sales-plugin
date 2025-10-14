@@ -212,7 +212,7 @@
 				<ec:field-validator>
 					<ec:field-validator-rule name="regexp"
 						message="Invalid percent format" bundle="${messages}">
-						<ec:field-validator-param name="regexp" raw="true">/^[0-9]{1,3}$/</ec:field-validator-param>
+						<ec:field-validator-param name="regexp" raw="true">/^[0-9]{1,3}(\.[0-9]{2,2})?$/</ec:field-validator-param>
 					</ec:field-validator-rule>
 					<ec:field-validator-rule name="between" 
 						message="Invalid percent value" bundle="${messages}">
@@ -230,7 +230,7 @@
 	<ed:col size="3" classStyle="form-group has-feedback">
 		<ec:dateField label="Offer Date" 
 			name="offerDate" 
-			value="${vars.entity.offerDate}"
+			value="${vars.entity.getOfferDateString(null)}"
 			readonly="${!pageContext.request.userPrincipal.isGrantedPermission('SALES:PRODUCT:FIELDS:OFFER_DATE')}"/>
 	</ed:col>
 	

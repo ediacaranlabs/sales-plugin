@@ -79,11 +79,14 @@ public class SelectProductOfferPortalExecutorService
 
 			for(Product p: list) {
 
-				if(p.getOfferDiscount() == null || p.getOfferDiscount().doubleValue() == 0) {
+				double offerDiscount = p.getOfferDiscount() == null? 0 : p.getOfferDiscount().doubleValue();
+				LocalDate offerDate = p.getOfferDate();
+				
+				if(offerDate == null || offerDiscount <= 0) {
 					continue;
 				}
-
-				if(p.getOfferDate() == null || p.getOfferDate().isAfter(LocalDate.now())) {
+				
+				if(LocalDate.now().isAfter(offerDate)) {
 					continue;
 				}
 				

@@ -3,6 +3,8 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +37,7 @@ import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
+import br.com.uoutec.i18n.MessageBundleThread;
 import br.com.uoutec.i18n.ValidationException;
 
 public class Product implements Serializable {
@@ -393,6 +396,25 @@ public class Product implements Serializable {
 		return offerDate;
 	}
 
+	public String getOfferDateString(Locale locale) {
+		
+		if(offerDate == null) {
+			return null;
+		}
+		
+		DateTimeFormatter dateTimeFormatter;
+		
+		if(locale != null) {
+			dateTimeFormatter = 
+					DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(MessageBundleThread.getLocale());			
+		}
+		else {
+			dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;			
+		}
+		
+		return offerDate.format(dateTimeFormatter);
+	}
+	
 	public void setOfferDate(LocalDate offerDate) {
 		this.offerDate = offerDate;
 	}
