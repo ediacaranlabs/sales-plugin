@@ -92,7 +92,7 @@
 						<c:if test="${entity.hasDiscount()}">
 							<h5><span class="discount">${entity.getProductValue(false)}</span></h5>
 						</c:if>
-						<h4>${entity.getCostString(locale)}</h4>
+						<h4>${entity.getValueString(locale)}</h4>
 						<c:if test="${images.size() > 0}">
 							<ec:carousel id="produc_images">
 								<c:forEach items="${images}" var="image">

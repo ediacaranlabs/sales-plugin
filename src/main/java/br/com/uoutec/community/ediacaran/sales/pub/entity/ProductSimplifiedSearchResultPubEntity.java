@@ -16,8 +16,10 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 	
 	private String publicID;
 	
-	private String cost;
+	private String value;
 
+	private String valueWithoutDiscount;
+	
 	private Boolean hasDiscount;
 	
 	private ProductPrice productValue;
@@ -36,7 +38,8 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 		this.hasDiscount = e.hasDiscount();
 		this.productValue = e.getProductValue();
 		this.productValueWithoutDiscount = e.getProductValue(false);
-		this.cost = e.getCostString(locale);
+		this.value = e.getValueString(locale);
+		this.valueWithoutDiscount = e.getValueString(locale, false);
 		this.tags = null;
 		this.publicID = e.getPublicID();
 		super.setShortDescription(super.getShortDescription() == null? null : (super.getShortDescription().length() > 128? super.getShortDescription().substring(0, 128) + " ..." : super.getShortDescription())  );
@@ -51,8 +54,20 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 		this.thumbnail = thumbnail;
 	}
 
-	public String getCostString() {
-		return cost;
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String getValueWithoutDiscount() {
+		return valueWithoutDiscount;
+	}
+
+	public void setValueWithoutDiscount(String valueWithoutDiscount) {
+		this.valueWithoutDiscount = valueWithoutDiscount;
 	}
 
 	public Boolean getHasDiscount() {
@@ -77,11 +92,6 @@ public class ProductSimplifiedSearchResultPubEntity extends ProductPubEntity {
 
 	public void setProductValueWithoutDiscount(ProductPrice productValueWithoutDiscount) {
 		this.productValueWithoutDiscount = productValueWithoutDiscount;
-	}
-
-	@Transient
-	public void setCostString(String cost) {
-		this.cost = cost;
 	}
 
 	public String getTagsString() {

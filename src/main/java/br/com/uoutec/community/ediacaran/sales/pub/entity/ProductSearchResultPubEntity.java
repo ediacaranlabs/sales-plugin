@@ -24,7 +24,7 @@ public class ProductSearchResultPubEntity extends ProductPubEntity{
 	public ProductSearchResultPubEntity(Product e, Locale locale){
 		super(e, locale);
 		this.thumbnail = e.getPublicThumb();
-		this.cost = e.getCostString(locale);
+		this.cost = e.getValueString(locale);
 		this.tags = e.getTagsString();
 	}
 

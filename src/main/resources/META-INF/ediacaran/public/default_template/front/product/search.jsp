@@ -28,14 +28,14 @@
     margin-left: -350px;
 }
 
-.navbar-toggler .fa:not([class*="fa-inverse"]) {
-    color: #000000;
-}
-
 #content-body{
 	padding-left: 1em;
 	padding-right: 1em;
 	background-color: #fcfcfc;
+}
+
+#pageBody{
+	min-height: 600px;
 }
 
 #detachedFilters{
@@ -43,10 +43,6 @@
 	padding-left: 1.5rem;
 	padding-right: 1.5rem;
 	background-color: #fcfcfc;
-}
-
-#pageBody{
-	min-height: 600px;
 }
 
 #filter_toggler button{
@@ -218,7 +214,7 @@
 															<ed:col size="12">
 																<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
 																<ec:if test="!{item.hasDiscount}">
-																	<span class="discount">!{item.productValueWithoutDiscount.symbol}!{item.productValueWithoutDiscount.wholeNumberString}!{item.productValueWithoutDiscount.fractionalPartString}</span><br>
+																	<span class="discount">!{item.valueWithoutDiscount}</span><br>
 																</ec:if>
 																!{item.productValue.symbol}<span class="price">!{item.productValue.wholeNumberString}</span>!{item.productValue.fractionalPartString}<br>
 															</ed:col>

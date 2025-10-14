@@ -315,11 +315,15 @@ public class Product implements Serializable {
 		this.tags = tags;
 	}
 
-	public String getCostString(Locale locale) {
+	public String getValueString(Locale locale) {
+		return getValueString(locale, true);
+	}
+	
+	public String getValueString(Locale locale, boolean withDiscount) {
 		return 
 			cost == null || currency == null? 
 					"" :
-					CurrencyUtil.toString(getCurrencyValue(), getValue());
+					CurrencyUtil.toString(getCurrencyValue(), getValue(withDiscount));
 	}
 
 	public String[] getCostPartsString(Locale locale) {
