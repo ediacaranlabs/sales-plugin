@@ -2,6 +2,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
+<ec:setBundle var="messages" locale="${locale}"/>
 <!DOCTYPE html>
 <html>
 
@@ -9,7 +10,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <ec:include uri="/includes/head.jsp"/>
-<title>Product Plugin - Ediacaran application</title>
+<title>${plugins.ediacaran.sales.portal_title}</title>
 </head>
 
 <body>
@@ -30,7 +31,7 @@
 	<c:if test="${!empty vars.categories}">
 	<section class="body">
 		<ed:container>
-			<h3>Categorias</h3>
+			<h3><fmt:message key="sections.categories" bundle="${messages}" /></h3>
 			<ec:carousel>
 				<c:forEach items="${vars.categories}" var="category">
 					<ec:carousel-item>
@@ -50,7 +51,7 @@
 	<c:if test="${!empty vars.offers}">
 	<section class="body">
 		<ed:container>
-			<h3>Offers</h3>
+			<h3><fmt:message key="sections.offers" bundle="${messages}" /></h3>
 			
 			<ed:row>
 				<c:forEach items="${vars.offers}" var="item">
@@ -80,7 +81,7 @@
 							<ed:row>
 								<ed:col size="12">
 									<ec:button 
-										label="Add cart" 
+										label="#{cart.add_button}" 
 										align="right"
 										size="small"
 										style="default"
@@ -104,7 +105,7 @@
 	<c:if test="${!empty vars.products}">
 	<section class="body">
 		<ed:container>
-			<h3>Products</h3>
+			<h3><fmt:message key="sections.products" bundle="${messages}" /></h3>
 			
 			<ed:row>
 				<c:forEach items="${vars.products}" var="item">
@@ -134,7 +135,7 @@
 							<ed:row>
 								<ed:col size="12">
 									<ec:button 
-										label="Add cart" 
+										label="#{cart.add_button}" 
 										align="right"
 										size="small"
 										style="default"

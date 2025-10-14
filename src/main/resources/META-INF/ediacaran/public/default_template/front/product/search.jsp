@@ -252,7 +252,7 @@
 
 	<ec:template var="response" id="filterTemplate">
 		<ec:if test="!{response.categories.length > 0}">
-			<b>Categories</b>
+			<b><fmt:message key="filters.category.title" bundle="${messages}" /></b>
 			<hr>
 			<ed:row>
 				<ed:col id="category_filter">
@@ -290,7 +290,7 @@
 					</ec:forEach>
 					
 					<span class="filter_clear !{response.selectedCategory != ''? 'show' : '' }">
-						<a id="cat_clear" class="filter_option" href="#">Remove filter</a><br>
+						<a id="cat_clear" class="filter_option" href="#"><fmt:message key="filters.category.remove_button" bundle="${messages}" /></a><br>
 						<ec:event componentName="cat_clear" type="click">
 								let $form = $.AppContext.utils.getById('search_form');
 								let $categoryField = $form.getField('category');
