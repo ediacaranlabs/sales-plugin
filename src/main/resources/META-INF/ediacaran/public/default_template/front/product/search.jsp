@@ -129,7 +129,7 @@
 								<ec:breadcrumb-path 
 									icon="home" 
 									text="" 
-									lnk="${plugins.ediacaran.sales.web_path}"/>
+									lnk="${plugins.ediacaran.sales.web_path}/"/>
 							</ec:breadcrumb>
 						</ec:right>
 					</div>

@@ -16,6 +16,8 @@ import org.brandao.brutos.annotation.Transient;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductCategory;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductSearchFilter;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
 public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
@@ -84,9 +86,10 @@ public class ProductSearchPubEntity extends AbstractPubEntity<ProductSearch> {
 		o.setDisplay(display);
 		
 		if(this.category != null) {
+			ProductCategoryRegistry productCategoryRegistry = EntityContextPlugin.getEntity(ProductCategoryRegistry.class);
 			ProductCategory c = new ProductCategory();
 			c.setProtectedID(this.category);
-			o.setCategory(c);
+			o.setCategory(productCategoryRegistry.findById(c.getId()));
 		}
 
 		if(this.filters != null) {
