@@ -57,7 +57,7 @@
 								<ec:breadcrumb-path 
 									icon="home" 
 									text="" 
-									lnk="${plugins.ediacaran.sales.web_path}" />
+									lnk="${plugins.ediacaran.sales.web_path}/" />
 								<ec:breadcrumb-path 
 									text="#{header.breadcrumb.parent}" 
 									lnk="${plugins.ediacaran.sales.web_path}/products/"

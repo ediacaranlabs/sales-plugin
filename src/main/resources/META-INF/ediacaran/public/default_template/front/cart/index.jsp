@@ -32,7 +32,7 @@
 						<ec:left><h4><fmt:message key="cart_review.title" bundle="${messages}"/></h4></ec:left>
 						<ec:right>
 							<ec:breadcrumb title="#{cart_review.title}" bundle="${messages}">
-								<ec:breadcrumb-path icon="home" text="" lnk="/" />
+								<ec:breadcrumb-path icon="home" text="" lnk="${plugins.ediacaran.sales.web_path}/" />
 							</ec:breadcrumb>
 						</ec:right>
 					</div>
