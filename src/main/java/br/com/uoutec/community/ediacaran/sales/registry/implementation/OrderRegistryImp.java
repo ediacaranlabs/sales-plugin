@@ -452,10 +452,10 @@ public class OrderRegistryImp
 		
 		Order order                   = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
-		Client actualUser             = OrderRegistryUtil.getActualClient(order.getClient().getId(), clientRegistry);
 		
+		OrderRegistryUtil.reloadClient(order, clientRegistry);
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
-		paymentGateway.payment(new PaymentRequest(actualUser, order.getPayment()));
+		paymentGateway.payment(new PaymentRequest(order));
 		OrderRegistryUtil.markPaymentAsReceived(order.getPayment(), order);
 		
 		try {

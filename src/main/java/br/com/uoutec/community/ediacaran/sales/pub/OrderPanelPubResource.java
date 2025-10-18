@@ -25,20 +25,19 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPanelPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPanelPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderResultSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPanelPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -163,10 +162,10 @@ public class OrderPanelPubResource {
 		List<OrderReport> ordersReport;
 		List<Shipping> shippings;
 		
-		Client client;
+		//Client client;
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
-			client = clientRegistry.findClientById(order.getClient().getId());
+			//client = clientRegistry.findClientById(order.getClient().getId());
 			invoices = invoiceRegistry.findByOrder(order.getId(), SystemUserRegistry.CURRENT_USER);
 			shippings = shippingRegistry.findByOrder(order.getId());
 			ordersReport = orderReportRegistry.findByOrder(order);
@@ -191,7 +190,7 @@ public class OrderPanelPubResource {
 							order.getPaymentType());
 			
 			if(paymentGateway != null){
-				view = paymentGateway.getOwnerView(new PaymentRequest(client, order.getPayment()));
+				view = paymentGateway.getOwnerView(new PaymentRequest(order));
 			}
 			
 		}

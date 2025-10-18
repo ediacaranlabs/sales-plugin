@@ -324,7 +324,7 @@ public class CartPubResource {
 		
 		try{
 			Checkout checkoutResult = cartService.checkout(cart, payment, "Pedido criado via website.");
-			String paymentResource = checkoutResult.getPaymentGateway().redirectView(new PaymentRequest(client, cart));
+			String paymentResource = checkoutResult.getPaymentGateway().redirectView(new PaymentRequest(checkoutResult.getOrder()));
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/" + checkoutResult.getOrder().getId());			
 		}
 		catch(EmptyOrderException ex){

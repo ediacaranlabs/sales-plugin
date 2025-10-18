@@ -1,45 +1,39 @@
 package br.com.uoutec.community.ediacaran.sales.payment;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
-import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 
 public class PaymentRequest {
 
+	private Order order;
+	
 	private Payment payment;
 	
 	private PaymentLocation location;
 	
+	private List<ProductRequest> itens;
+	
 	public PaymentRequest() {
 	}
 	
-	public PaymentRequest(Client client, Payment payment) {
+	public PaymentRequest(Order order) {
 		this.location = new PaymentLocation();
-		this.location.setCountry(client.getCountry());
-		this.location.setCity(client.getCity());
-		this.location.setRegion(client.getRegion());
-		this.location.setZip(client.getZip());
-		this.payment = payment;
-	}
-
-	public PaymentRequest(Client client, Cart cart) {
-		this.location = new PaymentLocation();
-		this.location.setCountry(client.getCountry());
-		this.location.setCity(client.getCity());
-		this.location.setRegion(client.getRegion());
-		this.location.setZip(client.getZip());
+		this.location.setCountry(order.getClient().getCountry());
+		this.location.setCity(order.getClient().getCity());
+		this.location.setRegion(order.getClient().getRegion());
+		this.location.setZip(order.getClient().getZip());
 		
-		this.payment = new Payment();
-		this.payment.setValue(cart.getSubtotal());
-		this.payment.setTax(cart.getTotalTax());
-		this.payment.setDiscount(cart.getTotalDiscount());
-		this.payment.setTotal( cart.getTotal());
-		this.payment.setCurrency(cart.getCurrency());
-		this.payment.setAddData(new HashMap<>());
+		this.payment = order.getPayment();
+		
+		this.itens = new ArrayList<>();
+		order.getItens().stream().forEach((e)->this.itens.add(new ProductRequest(e)));
+		this.order = order;
 	}
-
+	
 	public Payment getPayment() {
 		return payment;
 	}
@@ -48,5 +42,12 @@ public class PaymentRequest {
 		return location;
 	}
 
+	public List<ProductRequest> getItens() {
+		return itens;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
 	
 }

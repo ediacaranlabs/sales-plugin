@@ -25,7 +25,6 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
@@ -37,8 +36,8 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderResultSearchPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -215,14 +214,14 @@ public class OrderAdminPubResource {
 		
 		Order order;
 		List<Invoice> invoices;
-		Client client;
+		//Client client;
 		List<Shipping> shippings;
 		List<OrderReport> ordersReport;
 		
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
-			client = clientRegistry.findClientById(order.getClient().getId());
+			//client = clientRegistry.findClientById(order.getClient().getId());
 			shippings = shippingRegistry.findByOrder(order.getId());
 			ordersReport = orderReportRegistry.findByOrder(order);
 		}
@@ -246,7 +245,7 @@ public class OrderAdminPubResource {
 							order.getPaymentType());
 			
 			if(paymentGateway != null){
-				view = paymentGateway.getOwnerView(new PaymentRequest(client, order.getPayment()));
+				view = paymentGateway.getOwnerView(new PaymentRequest(order));
 			}
 			
 		}

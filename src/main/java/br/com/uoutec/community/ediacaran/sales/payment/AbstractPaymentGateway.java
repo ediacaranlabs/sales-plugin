@@ -26,12 +26,12 @@ public abstract class AbstractPaymentGateway implements PaymentGateway{
 	public void payment(PaymentRequest paymentRequest) throws PaymentGatewayException {
 		
 		if(paymentRequest.getPayment().getStatus() == PaymentStatus.NEW) {
-			authorize(paymentRequest.getPayment(), paymentRequest.getLocation());
+			authorize(paymentRequest);
 		}
 		else
 		if(paymentRequest.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT) {
 			
-			capture(paymentRequest.getPayment(), paymentRequest.getLocation());
+			capture(paymentRequest);
 			
 			if(paymentRequest.getPayment().getStatus() == PaymentStatus.SUSPECTED_FRAUD) {
 				suspectedFraud(paymentRequest.getPayment(), paymentRequest.getLocation());
@@ -58,12 +58,12 @@ public abstract class AbstractPaymentGateway implements PaymentGateway{
 		return PaymentStatus.PAYMENT_RECEIVED;
 	}
 	
-	public void authorize(Payment payment, PaymentLocation location) throws PaymentGatewayException{
-		changePaymentStatus(payment, getStartPaymentTransactionStatus());
+	public void authorize(PaymentRequest paymentRequest) throws PaymentGatewayException{
+		changePaymentStatus(paymentRequest.getPayment(), getStartPaymentTransactionStatus());
 	}
 	
-	public void capture(Payment payment, PaymentLocation location) throws PaymentGatewayException{
-		changePaymentStatus(payment, getEndPaymentTransactionStatus());
+	public void capture(PaymentRequest paymentRequest) throws PaymentGatewayException{
+		changePaymentStatus(paymentRequest.getPayment(), getEndPaymentTransactionStatus());
 	}
 
 	public void suspectedFraud(Payment payment, PaymentLocation location) throws PaymentGatewayException{

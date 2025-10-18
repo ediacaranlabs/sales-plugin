@@ -116,7 +116,7 @@ public class OrderRegistryUtil {
 			
 			save(order, entityAccess);
 			
-			paymentGateway.payment(new PaymentRequest(client, payment));
+			paymentGateway.payment(new PaymentRequest(order));
 			
 			checkPayment(payment, order);
 			order.getPayment().setStatus(payment.getStatus());
@@ -367,6 +367,16 @@ public class OrderRegistryUtil {
 		return user;
 	}
 
+	public static void reloadClient(Order order, ClientRegistry clientRegistry) throws ClientRegistryException {
+		Client user = clientRegistry.findClientById(order.getClient().getId());
+		
+		if(user == null) {
+			throw new ClientRegistryException(String.valueOf(order.getClient().getId()));
+		}
+		
+		order.setClient(user);
+	}
+	
 	public static Address getDefaultAddress(Client client) {
 		Address address = new Address();
 		
