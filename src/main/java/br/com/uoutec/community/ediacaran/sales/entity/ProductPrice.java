@@ -63,7 +63,6 @@ public class ProductPrice implements Serializable {
 		return nb.format(fractionalPart.doubleValue());
 	}
 
-
 	public String toString() {
 		return CurrencyUtil.toString(currency, value);
 	}
