@@ -126,12 +126,11 @@ public class OrderRegistryImp
 	private void registryNewOrder(Order entity) throws Throwable {
 		
 		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(entity, paymentGatewayRegistry);
-		Payment actualPayment         = OrderRegistryUtil.getPayment(new Payment(), entity, paymentGateway);
 		
 		OrderRegistryUtil.validateOrder(entity, saveValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		OrderRegistryUtil.preOrder(entity, productTypeRegistry);
-		OrderRegistryUtil.registerNewOrder(entity, entity.getClient(), actualPayment, "Predido criado", paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.registerNewOrder(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
 		OrderRegistryUtil.postOrder(entity, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Pedido criado #" + entity.getId(), entity, orderEntityAccess);
 		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, entity);
@@ -437,7 +436,7 @@ public class OrderRegistryImp
 		OrderRegistryUtil.checkCartToRegistry(cart, payment, paymentGateway, productTypeRegistry, orderEntityAccess);
 		OrderRegistryUtil.saveAddressIfNecessary(cart, clientRegistry);
 
-		Order order = OrderRegistryUtil.createOrder(cart, paymentGateway);
+		Order order = OrderRegistryUtil.createOrder(cart, cart.getClient(), payment, paymentGateway);
 		registerOrder(order);
 		return order;
 	}

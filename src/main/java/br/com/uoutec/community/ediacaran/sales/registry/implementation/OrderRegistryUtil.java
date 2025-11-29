@@ -69,9 +69,13 @@ public class OrderRegistryUtil {
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
 	
-	public static Order createOrder(Cart cart, PaymentGateway paymentGateway) {
+	public static Order createOrder(Cart cart, Client client, Payment payment, PaymentGateway paymentGateway) {
 
-		Address defaultAddress = getDefaultAddress(cart.getClient());
+		if(client == null) {
+			client = cart.getClient();
+		}
+		
+		Address defaultAddress = getDefaultAddress(client);
 		
 		Order order = new Order();
 		order.setDate(LocalDateTime.now());
@@ -82,6 +86,7 @@ public class OrderRegistryUtil {
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());
+		order.setPayment(payment);
 		order.setCurrency(order.getItens().get(0).getCurrency());
 		order.setBillingAddress(getBillingAddress(cart.getBillingAddress(), defaultAddress));
 		order.setShippingAddress(getShippingAddress(cart.getShippingAddress(), order.getBillingAddress(), defaultAddress, cart.getBillingAddress() == cart.getShippingAddress()));
@@ -112,7 +117,6 @@ public class OrderRegistryUtil {
 			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException, ValidationException {
 		
 			order.setStatus(OrderStatus.NEW);
-			order.setPayment(payment);
 			
 			save(order, entityAccess);
 			
@@ -183,9 +187,11 @@ public class OrderRegistryUtil {
 		
 	}
 	
-	public static Payment getPayment(Payment payment, Order order, PaymentGateway paymentGateway) {
+	/*
+	public static Payment getPayment(Order order, PaymentGateway paymentGateway) {
+		Payment
 		payment.setStatus(PaymentStatus.NEW);
-		payment.setPaymentType(paymentGateway.getId());
+		payment.setPaymentType(paymentGateway == null? null : paymentGateway.getId());
 		payment.setTax(order.getTax());
 		payment.setDiscount(order.getDiscount());
 		payment.setCurrency(order.getItens().get(0).getCurrency());
@@ -196,7 +202,12 @@ public class OrderRegistryUtil {
 		
 		return payment;
 	}
+	*/
 
+	public static Payment toPayment(Cart cart, PaymentGateway paymentGateway) {
+		return paymentGateway.toPayment(cart);
+	}
+	
 	public static void updateClient(Client client, ClientRegistry clientRegistry) throws ClientRegistryException {
 		clientRegistry.registerClient(client);
 	}

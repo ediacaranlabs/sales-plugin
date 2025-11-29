@@ -71,8 +71,8 @@ public class PaymentGatewayRegistryImp implements PaymentGatewayRegistry {
 	@Override
 	public List<PaymentGateway> getPaymentGateways(Cart cart, Client client) {
 		List<PaymentGateway> result = new ArrayList<>();
-		PaymentRequest paymenRequest = new PaymentRequest(cart.toOrder());
 		map.values().stream().forEach((e)->{
+			PaymentRequest paymenRequest = new PaymentRequest(cart.toOrder(client, e.toPayment(cart), e));
 			if(e.isApplicable(paymenRequest)) {
 				result.add(e);
 			}

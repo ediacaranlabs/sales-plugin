@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -268,72 +267,11 @@ public class Cart implements Serializable{
 	}
 
 	public Order toOrder() {
-		return toOrder(null);
+		return toOrder(null, null, null);
 	}
 	
-	public Order toOrder(PaymentGateway paymentGateway) {
-		Address defaultAddress = getDefaultAddress(getClient());
-		
-		Order order = new Order();
-		order.setDate(LocalDateTime.now());
-		order.setCartID(getId());
-		order.setStatus(OrderStatus.NEW);
-		order.setId(null);
-		order.setClient(getClient());
-		order.setItens(new ArrayList<ProductRequest>(getItens()));
-		order.setTaxes(getTaxes());
-		order.setPaymentType(paymentGateway == null? null : paymentGateway.getId());
-		order.setCurrency(order.getItens().get(0).getCurrency());
-		order.setBillingAddress(getBillingAddress(getBillingAddress(), defaultAddress));
-		order.setShippingAddress(getShippingAddress(getShippingAddress(), order.getBillingAddress(), defaultAddress, getBillingAddress() == getShippingAddress()));
-		return order;
+	public Order toOrder(Client client, Payment payment, PaymentGateway paymentGateway) {
+		return OrderRegistryUtil.createOrder(this, client, payment, paymentGateway);
 	}
-	
-	private Address getDefaultAddress(Client client) {
-		Address address = new Address();
-		
-		address.setAddressLine1(client.getAddressLine1());
-		address.setAddressLine2(client.getAddressLine2());
-		address.setCity(client.getCity());
-		address.setCountry(client.getCountry());
-		address.setFirstName(client.getFirstName());
-		address.setLastName(client.getLastName());
-		address.setRegion(client.getRegion());
-		address.setZip(client.getZip());
-		
-		return address;
-	}
-	
-	private Address getAddress(Address value) {
-		Address address = new Address();
-		
-		address.setAddressLine1(value.getAddressLine1());
-		address.setAddressLine2(value.getAddressLine2());
-		address.setCity(value.getCity());
-		address.setCountry(value.getCountry());
-		address.setFirstName(value.getFirstName());
-		address.setLastName(value.getLastName());
-		address.setRegion(value.getRegion());
-		address.setZip(value.getZip());
-		
-		return address;
-	}
-	
-	private Address getBillingAddress(Address billingAddress, Address defaultAddress) {
-		if(billingAddress == null) {
-			return defaultAddress;
-		}
-		else {
-			return getAddress(billingAddress);
-		}		
-	}
-	
-	private Address getShippingAddress(Address shippingAddress, Address billingAddress, Address defaultAddress, boolean useBillingAddress) {
-		if(shippingAddress == null) {
-			return defaultAddress;
-		}
-		
-		return useBillingAddress? billingAddress : getAddress(shippingAddress);
-	}
-	
+
 }
