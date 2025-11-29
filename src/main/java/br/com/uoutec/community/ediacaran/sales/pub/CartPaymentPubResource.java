@@ -156,7 +156,7 @@ public class CartPaymentPubResource {
 	/* show payment gateway */
 	
 	@Action("/cart/payment-type/{code}")
-	@RequestMethod(RequestMethodTypes.GET)
+	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
 	@ResponseErrors(rendered=false, name="exception")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public ResultAction paymentType(
@@ -171,7 +171,7 @@ public class CartPaymentPubResource {
 	}
 	
 	@Action("${plugins.ediacaran.front.admin_context}/cart/payment-type/{code}")
-	@RequestMethod(RequestMethodTypes.GET)
+	@RequestMethod({RequestMethodTypes.GET, RequestMethodTypes.POST})
 	@ResponseErrors(rendered=false, name="exception")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.ORDER.CREATE)

@@ -82,11 +82,20 @@ public class OrderRegistryUtil {
 		order.setCartID(cart.getId());
 		order.setStatus(OrderStatus.NEW);
 		order.setId(null);
-		order.setClient(cart.getClient());
+		order.setClient(client);
 		order.setItens(new ArrayList<ProductRequest>(cart.getItens()));
 		order.setTaxes(cart.getTaxes());
 		order.setPaymentType(paymentGateway.getId());
 		order.setPayment(payment);
+		
+		payment.setStatus(PaymentStatus.NEW);
+		payment.setPaymentType(paymentGateway.getId());
+		payment.setTax(order.getTax());
+		payment.setDiscount(order.getDiscount());
+		payment.setCurrency(order.getItens().get(0).getCurrency());
+		payment.setValue(order.getSubtotal());
+		payment.setTotal(order.getTotal());
+		
 		order.setCurrency(order.getItens().get(0).getCurrency());
 		order.setBillingAddress(getBillingAddress(cart.getBillingAddress(), defaultAddress));
 		order.setShippingAddress(getShippingAddress(cart.getShippingAddress(), order.getBillingAddress(), defaultAddress, cart.getBillingAddress() == cart.getShippingAddress()));
@@ -204,10 +213,6 @@ public class OrderRegistryUtil {
 	}
 	*/
 
-	public static Payment toPayment(Cart cart, PaymentGateway paymentGateway) {
-		return paymentGateway.toPayment(cart);
-	}
-	
 	public static void updateClient(Client client, ClientRegistry clientRegistry) throws ClientRegistryException {
 		clientRegistry.registerClient(client);
 	}

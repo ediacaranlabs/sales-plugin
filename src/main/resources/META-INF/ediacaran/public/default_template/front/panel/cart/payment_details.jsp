@@ -15,8 +15,8 @@
 					selected="${firstPaymentGateway.id == paymentGateway.id}" 
 					label="${paymentGateway.name}">
 					<ec:event type="change">
-						var $form = $.AppContext.utils.getById('payment_form');
-						var $paymentType = $form.getField('payment.paymentType');
+						var $form = $.AppContext.utils.getById('cart_checkout');
+						var $paymentType = $form.getField('paymentType');
 						var $paymentTypeValue = $paymentType.getValue();
 						
 						$form.submit(
