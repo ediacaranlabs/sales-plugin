@@ -71,6 +71,7 @@ public class PaymentPubEntity
 	protected void loadProperties(GenericPubEntity<Payment> e) {
 		PaymentPubEntity u = (PaymentPubEntity)e;
 		this.paymentType = u.paymentType;
+		this.setData(u.getData());
 	}
 
 	@Override

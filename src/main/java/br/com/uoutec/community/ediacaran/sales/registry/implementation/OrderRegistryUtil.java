@@ -92,11 +92,11 @@ public class OrderRegistryUtil {
 		payment.setPaymentType(paymentGateway.getId());
 		payment.setTax(order.getTax());
 		payment.setDiscount(order.getDiscount());
-		payment.setCurrency(order.getItens().get(0).getCurrency());
+		payment.setCurrency(order.getItens().isEmpty()? null : order.getItens().get(0).getCurrency());
 		payment.setValue(order.getSubtotal());
 		payment.setTotal(order.getTotal());
 		
-		order.setCurrency(order.getItens().get(0).getCurrency());
+		order.setCurrency(order.getItens().isEmpty()? null : order.getItens().get(0).getCurrency());
 		order.setBillingAddress(getBillingAddress(cart.getBillingAddress(), defaultAddress));
 		order.setShippingAddress(getShippingAddress(cart.getShippingAddress(), order.getBillingAddress(), defaultAddress, cart.getBillingAddress() == cart.getShippingAddress()));
 
