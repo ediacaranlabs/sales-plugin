@@ -25,7 +25,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
@@ -450,11 +449,11 @@ public class OrderRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
 		
 		Order order                   = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
+		//PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
 		
 		OrderRegistryUtil.reloadClient(order, clientRegistry);
 		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
-		paymentGateway.payment(new PaymentRequest(order));
+		//paymentGateway.payment(new PaymentRequest(order));
 		OrderRegistryUtil.markPaymentAsReceived(order.getPayment(), order);
 		
 		try {
