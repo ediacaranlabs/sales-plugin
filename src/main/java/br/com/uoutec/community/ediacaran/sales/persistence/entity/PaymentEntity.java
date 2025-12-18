@@ -11,6 +11,8 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -71,6 +73,7 @@ public class PaymentEntity implements Serializable{
 	private LocalDateTime receivedFrom;
 	
 	@Column(name="set_status")
+	@Enumerated(EnumType.STRING)
 	private PaymentStatus status;
 	
 	@Column(name="dsc_currency", length=3)

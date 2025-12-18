@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
+import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -64,7 +65,7 @@ import br.com.uoutec.i18n.ValidationException;
 @Singleton
 public class OrderRegistryImp
 	extends AbstractRegistry
-	implements OrderRegistry{
+	implements OrderRegistry {
 
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
@@ -445,15 +446,36 @@ public class OrderRegistryImp
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
+		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		updatePaymentStatus0(order.getPayment(), order, PaymentStatus.PAYMENT_RECEIVED);
+	}
+
+	@Override
+	@Transactional
+	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
+	public void registerPendingPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
+		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		updatePaymentStatus0(order.getPayment(), order, PaymentStatus.PENDING_PAYMENT_CONFIRMATION);
+	}
+	
+	@Override
+	@Transactional
+	@ActivateRequestContext
+	@EnableFilters(OrderRegistry.class)
+	public void updatePaymentStatus(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
+		updatePaymentStatus0(payment, o, paymentStatus);
+	}
+
+	private void updatePaymentStatus0(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getUpdatePaymentPermission(payment.getPaymentType().toLowerCase()));
 		
-		Order order                   = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-		//PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
+		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		payment     = OrderRegistryUtil.getActualPayment(payment, order);
 		
+		OrderRegistryUtil.updatePaymentStatus(payment, order, paymentStatus);
 		OrderRegistryUtil.reloadClient(order, clientRegistry);
-		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
-		//paymentGateway.payment(new PaymentRequest(order));
 		OrderRegistryUtil.markPaymentAsReceived(order.getPayment(), order);
 		
 		try {

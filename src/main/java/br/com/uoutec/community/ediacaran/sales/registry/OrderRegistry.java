@@ -10,6 +10,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
+import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -35,7 +36,11 @@ public interface OrderRegistry extends PublicBean {
 
 	/* register payment */
 	
+	void registerPendingPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
+	
 	void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException ;
+	
+	void updatePaymentStatus(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
 	
 	/* register invoice */
 	

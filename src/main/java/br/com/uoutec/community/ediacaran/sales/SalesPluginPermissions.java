@@ -80,6 +80,10 @@ public final class SalesPluginPermissions {
 		public static SecurityPermission getRegisterPaymentPermission() {
 			return new RuntimeSecurityPermission(basePermission + "register_payment");
 		}
+
+		public static SecurityPermission getUpdatePaymentPermission(String paymentType) {
+			return new RuntimeSecurityPermission(basePermission + "register_payment." + paymentType);
+		}
 		
 		public static SecurityPermission getSearchPermission() {
 			return new RuntimeSecurityPermission(basePermission + "search");

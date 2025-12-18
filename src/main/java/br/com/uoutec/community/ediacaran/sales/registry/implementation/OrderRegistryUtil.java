@@ -505,6 +505,22 @@ public class OrderRegistryUtil {
 		}
 		
 	}
+
+	public static void updatePaymentStatus(Payment payment, Order order, PaymentStatus paymentStatus) throws OrderRegistryException {
+		
+		OrderStatus newOrderStatus = toOrderStatus(paymentStatus);
+		
+		checkPayment(payment, order);
+		checkAndSetNewOrderStatus(order, newOrderStatus);
+		
+		if(paymentStatus == PaymentStatus.PAYMENT_RECEIVED) {
+			payment.setReceivedFrom(LocalDateTime.now());
+		}
+		else{
+			payment.setReceivedFrom(null);
+		}
+		
+	}
 	
 	public static void checkAndSetNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		checkNewOrderStatus(order, newStatus);
@@ -543,6 +559,15 @@ public class OrderRegistryUtil {
 		}
 	}
 
+	public static Payment getActualPayment(Payment payment, Order order) throws OrderRegistryException {
+		
+		if(payment.getId() != order.getPayment().getId()) {
+			throw new OrderRegistryException("invalid payment");
+		}
+		
+		return order.getPayment();
+	}
+	
 	public static Order getActualOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		return orderRegistry.findById(order.getId());
 	}
