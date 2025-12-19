@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
+import br.com.uoutec.application.security.DoPrivilegedException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
@@ -471,26 +472,42 @@ public class OrderRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getUpdatePaymentPermission(payment.getPaymentType().toLowerCase()));
 		
-		ContextSystemSecurityCheck.doPrivileged(()->{
-			
-			Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-			Payment actualPayment = OrderRegistryUtil.getActualPayment(payment, order);
-			OrderRegistryUtil.updatePaymentStatus(actualPayment, order, paymentStatus);
-			
-			actualPayment.setStatus(paymentStatus);
-			order.setStatus(OrderRegistryUtil.toOrderStatus(paymentStatus));
-			
-			try {
+		try {
+			ContextSystemSecurityCheck.doPrivileged(()->{
+				
+				Order order           = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+				Payment actualPayment = OrderRegistryUtil.getActualPayment(payment, order);
+				
+				OrderRegistryUtil.updatePaymentStatus(actualPayment, order, paymentStatus);
+				
 				updateOrder(order);
+	
 				o.setStatus(order.getStatus());
 				o.setPayment(order.getPayment());
+				
+				return null;
+			});
+			
+		}
+		catch(DoPrivilegedException ex) {
+			Throwable e = ex.getCause();
+			
+			if(e instanceof OrderRegistryException) {
+				throw (OrderRegistryException)e;
 			}
-			catch (Throwable e) {
+			else
+			if(e instanceof PaymentGatewayException) {
+				throw (PaymentGatewayException)e;
+			}
+			else
+			if(e instanceof ClientRegistryException) {
+				throw (ClientRegistryException)e;
+			}
+			else {
 				throw new OrderRegistryException(e);
 			}
-
-			return null;
-		});
+			
+		}
 		
 	}
 	
