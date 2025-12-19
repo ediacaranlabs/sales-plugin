@@ -471,21 +471,26 @@ public class OrderRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getUpdatePaymentPermission(payment.getPaymentType().toLowerCase()));
 		
-		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-		payment     = OrderRegistryUtil.getActualPayment(payment, order);
-		
-		OrderRegistryUtil.updatePaymentStatus(payment, order, paymentStatus);
-		OrderRegistryUtil.reloadClient(order, clientRegistry);
-		OrderRegistryUtil.markPaymentAsReceived(order.getPayment(), order);
-		
-		try {
-			updateOrder(order);
-			o.setStatus(order.getStatus());
-			o.setPayment(order.getPayment());
-		}
-		catch (Throwable e) {
-			throw new OrderRegistryException(e);
-		}
+		ContextSystemSecurityCheck.doPrivileged(()->{
+			
+			Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+			Payment actualPayment = OrderRegistryUtil.getActualPayment(payment, order);
+			OrderRegistryUtil.updatePaymentStatus(actualPayment, order, paymentStatus);
+			
+			actualPayment.setStatus(paymentStatus);
+			order.setStatus(OrderRegistryUtil.toOrderStatus(paymentStatus));
+			
+			try {
+				updateOrder(order);
+				o.setStatus(order.getStatus());
+				o.setPayment(order.getPayment());
+			}
+			catch (Throwable e) {
+				throw new OrderRegistryException(e);
+			}
+
+			return null;
+		});
 		
 	}
 	

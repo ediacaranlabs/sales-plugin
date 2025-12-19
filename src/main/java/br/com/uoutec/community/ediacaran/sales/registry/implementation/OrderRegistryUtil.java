@@ -508,6 +508,7 @@ public class OrderRegistryUtil {
 
 	public static void updatePaymentStatus(Payment payment, Order order, PaymentStatus paymentStatus) throws OrderRegistryException {
 		
+		payment.setStatus(paymentStatus);
 		OrderStatus newOrderStatus = toOrderStatus(paymentStatus);
 		
 		checkPayment(payment, order);
