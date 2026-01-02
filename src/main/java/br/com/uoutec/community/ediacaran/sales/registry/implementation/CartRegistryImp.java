@@ -32,7 +32,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
-import br.com.uoutec.community.ediacaran.system.lock.NamedLock;
+import br.com.uoutec.community.ediacaran.system.lock.LockManager;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -64,7 +64,7 @@ public class CartRegistryImp
 	private SystemUserRegistry systemUserRegistry;
 	
 	@Inject
-	private NamedLock lock;
+	private LockManager lockManager;
 
 	@Inject
 	private ProductTypeRegistry productTypeRegistry;
@@ -239,11 +239,10 @@ public class CartRegistryImp
 		}
 		
 		Order order;
-		boolean activeLock = false;
 		String lockID = CART_LOCK_GROUP_NAME + cart.getId();
 		
 		try{
-			activeLock = lock.lock(lockID);
+			lockManager.lock(lockID);
 			order = orderRegistry.createOrder(cart, payment, message, paymentGateway);
 		}
 		catch(ExistOrderRegistryException e){
@@ -257,7 +256,7 @@ public class CartRegistryImp
 			throw new OrderRegistryException(e);
 		}
 		finally {
-			lock.unlock(lockID, activeLock);			
+			lockManager.unlock(lockID);			
 		}
 		
 		return new Checkout(order, paymentGateway);
