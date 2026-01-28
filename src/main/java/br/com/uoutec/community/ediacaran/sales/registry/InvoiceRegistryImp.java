@@ -70,7 +70,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	private SubjectProvider subjectProvider;
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
 	public void registerInvoice(Invoice entity) throws ValidationException, RegistryException, EntityAccessException, ProductTypeHandlerException {
@@ -100,7 +100,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
 	public void removeInvoice(Invoice entity) throws InvoiceRegistryException, ShippingRegistryException {
@@ -217,7 +217,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
@@ -255,7 +255,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
 	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
@@ -267,7 +267,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
 	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {

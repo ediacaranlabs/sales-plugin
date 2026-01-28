@@ -43,7 +43,7 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 	private ObjectsTemplateManager objectsManager;
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerProductCategory(ProductCategory entity) throws ProductCategoryRegistryException {
 		
@@ -89,7 +89,7 @@ public class ProductCategoryRegistryImp implements ProductCategoryRegistry {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeProductCategory(ProductCategory entity) throws ProductCategoryRegistryException {
 		

@@ -21,7 +21,7 @@ public class CreateInvoiceAction implements ActionExecutor, PublicBean {
 	private OrderRegistry orderRegistry;
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void execute(ActionExecutorRequest request, ActionExecutorResponse response) throws Throwable {
 		ContextSystemSecurityCheck.doPrivileged(()->{

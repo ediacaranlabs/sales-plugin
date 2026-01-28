@@ -36,7 +36,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerProductMetadata(ProductMetadata entity) throws ProductRegistryException {
 		
@@ -55,7 +55,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeProductMetadata(ProductMetadata entity) throws ProductRegistryException {
 		
@@ -130,7 +130,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent)
 			throws ProductRegistryException {
@@ -187,7 +187,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeProductMetadataAttributes(List<? extends ProductMetadataAttribute> attributes, ProductMetadata parent)
 			throws ProductRegistryException {
@@ -262,7 +262,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
 			throws ProductRegistryException {
@@ -297,7 +297,7 @@ public class ProductMetadataRegistryImp implements ProductMetadataRegistry {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeProductMetadataAttributeOptions(List<? extends ProductMetadataAttributeOption> options, ProductMetadataAttribute parent)
 			throws ProductRegistryException {

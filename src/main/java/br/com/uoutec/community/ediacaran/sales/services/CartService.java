@@ -99,7 +99,7 @@ public class CartService {
 		cartRegistry.remove(cart, serial);
 	}
 	
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public Checkout checkout(Cart cart, Payment payment, String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
 		return cartRegistry.checkout(cart, payment, message);

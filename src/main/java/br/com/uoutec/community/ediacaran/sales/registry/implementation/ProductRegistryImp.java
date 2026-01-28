@@ -50,7 +50,7 @@ public class ProductRegistryImp
 	@Inject
 	private ObjectsTemplateManager objectsManager;
 	
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerProduct(Product entity) throws ProductRegistryException {
 		
@@ -100,7 +100,7 @@ public class ProductRegistryImp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeProduct(Product entity) throws ProductRegistryException{
 		
@@ -189,7 +189,7 @@ public class ProductRegistryImp
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerProductImages(List<ProductImage> list, Product parent) throws ProductRegistryException {
 		
@@ -223,7 +223,7 @@ public class ProductRegistryImp
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeProductImages(List<ProductImage> list, Product parent) throws ProductRegistryException {
 

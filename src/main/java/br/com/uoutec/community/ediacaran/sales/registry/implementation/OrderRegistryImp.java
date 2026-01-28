@@ -99,7 +99,7 @@ public class OrderRegistryImp
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void registerOrder(Order entity)	throws OrderRegistryException {
@@ -171,7 +171,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void removeOrder(Order entity) throws OrderRegistryException {
@@ -370,7 +370,7 @@ public class OrderRegistryImp
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void updateStatus(Order o, OrderStatus status) throws OrderRegistryException {
 		
@@ -402,7 +402,7 @@ public class OrderRegistryImp
 	 */
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public Order createOrder(Cart cart, Payment payment, 
@@ -443,7 +443,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
@@ -452,7 +452,7 @@ public class OrderRegistryImp
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void registerPendingPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
@@ -461,7 +461,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void updatePaymentStatus(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
@@ -545,7 +545,7 @@ public class OrderRegistryImp
 	 * @throws RegistryException 
 	 */
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void createRefound(String orderID, String message) throws RegistryException {
@@ -620,7 +620,7 @@ public class OrderRegistryImp
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void revertRefound(String orderID, String message) throws RegistryException {
 		

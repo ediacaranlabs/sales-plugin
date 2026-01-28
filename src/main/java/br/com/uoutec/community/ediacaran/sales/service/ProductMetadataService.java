@@ -36,7 +36,7 @@ public class ProductMetadataService {
 		return productMetadataRegistry.getProductMetadataAttributes(metadata);
 	}
 	
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public void registerProductMetadata(ProductMetadata metadata) throws ProductRegistryException {
 		
 		if(metadata instanceof ProductMetadataUpdate) {
@@ -67,7 +67,7 @@ public class ProductMetadataService {
 		
 	}
 
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public void unregisterProductMetadata(ProductMetadata metadata) throws ProductRegistryException {
 		
 		if(metadata instanceof ProductMetadataUpdate) {

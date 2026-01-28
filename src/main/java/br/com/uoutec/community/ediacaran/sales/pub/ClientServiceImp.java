@@ -34,12 +34,12 @@ public class ClientServiceImp implements ClientService{
 		return clientRegistry.searchClient(value);
 	}
 	
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public void registerClient(Client entity) throws ClientRegistryException{
 		registerClient(entity, null, null);
 	}
 
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public void registerClient(Client entity, 
 			List<Address> addAddresses, List<Address> removeAddresses) throws ClientRegistryException{
 		
@@ -61,7 +61,7 @@ public class ClientServiceImp implements ClientService{
 		
 	}
 	
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public void removeClient(Client entity) throws ClientRegistryException{
 		clientRegistry.registerClient(entity);
 	}

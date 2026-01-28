@@ -159,7 +159,7 @@ public class ProductMetadataAdminPubResource {
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.PRODUCT.SAVE)
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	public Map<String,Object> save(
 			@Basic(bean = "product_metadata")
 			ProductMetadataPubEntity productMetadataPubEntity,

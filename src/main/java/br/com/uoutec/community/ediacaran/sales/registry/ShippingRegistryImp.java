@@ -76,7 +76,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	private SubjectProvider subjectProvider;
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerShipping(Shipping entity) throws ShippingRegistryException, OrderRegistryException, ValidationException {
 		
@@ -113,7 +113,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeShipping(Shipping entity) throws ShippingRegistryException {
 		
@@ -134,7 +134,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException {
 		
@@ -374,7 +374,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		return ShippingRegistryUtil.toShipping(order, invoiceItens);
 	}
 
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@Override
 	@ActivateRequestContext
 	public void cancelShipping(Shipping shipping, String justification

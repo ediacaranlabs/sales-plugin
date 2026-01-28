@@ -61,7 +61,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	private ActionRegistry actionRegistry;
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerOrderReport(OrderReport entity) throws OrderReportRegistryException, ValidationException, OrderStatusNotAllowedRegistryException {
 		
@@ -140,7 +140,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void removeOrderReport(OrderReport entity) throws OrderReportRegistryException {
 		
@@ -210,7 +210,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException {
 		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(orderReport, message, LocalDateTime.now(), user);
