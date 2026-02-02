@@ -22,7 +22,7 @@ public class TaxPubEntity extends AbstractPubEntity<Tax>{
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(max = 38, min = 10, groups = IdValidation.class)
+	@Size(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 	
 	@NotNull(groups = DataValidation.class)

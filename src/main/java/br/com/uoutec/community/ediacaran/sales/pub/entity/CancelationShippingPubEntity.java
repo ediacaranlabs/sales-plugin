@@ -5,8 +5,7 @@ import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
@@ -22,7 +21,7 @@ public class CancelationShippingPubEntity extends AbstractPubEntity<Shipping> {
 	
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 	
 	@NotNull(groups = DataValidation.class)
@@ -30,7 +29,7 @@ public class CancelationShippingPubEntity extends AbstractPubEntity<Shipping> {
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp=CommonValidation.NAME_FORMAT, groups = DataValidation.class)
-	@Length(min = 5, max = 1024, groups = DataValidation.class)
+	@Size(min = 5, max = 1024, groups = DataValidation.class)
 	private String cancelJustification;
 	
 	public CancelationShippingPubEntity() {

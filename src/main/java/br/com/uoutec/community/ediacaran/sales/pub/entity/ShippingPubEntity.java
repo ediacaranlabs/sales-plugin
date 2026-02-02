@@ -10,11 +10,11 @@ import java.util.Map;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
-import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
@@ -34,12 +34,12 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(min = 10, max = 38, groups = DataValidation.class)
+	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
@@ -52,7 +52,7 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 
 	@NotNull(groups = ShippingCancelValidation.class)
 	@Pattern(regexp=CommonValidation.NAME_FORMAT, groups = DataValidation.class)
-	@Length(min = 5, max = 1024, groups = DataValidation.class)
+	@Size(min = 5, max = 1024, groups = DataValidation.class)
 	private String cancelJustification;
 	
 	@NotNull(groups = DataValidation.class)

@@ -46,7 +46,7 @@ public class ProductMetadataAttributePubEntity extends AbstractPubEntity<Product
 	
 	@NotNull(groups=DataValidation.class)
 	//@Pattern(regexp = CommonValidation.NAME_FORMAT)
-	@Length(max = 128, groups = DataValidation.class)
+	@Size(max = 128, groups = DataValidation.class)
 	private String name;
 	
 	@Size(min=3,groups=DataValidation.class)

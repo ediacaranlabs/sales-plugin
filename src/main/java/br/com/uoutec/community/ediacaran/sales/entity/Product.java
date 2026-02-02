@@ -50,7 +50,7 @@ public class Product implements Serializable {
 	
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.NAME_FORMAT)
-	@Length(max = 128, groups = DataValidation.class)
+	@Size(max = 128, groups = DataValidation.class)
 	protected String name;
 	
 	protected transient Path thumb;

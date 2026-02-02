@@ -26,7 +26,7 @@ public class ProductMetadata {
 
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.NAME_FORMAT)
-	@Length(max = 128, groups = DataValidation.class)
+	@Size(max = 128, groups = DataValidation.class)
 	protected String name;
 	
 	protected Path thumb;

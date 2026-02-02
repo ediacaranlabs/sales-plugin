@@ -34,7 +34,7 @@ public class ProductMetadataAttribute {
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.ADDRESS_FORMAT)
-	//@Length(max = 128, groups = DataValidation.class)
+	//@Size(max = 128, groups = DataValidation.class)
 	protected String name;
 
 	@NotNull(groups = DataValidation.class)

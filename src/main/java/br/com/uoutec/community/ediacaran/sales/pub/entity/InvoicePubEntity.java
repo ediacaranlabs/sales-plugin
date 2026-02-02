@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
-import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -27,12 +27,12 @@ public class InvoicePubEntity extends AbstractPubEntity<Invoice>{
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(max = 38, min = 10, groups = IdValidation.class)
+	@Size(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 
 	@NotNull
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(max = 38, min = 10, groups = IdValidation.class)
+	@Size(max = 38, min = 10, groups = IdValidation.class)
 	private String order;
 	
 	//@NotNull(groups = DataValidation.class)

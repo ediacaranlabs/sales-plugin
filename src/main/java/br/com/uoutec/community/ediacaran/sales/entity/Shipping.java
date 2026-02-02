@@ -16,8 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -29,12 +28,12 @@ public class Shipping implements Serializable{
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(min = 10, max = 38, groups = DataValidation.class)
+	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String order;
 	
 	@NotNull(groups = DataValidation.class)
@@ -48,7 +47,7 @@ public class Shipping implements Serializable{
 
 	@NotNull(groups = ShippingCancelValidation.class)
 	@Pattern(regexp=CommonValidation.NAME_FORMAT, groups = DataValidation.class)
-	@Length(min = 5, max = 1024, groups = DataValidation.class)
+	@Size(min = 5, max = 1024, groups = DataValidation.class)
 	private String cancelJustification;
 	
 	@NotNull(groups = DataValidation.class)

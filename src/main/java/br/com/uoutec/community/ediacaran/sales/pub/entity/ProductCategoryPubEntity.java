@@ -31,7 +31,7 @@ public class ProductCategoryPubEntity extends AbstractPubEntity<ProductCategory>
 	private String protectedID;
 
 	@NotNull(groups = DataValidation.class)
-	@Length(max = 128, groups = DataValidation.class)
+	@Size(max = 128, groups = DataValidation.class)
 	private String name;
 
 	private Image thumbnail;

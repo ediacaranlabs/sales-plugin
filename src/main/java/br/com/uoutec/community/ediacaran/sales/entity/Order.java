@@ -16,8 +16,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
-
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -29,7 +27,7 @@ public class Order implements Serializable{
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(max = 38, min = 10, groups = IdValidation.class)
+	@Size(max = 38, min = 10, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = DataValidation.class)

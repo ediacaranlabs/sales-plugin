@@ -9,13 +9,13 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Enumerated;
 import org.brandao.brutos.annotation.EnumerationType;
 import org.brandao.brutos.annotation.MappingTypes;
-import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -38,15 +38,15 @@ public class OrderReportPubEntity extends AbstractPubEntity<OrderReport> {
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(min = 10, max = 38, groups = DataValidation.class)
+	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String order;
 
-	@Length(min = 1, groups = DataValidation.class)
+	@Size(min = 1, groups = DataValidation.class)
 	private Integer user;
 	
 	@NotNull(groups = DataValidation.class)

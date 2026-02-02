@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -24,14 +23,14 @@ public class OrderLog implements Serializable{
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(max = 38, min = 10, groups = DataValidation.class)
+	@Size(max = 38, min = 10, groups = DataValidation.class)
 	private String orderId;
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 	
 	@NotNull(groups = DataValidation.class)
-	@Length(max = 255, min = 1, groups = DataValidation.class)
+	@Size(max = 255, min = 1, groups = DataValidation.class)
 	private String message;
 
 	public int getId() {

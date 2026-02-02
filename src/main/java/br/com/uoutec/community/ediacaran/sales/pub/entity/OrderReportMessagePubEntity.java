@@ -5,9 +5,9 @@ import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Constructor;
-import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
@@ -24,12 +24,12 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(min = 10, max = 38, groups = DataValidation.class)
+	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String orderReport;
 	
 	@NotNull(groups = DataValidation.class)
@@ -38,7 +38,7 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 	
-	@Length(min = 1, max = 128, groups = DataValidation.class)
+	@Size(min = 1, max = 128, groups = DataValidation.class)
 	private String message;
 	
 	@Constructor

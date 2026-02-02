@@ -13,8 +13,7 @@ import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -26,7 +25,7 @@ public class OrderReport implements Serializable {
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = DataValidation.class)

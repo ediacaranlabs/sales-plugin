@@ -14,8 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
@@ -27,7 +26,7 @@ public class ProductRequest implements Serializable {
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+")
-	@Length(min = 10, max = 38)
+	@Size(min = 10, max = 38)
 	protected String id;
 
 	@NotNull
@@ -37,7 +36,7 @@ public class ProductRequest implements Serializable {
 	@Valid
 	protected Product product;
 	
-	@Length(max = 30)
+	@Size(max = 30)
 	protected String productID;
 	
 	@Min(1)
@@ -65,15 +64,15 @@ public class ProductRequest implements Serializable {
 
 	@NotNull
 	@Pattern(regexp = CommonValidation.NAME_FORMAT)
-	@Length(max = 128)
+	@Size(max = 128)
 	protected String name;
 	
 	@NotNull
-	@Length(min = 5, max = 128)
+	@Size(min = 5, max = 128)
 	protected String shortDescription;
 	
 	@NotNull
-	@Length(min = 5, max = 128)
+	@Size(min = 5, max = 128)
 	protected String description;
 	
 	/* Campos transientes */

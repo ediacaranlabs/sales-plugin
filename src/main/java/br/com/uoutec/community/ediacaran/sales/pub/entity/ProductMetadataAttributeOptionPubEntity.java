@@ -3,10 +3,10 @@ package br.com.uoutec.community.ediacaran.sales.pub.entity;
 import java.util.Locale;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.Transient;
-import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadataAttributeOption;
@@ -33,7 +33,7 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 	
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
-	@Length(max = 128, groups = DataValidation.class)
+	@Size(max = 128, groups = DataValidation.class)
 	private String value;
 
 	@NotNull
@@ -42,7 +42,7 @@ public class ProductMetadataAttributeOptionPubEntity extends AbstractPubEntity<P
 
 	@NotNull(groups = DataValidation.class)
 	//@Pattern(regexp = CommonValidation.NAME_FORMAT, groups = DataValidation.class)
-	@Length(max = 256, groups = DataValidation.class)
+	@Size(max = 256, groups = DataValidation.class)
 	private String description;
 
 	private Boolean deleted;

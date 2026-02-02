@@ -9,8 +9,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -22,12 +21,12 @@ public class OrderReportMessage implements Serializable {
 
 	@NotNull(groups = IdValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
-	@Length(min = 10, max = 38, groups = IdValidation.class)
+	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Length(min = 10, max = 38, groups = DataValidation.class)
+	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String orderReport;
 	
 	@NotNull(groups = DataValidation.class)
@@ -36,7 +35,7 @@ public class OrderReportMessage implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 	
-	@Length(min = 1, max = 128, groups = DataValidation.class)
+	@Size(min = 1, max = 128, groups = DataValidation.class)
 	private String message;
 	
 	public OrderReportMessage(){

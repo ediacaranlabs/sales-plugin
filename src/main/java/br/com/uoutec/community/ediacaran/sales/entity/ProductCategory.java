@@ -29,7 +29,7 @@ public class ProductCategory implements Serializable {
 	private int id;
 
 	@NotNull(groups = DataValidation.class)
-	@Length(max = 128, groups = DataValidation.class)
+	@Size(max = 128, groups = DataValidation.class)
 	private String name;
 
 	protected volatile transient boolean imageLoaded;
