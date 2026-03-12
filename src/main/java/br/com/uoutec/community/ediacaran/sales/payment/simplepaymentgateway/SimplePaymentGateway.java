@@ -37,4 +37,9 @@ public class SimplePaymentGateway extends AbstractPaymentGateway{
 		return paymentRequest.getPayment().getTotal().compareTo(BigDecimal.ZERO) > 0;
 	}
 
+	@Override
+	public void refund(PaymentRequest paymentRequest) throws PaymentGatewayException {
+		
+	}
+
 }
