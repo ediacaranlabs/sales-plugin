@@ -32,6 +32,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyOrderException;
 import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
@@ -43,6 +44,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistry
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductException;
 import br.com.uoutec.community.ediacaran.security.Principal;
@@ -139,6 +141,27 @@ public class OrderRegistryUtil {
 		
 	}
 
+	public static void refoundOrder(Order order, Client client, Payment payment, String message, 
+			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException, ValidationException {
+		
+			paymentGateway.refund(new PaymentRequest(order));
+			
+			checkPayment(payment, order);
+			order.getPayment().setStatus(payment.getStatus());
+			checkAndUpdateNewOrderStatus(order, toOrderStatus(order.getPayment().getStatus()));
+			
+			update(order, entityAccess);
+		
+	}
+	
+	public static void cancelInvoices(List<Invoice> invoices, String justification, InvoiceRegistry invoiceRegistry) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
+		
+		for(Invoice i: invoices) {
+			invoiceRegistry.cancelInvoice(i, justification);
+		}
+		
+	}
+	
 	public static void registerEvent(String message, Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		orderRegistry.registryLog(order, message);
 	}
@@ -182,12 +205,33 @@ public class OrderRegistryUtil {
 		}
 		
 	}
+	
 	public static void postOrder(Order order, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException {
 		try{
 			for(ProductRequest pr: order.getItens()){
 				ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
 				ProductTypeHandler productTypeHandler = productType.getHandler();
 				productTypeHandler.postRegisterOrder(order.getClient(), order, pr);
+			}
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException("falha ao processar os produtos", e);
+		}
+		
+	}
+
+	public static void postRefundOrder(Order order, ProductTypeRegistry productTypeRegistry) throws OrderRegistryException {
+		try{
+			for(ProductRequest productRequest: order.getItens()){
+				try{
+					ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
+					ProductTypeHandler productTypeHandler = productType.getHandler();
+					productTypeHandler.removeItem(order.getClient(), order, productRequest);
+				}
+				catch(Throwable e){
+					throw new OrderRegistryException(
+						"falha ao processar o produto/serviço " + productRequest.getId(), e);
+				}
 			}
 		}
 		catch(Throwable e){
