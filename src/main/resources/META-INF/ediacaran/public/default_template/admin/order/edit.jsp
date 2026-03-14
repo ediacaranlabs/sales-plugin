@@ -328,5 +328,10 @@
 				$.AppContext.utils.updateContentByID('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/payment/${vars.order.id}', "order_result");
 			</ec:event>
 		</ec:button>
+		<ec:button label="#{refund.label}" icon="credit-card" enabled="${vars.order.payment.receivedFrom == null}" style="danger" align="right" actionType="button" bundle="${messages}">
+			<ec:event type="click">
+				$.AppContext.utils.updateContentByID('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/refund/${vars.order.id}', "order_result");
+			</ec:event>
+		</ec:button>
 	</ec:box-footer>
 </ec:box>

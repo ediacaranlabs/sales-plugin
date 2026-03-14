@@ -107,7 +107,7 @@ public enum OrderStatusValue implements OrderStatus {
 	
 	CANCELED(),
 
-	REFOUND();
+	REFUND();
 	
 	public static final String RESOURCE_BUNDLE = 
 			MessageBundle.toPackageID(OrderStatusValue.class);
@@ -152,7 +152,7 @@ public enum OrderStatusValue implements OrderStatus {
 
 			nextState.put(OrderStatusValue.PAYMENT_RECEIVED, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
-							OrderStatusValue.REFOUND,
+							OrderStatusValue.REFUND,
 							OrderStatusValue.ORDER_INVOICED))
 				);
 
@@ -169,7 +169,7 @@ public enum OrderStatusValue implements OrderStatus {
 							OrderStatusValue.COMPLETE))
 				);
 
-			nextState.put(OrderStatusValue.REFOUND, 
+			nextState.put(OrderStatusValue.REFUND, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
 							OrderStatusValue.CLOSED))
 				);

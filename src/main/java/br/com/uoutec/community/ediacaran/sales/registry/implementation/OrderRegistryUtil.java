@@ -199,7 +199,7 @@ public class OrderRegistryUtil {
 		case SUSPECTED_FRAUD:
 			return OrderStatus.PENDING_PAYMENT;
 		case REFOUND:
-			return OrderStatus.REFOUND;
+			return OrderStatus.REFUND;
 		default:
 			throw new OrderRegistryException("invalid payment status: " + paymentStatus);
 		}

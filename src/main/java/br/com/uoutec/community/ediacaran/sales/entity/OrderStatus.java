@@ -24,7 +24,7 @@ public interface OrderStatus {
 	
 	public static final OrderStatus CANCELED = OrderStatusValue.CANCELED;
 
-	public static final OrderStatus REFOUND = OrderStatusValue.REFOUND;
+	public static final OrderStatus REFUND = OrderStatusValue.REFUND;
 	
 	String getCode();
 	

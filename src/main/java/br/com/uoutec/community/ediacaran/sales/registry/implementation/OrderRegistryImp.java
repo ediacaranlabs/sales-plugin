@@ -549,12 +549,12 @@ public class OrderRegistryImp
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
-	public void createRefound(String orderID, String message) throws RegistryException {
+	public void createRefound(Order order, String message) throws RegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());
 		
 		try{
-			this.unsafeCreateRefound(orderID, message);
+			this.unsafeCreateRefound(order, message);
 		}
 		catch(RegistryException e){
 			throw e;
@@ -564,12 +564,9 @@ public class OrderRegistryImp
 		}
 	}
 	
-	private void unsafeCreateRefound(String orderID, String message
+	private void unsafeCreateRefound(Order order, String message
 			) throws OrderRegistryException, SystemUserRegistryException, ClientRegistryException, InvoiceRegistryException, 
 			PaymentGatewayException, ValidationException, ShippingRegistryException {
-		
-		Order order = new Order();
-		order.setId(orderID);
 		
 		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		Order actualOrder                = OrderRegistryUtil.getActualOrder(order, orderEntityAccess);
@@ -577,10 +574,10 @@ public class OrderRegistryImp
 		PaymentGateway paymentGateway    = OrderRegistryUtil.getPaymentGateway(actualOrder, paymentGatewayRegistry);
 		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
 		
-		OrderRegistryUtil.checkAndUpdateNewOrderStatus(actualOrder, OrderStatus.REFOUND);
+		OrderRegistryUtil.checkAndUpdateNewOrderStatus(actualOrder, OrderStatus.REFUND);
 		OrderRegistryUtil.refoundOrder(actualOrder, actualClient, order.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
 		
-		if(actualOrder.getStatus() == OrderStatus.REFOUND) {
+		if(actualOrder.getStatus() == OrderStatus.REFUND) {
 			OrderRegistryUtil.cancelInvoices(actualInvoices, message, invoiceRegistry);
 			OrderRegistryUtil.postRefundOrder(actualOrder, productTypeRegistry);
 			OrderRegistryUtil.saveOrUpdateIndex(actualOrder, indexEntityAccess);

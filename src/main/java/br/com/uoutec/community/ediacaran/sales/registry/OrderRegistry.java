@@ -52,7 +52,7 @@ public interface OrderRegistry extends PublicBean {
 
 	/* refound payment */
 	
-	void createRefound(String order, String message) throws RegistryException;
+	void createRefound(Order order, String message) throws RegistryException;
 			
 	void revertRefound(String order, String message) throws RegistryException;
 			

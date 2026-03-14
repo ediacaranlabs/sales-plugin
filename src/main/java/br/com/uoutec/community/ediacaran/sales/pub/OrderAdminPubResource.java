@@ -199,6 +199,47 @@ public class OrderAdminPubResource {
 		
 		return order;
 	}
+
+	@Action("/refund/{id}")
+	@View("${plugins.ediacaran.sales.template}/admin/order/refund_result")
+	@Result(value = "order", mappingType = MappingTypes.VALUE)
+	@RequireAnyRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.ORDER.PAYMENT)
+	public Order refund(
+			@DetachedName
+			OrderPubEntity orderPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale) throws InvalidRequestException{
+	
+		Order order;
+		try{
+			order = orderPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.payment.error.fail_load, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+
+		try{
+			orderRegistry.createRefound(order, "refund");
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderAdminPubResourceMessages.payment.error.fail_register, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		return order;
+	}
 	
 	@Action("/edit/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/edit")
