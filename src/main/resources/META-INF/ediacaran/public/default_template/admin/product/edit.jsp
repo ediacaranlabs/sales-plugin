@@ -2,7 +2,9 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt"                    prefix="fmt"%> 
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
+
 <%@page trimDirectiveWhitespaces="true" %>
+
 <ec:setBundle var="messages" locale="${locale}"/>
 <ec:setTemplatePackage name="admin"/>
 <section class="inner-headline">
@@ -27,7 +29,7 @@
 <ec:box>
 	<ec:box-body>
 		<ec:form method="POST" id="product_form" enctype="multipart/form-data"
-			update="result_product_form" 
+			update="result_product_form" acceptCharset="utf8"
 			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/save/${vars.product_view.vars.entity.productType.toLowerCase()}" >
 			<!-- product-view -->
 			<c:set var="localVars" value="${vars}" />

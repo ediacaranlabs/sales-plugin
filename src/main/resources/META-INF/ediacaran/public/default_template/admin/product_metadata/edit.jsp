@@ -27,7 +27,7 @@
 <ec:box>
 	<ec:box-body>
 		<ec:form method="POST" id="product_metadata_form" enctype="multipart/form-data"
-			update="result_product_form" 
+			update="result_product_form" acceptCharset="UTF-8"
 			action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/product-metadata/save" >
 			<span formgroup="product_metadata">
 				<input type="hidden" name="protectedID" value="${vars.entity.protectedID}">

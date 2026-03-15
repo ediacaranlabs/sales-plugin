@@ -12,7 +12,6 @@ import org.brandao.brutos.annotation.Basic;
 import org.brandao.brutos.annotation.Constructor;
 import org.brandao.brutos.annotation.MappingTypes;
 import org.brandao.brutos.annotation.Transient;
-import org.hibernate.validator.constraints.Length;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeType;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductAttributeValueType;

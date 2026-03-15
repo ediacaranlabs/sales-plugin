@@ -1,5 +1,5 @@
 <%@page trimDirectiveWhitespaces="true" %>
-<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core"                   prefix="c"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
