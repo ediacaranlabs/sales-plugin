@@ -82,11 +82,10 @@
 			<ec:event type="change">
 				let $source = $event.source;
 				let $form = $source.getForm();
-				$form.submit(
-					false, 
-					"${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/${vars.entity.productType.toLowerCase()}/attribute_tab", 
-					"attribute_tab"
-				); 
+				let productMetadataID = $form.getField($source.getProperty('name')).getValue();
+				let $url = '${vars.updateURL}';
+				
+				$form.submit(false,	$url, "attribute_tab"); 
 			</ec:event>
 		</ec:select>
 	</ed:col>

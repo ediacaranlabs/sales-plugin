@@ -94,6 +94,7 @@ public abstract class AbstractProductTypeViewHandler
 		ra.add("images", images);
 		ra.add("currencyList", currencyList);
 		ra.add("measurementUnit", MeasurementUnit.values());
+		ra.add("updateURL", varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/products/show/") + entity.getProductType()  + "/attribute_tab");
 		
 		return ra;
 	}

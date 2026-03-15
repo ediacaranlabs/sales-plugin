@@ -352,7 +352,7 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 		o.setName(this.name);
 		o.setMeasurementUnit(this.measurementUnit);
 		o.setProductType(this.productType);
-		o.setThumb(thumbnail == null? null : thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE));
+		o.setThumb(thumbnail == null? null : (thumbnail.isImage()? thumbnail.save(SalesPluginConstants.WIDTH_PRODUCT_IMAGE, SalesPluginConstants.HEIGHT_PRODUCT_IMAGE) : null));
 		o.setTags(this.tagsString != null? StringUtil.toSet(this.tagsString, ",") : tags);
 		o.setShortDescription(this.shortDescription);
 		o.setMetadata(this.productMetadataID == null? 0 : this.productMetadataID.intValue());
