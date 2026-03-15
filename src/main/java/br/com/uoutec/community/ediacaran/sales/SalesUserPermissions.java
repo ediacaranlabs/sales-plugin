@@ -167,6 +167,8 @@ public final class SalesUserPermissions {
 			public static final String SHORT_DESCRIPTION	= ALL +  ":SHORT_DESCRIPTION";
 			
 			public static final String DESCRIPTION 			= ALL +  ":DESCRIPTION";
+
+			public static final String CATEGORY 			= ALL +  ":CATEGORY";
 			
 			public static final String CURRENCY 			= ALL +  ":CURRENCY";
 			

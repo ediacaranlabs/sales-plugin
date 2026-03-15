@@ -72,6 +72,28 @@ public class SecurityPluginInstaller {
 		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ID,	"Invoice - Edit id field",		"Id invoice field", 		null);
 		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ORDER,	"Invoice - Edit order field",	"Order invoice field",		null);
 		am.registerAuthorization(SalesUserPermissions.INVOICE.FIELDS.ITENS,	"Invoice - Edit itens field",	"Itens invoice field", 		null);
+
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.ALL,			"Product - Manager",			"Product Manager", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.SHOW,			"Product - Show",				"Show Product", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.CREATE,		"Product - Create",				"Create Product", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.EDIT,			"Product - Edit",				"Edit Product", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.SAVE,			"Product - Save",				"Save Product", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.DELETE,		"Product - Delete",				"Delete Product",			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.SEARCH,		"Product - Search",				"Search Product", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.ALL,	"Product - fields",				"Product fields", 			null);
+		
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.NAME,				"Product - Edit name field",				"Name Product field", 				null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.PRODUCT_METADATA,	"Product - Edit metadata field",			"Metadata Product field", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.SHORT_DESCRIPTION,	"Product - Edit short description field",	"Short description Product field", 	null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.CATEGORY,			"Product - Edit category field",			"Category Product field", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.DESCRIPTION,		"Product - Edit description field",			"Description Product field", 		null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.CURRENCY,			"Product - Edit currency field",			"Currency Product field", 			null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.COST,				"Product - Edit cost field",				"Cost Product field", 				null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.MEASUREMENT_UNIT,	"Product - Edit mensurement unit field",	"Mensurement unit Product field", 	null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.OFFER_DISCOUNT,	"Product - Edit offer discount field",		"Offer discount Product field", 	null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.OFFER_DATE,		"Product - Edit offer date field",			"Offer date Product field", 		null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.TAGS,				"Product - Edit tags field",				"Tags Product field", 				null);
+		am.registerAuthorization(SalesUserPermissions.PRODUCT.FIELDS.DISPLAY,			"Product - Edit display field",				"Display Product field", 			null);
 		
 	}
 	
@@ -108,6 +130,18 @@ public class SecurityPluginInstaller {
 		am.unregisterAuthorization(SalesUserPermissions.INVOICE.FIELDS.ORDER);
 		am.unregisterAuthorization(SalesUserPermissions.INVOICE.FIELDS.ITENS);
 
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.NAME);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.PRODUCT_METADATA);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.SHORT_DESCRIPTION);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.DESCRIPTION);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.CURRENCY);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.COST);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.MEASUREMENT_UNIT);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.OFFER_DISCOUNT);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.OFFER_DATE);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.TAGS);
+		am.unregisterAuthorization(SalesUserPermissions.PRODUCT.FIELDS.DISPLAY);
+		
 	}
 	
 	
