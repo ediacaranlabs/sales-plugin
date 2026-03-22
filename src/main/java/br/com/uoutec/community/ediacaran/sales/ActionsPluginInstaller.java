@@ -32,22 +32,22 @@ public class ActionsPluginInstaller {
 		ActionRegistry actionRegistry = EntityContextPlugin.getEntity(ActionRegistry.class);
 		
 		actionRegistry.registerAction(NEW_ORDER_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
-			String orderID = request.getParameter("order");
+			String orderID = (String)request.getParameter("order");
 			response.setParameter("order", orderID);
 		});
 
 		actionRegistry.registerAction(NEW_INVOICE_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
-			String invoice = request.getParameter("invoice");
+			String invoice = (String)request.getParameter("invoice");
 			response.setParameter("invoice", invoice);
 		});
 
 		actionRegistry.registerAction(NEW_SHIPPING_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
-			String shipping = request.getParameter("shipping");
+			String shipping = (String)request.getParameter("shipping");
 			response.setParameter("shipping", shipping);
 		});
 
 		actionRegistry.registerAction(NEW_ORDER_REPORT, 3, 10, ChronoUnit.SECONDS, (request,response)->{
-			String orderReport = request.getParameter("orderReport");
+			String orderReport = (String)request.getParameter("orderReport");
 			response.setParameter("orderReport", orderReport);
 		});
 		

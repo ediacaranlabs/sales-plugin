@@ -32,7 +32,7 @@ public class CreateInvoiceAction implements ActionExecutor, PublicBean {
 	
 	private void localExecute(ActionExecutorRequest request, ActionExecutorResponse response) throws Throwable {
 		
-		String orderID = request.getParameter("order");
+		String orderID = (String)request.getParameter("order");
 		Order order = orderRegistry.findById(orderID);
 		
 		if(order.getPayment().getStatus() != PaymentStatus.PAYMENT_RECEIVED) {
