@@ -32,15 +32,15 @@ public interface OrderRegistry extends PublicBean {
 	
 	/* create order */
 	
-	Order createOrder(Cart cart, Payment payment, String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
+	List<Order> createOrder(Cart cart, Payment payment, String message, PaymentGateway paymentGateway) throws OrderRegistryException; 
 
 	/* register payment */
 	
-	void registerPendingPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
+	void registerPendingPayment(Payment payment) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
 	
-	void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException ;
+	void registerPayment(Payment payment) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException ;
 	
-	void updatePaymentStatus(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
+	void updatePaymentStatus(Payment payment, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
 	
 	/* register invoice */
 	
