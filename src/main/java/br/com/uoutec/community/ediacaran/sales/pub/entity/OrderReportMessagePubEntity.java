@@ -11,6 +11,7 @@ import org.brandao.brutos.annotation.Constructor;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -32,6 +33,11 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String orderReport;
 	
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
+	@Size(min = 10, max = 38, groups = DataValidation.class)
+	private String productRequest;
+	
 	@NotNull(groups = DataValidation.class)
 	private Integer user;
 	
@@ -47,12 +53,21 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 	
 	public OrderReportMessagePubEntity(OrderReportMessage e, Locale locale) {
 		this.id = e.getId();
+		this.productRequest = e.getProductRequest();
 		this.orderReport = e.getOrderReport();
 		this.message = e.getMessage();
 		this.user = e.getUser() == null? null : e.getUser().getId();
 		this.date = e.getDate();
 	}
 	
+	public String getProductRequest() {
+		return productRequest;
+	}
+
+	public void setProductRequest(String productRequest) {
+		this.productRequest = productRequest;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -105,10 +120,16 @@ public class OrderReportMessagePubEntity extends AbstractPubEntity<OrderReportMe
 
 	@Override
 	protected OrderReportMessage reloadEntity() throws Throwable {
+		
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		
 		OrderReport orderReport = new OrderReport();
 		orderReport.setId(this.orderReport);
-		return orderReportRegistry.getMessageById(id, orderReport);
+		
+		ProductRequest pr = new ProductRequest();
+		pr.setId(productRequest);
+		
+		return orderReportRegistry.getMessageById(id, pr, orderReport);
 	}
 
 	@Override

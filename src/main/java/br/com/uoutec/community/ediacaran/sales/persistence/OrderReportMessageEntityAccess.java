@@ -15,7 +15,7 @@ public interface OrderReportMessageEntityAccess {
 	
 	void delete(OrderReportMessage value) throws EntityAccessException;
 	
-	List<OrderReportMessage> getByOrderReport(String id, Integer first, Integer max) throws EntityAccessException;
+	List<OrderReportMessage> search(String id, String productRequest, Integer first, Integer max) throws EntityAccessException;
 	
 	void flush();
 	

@@ -29,6 +29,11 @@ public class OrderReportMessage implements Serializable {
 	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String orderReport;
 	
+	@NotNull(groups = IdValidation.class)
+	@Pattern(regexp = "[0-9A-Z]+")
+	@Size(min = 10, max = 38)
+	private String productRequest;
+	
 	@NotNull(groups = DataValidation.class)
 	private SystemUser user;
 	
@@ -39,6 +44,14 @@ public class OrderReportMessage implements Serializable {
 	private String message;
 	
 	public OrderReportMessage(){
+	}
+
+	public String getProductRequest() {
+		return productRequest;
+	}
+
+	public void setProductRequest(String productRequest) {
+		this.productRequest = productRequest;
 	}
 
 	public String getId() {

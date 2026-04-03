@@ -402,8 +402,9 @@ public class OrderReportRegistryUtil {
 		return result;
 	}
 	
-	public static OrderReportMessage toOrderReportMessage(OrderReport e, String message, LocalDateTime date, SystemUser user) throws OrderReportRegistryException {
+	public static OrderReportMessage toOrderReportMessage(ProductRequest productRequest, OrderReport e, String message, LocalDateTime date, SystemUser user) throws OrderReportRegistryException {
 		OrderReportMessage x = new OrderReportMessage();
+		x.setProductRequest(productRequest.getId());
 		x.setDate(date);
 		x.setMessage(message);
 		x.setOrderReport(e.getId());
@@ -421,8 +422,8 @@ public class OrderReportRegistryUtil {
 		}
 	}
 
-	public static OrderReportMessageResultSearch getOrderReportMessageByOrderReport(OrderReport orderReport, 
-			Integer page, Integer maxItens, OrderReportMessageEntityAccess entityAccess, SystemUserRegistry systemUserRegistry) throws OrderReportRegistryException{
+	public static OrderReportMessageResultSearch getOrderReportMessageByOrderReport(ProductRequest productRequest, 
+			OrderReport orderReport, Integer page, Integer maxItens, OrderReportMessageEntityAccess entityAccess, SystemUserRegistry systemUserRegistry) throws OrderReportRegistryException{
 		
 		try{
 			page = page == null? 1 : page;
@@ -431,7 +432,7 @@ public class OrderReportRegistryUtil {
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;
 			
-			List<OrderReportMessage> itens = entityAccess.getByOrderReport(orderReport.getId(), firstResult, maxResults);
+			List<OrderReportMessage> itens = entityAccess.search(orderReport.getId(), productRequest.getId(), firstResult, maxResults);
 			Collections.reverse(itens);
 			
 			for(OrderReportMessage e: itens) {

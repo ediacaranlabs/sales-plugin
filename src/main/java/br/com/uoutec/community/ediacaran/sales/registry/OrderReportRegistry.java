@@ -8,6 +8,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
@@ -29,10 +30,10 @@ public interface OrderReportRegistry extends PublicBean {
 	
 	OrderReportResultSearch searchOrderReport(OrderReportSearch value) throws OrderReportRegistryException;
 	
-	void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException;
+	void sendMessage(ProductRequest productRequest, OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException;
 
-	OrderReportMessage getMessageById(String id, OrderReport orderReport) throws OrderReportRegistryException;
+	OrderReportMessage getMessageById(String id, ProductRequest productRequest, OrderReport orderReport) throws OrderReportRegistryException;
 	
-	OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException;
+	OrderReportMessageResultSearch getMessages(ProductRequest productRequest, OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException;
 	
 }

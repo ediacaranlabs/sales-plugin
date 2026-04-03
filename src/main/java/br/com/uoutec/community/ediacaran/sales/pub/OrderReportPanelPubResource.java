@@ -29,11 +29,13 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageClientPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductRequestPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
@@ -182,7 +184,7 @@ public class OrderReportPanelPubResource {
 	}
 
 	
-	@Action(value="/messages")
+	@Action(value="/messages/{orderReport.id}/{productRequest.id}")
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
@@ -190,7 +192,8 @@ public class OrderReportPanelPubResource {
 	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public OrderReportMessageSearchResultPubEntity getMessages(
-			@DetachedName OrderReportClientPubEntity orderReportClientPubEntity,
+			@Basic(bean="orderReport") OrderReportClientPubEntity orderReportClientPubEntity,
+			@Basic(bean="productRequest") ProductRequestPubEntity productRequestPubEntity,
 			@Basic(bean="page") Integer page,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
@@ -208,10 +211,26 @@ public class OrderReportPanelPubResource {
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
+
+		ProductRequest productRequest;
+		
+		try{
+			productRequestPubEntity.setOrderId(orderReport.getOrder().getId());
+			productRequest = productRequestPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportAdminPubResourceMessages.search.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
 		
 		
 		try{
-			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(orderReport, page, null);
+			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(productRequest, orderReport, page, null);
 			return result == null? null : new OrderReportMessageSearchResultPubEntity(result, orderReport, locale);
 		}
 		catch(Throwable ex){
@@ -227,7 +246,7 @@ public class OrderReportPanelPubResource {
 		
 	}
 
-	@Action("/sendMessage")
+	@Action("/sendMessage/{orderReportd}/{productRequest}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/result_message")
 	@Result("vars")
 	@RequestMethod("POST")
@@ -257,7 +276,11 @@ public class OrderReportPanelPubResource {
 		try{
 			OrderReport or = new OrderReport();
 			or.setId(orderReportMessage.getOrderReport());
-			orderReportRegistry.sendMessage(or, orderReportMessage.getMessage(), orderReportMessage.getUser());
+			
+			ProductRequest pr = new ProductRequest();
+			pr.setId(orderReportMessage.getProductRequest());
+			
+			orderReportRegistry.sendMessage(pr, or, orderReportMessage.getMessage(), orderReportMessage.getUser());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

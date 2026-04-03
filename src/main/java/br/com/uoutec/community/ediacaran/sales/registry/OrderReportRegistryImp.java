@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSe
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
@@ -212,19 +213,19 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException {
-		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(orderReport, message, LocalDateTime.now(), user);
+	public void sendMessage(ProductRequest productRequest, OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException {
+		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(productRequest, orderReport, message, LocalDateTime.now(), user);
 		OrderReportRegistryUtil.registerMessage(e, orderReportMessageEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(orderReportMessageEntityAccess);
 	}
 
 	@Override
 	@ActivateRequestContext
-	public OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException {
+	public OrderReportMessageResultSearch getMessages(ProductRequest productRequest, OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException {
 		
 		SystemUserRegistry systemUserRegistry = EntityContextPlugin.getEntity(SystemUserRegistry.class);
 		
-		return OrderReportRegistryUtil.getOrderReportMessageByOrderReport(orderReport, page, quantityPerPage, orderReportMessageEntityAccess, systemUserRegistry);
+		return OrderReportRegistryUtil.getOrderReportMessageByOrderReport(productRequest, orderReport, page, quantityPerPage, orderReportMessageEntityAccess, systemUserRegistry);
 	}
 
 	@Override

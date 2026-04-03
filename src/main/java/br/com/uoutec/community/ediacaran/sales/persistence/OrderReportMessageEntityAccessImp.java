@@ -72,7 +72,7 @@ public class OrderReportMessageEntityAccessImp
 		return value;
 	}
 
-	public List<OrderReportMessage> getByOrderReport(String id, Integer first, Integer max) throws EntityAccessException {
+	public List<OrderReportMessage> search(String id, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<OrderReportMessageEntity> criteria = builder.createQuery(OrderReportMessageEntity.class);
