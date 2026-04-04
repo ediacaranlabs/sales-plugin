@@ -184,7 +184,7 @@ public class OrderReportPanelPubResource {
 	}
 
 	
-	@Action(value="/messages/{orderReport.id}/{productRequest.id}")
+	@Action(value="/messages")
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
@@ -246,15 +246,14 @@ public class OrderReportPanelPubResource {
 		
 	}
 
-	@Action("/sendMessage/{orderReportd}/{productRequest}")
+	@Action("/sendMessage")
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/result_message")
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
 	public Map<String,Object> sendMessage(
-			@DetachedName
-			OrderReportMessageClientPubEntity orderReportMessageClientPubEntity,
+			@DetachedName OrderReportMessageClientPubEntity orderReportMessageClientPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{

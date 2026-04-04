@@ -72,7 +72,7 @@ public class OrderReportMessageEntityAccessImp
 		return value;
 	}
 
-	public List<OrderReportMessage> search(String id, Integer first, Integer max) throws EntityAccessException {
+	public List<OrderReportMessage> search(String id, String productRequest, Integer first, Integer max) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		    CriteriaQuery<OrderReportMessageEntity> criteria = builder.createQuery(OrderReportMessageEntity.class);
@@ -82,6 +82,7 @@ public class OrderReportMessageEntityAccessImp
 		    
 		    List<Predicate> and = new ArrayList<Predicate>();
 
+	    	and.add(builder.equal(from.get("productRequestID"), productRequest));
 	    	and.add(builder.equal(from.get("orderReportID"), id));
 		    
 		    if(!and.isEmpty()) {

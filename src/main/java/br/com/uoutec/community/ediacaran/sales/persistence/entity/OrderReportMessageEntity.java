@@ -23,8 +23,11 @@ public class OrderReportMessageEntity implements Serializable {
 	@Column(name="cod_order_report_msg", length=38)
 	private String id;
 	
-	@Column(name="cod_order_report")
+	@Column(name="cod_order_report", length=38)
 	private String orderReportID;
+
+	@Column(name="cod_product_request", length=38)
+	private String productRequestID;
 	
 	@Column(name="dat_created")
 	private LocalDateTime date;
@@ -41,6 +44,7 @@ public class OrderReportMessageEntity implements Serializable {
 	public OrderReportMessageEntity(OrderReportMessage e){
 		this.id = e.getId();
 		this.date = e.getDate();
+		this.productRequestID = e.getProductRequest();
 		this.orderReportID = e.getOrderReport();
 		this.message = e.getMessage();
 		this.user = e.getUser() == null? null : e.getUser().getId();
@@ -93,7 +97,8 @@ public class OrderReportMessageEntity implements Serializable {
 		e.setDate(this.date);
 		e.setMessage(this.message);
 		e.setOrderReport(this.orderReportID);
-
+		e.setProductRequest(this.productRequestID);
+		
 		if(this.user != null) {
 			SystemUser user = new SystemUser();
 			user.setId(this.user);

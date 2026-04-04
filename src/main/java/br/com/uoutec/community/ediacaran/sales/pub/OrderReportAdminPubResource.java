@@ -30,11 +30,13 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSe
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessagePubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportSearchResultPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductRequestPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
@@ -200,7 +202,8 @@ public class OrderReportAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public OrderReportMessageSearchResultPubEntity getMessages(
-			@DetachedName OrderReportPubEntity orderReportPubEntity,
+			@Basic(bean="orderReport") OrderReportPubEntity orderReportPubEntity,
+			@Basic(bean="productRequest") ProductRequestPubEntity productRequestPubEntity,
 			@Basic(bean="page") Integer page,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale){
@@ -218,10 +221,26 @@ public class OrderReportAdminPubResource {
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
+
+		ProductRequest productRequest;
+		
+		try{
+			productRequestPubEntity.setOrderId(orderReport.getOrder().getId());
+			productRequest = productRequestPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportAdminPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportAdminPubResourceMessages.search.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
 		
 		
 		try{
-			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(orderReport, page, null);
+			OrderReportMessageResultSearch result = orderReportRegistry.getMessages(productRequest, orderReport, page, null);
 			return result == null? null : new OrderReportMessageSearchResultPubEntity(result, orderReport, locale);
 		}
 		catch(Throwable ex){
@@ -244,8 +263,7 @@ public class OrderReportAdminPubResource {
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
 	public Map<String,Object> sendMessage(
-			@DetachedName
-			OrderReportMessagePubEntity orderReportMessagePubEntity,
+			@DetachedName OrderReportMessagePubEntity orderReportMessagePubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
@@ -267,7 +285,11 @@ public class OrderReportAdminPubResource {
 		try{
 			OrderReport or = new OrderReport();
 			or.setId(orderReportMessage.getOrderReport());
-			orderReportRegistry.sendMessage(or, orderReportMessage.getMessage(), orderReportMessage.getUser());
+			
+			ProductRequest pr = new ProductRequest();
+			pr.setId(orderReportMessage.getProductRequest());
+			
+			orderReportRegistry.sendMessage(pr, or, orderReportMessage.getMessage(), orderReportMessage.getUser());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
