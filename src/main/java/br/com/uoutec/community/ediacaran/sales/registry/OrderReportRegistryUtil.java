@@ -338,6 +338,12 @@ public class OrderReportRegistryUtil {
 			throw new OrderReportRegistryException("order is closed");
 		}
 
+		//checks if there is only one product.
+		
+		if(e.getProducts().size() > 1) {
+			throw new OrderReportRegistryException("allowed only one product per request");
+		}
+		
 		//check if not exist reported product request
 		
 		Set<String> reportedProductRequest;

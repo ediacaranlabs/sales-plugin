@@ -164,7 +164,8 @@ public class OrderReportPanelPubResource {
 					.filter((e)->e.getCause() != null)
 					.collect(Collectors.toList())
 			);
-			orderReportRegistry.registerOrderReport(orderReport);
+			
+			orderReportRegistry.createOrderReportPerProduct(orderReport.getOrder(), orderReport.getProducts());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
@@ -177,7 +178,7 @@ public class OrderReportPanelPubResource {
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("orderReport", orderReport);
+		map.put("order", orderReport.getOrder());
 		return map;
 	}
 

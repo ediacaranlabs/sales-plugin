@@ -64,7 +64,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void createOrderReport(Order order, List<ProductRequestReport> products) throws OrderReportRegistryException, ValidationException, OrderStatusNotAllowedRegistryException {
+	public void createOrderReportPerProduct(Order order, List<ProductRequestReport> products) throws OrderReportRegistryException, ValidationException, OrderStatusNotAllowedRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getRegisterPermission());
 		
