@@ -300,19 +300,24 @@ public class OrderReportRegistryUtil {
 		}
 		
 		
+		return createOrderReport(order, list);
+	}
+
+	public static OrderReport createOrderReport(Order order, List<ProductRequestReport> products) throws OrderReportRegistryException {
+		
 		OrderReport or = new OrderReport();
 		
-		or.setClient(e.getClient());
+		or.setClient(order.getClient());
 		or.setDate(LocalDateTime.now());
 		or.setId(null);
-		or.setProducts(list);
+		or.setProducts(products);
 		or.setStatus(OrderReportStatus.NEW_REQUEST);
 		or.setUser(null);
-		or.setOrder(e);;
+		or.setOrder(order);
 		
 		return or;
 	}
-
+	
 	public static void checkAllowedCreateOrderReport(Order order) throws OrderStatusNotAllowedRegistryException {
 		if(!order.getStatus().isAllowedCreateOrderReport()) {
 			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());

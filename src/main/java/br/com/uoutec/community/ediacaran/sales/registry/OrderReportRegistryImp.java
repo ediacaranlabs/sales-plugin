@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.control.ActivateRequestContext;
@@ -59,6 +60,46 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	
 	@Inject
 	private ActionRegistry actionRegistry;
+	
+	@Override
+	@Transactional(rollbackOn = Throwable.class)
+	@ActivateRequestContext
+	public void createOrderReport(Order order, List<ProductRequestReport> products) throws OrderReportRegistryException, ValidationException, OrderStatusNotAllowedRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getRegisterPermission());
+		
+		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
+		ClientRegistry clientRegistry           = EntityContextPlugin.getEntity(ClientRegistry.class);
+		InvoiceRegistry invoiceRegistry	        = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		ShippingRegistry shippingRegistry	    = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		ProductTypeRegistry productTypeRegistry	= EntityContextPlugin.getEntity(ProductTypeRegistry.class);
+		
+		List<OrderReport> orderReportList = new ArrayList<>();
+		
+		try {
+			for(ProductRequestReport pr: products) {
+				OrderReport entity = OrderReportRegistryUtil.createOrderReport(order, Arrays.asList(pr));
+				save(entity, entityAccess, orderRegistry, clientRegistry, shippingRegistry, invoiceRegistry, productTypeRegistry);
+				orderReportList.add(entity);
+			}
+		}
+		catch(OrderStatusNotAllowedRegistryException ex) {
+			throw ex;
+		}
+		catch(OrderReportRegistryException ex) {
+			throw ex;
+		}
+		catch(Throwable ex) {
+			throw new OrderReportRegistryException(ex);
+		}
+		
+		OrderReportRegistryUtil.sendToRepository(entityAccess);
+		
+		for(OrderReport entity: orderReportList) {
+			OrderReportRegistryUtil.registerOrderReportRegisterEvent(actionRegistry, entity, true);
+		}
+		
+	}
 	
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
