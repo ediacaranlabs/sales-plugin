@@ -54,8 +54,8 @@ public class ActionsPluginInstaller {
 		actionRegistry.registerAction(REGISTER_PAYMENT_INFO, 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(RegisterPaymntInfoAction.class));
 		actionRegistry.registerAction(CREATE_INVOICE,			3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(CreateInvoiceAction.class));
 		
-		actionRegistry.addNextAction(NEW_ORDER_REGISTERED,	REGISTER_PAYMENT_INFO);
-		actionRegistry.addNextAction(REGISTER_PAYMENT_INFO,	CREATE_INVOICE);
+		actionRegistry.executeAfter(NEW_ORDER_REGISTERED,	REGISTER_PAYMENT_INFO);
+		actionRegistry.executeAfter(REGISTER_PAYMENT_INFO,	CREATE_INVOICE);
 		actionRegistry.addExceptionAction(CREATE_INVOICE,	EmptyInvoiceException.class, null);
 		
 	}
