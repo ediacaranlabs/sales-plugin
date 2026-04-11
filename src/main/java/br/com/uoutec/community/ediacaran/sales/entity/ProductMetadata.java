@@ -10,8 +10,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
-
 import br.com.uoutec.application.io.Path;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
