@@ -14,9 +14,9 @@ import javax.persistence.Table;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 
 @Entity
-@Table(name="rw_product_request_refound")
-@EntityListeners(ProductRequestRefoundEntityListener.class)
-public class ProductRequestRefoundEntity implements Serializable{
+@Table(name="rw_product_request_refund")
+@EntityListeners(ProductRequestRefundEntityListener.class)
+public class ProductRequestRefundEntity implements Serializable{
 
 	private static final long serialVersionUID = -6395849000853228077L;
 
@@ -24,8 +24,8 @@ public class ProductRequestRefoundEntity implements Serializable{
 	private ProductRequestRefoundIDEntity id;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_refound", referencedColumnName="cod_refound", insertable = false, updatable = false)
-	private RefoundEntity refound;
+	@JoinColumn(name="cod_refund", referencedColumnName="cod_refund", insertable = false, updatable = false)
+	private RefundEntity refund;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_product_request", referencedColumnName="cod_product_request", insertable = false, updatable = false)
@@ -34,14 +34,14 @@ public class ProductRequestRefoundEntity implements Serializable{
 	@Column(name="vlr_units", length=11)
 	private Integer units;
 	
-	public ProductRequestRefoundEntity(){
+	public ProductRequestRefundEntity(){
 	}
 	
-	public ProductRequestRefoundEntity(RefoundEntity refound, ProductRequest e){
-		this.id                   = new ProductRequestRefoundIDEntity(e.getId(), refound.getId());
+	public ProductRequestRefundEntity(RefundEntity refund, ProductRequest e){
+		this.id                   = new ProductRequestRefoundIDEntity(e.getId(), refund.getId());
 		this.units                = e.getUnits();
-		this.productRequestEntity = e == null? null : new ProductRequestEntity(refound, e);
-		this.refound             = refound;
+		this.productRequestEntity = e == null? null : new ProductRequestEntity(refund, e);
+		this.refund             = refund;
 	}
 	
 	public ProductRequestRefoundIDEntity getId() {
@@ -60,16 +60,16 @@ public class ProductRequestRefoundEntity implements Serializable{
 		this.units = units;
 	}
 
-	public RefoundEntity getRefound() {
-		return refound;
+	public RefundEntity getRefund() {
+		return refund;
 	}
 
-	public void setRefound(RefoundEntity refound) {
-		this.refound = refound;
+	public void setRefund(RefundEntity refund) {
+		this.refund = refund;
 		this.id = 
 			new ProductRequestRefoundIDEntity(
 				productRequestEntity == null? null : productRequestEntity.getId(), 
-				refound == null? null : refound.getId()
+				refund == null? null : refund.getId()
 			);
 	}
 
@@ -82,7 +82,7 @@ public class ProductRequestRefoundEntity implements Serializable{
 		this.id = 
 				new ProductRequestRefoundIDEntity(
 					productRequestEntity == null? null : this.productRequestEntity.getId(), 
-					refound == null? null : refound.getId()
+					refund == null? null : refund.getId()
 				);
 	}
 

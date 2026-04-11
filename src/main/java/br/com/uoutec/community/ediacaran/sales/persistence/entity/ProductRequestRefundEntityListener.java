@@ -2,7 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence.entity;
 
 import br.com.uoutec.community.ediacaran.persistence.SecurityEntitylListener;
 
-public class ProductRequestRefoundEntityListener 
-	extends SecurityEntitylListener<ProductRequestRefoundEntity>{
+public class ProductRequestRefundEntityListener 
+	extends SecurityEntitylListener<ProductRequestRefundEntity>{
 
 }

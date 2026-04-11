@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
-public class Refound implements Serializable {
+public class Refund implements Serializable {
 
 	private static final long serialVersionUID = -8250427147520718020L;
 
@@ -41,7 +41,7 @@ public class Refound implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	private String refundType;
 	
-	private LocalDateTime refoundDate;
+	private LocalDateTime refundDate;
 	
 	@NotNull(groups = DataValidation.class )
 	@Valid
@@ -49,7 +49,7 @@ public class Refound implements Serializable {
 	
 	private Map<String, String> addData;
 	
-	public Refound(){
+	public Refund(){
 	}
 
 	public String getId() {
@@ -130,23 +130,23 @@ public class Refound implements Serializable {
 		return date.format(dateTimeFormatter);
 	}
 
-	public String toStringRefoundDate(Locale locale) {
-		if(refoundDate == null) {
+	public String toStringRefundDate(Locale locale) {
+		if(refundDate == null) {
 			return "";
 		}
 		//DateTimeFormatter.withLocale(locale).
 		
 		DateTimeFormatter dateTimeFormatter = 
 				DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
-		return refoundDate.format(dateTimeFormatter);
+		return refundDate.format(dateTimeFormatter);
 	}
 	
-	public LocalDateTime getRefoundDate() {
-		return refoundDate;
+	public LocalDateTime getRefundDate() {
+		return refundDate;
 	}
 
-	public void setRefoundDate(LocalDateTime refoundDate) {
-		this.refoundDate = refoundDate;
+	public void setRefundDate(LocalDateTime refoundDate) {
+		this.refundDate = refoundDate;
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public class Refound implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Refound other = (Refound) obj;
+		Refund other = (Refund) obj;
 		return Objects.equals(id, other.id);
 	}
 	

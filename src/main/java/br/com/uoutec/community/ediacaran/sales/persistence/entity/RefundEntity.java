@@ -24,7 +24,7 @@ import org.brandao.brutos.bean.BeanProperty;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
-import br.com.uoutec.community.ediacaran.sales.entity.Refound;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
@@ -33,7 +33,7 @@ import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 @Entity
 @Table(name="rw_refound")
 @EntityListeners(RefoundEntityListener.class)
-public class RefoundEntity implements Serializable {
+public class RefundEntity implements Serializable {
 
 	private static transient final long serialVersionUID = -5167928569154696530L;
 
@@ -51,7 +51,7 @@ public class RefoundEntity implements Serializable {
 	}
 	
 	@Id
-	@Column(name="cod_refound", length=32)
+	@Column(name="cod_refund", length=32)
 	private String id;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
@@ -62,24 +62,24 @@ public class RefoundEntity implements Serializable {
 	private Integer client;
 
 	@Column(name="cod_refound_type")
-	private String refoundType;
+	private String refundType;
 	
 	@Column(name="dat_created")
 	private LocalDateTime date;
 
 	@Column(name="dat_refound")
-	private LocalDateTime refoundDate;
+	private LocalDateTime refundDate;
 	
 	@OneToMany(mappedBy = "refound")
-	private List<ProductRequestRefoundEntity> products;
+	private List<ProductRequestRefundEntity> products;
 	
 	@Lob
 	private String addData;
 
-	public RefoundEntity(){
+	public RefundEntity(){
 	}
 	
-	public RefoundEntity(Refound e){
+	public RefundEntity(Refund e){
 		
 		if(e.getOrder() != null) {
 			this.order = new OrderEntity();
@@ -88,13 +88,13 @@ public class RefoundEntity implements Serializable {
 		
 		this.id = e.getId();
 		this.date = e.getDate();
-		this.refoundDate = e.getRefoundDate();
+		this.refundDate = e.getRefundDate();
 		this.client = e.getClient() == null? null : e.getClient().getId();
-		this.refoundType = e.getRefundType();
+		this.refundType = e.getRefundType();
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
 			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestRefoundEntity(this, p));
+				this.products.add(new ProductRequestRefundEntity(this, p));
 			}
 		}
 		
@@ -136,42 +136,42 @@ public class RefoundEntity implements Serializable {
 		this.date = date;
 	}
 
-	public LocalDateTime getRefoundDate() {
-		return refoundDate;
+	public LocalDateTime getRefundDate() {
+		return refundDate;
 	}
 
-	public void setRefoundDate(LocalDateTime refoundDate) {
-		this.refoundDate = refoundDate;
+	public void setRefundDate(LocalDateTime refundDate) {
+		this.refundDate = refundDate;
 	}
 
-	public List<ProductRequestRefoundEntity> getProducts() {
+	public List<ProductRequestRefundEntity> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<ProductRequestRefoundEntity> products) {
+	public void setProducts(List<ProductRequestRefundEntity> products) {
 		this.products = products;
 	}
 
-	public Refound toEntity(){
+	public Refund toEntity(){
 		return this.toEntity(null);
 	}
 	
-	public Refound toEntity(Refound e){
+	public Refund toEntity(Refund e){
 		
 		try{
 			
 			if(e == null) {
-				if(this.refoundType == null) {
-					e =  new Refound();
+				if(this.refundType == null) {
+					e =  new Refund();
 				}
 				else{
 					EntityInheritanceManager entityInheritanceUtil = 
 							EntityContextPlugin.getEntity(EntityInheritanceManager.class);
 						
-					e = entityInheritanceUtil.getInstance(Refound.class, this.refoundType);
+					e = entityInheritanceUtil.getInstance(Refund.class, this.refundType);
 					
 					if(e == null){
-						e = new Refound();
+						e = new Refund();
 					}
 				}
 				
@@ -184,8 +184,8 @@ public class RefoundEntity implements Serializable {
 			}
 			
 			e.setId(this.id);
-			e.setRefoundDate(this.refoundDate);
-			e.setRefundType(this.refoundType);
+			e.setRefundDate(this.refundDate);
+			e.setRefundType(this.refundType);
 			e.setDate(this.date);
 			
 			if(this.client != null) {
@@ -200,7 +200,7 @@ public class RefoundEntity implements Serializable {
 
 			if(this.products != null) {
 				List<ProductRequest> list = new ArrayList<>();
-				for(ProductRequestRefoundEntity p: this.products) {
+				for(ProductRequestRefundEntity p: this.products) {
 					list.add(p.toEntity());
 				}
 				e.setProducts(list);
@@ -229,7 +229,7 @@ public class RefoundEntity implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RefoundEntity other = (RefoundEntity) obj;
+		RefundEntity other = (RefundEntity) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
