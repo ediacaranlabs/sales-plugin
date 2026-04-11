@@ -38,12 +38,11 @@ public class Refound implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
+	@NotNull(groups = DataValidation.class)
+	private String refundType;
+	
 	private LocalDateTime refoundDate;
 	
-	@Valid
-	@NotNull(groups = DataValidation.class)
-	private Payment payment;
-
 	@NotNull(groups = DataValidation.class )
 	@Valid
 	private List<ProductRequest> products;
@@ -69,6 +68,14 @@ public class Refound implements Serializable {
 		this.order = order;
 	}
 
+	public String getRefundType() {
+		return refundType;
+	}
+
+	public void setRefundType(String refundType) {
+		this.refundType = refundType;
+	}
+
 	public Client getClient() {
 		return client;
 	}
@@ -85,12 +92,12 @@ public class Refound implements Serializable {
 		this.date = date;
 	}
 
-	public Payment getPayment() {
-		return payment;
+	public Map<String, String> getAddData() {
+		return addData;
 	}
 
-	public void setPayment(Payment payment) {
-		this.payment = payment;
+	public void setAddData(Map<String, String> addData) {
+		this.addData = addData;
 	}
 
 	public List<ProductRequest> getProducts() {

@@ -58,6 +58,10 @@ public class ProductRequestEntity implements Serializable{
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_shipping", referencedColumnName="cod_shipping")
 	private ShippingEntity shipping;
+
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="cod_refound", referencedColumnName="cod_refound")
+	private RefoundEntity refound;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="set_period_type", length=32)
@@ -96,27 +100,33 @@ public class ProductRequestEntity implements Serializable{
 	}
 	
 	public ProductRequestEntity(ProductRequest e){
-		this(null, null, null, e);
+		this(null, null, null, null, e);
 	}
 	
 	public ProductRequestEntity(OrderEntity order, ProductRequest e){
-		this(order, null, null, e);
+		this(order, null, null, null, e);
+	}
+
+	public ProductRequestEntity(RefoundEntity refound, ProductRequest e){
+		this(null, null, null, refound, e);
 	}
 	
 	public ProductRequestEntity(InvoiceEntity invoice, ProductRequest e){
-		this(null, invoice, null, e);
+		this(null, invoice, null, null, e);
 	}
+	
 	public ProductRequestEntity(ShippingEntity shipping, ProductRequest e){
-		this(null, null, shipping, e);
+		this(null, null, shipping, null, e);
 	}
 
-	public ProductRequestEntity(OrderEntity order, InvoiceEntity invoice, ShippingEntity shipping, ProductRequest e){
+	public ProductRequestEntity(OrderEntity order, InvoiceEntity invoice, ShippingEntity shipping, RefoundEntity refound, ProductRequest e){
 		this.id               = e.getId();
 		this.name             = e.getName();
 		this.serial           = e.getSerial();
 		this.order            = order;
 		this.invoice          = invoice;
 		this.shipping         = shipping;
+		this.refound          = refound;
 		this.addData          = DataUtil.encode(e.getAddData());
 		this.cost             = e.getCost();
 		this.currency         = e.getCurrency();

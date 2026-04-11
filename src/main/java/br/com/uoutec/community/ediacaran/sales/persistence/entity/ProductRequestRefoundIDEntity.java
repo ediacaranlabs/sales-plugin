@@ -7,35 +7,35 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class ProductRequestShippingIDEntity implements Serializable{
+public class ProductRequestRefoundIDEntity implements Serializable{
 
 	private static final long serialVersionUID = -7914273839250723485L;
 
 	@Column(name="cod_product_request", length=38)
 	private String productRequestID;
 
-	@Column(name="cod_refound", length=32)
-	private String refoundID;
+	@Column(name="cod_shipping", length=32)
+	private String shippingID;
 
-	public ProductRequestShippingIDEntity() {
+	public ProductRequestRefoundIDEntity() {
 	}
 	
-	public ProductRequestShippingIDEntity(String productRequestID, String refoundID) {
+	public ProductRequestRefoundIDEntity(String productRequestID, String shippingID) {
 		this.productRequestID = productRequestID;
-		this.refoundID = refoundID;
+		this.shippingID = shippingID;
 	}
 
 	public String getProductRequestID() {
 		return productRequestID;
 	}
 
-	public String getRefoundID() {
-		return refoundID;
+	public String getShippingID() {
+		return shippingID;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(refoundID, productRequestID);
+		return Objects.hash(shippingID, productRequestID);
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class ProductRequestShippingIDEntity implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ProductRequestShippingIDEntity other = (ProductRequestShippingIDEntity) obj;
-		return Objects.equals(refoundID, other.refoundID) && Objects.equals(productRequestID, other.productRequestID);
+		ProductRequestRefoundIDEntity other = (ProductRequestRefoundIDEntity) obj;
+		return Objects.equals(shippingID, other.shippingID) && Objects.equals(productRequestID, other.productRequestID);
 	}
 	
 }

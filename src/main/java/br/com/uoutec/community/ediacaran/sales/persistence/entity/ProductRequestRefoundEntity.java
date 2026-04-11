@@ -14,18 +14,18 @@ import javax.persistence.Table;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 
 @Entity
-@Table(name="rw_product_request_shipping")
-@EntityListeners(ProductRequestShippingEntityListener.class)
-public class ProductRequestShippingEntity implements Serializable{
+@Table(name="rw_product_request_refound")
+@EntityListeners(ProductRequestRefoundEntityListener.class)
+public class ProductRequestRefoundEntity implements Serializable{
 
 	private static final long serialVersionUID = -6395849000853228077L;
 
 	@EmbeddedId
-	private ProductRequestShippingIDEntity id;
+	private ProductRequestRefoundIDEntity id;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_shipping", referencedColumnName="cod_shipping", insertable = false, updatable = false)
-	private ShippingEntity shipping;
+	@JoinColumn(name="cod_refound", referencedColumnName="cod_refound", insertable = false, updatable = false)
+	private RefoundEntity refound;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cod_product_request", referencedColumnName="cod_product_request", insertable = false, updatable = false)
@@ -33,23 +33,22 @@ public class ProductRequestShippingEntity implements Serializable{
 	
 	@Column(name="vlr_units", length=11)
 	private Integer units;
-
 	
-	public ProductRequestShippingEntity(){
+	public ProductRequestRefoundEntity(){
 	}
 	
-	public ProductRequestShippingEntity(ShippingEntity shipping, ProductRequest e){
-		this.id                   = new ProductRequestShippingIDEntity(e.getId(), shipping.getId());
+	public ProductRequestRefoundEntity(RefoundEntity refound, ProductRequest e){
+		this.id                   = new ProductRequestRefoundIDEntity(e.getId(), refound.getId());
 		this.units                = e.getUnits();
-		this.productRequestEntity = e == null? null : new ProductRequestEntity(shipping, e);
-		this.shipping             = shipping;
+		this.productRequestEntity = e == null? null : new ProductRequestEntity(refound, e);
+		this.refound             = refound;
 	}
 	
-	public ProductRequestShippingIDEntity getId() {
+	public ProductRequestRefoundIDEntity getId() {
 		return id;
 	}
 
-	public void setId(ProductRequestShippingIDEntity id) {
+	public void setId(ProductRequestRefoundIDEntity id) {
 		this.id = id;
 	}
 
@@ -61,16 +60,16 @@ public class ProductRequestShippingEntity implements Serializable{
 		this.units = units;
 	}
 
-	public ShippingEntity getShipping() {
-		return shipping;
+	public RefoundEntity getRefound() {
+		return refound;
 	}
 
-	public void setShipping(ShippingEntity shipping) {
-		this.shipping = shipping;
+	public void setRefound(RefoundEntity refound) {
+		this.refound = refound;
 		this.id = 
-			new ProductRequestShippingIDEntity(
+			new ProductRequestRefoundIDEntity(
 				productRequestEntity == null? null : productRequestEntity.getId(), 
-				shipping == null? null : shipping.getId()
+				refound == null? null : refound.getId()
 			);
 	}
 
@@ -81,9 +80,9 @@ public class ProductRequestShippingEntity implements Serializable{
 	public void setProductRequestEntity(ProductRequestEntity productRequestEntity) {
 		this.productRequestEntity = productRequestEntity;
 		this.id = 
-				new ProductRequestShippingIDEntity(
+				new ProductRequestRefoundIDEntity(
 					productRequestEntity == null? null : this.productRequestEntity.getId(), 
-					shipping == null? null : shipping.getId()
+					refound == null? null : refound.getId()
 				);
 	}
 
