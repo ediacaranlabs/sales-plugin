@@ -105,6 +105,9 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity);
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity, actualShiping, orderRegistry);
+		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder, orderRegistry);
+		refundRegistryUtil.registerNewRefundEvent(entity);
+		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity, null, null, orderRegistry);
 		
 		//ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
@@ -112,10 +115,10 @@ public class RefundRegistryImp implements RefundRegistry {
 		//ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		//ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
 		//ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
-		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
-		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
-		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, shipping, orderReportRegistry, orderRegistry, productTypeRegistry, entityAccess);
+		//ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
+		//OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
+		//ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
+		//ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, shipping, orderReportRegistry, orderRegistry, productTypeRegistry, entityAccess);
 		
 	}
 

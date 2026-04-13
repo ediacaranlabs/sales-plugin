@@ -12,6 +12,8 @@ public class ActionsPluginInstaller {
 
 	public static final String NEW_ORDER_REGISTERED 		= "new_order_registered";
 
+	public static final String NEW_REFUND_REGISTERED 		= "new_refund_registered";
+	
 	public static final String NEW_INVOICE_REGISTERED 		= "new_invoice_registered";
 
 	public static final String NEW_SHIPPING_REGISTERED 		= "new_shipping_registered";

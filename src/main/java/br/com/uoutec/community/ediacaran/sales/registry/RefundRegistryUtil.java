@@ -7,11 +7,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
@@ -19,6 +22,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
+import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
@@ -45,6 +50,9 @@ public class RefundRegistryUtil {
 	
 	@Inject
 	private ShippingRegistry shippingRegistry;
+	
+	@Inject
+	private ActionRegistry actionRegistry;
 	
 	public void save(Refund refund, Order order) throws RefundRegistryException {
 		try {
@@ -288,6 +296,38 @@ public class RefundRegistryUtil {
 		
 		if(isCompletedRefund(order, refunds, Collections.EMPTY_LIST)) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.REFUND, orderRegistry);
+		}
+		
+	}
+
+	public void registerEvent(String message, Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.registryLog(order, message);
+	}
+
+	public void registerNewRefundEvent(Refund refund) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.NEW_REFUND_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("refund", refund.getId())
+				.build()
+		);
+	}
+
+	public void updateOrderStatus(Order actualOrder, Collection<Refund> refundList, Refund refund, 
+			OrderReportRegistry orderReportRegistry, ShippingRegistry shippingRegistry, 
+			OrderRegistry orderRegistry) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
+		
+		List<Shipping> shippingList			= shippingRegistry.findByOrder(actualOrder.getId());
+		List<OrderReport> orderReportList 	= orderReportRegistry.findByOrder(actualOrder);
+		List<Refund> allRefund				= new ArrayList<>(refundList);
+		
+		if(!allRefund.contains(refund)) {
+			allRefund.add(refund);
+		}
+		
+		if(isCompletedRefund(actualOrder, refundList, shippingList) &&
+			OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
+			orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 		}
 		
 	}
