@@ -39,6 +39,8 @@ public interface OrderStatus {
 	boolean isAllowedCreateShipping();
 
 	boolean isAllowedCreateRefund();
+
+	boolean isAllowedChangeRefund();
 	
 	boolean isAllowedChangeShipping();
 

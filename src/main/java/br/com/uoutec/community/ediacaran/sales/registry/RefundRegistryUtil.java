@@ -76,6 +76,10 @@ public class RefundRegistryUtil {
 	public void checkEntityToSave(Refund entity) throws ValidationException {
 		ValidatorBean.validate(entity, saveValidations);
 	}
+
+	public void checkEntityToUpdate(Refund entity) throws ValidationException {
+		ValidatorBean.validate(entity, updateValidations);
+	}
 	
 	public void checkOrder(Refund entity) throws RefundRegistryException {
 		
@@ -111,6 +115,15 @@ public class RefundRegistryUtil {
 		}
 		
 		return actuaClient;
+	}
+
+	public Refund getActualRefund(Refund refund) throws RefundRegistryException {
+		try {
+			return entityAccess.findById(refund.getId());
+		}
+		catch(Throwable ex) {
+			throw new RefundRegistryException(ex);
+		}
 	}
 	
 	public List<Refund> getActualRefunds(Order order, Client client) throws RefundRegistryException {
@@ -338,6 +351,19 @@ public class RefundRegistryUtil {
 			orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 		}
 		
+	}
+	
+	public void checkAllowedUpdateRefund(Order order) throws OrderStatusNotAllowedRegistryException {
+		if(!order.getStatus().isAllowedChangeRefund()) {
+			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
+		}
+	}
+
+	public void preventChangeRefundSensitiveData(Refund refund, Refund actualRefund) {
+		refund.setClient(actualRefund.getClient());
+		refund.setDate(actualRefund.getDate());
+		refund.setOrder(actualRefund.getOrder());
+		refund.setRefundType(actualRefund.getRefundType());
 	}
 	
 }

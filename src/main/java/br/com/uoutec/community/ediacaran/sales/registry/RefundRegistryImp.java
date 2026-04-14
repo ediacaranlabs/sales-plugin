@@ -110,27 +110,33 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.registerNewRefundEvent(entity);
 		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity, null, null, orderRegistry);
 		
-		//ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
-		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		//ShippingRegistryUtil.checkShipping(actualOrder, actualShippings, shipping, productTypeRegistry);
-		//ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
-		//ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
-		//ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry, productTypeRegistry);
-		//ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-		//OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
-		//ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
-		//ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, shipping, orderReportRegistry, orderRegistry, productTypeRegistry, entityAccess);
-		
 	}
 
-	private void update(Refund entity) {
+	private void update(Refund entity) throws ValidationException, RefundRegistryException, ClientRegistryException, 
+		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException {
+		
+		refundRegistryUtil.checkEntityToUpdate(entity);
+		
+		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
+		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
+		Client actualClient				= refundRegistryUtil.getActualClient(actualOrder, actualOrder.getClient());		
+		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder, actualClient);
+		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
+		
+		refundRegistryUtil.checkAllowedUpdateRefund(actualOrder);
+		refundRegistryUtil.checkAllowedRefundStatus(actualOrder);
+		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
+		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
+		refundRegistryUtil.update(actualRefund, actualOrder);
+		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity, actualShiping, orderRegistry);
+		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity, null, null, orderRegistry);
 		
 	}
 	
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void removeShipping(Shipping entity) throws ShippingRegistryException {
+	public void removeShipping(Refund entity) throws ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRemovePermission());
 		
