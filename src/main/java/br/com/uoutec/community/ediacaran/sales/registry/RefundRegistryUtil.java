@@ -149,8 +149,8 @@ public class RefundRegistryUtil {
 
 		Map<String, ProductRequest> map = toMap(order.getItens());
 		
-		loadRefundsToCalculateUnits(actualRefunds, refund, map);
 		removeShippedItens(shippingList, map);
+		loadRefundsToCalculateUnits(actualRefunds, refund, map);
 
 		for(ProductRequest pr: refund.getProducts()) {
 			
@@ -222,7 +222,7 @@ public class RefundRegistryUtil {
 			
 			for(Shipping i: shippingList) {
 				
-				if(i.getCancelDate() != null || i.isClosed()) {
+				if(i.getCancelDate() != null) {
 					continue;
 				}
 				
