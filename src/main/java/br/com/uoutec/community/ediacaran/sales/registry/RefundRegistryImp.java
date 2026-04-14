@@ -76,7 +76,8 @@ public class RefundRegistryImp implements RefundRegistry {
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void registerRefund(Refund entity) throws RefundRegistryException {
+	public void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, 
+		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getRegisterPermission());
 		
@@ -84,12 +85,12 @@ public class RefundRegistryImp implements RefundRegistry {
 			save(entity);
 		}
 		else {
-			update(entity, order);
+			update(entity);
 		}
 		
 	}
 
-	private void save(Refund entity) {
+	private void save(Refund entity) throws ValidationException, RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException {
 		
 		refundRegistryUtil.checkEntityToSave(entity);
 
@@ -122,7 +123,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 	}
 
-	private void update(Refund entity, Order order) {
+	private void update(Refund entity) {
 		
 	}
 	

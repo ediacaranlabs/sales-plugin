@@ -6,10 +6,11 @@ import java.util.Map;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
+import br.com.uoutec.i18n.ValidationException;
 
 public interface RefundRegistry extends PublicBean{
 
-	void registerRefund(Refund entity) throws RefundRegistryException;
+	void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException;
 	
 	void removeRefund(Refund entity) throws RefundRegistryException;
 	

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -20,7 +19,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
@@ -29,7 +27,6 @@ import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
-import br.com.uoutec.persistence.EntityAccessException;
 
 public class RefundRegistryUtil {
 
@@ -116,8 +113,13 @@ public class RefundRegistryUtil {
 		return actuaClient;
 	}
 	
-	public List<Refund> getActualRefunds(Order order, Client client) throws EntityAccessException{
-		return entityAccess.findByOrder(order.getId(), client);		
+	public List<Refund> getActualRefunds(Order order, Client client) throws RefundRegistryException {
+		try {
+			return entityAccess.findByOrder(order.getId(), client);
+		}
+		catch(Throwable ex) {
+			throw new RefundRegistryException(ex);
+		}
 	}
 
 	public List<Shipping> getActualShipping(Order order) throws ShippingRegistryException {
@@ -140,7 +142,7 @@ public class RefundRegistryUtil {
 	
 	public void checkRefund(Order order, List<Refund> actualResund, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException, CompletedShippingRegistryException {
 
-		checkIsCompletedRefund(order, actualResund, shippingList);
+		checkIsCompletedRefund(order, actualResund);
 		checkUnits(order, actualResund, refund, shippingList);		
 		
 	}
@@ -150,7 +152,7 @@ public class RefundRegistryUtil {
 		Map<String, ProductRequest> map = toMap(order.getItens());
 		
 		removeShippedItens(shippingList, map);
-		loadRefundsToCalculateUnits(actualRefunds, refund, map);
+		removeRefundItens(actualRefunds, refund, map);
 
 		for(ProductRequest pr: refund.getProducts()) {
 			
@@ -172,36 +174,43 @@ public class RefundRegistryUtil {
 		
 	}
 	
-	public void checkIsCompletedRefund(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList) throws CompletedShippingRegistryException, InvalidUnitsOrderRegistryException {
+	public void checkIsCompletedRefund(Order order, Collection<Refund> refundList) throws CompletedShippingRegistryException, InvalidUnitsOrderRegistryException {
 		
-		if(isCompletedRefund(order, refundList, shippingList)) {
+		if(isCompletedRefund(order, refundList)) {
 			throw new CompletedShippingRegistryException();
 		}
 	}
 
-	public boolean isCompletedRefund(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException {
+	@SuppressWarnings("unchecked")
+	public boolean isCompletedRefund(Order order, Collection<Refund> refundList) throws InvalidUnitsOrderRegistryException {
 		
 		if(refundList.isEmpty()) {
 			return false;
 		}
 		
-		boolean isComplete = true;
+		 return !isExistsItens(order, refundList, Collections.EMPTY_LIST);
+	}
+
+	public boolean isExistsItens(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException {
+		
+		if(refundList.isEmpty()) {
+			return false;
+		}
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens());
 		 
 		 removeShippedItens(shippingList, map);
-		 loadRefundsToCalculateUnits(refundList, null, map);
+		 removeRefundItens(refundList, null, map);
 		 
 		for(ProductRequest tpr: map.values()) {
 
 			if(tpr.getUnits() > 0) {
-				isComplete = false;
-				break;
+				return true;
 			}
 			
 		}
-		
-		return isComplete;
+
+		return false;
 	}
 	
 	public Map<String, ProductRequest> toMap(Collection<ProductRequest> values) {
@@ -222,19 +231,19 @@ public class RefundRegistryUtil {
 			
 			for(Shipping i: shippingList) {
 				
-				if(i.getCancelDate() != null) {
-					continue;
-				}
+				if(i.getReceivedDate() == null && i.getCancelDate() == null) {
 				
-				for(ProductRequest pr: i.getProducts()) {
-					ProductRequest tpr = productRequests.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+					for(ProductRequest pr: i.getProducts()) {
+						ProductRequest tpr = productRequests.get(pr.getSerial());
+						
+						tpr.setUnits(tpr.getUnits() - pr.getUnits());
+						
+						if(tpr.getUnits() < 0) {
+							throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+						}
+	
 					}
-
+					
 				}
 				
 			}
@@ -243,7 +252,7 @@ public class RefundRegistryUtil {
 		
 	}
 	
-	public void loadRefundsToCalculateUnits(Collection<Refund> refundList, Refund actualRefund, 
+	public void removeRefundItens(Collection<Refund> refundList, Refund actualRefund, 
 			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
 		
 		if(refundList != null) {
@@ -294,7 +303,7 @@ public class RefundRegistryUtil {
 	public void markAsComplete(Order order, Collection<Refund> refunds, Collection<Shipping> shippingList, 
 			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
-		if(isCompletedRefund(order, refunds, Collections.EMPTY_LIST)) {
+		if(!isExistsItens(order, refunds, Collections.EMPTY_LIST) ) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.REFUND, orderRegistry);
 		}
 		
@@ -325,8 +334,7 @@ public class RefundRegistryUtil {
 			allRefund.add(refund);
 		}
 		
-		if(isCompletedRefund(actualOrder, refundList, shippingList) &&
-			OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
+		if(!isExistsItens(actualOrder, allRefund, shippingList) && OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
 			orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 		}
 		
