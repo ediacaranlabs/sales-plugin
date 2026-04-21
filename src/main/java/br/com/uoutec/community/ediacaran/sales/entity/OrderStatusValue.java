@@ -238,5 +238,15 @@ public enum OrderStatusValue implements OrderStatus {
 	public String getCode() {
 		return name();
 	}
+
+	@Override
+	public boolean isAllowedCreateRefund() {
+		return false;
+	}
+
+	@Override
+	public boolean isAllowedChangeRefund() {
+		return false;
+	}
 	
 }

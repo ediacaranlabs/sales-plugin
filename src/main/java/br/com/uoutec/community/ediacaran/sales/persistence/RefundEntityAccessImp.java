@@ -134,7 +134,7 @@ public class RefundEntityAccessImp
 	}
 
 	@Override
-	public List<Refund> findByOrder(String order, Client user) throws EntityAccessException {
+	public List<Refund> findByOrder(String order) throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -148,10 +148,6 @@ public class RefundEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 	    	and.add(builder.equal(orderJoin.get("id"), order));
 		    
-	    	if(user != null) {
-		    	and.add(builder.equal(from.get("client"), user.getId()));
-	    	}
-	    	
 		    if(!and.isEmpty()) {
 			    criteria.where(
 			    		builder.and(
