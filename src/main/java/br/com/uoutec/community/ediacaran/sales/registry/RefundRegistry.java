@@ -16,13 +16,13 @@ public interface RefundRegistry extends PublicBean{
 	
 	Refund findRefundById(String id) throws RefundRegistryException;
 
-	Refund toRefund(Order order) throws RefundRegistryException;
-	
 	//ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
 	
-	Refund createRefund(Order orderID, Map<String, Integer> itens, String message) throws RefundRegistryException;
+	Refund createRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
 
-	void confirmRefund(Refund shipping) throws RefundRegistryException;
+	Refund createRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
+	
+	void confirmRefund(Refund shipping) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException;
 	
 	List<Refund> findRefundByOrder(String id) throws RefundRegistryException;
 	

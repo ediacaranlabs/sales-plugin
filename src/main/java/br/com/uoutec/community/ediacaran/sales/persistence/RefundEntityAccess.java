@@ -18,7 +18,7 @@ public interface RefundEntityAccess {
 	
 	List<Refund> getList(Integer first, Integer max, Client client) throws EntityAccessException;
 	
-	List<Refund> findByOrder(String order, Client client) throws EntityAccessException;
+	List<Refund> findByOrder(String order) throws EntityAccessException;
 	
 	void flush();
 	

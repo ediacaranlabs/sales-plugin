@@ -51,6 +51,9 @@ public class RefundRegistryUtil {
 	@Inject
 	private ActionRegistry actionRegistry;
 	
+	@Inject
+	private OrderReportRegistry orderReportRegistry;
+	
 	public void save(Refund refund, Order order) throws RefundRegistryException {
 		try {
 			entityAccess.save(refund);
@@ -65,6 +68,17 @@ public class RefundRegistryUtil {
 	public void update(Refund refund, Order order) throws RefundRegistryException {
 		try {
 			entityAccess.update(refund);
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new RefundRegistryException(
+				"refund error: " + order.getId(), e);
+		}
+	}
+
+	public void delete(Refund refund, Order order) throws RefundRegistryException {
+		try {
+			entityAccess.delete(refund);
 			entityAccess.flush();
 		}
 		catch(Throwable e){
@@ -105,6 +119,23 @@ public class RefundRegistryUtil {
 
 		return order;
 	}
+
+	public Order getActualOrder(Order entity) throws RefundRegistryException {
+		
+		Order order;
+		try {
+			order = orderRegistry.findById(entity.getId());
+		}
+		catch (OrderRegistryException e) {
+			throw new RefundRegistryException(e);
+		}
+		
+		if(order == null) {
+			throw new RefundRegistryException("order not found #" + entity.getId());
+		}
+
+		return order;
+	}
 	
 	public Client getActualClient(Order order, Client user) throws RefundRegistryException, ClientRegistryException {
 		
@@ -125,10 +156,19 @@ public class RefundRegistryUtil {
 			throw new RefundRegistryException(ex);
 		}
 	}
-	
-	public List<Refund> getActualRefunds(Order order, Client client) throws RefundRegistryException {
+
+	public Refund getActualRefund(String id) throws RefundRegistryException {
 		try {
-			return entityAccess.findByOrder(order.getId(), client);
+			return entityAccess.findById(id);
+		}
+		catch(Throwable ex) {
+			throw new RefundRegistryException(ex);
+		}
+	}
+	
+	public List<Refund> getActualRefunds(Order order) throws RefundRegistryException {
+		try {
+			return entityAccess.findByOrder(order.getId());
 		}
 		catch(Throwable ex) {
 			throw new RefundRegistryException(ex);
@@ -300,8 +340,7 @@ public class RefundRegistryUtil {
 		entity.setRefundDate(null);
 	}
 
-	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund, Collection<Shipping> shippingList, 
-			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
+	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		List<Refund> allRefund = new ArrayList<>(refundList);
 		
@@ -322,7 +361,7 @@ public class RefundRegistryUtil {
 		
 	}
 
-	public void registerEvent(String message, Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
+	public void registerEvent(String message, Order order) throws OrderRegistryException {
 		orderRegistry.registryLog(order, message);
 	}
 
@@ -335,9 +374,7 @@ public class RefundRegistryUtil {
 		);
 	}
 
-	public void updateOrderStatus(Order actualOrder, Collection<Refund> refundList, Refund refund, 
-			OrderReportRegistry orderReportRegistry, ShippingRegistry shippingRegistry, 
-			OrderRegistry orderRegistry) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
+	public void updateOrderStatus(Order actualOrder, Collection<Refund> refundList, Refund refund) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		List<Shipping> shippingList			= shippingRegistry.findByOrder(actualOrder.getId());
 		List<OrderReport> orderReportList 	= orderReportRegistry.findByOrder(actualOrder);
@@ -364,6 +401,24 @@ public class RefundRegistryUtil {
 		refund.setDate(actualRefund.getDate());
 		refund.setOrder(actualRefund.getOrder());
 		refund.setRefundType(actualRefund.getRefundType());
+	}
+
+	public void confirmRefund(Refund refund) throws ShippingRegistryException {
+		refund.setRefundDate(LocalDateTime.now());
+	}
+
+	public Refund toRefund(Order order, Collection<ProductRequest> itens) {
+		Refund i = new Refund();
+		
+		i.setRefundDate(null);
+		i.setAddData(new HashMap<>());
+		i.setDate(LocalDateTime.now());
+		i.setClient(order.getClient());
+		i.setProducts(new ArrayList<ProductRequest>(itens));
+		i.setRefundType(null);
+		i.setOrder(order.getId());
+		
+		return i;
 	}
 	
 }
