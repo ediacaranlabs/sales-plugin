@@ -55,6 +55,16 @@ public enum OrderStatusValue implements OrderStatus {
 			return false;
 		}
 		
+		@Override
+		public boolean isAllowedCreateRefund() {
+			return true;
+		}
+
+		@Override
+		public boolean isAllowedChangeRefund() {
+			return true;
+		}
+		
 	},
 	
 	ORDER_INVOICED(){
@@ -78,6 +88,16 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		public boolean isClosed() {
 			return false;
+		}
+		
+		@Override
+		public boolean isAllowedCreateRefund() {
+			return true;
+		}
+
+		@Override
+		public boolean isAllowedChangeRefund() {
+			return true;
 		}
 		
 	},
