@@ -55,7 +55,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity);
 		refundRegistryUtil.save(entity, actualOrder);
-		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity, actualShiping);
+		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
 		refundRegistryUtil.registerNewRefundEvent(entity);
 		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
@@ -70,14 +70,10 @@ public class RefundRegistryImp implements RefundRegistry {
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
-		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		
-		refundRegistryUtil.checkAllowedUpdateRefund(actualOrder);
-		refundRegistryUtil.checkAllowedRefundStatus(actualOrder);
-		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
 		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
 		refundRegistryUtil.update(actualRefund, actualOrder);
-		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity, actualShiping);
+		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
 		
 	}

@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,7 +203,7 @@ public class RefundRegistryUtil {
 
 		Map<String, ProductRequest> map = toMap(order.getItens());
 		
-		removeShippedItens(shippingList, map);
+		removePendingShippedItens(shippingList, map);
 		removeRefundItens(actualRefunds, refund, map);
 
 		for(ProductRequest pr: refund.getProducts()) {
@@ -234,16 +233,16 @@ public class RefundRegistryUtil {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean isCompletedRefund(Order order, Collection<Refund> refundList) throws InvalidUnitsOrderRegistryException {
 		
-		if(refundList.isEmpty()) {
-			return false;
-		}
+		 Map<String, ProductRequest> map = toMap(order.getItens());
+		 
+		 removeConfirmedRefundItens(refundList, null, map);
 		
-		 return !isExistsItens(order, refundList, Collections.EMPTY_LIST);
+		 return !isExistsItens(map);
 	}
 
+	/*
 	public boolean isExistsItens(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException {
 		
 		if(refundList.isEmpty()) {
@@ -252,7 +251,7 @@ public class RefundRegistryUtil {
 		
 		 Map<String, ProductRequest> map = toMap(order.getItens());
 		 
-		 removeShippedItens(shippingList, map);
+		 removePendingShippedItens(shippingList, map);
 		 removeRefundItens(refundList, null, map);
 		 
 		for(ProductRequest tpr: map.values()) {
@@ -264,6 +263,38 @@ public class RefundRegistryUtil {
 		}
 
 		return false;
+	}
+	*/
+
+	public boolean isExistsItens(Map<String, ProductRequest> map) throws InvalidUnitsOrderRegistryException {
+		
+		for(ProductRequest tpr: map.values()) {
+
+			if(tpr.getUnits() > 0) {
+				return true;
+			}
+			
+		}
+
+		return false;
+	}
+	
+	public boolean isCompletedOrder(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList, Collection<OrderReport> orderReportList) throws InvalidUnitsOrderRegistryException {
+		
+		 Map<String, ProductRequest> map = toMap(order.getItens());
+		 
+		 removeCompletedShippingItens(shippingList, map);
+		 removeRefundItens(refundList, null, map);
+		 
+		for(ProductRequest tpr: map.values()) {
+
+			if(tpr.getUnits() > 0) {
+				return false;
+			}
+			
+		}
+
+		return OrderReportRegistryUtil.isCompletedOrderReport(order, orderReportList);
 	}
 	
 	public Map<String, ProductRequest> toMap(Collection<ProductRequest> values) {
@@ -278,13 +309,40 @@ public class RefundRegistryUtil {
 		return transientItens;
 	}
 	
-	public void removeShippedItens(Collection<Shipping> shippingList, Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
+	public void removePendingShippedItens(Collection<Shipping> shippingList, Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
 		
 		if(shippingList != null) {
 			
 			for(Shipping i: shippingList) {
 				
 				if(i.getReceivedDate() == null && i.getCancelDate() == null) {
+				
+					for(ProductRequest pr: i.getProducts()) {
+						ProductRequest tpr = productRequests.get(pr.getSerial());
+						
+						tpr.setUnits(tpr.getUnits() - pr.getUnits());
+						
+						if(tpr.getUnits() < 0) {
+							throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+						}
+	
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+
+	public void removeCompletedShippingItens(Collection<Shipping> shippingList, Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
+		
+		if(shippingList != null) {
+			
+			for(Shipping i: shippingList) {
+				
+				if(i.getReceivedDate() != null) {
 				
 					for(ProductRequest pr: i.getProducts()) {
 						ProductRequest tpr = productRequests.get(pr.getSerial());
@@ -311,14 +369,38 @@ public class RefundRegistryUtil {
 		if(refundList != null) {
 			for(Refund i: refundList) {
 				
-				if(i.getRefundDate() != null) {
+				if(actualRefund != null && i.getId().equals(actualRefund.getId())) {
+					continue;
+				}
+				
+				for(ProductRequest pr: i.getProducts()) {
+					ProductRequest tpr = productRequests.get(pr.getSerial());
+					
+					tpr.setUnits(tpr.getUnits() - pr.getUnits());
+					
+					if(tpr.getUnits() < 0) {
+						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+					}
+				}
+				
+			}
+		}
+		
+	}
+
+	public void removeConfirmedRefundItens(Collection<Refund> refundList, Refund actualRefund, 
+			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
+		
+		if(refundList != null) {
+			for(Refund i: refundList) {
+				
+				if(i.getRefundDate() == null) {
 					continue;
 				}
 				
 				if(actualRefund != null && i.getId().equals(actualRefund.getId())) {
 					continue;
 				}
-
 				
 				for(ProductRequest pr: i.getProducts()) {
 					ProductRequest tpr = productRequests.get(pr.getSerial());
@@ -340,7 +422,7 @@ public class RefundRegistryUtil {
 		entity.setRefundDate(null);
 	}
 
-	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
+	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		List<Refund> allRefund = new ArrayList<>(refundList);
 		
@@ -348,14 +430,13 @@ public class RefundRegistryUtil {
 			allRefund.add(refund);
 		}
 		
-		markAsComplete(order, refundList, shippingList, orderRegistry); 
+		markAsComplete(order, refundList, orderRegistry); 
 	}
 
-	@SuppressWarnings("unchecked")
-	public void markAsComplete(Order order, Collection<Refund> refunds, Collection<Shipping> shippingList, 
+	public void markAsComplete(Order order, Collection<Refund> refunds, 
 			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
-		if(!isExistsItens(order, refunds, Collections.EMPTY_LIST) ) {
+		if(isCompletedRefund(order, refunds) ) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.REFUND, orderRegistry);
 		}
 		
@@ -384,7 +465,7 @@ public class RefundRegistryUtil {
 			allRefund.add(refund);
 		}
 		
-		if(!isExistsItens(actualOrder, allRefund, shippingList) && OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
+		if(isCompletedOrder(actualOrder, refundList, shippingList, orderReportList)) {
 			orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 		}
 		
@@ -397,10 +478,13 @@ public class RefundRegistryUtil {
 	}
 
 	public void preventChangeRefundSensitiveData(Refund refund, Refund actualRefund) {
+		
 		refund.setClient(actualRefund.getClient());
 		refund.setDate(actualRefund.getDate());
 		refund.setOrder(actualRefund.getOrder());
 		refund.setRefundType(actualRefund.getRefundType());
+		refund.setProducts(actualRefund.getProducts());
+		
 	}
 
 	public void confirmRefund(Refund refund) throws ShippingRegistryException {
