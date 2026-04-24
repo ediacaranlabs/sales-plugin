@@ -203,8 +203,8 @@ public class RefundRegistryUtil {
 
 		Map<String, ProductRequest> map = toMap(order.getItens());
 		
-		removeShippedItens(shippingList, map);
-		removeRefundItens(actualRefunds, refund, map);
+		removeAllShippedItens(shippingList, map);
+		removeAllRefundItens(actualRefunds, refund, map);
 
 		for(ProductRequest pr: refund.getProducts()) {
 			
@@ -284,7 +284,7 @@ public class RefundRegistryUtil {
 		 Map<String, ProductRequest> map = toMap(order.getItens());
 		 
 		 removeCompletedShippingItens(shippingList, map);
-		 removeRefundItens(refundList, null, map);
+		 removeConfirmedRefundItens(refundList, null, map);
 		 
 		for(ProductRequest tpr: map.values()) {
 
@@ -309,27 +309,27 @@ public class RefundRegistryUtil {
 		return transientItens;
 	}
 	
-	public void removeShippedItens(Collection<Shipping> shippingList, Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
+	public void removeAllShippedItens(Collection<Shipping> shippingList, Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
 		
-		if(shippingList != null) {
+		if(shippingList == null || shippingList.isEmpty()) {
+			return;
+		}
+		
+		for(Shipping i: shippingList) {
 			
-			for(Shipping i: shippingList) {
+			if(i.isCanceled()) {
+				continue;
+			}
+			
+			for(ProductRequest pr: i.getProducts()) {
+				ProductRequest tpr = productRequests.get(pr.getSerial());
 				
-				if(i.getCancelDate() == null) {
+				tpr.setUnits(tpr.getUnits() - pr.getUnits());
 				
-					for(ProductRequest pr: i.getProducts()) {
-						ProductRequest tpr = productRequests.get(pr.getSerial());
-						
-						tpr.setUnits(tpr.getUnits() - pr.getUnits());
-						
-						if(tpr.getUnits() < 0) {
-							throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-						}
-	
-					}
-					
+				if(tpr.getUnits() < 0) {
+					throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
 				}
-				
+
 			}
 			
 		}
@@ -342,7 +342,7 @@ public class RefundRegistryUtil {
 			
 			for(Shipping i: shippingList) {
 				
-				if(!(i.getReceivedDate() != null && i.getCancelDate() == null)) {
+				if(!i.isCompleted()) {
 					continue;
 				}
 				
@@ -364,7 +364,7 @@ public class RefundRegistryUtil {
 		
 	}
 	
-	public void removeRefundItens(Collection<Refund> refundList, Refund actualRefund, 
+	public void removeAllRefundItens(Collection<Refund> refundList, Refund actualRefund, 
 			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
 		
 		if(refundList != null) {
@@ -392,28 +392,30 @@ public class RefundRegistryUtil {
 	public void removeConfirmedRefundItens(Collection<Refund> refundList, Refund actualRefund, 
 			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
 		
-		if(refundList != null) {
-			for(Refund i: refundList) {
-				
-				if(i.getRefundDate() == null) {
-					continue;
-				}
-				
-				if(actualRefund != null && i.getId().equals(actualRefund.getId())) {
-					continue;
-				}
-				
-				for(ProductRequest pr: i.getProducts()) {
-					ProductRequest tpr = productRequests.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
-				}
-				
+		if(refundList == null || refundList.isEmpty()) {
+			return;
+		}
+		
+		for(Refund i: refundList) {
+			
+			if(!i.isCompleted()) {
+				continue;
 			}
+			
+			if(actualRefund != null && i.getId().equals(actualRefund.getId())) {
+				continue;
+			}
+			
+			for(ProductRequest pr: i.getProducts()) {
+				ProductRequest tpr = productRequests.get(pr.getSerial());
+				
+				tpr.setUnits(tpr.getUnits() - pr.getUnits());
+				
+				if(tpr.getUnits() < 0) {
+					throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+				}
+			}
+			
 		}
 		
 	}

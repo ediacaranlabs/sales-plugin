@@ -141,6 +141,10 @@ public class Refund implements Serializable {
 		return refundDate.format(dateTimeFormatter);
 	}
 	
+	public boolean isCompleted() {
+		return refundDate != null;
+	}
+	
 	public LocalDateTime getRefundDate() {
 		return refundDate;
 	}

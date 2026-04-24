@@ -214,6 +214,10 @@ public class Shipping implements Serializable{
 		this.closed = closed;
 	}
 
+	public boolean isCompleted() {
+		return receivedDate != null && cancelDate == null;
+	}
+	
 	public void set(String property, String value) {
 		if(addData == null) {
 			addData = new HashMap<>();
@@ -245,6 +249,10 @@ public class Shipping implements Serializable{
 		DateTimeFormatter dateTimeFormatter = 
 				DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
 		return cancelDate.format(dateTimeFormatter);
+	}
+
+	public boolean isCanceled() {
+		return cancelDate != null;
 	}
 	
 	public LocalDateTime getCancelDate() {

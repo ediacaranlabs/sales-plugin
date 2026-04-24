@@ -139,7 +139,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		Map<String, ProductRequest> transientItens	= refundRegistryUtil.toMap(actualOrder.getItens());
 		
 		
-		refundRegistryUtil.removeRefundItens(actualRefunds, null, transientItens);
+		refundRegistryUtil.removeAllRefundItens(actualRefunds, null, transientItens);
 		
 		return refundRegistryUtil.toRefund(actualOrder, transientItens.values());
 		
