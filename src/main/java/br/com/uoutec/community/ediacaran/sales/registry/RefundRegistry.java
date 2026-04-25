@@ -18,7 +18,7 @@ public interface RefundRegistry extends PublicBean{
 	
 	Refund findRefundById(String id) throws RefundRegistryException;
 
-	RefundResultSearch searchRefunds(RefundSearch value) throws RefundRegistryException;
+	RefundResultSearch searchRefund(RefundSearch value) throws RefundRegistryException;
 	
 	Refund createRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
 

@@ -42,7 +42,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 	}
 
-	public RefundResultSearch searchShipping(RefundSearch value) throws RefundRegistryException {
+	public RefundResultSearch searchRefund(RefundSearch value) throws RefundRegistryException {
 		return new RefundResultSearch(false, 0, 0, null);
 	}
 	

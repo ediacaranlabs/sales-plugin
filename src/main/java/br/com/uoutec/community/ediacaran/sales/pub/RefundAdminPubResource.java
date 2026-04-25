@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -9,8 +10,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.brandao.brutos.ResultAction;
-import org.brandao.brutos.ResultActionImp;
 import org.brandao.brutos.annotation.AcceptRequestType;
 import org.brandao.brutos.annotation.Action;
 import org.brandao.brutos.annotation.Basic;
@@ -24,25 +23,21 @@ import org.brandao.brutos.annotation.Transient;
 import org.brandao.brutos.annotation.View;
 import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
-import org.brandao.brutos.annotation.web.RequestMethodTypes;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
-import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.CancelationShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundSearchResultPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
-import br.com.uoutec.community.ediacaran.sales.shipping.ShippingMethod;
-import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
@@ -85,7 +80,7 @@ public class RefundAdminPubResource {
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
 	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.SHIPPING.SEARCH)
+	@RequiresPermissions(SalesUserPermissions.REFUND.SEARCH)
 	@Result(mappingType = MappingTypes.OBJECT)
 	public RefundSearchResultPubEntity search(
 			@DetachedName RefundSearchPubEntity request,
@@ -109,7 +104,7 @@ public class RefundAdminPubResource {
 		
 		
 		try{
-			RefundResultSearch result = refundRegistry.searchRefunds(search);
+			RefundResultSearch result = refundRegistry.searchRefund(search);
 			return result == null? null : new RefundSearchResultPubEntity(result, locale);
 		}
 		catch(Throwable ex){
@@ -126,47 +121,48 @@ public class RefundAdminPubResource {
 	}
 	
 	@Action("/edit/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
+	@View("${plugins.ediacaran.sales.template}/admin/refunds/edit")
 	@Result("vars")
 	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.INVOICE.SHOW)
+	@RequiresPermissions(SalesUserPermissions.REFUND.SHOW)
 	public Map<String,Object> invoiceDetail(
 			@DetachedName
-			ShippingPubEntity shippingPubEntity,
+			RefundPubEntity refundPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
-		Shipping shipping;
-		List<ShippingMethod> shippingMethods = null;
-		ShippingMethod selectedShippingMethod = null;
+		Refund refund;
+		List<PaymentGateway> paymentGatewayList = null;
+		PaymentGateway selectedPaymentGateway = null;
+		
 		try{
-			shipping = shippingPubEntity.rebuild(true, false, false);
-			shippingMethods = shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
-			selectedShippingMethod = shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
+			refund = refundPubEntity.rebuild(true, false, false);
+			selectedPaymentGateway = paymentGatewayRegistry.getPaymentGateway(refund.getRefundType());
+			paymentGatewayList = Arrays.asList(selectedPaymentGateway);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.details.error.fail_load_entity, 
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.details.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("shipping", shipping);
-		map.put("shippingMethods", shippingMethods);
-		map.put("selectedShippingMethod", selectedShippingMethod);
+		map.put("entity", refund);
+		map.put("paymentGatewayList", paymentGatewayList);
+		map.put("selectedPaymentGateway", selectedPaymentGateway);
 		return map;
 	}
 	
 	@Action("/new/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/shipping/edit")
+	@View("${plugins.ediacaran.sales.template}/admin/refunds/edit")
 	@Result("vars")
 	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.SHIPPING.CREATE)
+	@RequiresPermissions(SalesUserPermissions.REFUND.CREATE)
 	public Map<String,Object> newShipping(
 			@DetachedName
 			OrderPubEntity orderPubEntity,
@@ -182,178 +178,87 @@ public class RefundAdminPubResource {
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.new_shipping.error.fail_load_entity, 
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.new_shipping.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
-		Shipping shipping = null;
-		List<ShippingMethod> shippingMethods = null;
-		ShippingMethod selectedShippingMethod = null;
+		Refund refund;
+		List<PaymentGateway> paymentGatewayList = null;
+		PaymentGateway selectedPaymentGateway = null;
+		
 		try{
-			shipping = shippingRegistry.toShipping(order);
-			shippingMethods = shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
-			selectedShippingMethod = shipping.getShippingType() == null? null : shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
+			refund = refundRegistry.createRefund(order);
+			selectedPaymentGateway = paymentGatewayRegistry.getPaymentGateway(refund.getRefundType());
+			paymentGatewayList = Arrays.asList(selectedPaymentGateway);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.new_shipping.error.create_shipping, 
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.new_shipping.error.create_shipping, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		//map.put("order", order);
-		map.put("shipping", shipping);
-		map.put("shippingMethods", shippingMethods);
-		map.put("selectedShippingMethod", selectedShippingMethod);
-		return map;
-	}
 
-	@Action("/shippingtype/select")
-	@RequestMethod(RequestMethodTypes.POST)
-	public ResultAction selectShippingType(
-			@DetachedName
-			ShippingPubEntity shippingPubEntity,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale) throws InvalidRequestException{
-		
-		String view 					= null;
-		boolean resolvedView 			= false;
-		ShippingMethod shippingMethod	= null;
-		Shipping shipping				= null;
-		Throwable exception 			= null;
-		
-		try{
-			shipping = shippingPubEntity.rebuild(shippingPubEntity.getId() != null, true, false);
-			shippingMethod	= shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
-			view 			= shippingMethod.getView(shipping);
-			resolvedView 	= true;
-		}
-		catch(Throwable ex){
-			ex.printStackTrace();
-			String error = i18nRegistry
-					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.select_shipping_type.error.fail_load_entity, 
-							locale);
-			exception    = new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
-		}
-		
-		ResultAction ra = new ResultActionImp();
-		
-		if(view != null){
-			ra.setView(view, resolvedView);
-		}
-		else{
-			ra.setContentType(String.class);
-			ra.setContent("");
-		}
-		
-		ra.add("exception",			exception);
-		ra.add("shipping",			shipping);
-		ra.add("shippingMethod",	shippingMethod);
-		
-		return ra;
+		map.put("entity", refund);
+		map.put("paymentGatewayList", paymentGatewayList);
+		map.put("selectedPaymentGateway", selectedPaymentGateway);
+		return map;
 	}
 	
 	@Action("/save")
-	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
+	@View("${plugins.ediacaran.sales.template}/admin/refunds/result")
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.SHIPPING.SAVE)
+	@RequiresPermissions(SalesUserPermissions.REFUND.SAVE)
 	public Map<String,Object> save(
 			@DetachedName
-			ShippingPubEntity shippingPubEntity,
+			RefundPubEntity refundPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{
 		
-		Shipping shipping;
+		Refund refund;
 		try{
-			shipping = shippingPubEntity.rebuild(shippingPubEntity.getId() != null, true, true);
+			refund = refundPubEntity.rebuild(refundPubEntity.getId() != null, true, true);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.edit.error.fail_load_entity, 
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.edit.error.fail_load_entity, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 
 		try{
-			shipping.setProducts(
-				shipping.getProducts().stream()
+			refund.setProducts(
+				refund.getProducts().stream()
 					.filter((e)->e.getUnits() > 0)
 					.collect(Collectors.toList())
 			);
-			shippingRegistry.registerShipping(shipping);
+			refundRegistry.registerRefund(refund);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
 					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.save.error.register, 
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.save.error.register, 
 							locale);
 			
 			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("shipping", shipping);
-		return map;
-	}
-
-	@Action("/cancel")
-	@View("${plugins.ediacaran.sales.template}/admin/shipping/result")
-	@Result("vars")
-	@RequestMethod("POST")
-	@RequireAnyRole(BasicRoles.USER)
-	@RequiresPermissions(SalesUserPermissions.SHIPPING.CANCEL)
-	public Map<String,Object> cancel(
-			@DetachedName
-			CancelationShippingPubEntity shippingPubEntity,
-			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
-			Locale locale
-	) throws InvalidRequestException{
-		
-		Shipping shipping;
-		try{
-			shipping = shippingPubEntity.rebuild(true, true, true);
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.cancel.error.fail_load_entity, 
-							locale);
-			
-			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
-		}
-
-		try{
-			shippingRegistry.cancelShipping(shipping, shippingPubEntity.getCancelJustification());
-		}
-		catch(Throwable ex){
-			String error = i18nRegistry
-					.getString(
-							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
-							ShippingAdminPubResourceMessages.cancel.error.register, 
-							locale);
-			
-			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
-		}
-		
-		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("shipping", shipping);
+		map.put("shipping", refund);
 		return map;
 	}
 	
