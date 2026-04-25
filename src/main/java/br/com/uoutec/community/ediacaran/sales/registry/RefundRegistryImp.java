@@ -14,6 +14,8 @@ import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.i18n.ValidationException;
 
@@ -40,6 +42,10 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 	}
 
+	public RefundResultSearch searchShipping(RefundSearch value) throws RefundRegistryException {
+		return new RefundResultSearch(false, 0, 0, null);
+	}
+	
 	private void save(Refund entity) throws ValidationException, RefundRegistryException, 
 		ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException {
 		

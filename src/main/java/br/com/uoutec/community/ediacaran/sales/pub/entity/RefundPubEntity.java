@@ -20,9 +20,7 @@ import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
-import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -41,6 +39,9 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
 	@Size(min = 10, max = 38, groups = DataValidation.class)
 	private String order;
+
+	@NotNull(groups = DataValidation.class)
+	private String refundType;
 	
 	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
@@ -59,11 +60,12 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 	public RefundPubEntity() {
 	}
 	
-	public RefundPubEntity(Shipping e, Locale locale) {
+	public RefundPubEntity(Refund e, Locale locale) {
 		this.addData = e.getAddData();
 		this.date = e.getDate();
-		this.refundDate = e.getReceivedDate();
+		this.refundDate = e.getRefundDate();
 		this.id = e.getId() == null? null : SecretUtil.toProtectedID(e.getId());
+		this.refundType = e.getRefundType();
 		
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
@@ -114,13 +116,10 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 			return;
 		}
 
-		o.setDepth(this.depth == null? 0f : this.depth.floatValue());
-		o.setHeight(this.height == null? 0f : this.height.floatValue());
-		o.setWeight(this.weight == null? 0f : this.weight.floatValue());
-		o.setWidth(this.width == null? 0f : this.width.floatValue());
-		
+		o.setDate(this.date);
+		o.setRefundDate(this.refundDate);
+		o.setRefundType(id);
 		o.setOrder(this.order);
-		o.setShippingType(this.shippingType);
 		
 		if(this.products != null) {
 			
@@ -166,6 +165,14 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.order = order;
 	}
 
+	public String getRefundType() {
+		return refundType;
+	}
+
+	public void setRefundType(String refundType) {
+		this.refundType = refundType;
+	}
+
 	public LocalDateTime getDate() {
 		return date;
 	}
@@ -174,60 +181,12 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.date = date;
 	}
 
-	public String getShippingType() {
-		return shippingType;
+	public LocalDateTime getRefundDate() {
+		return refundDate;
 	}
 
-	public void setShippingType(String shippingType) {
-		this.shippingType = shippingType;
-	}
-
-	public AddressPubEntity getOrigin() {
-		return origin;
-	}
-
-	public void setOrigin(AddressPubEntity origin) {
-		this.origin = origin;
-	}
-
-	public AddressPubEntity getDest() {
-		return dest;
-	}
-
-	public void setDest(AddressPubEntity dest) {
-		this.dest = dest;
-	}
-
-	public Float getWeight() {
-		return weight;
-	}
-
-	public void setWeight(Float weight) {
-		this.weight = weight;
-	}
-
-	public Float getHeight() {
-		return height;
-	}
-
-	public void setHeight(Float height) {
-		this.height = height;
-	}
-
-	public Float getWidth() {
-		return width;
-	}
-
-	public void setWidth(Float width) {
-		this.width = width;
-	}
-
-	public Float getDepth() {
-		return depth;
-	}
-
-	public void setDepth(Float depth) {
-		this.depth = depth;
+	public void setRefundDate(LocalDateTime refundDate) {
+		this.refundDate = refundDate;
 	}
 
 	public List<ProductRequestPubEntity> getProducts() {
@@ -236,22 +195,6 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 
 	public void setProducts(List<ProductRequestPubEntity> products) {
 		this.products = products;
-	}
-
-	public LocalDateTime getCancelDate() {
-		return cancelDate;
-	}
-
-	public void setCancelDate(LocalDateTime cancelDate) {
-		this.cancelDate = cancelDate;
-	}
-
-	public String getCancelJustification() {
-		return cancelJustification;
-	}
-
-	public void setCancelJustification(String cancelJustification) {
-		this.cancelJustification = cancelJustification;
 	}
 
 	public Map<String, String> getAddData() {
@@ -264,7 +207,7 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 
 	@Override
 	protected String getCodeType() {
-		return shippingType;
+		return refundType;
 	}
 
 	@Override
@@ -273,21 +216,15 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 	}
 
 	@Override
-	protected void loadProperties(GenericPubEntity<Shipping> entity) {
+	protected void loadProperties(GenericPubEntity<Refund> entity) {
 		RefundPubEntity e = (RefundPubEntity)entity;
 		this.setData(e.getData());
 		this.date = e.getDate();
-		this.depth = e.getDepth();
-		this.dest = e.getDest();
-		this.height = e.getHeight();
 		this.id = e.getId();
 		this.order = e.getOrder();
 		this.products = e.getProducts();
-		this.shippingType = e.getShippingType();
-		this.weight = e.getWeight();
-		this.width = e.getWidth();
-		this.cancelJustification = e.getCancelJustification();
-		this.cancelDate = e.getCancelDate();
+		this.refundDate = e.getRefundDate();
+		this.refundType = e.getRefundType();
 	}
 	
 }

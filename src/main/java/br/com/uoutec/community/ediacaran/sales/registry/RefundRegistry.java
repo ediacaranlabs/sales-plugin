@@ -5,6 +5,8 @@ import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.i18n.ValidationException;
 
@@ -16,7 +18,7 @@ public interface RefundRegistry extends PublicBean{
 	
 	Refund findRefundById(String id) throws RefundRegistryException;
 
-	//ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
+	RefundResultSearch searchRefunds(RefundSearch value) throws RefundRegistryException;
 	
 	Refund createRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
 

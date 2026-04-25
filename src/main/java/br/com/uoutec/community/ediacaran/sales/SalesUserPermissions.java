@@ -140,6 +140,32 @@ public final class SalesUserPermissions {
 		
 	}
 
+	public static final class REFUND {
+
+		public static final String ALL 		= SalesUserPermissions.ALL + ":REFUND";
+		
+		public static final String CREATE	= ALL + ":CREATE";
+		
+		public static final String SHOW		= ALL + ":SHOW";
+
+		public static final String SEARCH	= ALL + ":SEARCH";
+
+		public static final String EDIT		= ALL + ":EDIT";
+
+		public static final String CANCEL	= ALL + ":CANCEL";
+
+		public static final String SAVE		= ALL + ":SAVE";
+
+		public static final String DELETE	= ALL + ":DELETE";
+		
+		public static final class FIELDS {
+
+			public static final String ALL 		= SalesUserPermissions.REFUND.ALL +  ":FIELDS";
+
+		}
+		
+	}
+	
 	public static final class PRODUCT {
 
 		public static final String ALL 		= SalesUserPermissions.ALL + ":PRODUCT";
