@@ -31,6 +31,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -42,6 +43,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
@@ -79,6 +81,10 @@ public class OrderAdminPubResource {
 	@Transient
 	@Inject
 	private OrderReportRegistry orderReportRegistry;
+
+	@Transient
+	@Inject
+	private RefundRegistry refundRegistry;
 	
 	@Transient
 	@Inject
@@ -200,6 +206,7 @@ public class OrderAdminPubResource {
 		return order;
 	}
 
+	/*
 	@Action("/refund/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/refund_result")
 	@Result(value = "order", mappingType = MappingTypes.VALUE)
@@ -240,6 +247,7 @@ public class OrderAdminPubResource {
 		
 		return order;
 	}
+	*/
 	
 	@Action("/edit/{id}")
 	@View("${plugins.ediacaran.sales.template}/admin/order/edit")
@@ -257,11 +265,13 @@ public class OrderAdminPubResource {
 		List<Invoice> invoices;
 		//Client client;
 		List<Shipping> shippings;
+		List<Refund> refunds;
 		List<OrderReport> ordersReport;
 		
 		try{
 			order = orderPubEntity.rebuild(true, false, true);
 			invoices = invoiceRegistry.findByOrder(order.getId());
+			refunds = refundRegistry.findRefundByOrder(order.getId());
 			//client = clientRegistry.findClientById(order.getClient().getId());
 			shippings = shippingRegistry.findByOrder(order.getId());
 			ordersReport = orderReportRegistry.findByOrder(order);
@@ -303,6 +313,7 @@ public class OrderAdminPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("order",          order);
 		map.put("invoices",       invoices);
+		map.put("refunds",        refunds);
 		map.put("orderReportList",ordersReport);
 		map.put("shippings",      shippings);
 		map.put("paymentGateway", paymentGateway);

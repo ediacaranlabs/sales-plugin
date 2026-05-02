@@ -14,7 +14,7 @@ public class RefundSearchPubEntity extends AbstractPubEntity<RefundSearch> {
 
 	private String id;
 	
-	private Integer client;
+	private String order;
 
 	private String clientName;
 	
@@ -39,12 +39,13 @@ public class RefundSearchPubEntity extends AbstractPubEntity<RefundSearch> {
 		this.id = id;
 	}
 
-	public Integer getClient() {
-		return client;
+
+	public String getOrder() {
+		return order;
 	}
 
-	public void setClient(Integer client) {
-		this.client = client;
+	public void setOrder(String order) {
+		this.order = order;
 	}
 
 	public String getClientName() {
@@ -131,7 +132,7 @@ public class RefundSearchPubEntity extends AbstractPubEntity<RefundSearch> {
 	protected void copyTo(RefundSearch o, boolean reload, boolean override,
 			boolean validate) throws Throwable {
 		o.setId(id);
-		o.setClient(client);
+		o.setOrder(order);
 		o.setClientName(clientName);
 		o.setPage(page);
 		o.setResultPerPage(resultPerPage);

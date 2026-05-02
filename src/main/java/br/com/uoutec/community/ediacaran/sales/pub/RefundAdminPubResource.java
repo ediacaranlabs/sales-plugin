@@ -67,7 +67,7 @@ public class RefundAdminPubResource {
 	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	@Action("/")
-	@View("${plugins.ediacaran.sales.template}/admin/refunds/index")
+	@View("${plugins.ediacaran.sales.template}/admin/refund/index")
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.REFUND.SHOW)
 	public void index(
@@ -121,7 +121,7 @@ public class RefundAdminPubResource {
 	}
 	
 	@Action("/edit/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/refunds/edit")
+	@View("${plugins.ediacaran.sales.template}/admin/refund/edit")
 	@Result("vars")
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.REFUND.SHOW)
@@ -152,18 +152,18 @@ public class RefundAdminPubResource {
 		}
 
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("entity", refund);
+		map.put("refund", refund);
 		map.put("paymentGatewayList", paymentGatewayList);
 		map.put("selectedPaymentGateway", selectedPaymentGateway);
 		return map;
 	}
 	
 	@Action("/new/{id}")
-	@View("${plugins.ediacaran.sales.template}/admin/refunds/edit")
+	@View("${plugins.ediacaran.sales.template}/admin/refund/edit")
 	@Result("vars")
 	@RequireAnyRole(BasicRoles.USER)
 	@RequiresPermissions(SalesUserPermissions.REFUND.CREATE)
-	public Map<String,Object> newShipping(
+	public Map<String,Object> newRefund(
 			@DetachedName
 			OrderPubEntity orderPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
@@ -213,7 +213,7 @@ public class RefundAdminPubResource {
 	}
 	
 	@Action("/save")
-	@View("${plugins.ediacaran.sales.template}/admin/refunds/result")
+	@View("${plugins.ediacaran.sales.template}/admin/refund/result")
 	@Result("vars")
 	@RequestMethod("POST")
 	@RequireAnyRole(BasicRoles.USER)
@@ -258,7 +258,7 @@ public class RefundAdminPubResource {
 		}
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("shipping", refund);
+		map.put("refund", refund);
 		return map;
 	}
 	
