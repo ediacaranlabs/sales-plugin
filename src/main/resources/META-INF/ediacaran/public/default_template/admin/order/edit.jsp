@@ -284,6 +284,32 @@
 							</ec:table-body>
 						</ec:table>
 					</ec:tabs-item>
+
+
+					<ec:tabs-item title="#{tabs.refund.title}" bundle="${messages}">
+					
+						<ec:table>
+							<ec:table-header>
+								<ec:table-col><center><small><fmt:message key="table_refund.id" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_refund.date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_refund.refund_date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_shipping.actions" bundle="${messages}"/></small></center></ec:table-col>
+							</ec:table-header>
+							<ec:table-body>
+								<c:forEach items="${vars.refunds}" var="refund">
+								<ec:table-row>
+									<ec:table-col><center><small>${refund.id}</small></center></ec:table-col>
+									<ec:table-col><center><small>${refund.toStringDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${refund.toStringRefundDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/edit/${shipping.id}">
+										<fmt:message key="table_refund.actions.details" bundle="${messages}"/>
+									</a></small></center></ec:table-col>
+								</ec:table-row>
+								</c:forEach>
+							</ec:table-body>
+						</ec:table>
+					</ec:tabs-item>
+					
 					<c:forEach items="${vars.widgets}" var="widget">
 						<ec:tabs-item title="${widget.title}" >
 							<span id="${widget.id}_tab">
@@ -330,7 +356,7 @@
 		</ec:button>
 		<ec:button label="#{refund.label}" icon="credit-card" enabled="${vars.order.payment.receivedFrom == null}" style="danger" align="right" actionType="button" bundle="${messages}">
 			<ec:event type="click">
-				$.AppContext.utils.updateContentByID('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/refund/${vars.order.id}', "order_result");
+				$.AppContext.utils.updateContentByID('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/new/${vars.order.id}', "order_result");
 			</ec:event>
 		</ec:button>
 	</ec:box-footer>
