@@ -43,7 +43,8 @@ public class RefundRegistryImp implements RefundRegistry {
 	}
 
 	public RefundResultSearch searchRefund(RefundSearch value) throws RefundRegistryException {
-		return new RefundResultSearch(false, 0, 0, null);
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getSearchPermission());
+		return refundRegistryUtil.search(value);
 	}
 	
 	private void save(Refund entity) throws ValidationException, RefundRegistryException, 

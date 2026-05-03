@@ -16,8 +16,11 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
+import br.com.uoutec.community.ediacaran.sales.persistence.RefundIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
@@ -45,10 +48,16 @@ public class RefundRegistryUtil {
 	private RefundEntityAccess entityAccess;
 	
 	@Inject
+	private RefundIndexEntityAccess indexEntityAccess;
+	
+	@Inject
 	private ShippingRegistry shippingRegistry;
 	
 	@Inject
 	private ActionRegistry actionRegistry;
+
+	@Inject
+	private ClientRegistry clientRegistry;
 	
 	@Inject
 	private OrderReportRegistry orderReportRegistry;
@@ -84,6 +93,31 @@ public class RefundRegistryUtil {
 			throw new RefundRegistryException(
 				"refund error: " + order.getId(), e);
 		}
+	}
+	
+	
+	public RefundResultSearch search(RefundSearch value) throws RefundRegistryException {
+		try{
+			int page = value.getPage() == null? 1 : value.getPage().intValue();
+			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<Refund> list = indexEntityAccess.search(value, firstResult, maxResults);
+			List<Refund> itens = new ArrayList<>();
+			
+			for(Refund e: list) {
+				e = entityAccess.findById(e.getId());
+				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));
+				itens.add(e);
+			}
+			
+			return new RefundResultSearch(itens.size() > maxItens, -1, page, itens.size() > maxItens? itens.subList(0, maxItens -1) : itens);
+		}
+		catch(Throwable e){
+			throw new RefundRegistryException(e);
+		}
+		
 	}
 	
 	public void checkEntityToSave(Refund entity) throws ValidationException {
