@@ -31,7 +31,7 @@ import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 @Entity
-@Table(name="rw_refound")
+@Table(name="rw_refund")
 @EntityListeners(RefoundEntityListener.class)
 public class RefundEntity implements Serializable {
 
@@ -61,7 +61,7 @@ public class RefundEntity implements Serializable {
 	@Column(name="cod_client",  updatable = false)
 	private Integer client;
 
-	@Column(name="cod_refound_type")
+	@Column(name="cod_refund_type")
 	private String refundType;
 	
 	@Column(name="dat_created")
@@ -70,7 +70,7 @@ public class RefundEntity implements Serializable {
 	@Column(name="dat_refound")
 	private LocalDateTime refundDate;
 	
-	@OneToMany(mappedBy = "refound")
+	@OneToMany(mappedBy = "refund")
 	private List<ProductRequestRefundEntity> products;
 	
 	@Lob

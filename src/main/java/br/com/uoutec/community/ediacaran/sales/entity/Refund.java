@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -153,6 +155,78 @@ public class Refund implements Serializable {
 		this.refundDate = refoundDate;
 	}
 
+	public BigDecimal getSubtotal(){
+		
+		if(products.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: products) {
+			value = value.add(pr.getSubtotal());
+		}
+		return value;
+	}
+
+	public String getDisplaySubtotal() {
+		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getSubtotal());
+	}
+	
+	public BigDecimal getDiscount() {
+
+		if(products.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: products) {
+			value = value.add(pr.getDiscount());
+		}
+		
+		return value;
+	}
+
+	public String getDisplayDiscount() {
+		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getDiscount());
+	}
+	
+	public BigDecimal getTax() {
+		
+		if(products.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal value = BigDecimal.ZERO;
+		for(ProductRequest pr: products) {
+			value = value.add(pr.getTax());
+		}
+		
+		return value;
+	}
+
+	public String getDisplayTax() {
+		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getTax());
+	}
+	
+	public BigDecimal getTotal(){
+		
+		if(products.isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
+		BigDecimal value = BigDecimal.ZERO;
+		
+		for(ProductRequest pr: products) {
+			value = value.add(pr.getTotal());
+		}
+		
+		return value;
+	}
+
+	public String getDisplayTotal() {
+		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getTotal());
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

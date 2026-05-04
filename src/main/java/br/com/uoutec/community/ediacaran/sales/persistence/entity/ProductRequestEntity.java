@@ -60,7 +60,7 @@ public class ProductRequestEntity implements Serializable{
 	private ShippingEntity shipping;
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_refund", referencedColumnName="cod_refound")
+	@JoinColumn(name="cod_refund")
 	private RefundEntity refund;
 	
 	@Enumerated(EnumType.STRING)

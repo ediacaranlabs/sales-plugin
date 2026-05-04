@@ -32,7 +32,7 @@ public class RefundIndexEntity implements Serializable{
 	@Column(name="dsc_client_name", length=255)
 	private String clientName;
 	
-	@Column(name="cod_refound_type")
+	@Column(name="cod_refund_type")
 	private String refundType;
 	
 	@Column(name="dat_created")

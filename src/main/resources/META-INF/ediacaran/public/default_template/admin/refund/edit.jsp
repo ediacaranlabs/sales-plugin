@@ -41,12 +41,17 @@
 		</ed:row>
 		<ed:row>
 			<ed:col size="12">
-				<b><fmt:message key="refund_code" bundle="${messages}"/>:</b> #${vars.refudn.id}<br>
+				<b><fmt:message key="refund_code" bundle="${messages}"/>:</b> #${vars.refund.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.refund.toStringDate(locale)}<br>
 				<b><fmt:message key="refund_in" bundle="${messages}"/>:</b> ${vars.refund.toStringRefundDate(locale)}<br>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.refund.order}<br>
 			</ed:col>
 		</ed:row>
+		<script type="text/javascript">
+			var refundEntity = {};
+			refundEntity.itens = {};
+			refundEntity.order = '${vars.refund.order}';
+		</script>
 		<ed:row>
 			<ed:col>
 				<ec:table>
@@ -54,10 +59,17 @@
 						<ec:table-col><center><fmt:message key="product_table.id" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="product_table.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
-						<%--<ec:table-col><center><fmt:message key="product_table.description" bundle="${messages}"/></center></ec:table-col>--%>
+						<ec:table-col><center><fmt:message key="product_table.subtotal" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.discount" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.tax" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.total" bundle="${messages}"/></center></ec:table-col>
+
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.refund.products}" var="product">
+							<script type="text/javascript">
+								refundEntity.itens['${product.serial}'] = '${product.units}';
+							</script>
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col classStyle="qty form-group has-feedback" >
@@ -67,7 +79,53 @@
 									<c:if test="${empty vars.refund.id}">
 									<span formgroup="products" formgrouptype="index">
 										<input type="hidden" name="serial" value="${product.serial}">
-										<ec:textfield maxlength="2" name="units" value="${product.units}" enabled="${empty vars.refund.id}">
+										<ec:textfield maxlength="2" name="units" value="${product.units}" extAttrs="serial=''" enabled="${empty vars.refund.id}">
+											<ec:event type="keyup">
+												var $form = $event.source.getForm();
+												var $group = $event.source.getFormGroup();
+												
+												var $unitsField = $form.getField($group.getPath() + ".units" );
+												var $serialField = $form.getField($group.getPath() + ".serial" );
+												
+												var $unitsValue = $unitsField.getValue();
+												var $serialValue = $serialField.getValue();
+												
+												refundEntity.itens[$serialValue] = $unitsValue;
+
+												
+												$.AppContext.utils.postJson(
+													'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/recalc',
+													refundEntity,
+													function ($e){
+													
+														if(!$e.itens){
+															return;
+														}
+														
+														for (let $j = 0; $j < $e.itens.length; $j++) {
+															var $i = $e.itens[$j];
+														  
+														  	if($i.serial == $serialValue){
+	
+																$.AppContext.utils.getById($serialValue + '_subtotal').setValue($i.subtotal);
+																$.AppContext.utils.getById($serialValue + '_discount').setValue($i.discounts);
+																$.AppContext.utils.getById($serialValue + '_tax').setValue($i.taxes);
+																$.AppContext.utils.getById($serialValue + '_total').setValue($i.total);
+																
+															}
+														  
+														}
+														
+														$.AppContext.utils.getById('subtotal').setValue($e.subtotal);
+														$.AppContext.utils.getById('discounts').setValue($e.discounts);
+														$.AppContext.utils.getById('taxes').setValue($e.taxes);
+														$.AppContext.utils.getById('total').setValue($e.total);
+														
+														
+													}
+												);
+												
+											</ec:event>										
 											<ec:field-validator>
 												<ec:field-validator-rule name="notEmpty" message="#{product_table.form.units.validation.notEmpty}" bundle="${messages}"/>
 												<ec:field-validator-rule name="between" message="#{product_table.form.units.validation.between}" bundle="${messages}">
@@ -80,6 +138,10 @@
 									</c:if>
 								</ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_subtotal">${product.displaySubtotal}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_discount">${product.displayDiscount}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_tax">${product.displayTax}</center></ec:table-col>
+								<ec:table-col><center id="${product.serial}_total">${product.displayTotal}</center></ec:table-col>
 								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 							</ec:table-row>
 						</c:forEach>
@@ -87,6 +149,31 @@
 				</ec:table>
 			</ed:col>
 		</ed:row>
+		<ed:row>
+			<ed:col size="5">
+			</ed:col>
+			<ed:col size="7">
+				<p>
+					<fmt:message key="created_in" bundle="${messages}"/>
+					${vars.refund.toStringDate(locale)}
+				</p>
+				
+				<ec:description-list>
+					<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
+						<span id="subtotal">${vars.refund.displaySubtotal}</span>
+					</ec:description>
+					<ec:description title="#{table_product.discount}" truncate="false" bundle="${messages}">
+						<span id="discounts">${vars.refund.displayDiscount}</span>
+					</ec:description>
+					<ec:description title="#{table_product.tax}" truncate="false" bundle="${messages}">
+						<span id="taxes">${vars.refund.displayTax}</span>
+					</ec:description>
+					<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
+						<span id="total">${vars.refund.displayTotal}</span>
+					</ec:description>
+				</ec:description-list>
+			</ed:col>
+		</ed:row>		
 		<ed:row>
 			<ed:col id="refundFormResult">
 			</ed:col>
@@ -96,7 +183,7 @@
 		<ec:button label="#{show_order.label}" actionType="button" style="light" 
 			align="right" bundle="${messages}">
 			<ec:event type="click">
-				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.shipping.order}');			
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.refund.order}');			
 			</ec:event>
 		</ec:button>
 		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"

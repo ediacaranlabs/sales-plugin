@@ -14,28 +14,29 @@ public class ProductRequestRefoundIDEntity implements Serializable{
 	@Column(name="cod_product_request", length=38)
 	private String productRequestID;
 
-	@Column(name="cod_shipping", length=32)
-	private String shippingID;
+	@Column(name="cod_refund", length=32)
+	private String refoundID;
+	
 
 	public ProductRequestRefoundIDEntity() {
 	}
 	
-	public ProductRequestRefoundIDEntity(String productRequestID, String shippingID) {
+	public ProductRequestRefoundIDEntity(String productRequestID, String refoundID) {
 		this.productRequestID = productRequestID;
-		this.shippingID = shippingID;
+		this.refoundID = refoundID;
 	}
 
 	public String getProductRequestID() {
 		return productRequestID;
 	}
 
-	public String getShippingID() {
-		return shippingID;
+	public String getRefoundID() {
+		return refoundID;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(shippingID, productRequestID);
+		return Objects.hash(refoundID, productRequestID);
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class ProductRequestRefoundIDEntity implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		ProductRequestRefoundIDEntity other = (ProductRequestRefoundIDEntity) obj;
-		return Objects.equals(shippingID, other.shippingID) && Objects.equals(productRequestID, other.productRequestID);
+		return Objects.equals(refoundID, other.refoundID) && Objects.equals(productRequestID, other.productRequestID);
 	}
 	
 }

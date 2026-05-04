@@ -538,6 +538,7 @@ public class RefundRegistryUtil {
 		i.setProducts(new ArrayList<ProductRequest>(itens));
 		i.setRefundType(null);
 		i.setOrder(order.getId());
+		i.setRefundType(order.getPaymentType());
 		
 		return i;
 	}

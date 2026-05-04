@@ -34,6 +34,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundRecalcPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundSearchPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.RefundSearchResultPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -206,7 +207,7 @@ public class RefundAdminPubResource {
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 
-		map.put("entity", refund);
+		map.put("refund", refund);
 		map.put("paymentGatewayList", paymentGatewayList);
 		map.put("selectedPaymentGateway", selectedPaymentGateway);
 		return map;
@@ -260,6 +261,37 @@ public class RefundAdminPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("refund", refund);
 		return map;
+	}
+	
+	@Action("/recalc")
+	@RequestMethod("POST")
+	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
+	@ResponseType(MediaTypes.APPLICATION_JSON)
+	@Result(mappingType = MappingTypes.OBJECT)
+	@RequireAnyRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.INVOICE.EDIT)
+	public RefundRecalcPubEntity recalc(
+			@DetachedName
+			RefundPubEntity refundPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Refund refund;
+		try{
+			refund = refundPubEntity.rebuild(refundPubEntity.getId() != null, true, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							InvoiceAdminPubResourceMessages.RESOURCE_BUNDLE,
+							InvoiceAdminPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		return new RefundRecalcPubEntity(refund, locale);
 	}
 	
 }
