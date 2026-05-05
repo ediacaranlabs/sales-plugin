@@ -60,7 +60,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.checkAllowedCreateRefund(actualOrder);
 		refundRegistryUtil.checkAllowedRefundStatus(actualOrder);
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
-		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity);
+		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);

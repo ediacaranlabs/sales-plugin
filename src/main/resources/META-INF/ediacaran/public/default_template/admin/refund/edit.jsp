@@ -104,19 +104,19 @@
 														  
 														  	if($i.serial ==  $serialOriginalName){
 	
-																$.AppContext.utils.getById($serialOriginalName + '_subtotal').setValue($i.subtotal);
-																$.AppContext.utils.getById($serialOriginalName + '_discount').setValue($i.discounts);
-																$.AppContext.utils.getById($serialOriginalName + '_tax').setValue($i.taxes);
-																$.AppContext.utils.getById($serialOriginalName + '_total').setValue($i.total);
+																$.AppContext.utils.getById($serialOriginalName + '_subtotal').setValue($i.displaySubtotal);
+																$.AppContext.utils.getById($serialOriginalName + '_discount').setValue($i.displayDiscounts);
+																$.AppContext.utils.getById($serialOriginalName + '_tax').setValue($i.displayTaxes);
+																$.AppContext.utils.getById($serialOriginalName + '_total').setValue($i.displayTotal);
 																
 															}
 														  
 														}
 														
-														$.AppContext.utils.getById('subtotal').setValue($e.subtotal);
-														$.AppContext.utils.getById('discounts').setValue($e.discounts);
-														$.AppContext.utils.getById('taxes').setValue($e.taxes);
-														$.AppContext.utils.getById('total').setValue($e.total);
+														$.AppContext.utils.getById('subtotal').setValue($e.displaySubtotal);
+														$.AppContext.utils.getById('discounts').setValue($e.displayDiscounts);
+														$.AppContext.utils.getById('taxes').setValue($e.displayTaxes);
+														$.AppContext.utils.getById('total').setValue($e.displayTotal);
 														
 														
 													}

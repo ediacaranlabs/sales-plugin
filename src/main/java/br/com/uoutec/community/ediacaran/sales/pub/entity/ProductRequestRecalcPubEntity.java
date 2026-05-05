@@ -26,6 +26,14 @@ public class ProductRequestRecalcPubEntity
 	
 	private BigDecimal total;
 
+	private String displaySubtotal;
+
+	private String displayDiscounts;
+	
+	private String displayTaxes;
+	
+	private String displayTotal;
+	
 	@Constructor
 	public ProductRequestRecalcPubEntity() {
 	}
@@ -36,6 +44,12 @@ public class ProductRequestRecalcPubEntity
 		this.discounts = e.getDiscount();
 		this.taxes = e.getTax();
 		this.total = e.getTotal();
+
+		this.displaySubtotal = e.getDisplaySubtotal();
+		this.displayDiscounts = e.getDisplayDiscount();
+		this.displayTaxes = e.getDisplayTax();
+		this.displayTotal = e.getDisplayTotal();
+		
 		this.serial = e.getSerial();
 	}
 
@@ -84,6 +98,42 @@ public class ProductRequestRecalcPubEntity
 
 	public void setTotal(BigDecimal total) {
 		this.total = total;
+	}
+
+	public String getDisplaySubtotal() {
+		return displaySubtotal;
+	}
+
+	public void setDisplaySubtotal(String displaySubtotal) {
+		this.displaySubtotal = displaySubtotal;
+	}
+
+	public String getDisplayDiscounts() {
+		return displayDiscounts;
+	}
+
+	public void setDisplayDiscounts(String displayDiscounts) {
+		this.displayDiscounts = displayDiscounts;
+	}
+
+	public String getDisplayTaxes() {
+		return displayTaxes;
+	}
+
+	public void setDisplayTaxes(String displayTaxes) {
+		this.displayTaxes = displayTaxes;
+	}
+
+	public String getDisplayTotal() {
+		return displayTotal;
+	}
+
+	public void setDisplayTotal(String displayTotal) {
+		this.displayTotal = displayTotal;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
 }

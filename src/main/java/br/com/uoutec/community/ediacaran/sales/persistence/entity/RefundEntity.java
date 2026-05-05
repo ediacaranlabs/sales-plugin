@@ -25,7 +25,6 @@ import org.brandao.brutos.bean.BeanProperty;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
-import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -41,7 +40,7 @@ public class RefundEntity implements Serializable {
 	
 	static{
 		excludeFields = new HashSet<String>();
-		BeanInstance i = new BeanInstance(null, Shipping.class);
+		BeanInstance i = new BeanInstance(null, Refund.class);
 		
 		List<BeanProperty> list = i.getProperties();
 		

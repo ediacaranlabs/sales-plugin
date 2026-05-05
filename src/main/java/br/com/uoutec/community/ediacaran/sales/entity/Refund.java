@@ -37,10 +37,8 @@ public class Refund implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	private Client client;
 	
-	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
-	@NotNull(groups = DataValidation.class)
 	private String refundType;
 	
 	private LocalDateTime refundDate;

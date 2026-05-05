@@ -120,6 +120,11 @@ public class RefundRegistryUtil {
 		
 	}
 	
+	public void setSaveProperties(Refund entity) throws ValidationException {
+		entity.setDate(LocalDateTime.now());
+		entity.setRefundDate(null);
+	}
+	
 	public void checkEntityToSave(Refund entity) throws ValidationException {
 		ValidatorBean.validate(entity, saveValidations);
 	}
@@ -454,9 +459,10 @@ public class RefundRegistryUtil {
 		
 	}
 	
-	public void preventChangeRefundSaveSensitiveData(Refund entity) {
+	public void preventChangeRefundSaveSensitiveData(Refund entity, Order order) {
 		entity.setDate(LocalDateTime.now());
 		entity.setRefundDate(null);
+		entity.setRefundType(order.getPaymentType());
 	}
 
 	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
