@@ -465,6 +465,44 @@ public class OrderEntityAccessImp
 		}
 	}
 
+	public ProductRequest getProductRequestBySerial(String orderID, String serial) throws EntityAccessException{
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestEntity> criteria = 
+		    		builder.createQuery(ProductRequestEntity.class);
+		    Root<ProductRequestEntity> from = 
+		    		criteria.from(ProductRequestEntity.class);
+		    
+		    criteria.select(from);
+		    
+		    List<Predicate> and = new ArrayList<Predicate>();
+
+	    	and.add(builder.equal(from.get("serial"), serial));
+		    
+		    Join<ProductRequestEntity, OrderEntity> orderJoin = from.join("order");
+		    and.add(builder.equal(orderJoin.get("id"), orderID));
+	    	
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestEntity> typed = 
+		    		entityManager.createQuery(criteria);
+
+
+		    ProductRequestEntity e = typed.getSingleResult();
+		    
+		    return e == null? null : e.toEntity();
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}		
+	}
+	
 	public ProductRequest getProductRequest(String orderID, String id) throws EntityAccessException {
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();

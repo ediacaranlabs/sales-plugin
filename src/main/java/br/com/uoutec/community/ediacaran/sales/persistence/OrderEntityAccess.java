@@ -28,6 +28,8 @@ public interface OrderEntityAccess {
 	List<Order> getOrders(OrderStatus status, Integer first, Integer max) throws EntityAccessException;
 
 	ProductRequest getProductRequest(String orderID, String id) throws EntityAccessException;
+
+	ProductRequest getProductRequestBySerial(String orderID, String id) throws EntityAccessException;
 	
 	void registryLog(Order order, String message) throws EntityAccessException;
 	

@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -24,7 +25,15 @@ import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 
 @Entity
-@Table(name="rw_product_request")
+@Table(
+		name="rw_product_request",
+		indexes = {
+			@Index(columnList = "cod_order, dsc_serial", unique = true),
+			@Index(columnList = "cod_invoice, dsc_serial", unique = true),
+			@Index(columnList = "cod_shipping, dsc_serial", unique = true),
+			@Index(columnList = "cod_refund, dsc_serial", unique = true)
+		}
+)
 @EntityListeners(ProductRequestEntityListener.class)
 public class ProductRequestEntity implements Serializable{
 
@@ -60,7 +69,7 @@ public class ProductRequestEntity implements Serializable{
 	private ShippingEntity shipping;
 
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="cod_refund")
+	@JoinColumn(name="cod_refund", referencedColumnName="cod_refund")
 	private RefundEntity refund;
 	
 	@Enumerated(EnumType.STRING)

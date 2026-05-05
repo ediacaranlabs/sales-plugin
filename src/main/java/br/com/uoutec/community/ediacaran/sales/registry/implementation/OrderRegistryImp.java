@@ -355,6 +355,19 @@ public class OrderRegistryImp
 		}
 	}
 
+	public ProductRequest getProductRequestBySerial(String orderID, String serial) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.GET.getProductRequestPermission());
+		
+		try{
+			return orderEntityAccess.getProductRequestBySerial(orderID, serial);
+		}
+		catch(Throwable e){
+			e.printStackTrace();
+			throw new OrderRegistryException(e);
+		}
+	}
+	
 	@ActivateRequestContext
 	public ProductRequest getProductRequest(String orderID,
 			String id) throws OrderRegistryException {

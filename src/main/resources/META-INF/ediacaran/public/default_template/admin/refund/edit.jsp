@@ -47,11 +47,6 @@
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.refund.order}<br>
 			</ed:col>
 		</ed:row>
-		<script type="text/javascript">
-			var refundEntity = {};
-			refundEntity.itens = {};
-			refundEntity.order = '${vars.refund.order}';
-		</script>
 		<ed:row>
 			<ed:col>
 				<ec:table>
@@ -67,9 +62,6 @@
 					</ec:table-header>
 					<ec:table-body>
 						<c:forEach items="${vars.refund.products}" var="product">
-							<script type="text/javascript">
-								refundEntity.itens['${product.serial}'] = '${product.units}';
-							</script>
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col classStyle="qty form-group has-feedback" >
@@ -77,11 +69,12 @@
 										<ec:center>${product.units}</ec:center>
 									</c:if>
 									<c:if test="${empty vars.refund.id}">
-									<span formgroup="products" formgrouptype="index">
-										<input type="hidden" name="serial" value="${product.serial}">
-										<ec:textfield maxlength="2" name="units" value="${product.units}" extAttrs="serial=''" enabled="${empty vars.refund.id}">
+									<span formgroup="itens">
+										<ec:textfield maxlength="2" name="${product.serial}" value="${product.units}" enabled="${empty vars.refund.id}">
 											<ec:event type="keyup">
 												var $form = $event.source.getForm();
+												
+												/*
 												var $group = $event.source.getFormGroup();
 												
 												var $unitsField = $form.getField($group.getPath() + ".units" );
@@ -89,13 +82,17 @@
 												
 												var $unitsValue = $unitsField.getValue();
 												var $serialValue = $serialField.getValue();
-												
-												refundEntity.itens[$serialValue] = $unitsValue;
+												*/
+												//refundEntity.itens[$serialValue] = $unitsValue;
 
-												
+												var $serialName = $event.source.getAttribute('name');
+												var $serialOriginalName = $event.source.getAttribute('originalname');
+												var $serialField = $form.getField($serialName);
+												var $serialValue = $serialField.getValue();
+												console.log($serialName + ":" + $serialValue);
 												$.AppContext.utils.postJson(
 													'${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/recalc',
-													refundEntity,
+													$form.toObject(),
 													function ($e){
 													
 														if(!$e.itens){
@@ -105,12 +102,12 @@
 														for (let $j = 0; $j < $e.itens.length; $j++) {
 															var $i = $e.itens[$j];
 														  
-														  	if($i.serial == $serialValue){
+														  	if($i.serial ==  $serialOriginalName){
 	
-																$.AppContext.utils.getById($serialValue + '_subtotal').setValue($i.subtotal);
-																$.AppContext.utils.getById($serialValue + '_discount').setValue($i.discounts);
-																$.AppContext.utils.getById($serialValue + '_tax').setValue($i.taxes);
-																$.AppContext.utils.getById($serialValue + '_total').setValue($i.total);
+																$.AppContext.utils.getById($serialOriginalName + '_subtotal').setValue($i.subtotal);
+																$.AppContext.utils.getById($serialOriginalName + '_discount').setValue($i.discounts);
+																$.AppContext.utils.getById($serialOriginalName + '_tax').setValue($i.taxes);
+																$.AppContext.utils.getById($serialOriginalName + '_total').setValue($i.total);
 																
 															}
 														  

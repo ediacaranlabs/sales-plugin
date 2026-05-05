@@ -1,13 +1,10 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -35,23 +32,19 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 	@Size(min = 10, max = 38, groups = IdValidation.class)
 	private String id;
 
-	@NotNull(groups = DataValidation.class)
-	@Pattern(regexp = "[0-9A-Z]+", groups = DataValidation.class)
-	@Size(min = 10, max = 38, groups = DataValidation.class)
+	@NotNull
+	@Pattern(regexp = "[0-9A-Z]+", groups = IdValidation.class)
+	@Size(max = 38, min = 10, groups = IdValidation.class)
 	private String order;
 
-	@NotNull(groups = DataValidation.class)
 	private String refundType;
 	
-	@NotNull(groups = DataValidation.class)
 	private LocalDateTime date;
 
 	private LocalDateTime refundDate;
 	
-	@Basic(mappingType = MappingTypes.OBJECT)
-	@NotNull(groups = DataValidation.class )
-	@Valid
-	private List<ProductRequestPubEntity> products;
+	@NotNull(groups = DataValidation.class)
+	private Map<String, Integer> itens;
 	
 	@Basic(mappingType = MappingTypes.OBJECT)
 	private Map<String, String> addData;
@@ -68,14 +61,13 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.refundType = e.getRefundType();
 		
 		if(e.getProducts() != null) {
-			this.products = new ArrayList<>();
-			for(ProductRequest p: e.getProducts()) {
-				this.products.add(new ProductRequestPubEntity(p, locale));
-			}
+			this.itens = new HashMap<>();
+			e.getProducts().forEach((i)->{
+				this.itens.put(i.getSerial(), i.getUnits());
+			});
 		}
 		
 		this.order = e.getOrder();
-		this.order = e.getOrder() == null? null : SecretUtil.toProtectedID(e.getOrder());
 	}
 	
 	@Override
@@ -112,39 +104,18 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		
 		o.setAddData(this.addData);
 
-		if(this.id != null) {
-			return;
-		}
-
 		o.setDate(this.date);
 		o.setRefundDate(this.refundDate);
 		o.setRefundType(id);
 		o.setOrder(this.order);
 		
-		if(this.products != null) {
+		if(this.itens != null) {
 			
-			Map<String,Integer> units = new HashMap<>();
-			for(ProductRequestPubEntity e: this.products) {
-				ProductRequest p = e.rebuild(false, true, false);
-				if(p.getSerial() != null) {
-					units.put(p.getSerial(), e.getUnits());
-				}
+			for(ProductRequest i: o.getProducts()) {
+				Integer units = this.itens.get(i.getSerial());
+				i.setUnits(units == null? 0 : units.intValue());
 			}
 			
-			if(o.getProducts() != null) {
-				for(ProductRequest p: o.getProducts()) {
-					Integer u = units.get(p.getSerial());
-					p.setUnits(u == null? 0 : u.intValue());
-				}
-			}
-			
-		}
-		else {
-			if(o.getProducts() != null) {
-				for(ProductRequest p: o.getProducts()) {
-					p.setUnits(0);
-				}
-			}
 		}
 		
 	}
@@ -189,12 +160,12 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.refundDate = refundDate;
 	}
 
-	public List<ProductRequestPubEntity> getProducts() {
-		return products;
+	public Map<String, Integer> getItens() {
+		return itens;
 	}
 
-	public void setProducts(List<ProductRequestPubEntity> products) {
-		this.products = products;
+	public void setItens(Map<String, Integer> itens) {
+		this.itens = itens;
 	}
 
 	public Map<String, String> getAddData() {
@@ -222,7 +193,7 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.date = e.getDate();
 		this.id = e.getId();
 		this.order = e.getOrder();
-		this.products = e.getProducts();
+		this.itens = e.getItens();
 		this.refundDate = e.getRefundDate();
 		this.refundType = e.getRefundType();
 	}
