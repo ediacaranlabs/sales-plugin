@@ -11,6 +11,7 @@ public class ThemesPluginInstaller {
 	public void install() throws Throwable {
 		PluginThemesManager ptm = EntityContextPlugin.getEntity(PluginThemesManager.class);
 		ptm.registerThemes();
+		
 	}
 	
 	public void uninstall() throws Throwable {
