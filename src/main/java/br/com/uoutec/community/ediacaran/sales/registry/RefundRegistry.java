@@ -7,12 +7,13 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.i18n.ValidationException;
 
 public interface RefundRegistry extends PublicBean{
 
-	void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException;
+	void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException, PaymentGatewayException;
 	
 	void removeRefund(Refund entity) throws RefundRegistryException;
 	

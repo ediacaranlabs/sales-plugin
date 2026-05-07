@@ -17,6 +17,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.i18n.ValidationException;
 
 @Singleton
@@ -29,7 +31,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, 
-		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException {
+		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException, PaymentGatewayException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getRegisterPermission());
 		
@@ -48,7 +50,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	}
 	
 	private void save(Refund entity) throws ValidationException, RefundRegistryException, 
-		ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException {
+		ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, PaymentGatewayException {
 		
 		refundRegistryUtil.checkEntityToSave(entity);
 
@@ -61,7 +63,11 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.checkAllowedRefundStatus(actualOrder);
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
+		
+		PaymentGateway paymentGateway   = refundRegistryUtil.getPaymentGateway(entity);
+		refundRegistryUtil.refoundProducts(actualOrder, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
+		
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
 		refundRegistryUtil.registerNewRefundEvent(entity);

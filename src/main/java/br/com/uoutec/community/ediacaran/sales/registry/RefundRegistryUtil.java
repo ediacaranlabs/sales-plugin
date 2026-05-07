@@ -19,6 +19,10 @@ import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
@@ -61,6 +65,9 @@ public class RefundRegistryUtil {
 	
 	@Inject
 	private OrderReportRegistry orderReportRegistry;
+	
+	@Inject
+	private PaymentGatewayRegistry paymentGatewayRegistry;
 	
 	public void save(Refund refund, Order order) throws RefundRegistryException {
 		try {
@@ -213,6 +220,16 @@ public class RefundRegistryUtil {
 		}
 	}
 
+	public PaymentGateway getPaymentGateway(Refund refund) throws RefundRegistryException {
+		PaymentGateway paymentGateway = paymentGatewayRegistry.getPaymentGateway(refund.getRefundType());
+		
+		if(paymentGateway == null) {
+			throw new RefundRegistryException("payment gateway not found: " + refund.getRefundType());
+		}
+		
+		return paymentGateway;
+	}
+	
 	public List<Shipping> getActualShipping(Order order) throws ShippingRegistryException {
 		return shippingRegistry.findByOrder(order.getId());
 	}
@@ -238,6 +255,10 @@ public class RefundRegistryUtil {
 		
 	}
 
+	public void refoundProducts(Order order, List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
+		paymentGateway.refund(new PaymentRequest(order, order.getClient(), order.getPayment(), itens));
+	}
+	
 	public void checkUnits(Order order, List<Refund> actualRefunds, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 
 		Map<String, ProductRequest> map = toMap(order.getItens());

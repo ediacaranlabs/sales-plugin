@@ -26,6 +26,10 @@ public class PaymentRequest {
 	}
 
 	public PaymentRequest(Order order, Client client, Payment payment) {
+		this(order, client, payment, order.getItens());
+	}
+	
+	public PaymentRequest(Order order, Client client, Payment payment, List<ProductRequest> products) {
 		
 		this.location = new PaymentLocation();
 		this.location.setCountry(client.getCountry());
@@ -36,7 +40,7 @@ public class PaymentRequest {
 		this.payment = payment;
 		
 		this.itens = new ArrayList<>();
-		order.getItens().stream().forEach((e)->this.itens.add(new ProductRequest(e)));
+		products.stream().forEach((e)->this.itens.add(new ProductRequest(e)));
 		this.order = order;
 		
 	}
