@@ -6,7 +6,7 @@ public interface PaymentGateway {
 	
 	void payment(PaymentRequest paymentRequest) throws PaymentGatewayException;
 
-	void refund(PaymentRequest paymentRequest) throws PaymentGatewayException;
+	void refund(RefundRequest refundRequest) throws PaymentGatewayException;
 	
 	String redirectView(PaymentRequest paymentRequest) throws PaymentGatewayException;
 	

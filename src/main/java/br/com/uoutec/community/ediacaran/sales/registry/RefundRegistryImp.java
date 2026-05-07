@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
@@ -64,14 +65,17 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
 		
-		PaymentGateway paymentGateway   = refundRegistryUtil.getPaymentGateway(entity);
-		refundRegistryUtil.refoundProducts(actualOrder, entity.getProducts(), paymentGateway);
+		PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
+		refundRegistryUtil.refoundProducts(actualOrder, entity, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
 		
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
 		refundRegistryUtil.registerNewRefundEvent(entity);
-		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
+		
+		if(actualOrder.getStatus() != OrderStatus.REFUND) {
+			refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
+		}
 		
 	}
 
@@ -87,7 +91,10 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
 		refundRegistryUtil.update(actualRefund, actualOrder);
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
-		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
+		
+		if(actualOrder.getStatus() != OrderStatus.REFUND) {
+			refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
+		}
 		
 	}
 	

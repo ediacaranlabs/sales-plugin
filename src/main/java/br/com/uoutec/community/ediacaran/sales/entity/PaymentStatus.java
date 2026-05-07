@@ -27,6 +27,8 @@ public enum PaymentStatus {
 	
 	SUSPECTED_FRAUD,
 	
+	PARTIAL_REFUND,
+	
 	REFOUND;
 	
 	public static final String RESOURCE_BUNDLE = 
@@ -81,9 +83,15 @@ public enum PaymentStatus {
 			
 			nextState.put(PAYMENT_RECEIVED, 
 					new HashSet<PaymentStatus>(Arrays.asList(
+							PARTIAL_REFUND,
 							REFOUND))
 				);
 
+			nextState.put(PARTIAL_REFUND, 
+					new HashSet<PaymentStatus>(Arrays.asList(
+							REFOUND))
+				);
+			
 			nextState.put(PAYMENT_REVIEW, 
 					new HashSet<PaymentStatus>(Arrays.asList(
 							SUSPECTED_FRAUD,

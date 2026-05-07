@@ -14,6 +14,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
@@ -22,7 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
+import br.com.uoutec.community.ediacaran.sales.payment.RefundRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
@@ -255,8 +256,8 @@ public class RefundRegistryUtil {
 		
 	}
 
-	public void refoundProducts(Order order, List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
-		paymentGateway.refund(new PaymentRequest(order, order.getClient(), order.getPayment(), itens));
+	public void refoundProducts(Order order, Refund refund, List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
+		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, itens));
 	}
 	
 	public void checkUnits(Order order, List<Refund> actualRefunds, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
@@ -501,6 +502,7 @@ public class RefundRegistryUtil {
 			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		if(isCompletedRefund(order, refunds) ) {
+			order.getPayment().setStatus(PaymentStatus.REFOUND);
 			OrderRegistryUtil.updateStatus(order, OrderStatus.REFUND, orderRegistry);
 		}
 		
