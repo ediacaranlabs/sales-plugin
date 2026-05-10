@@ -141,19 +141,6 @@ public class OrderRegistryUtil {
 		
 	}
 
-	public static void refoundOrder(Order order, Client client, Payment payment, String message, 
-			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException, ValidationException {
-		
-			paymentGateway.refund(new PaymentRequest(order));
-			
-			checkPayment(payment, order);
-			order.getPayment().setStatus(payment.getStatus());
-			checkAndUpdateNewOrderStatus(order, toOrderStatus(order.getPayment().getStatus()));
-			
-			update(order, entityAccess);
-		
-	}
-	
 	public static void cancelInvoices(List<Invoice> invoices, String justification, InvoiceRegistry invoiceRegistry) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
 		
 		for(Invoice i: invoices) {

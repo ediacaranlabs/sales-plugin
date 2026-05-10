@@ -53,9 +53,7 @@ public class FreePaymentGateway extends  AbstractPaymentGateway{
 	}
 
 	@Override
-	public void refund(PaymentRequest paymentRequest) throws PaymentGatewayException {
-		// TODO Auto-generated method stub
-		
+	public void refund(RefundRequest paymentRequest) throws PaymentGatewayException {
 	}
 
 }

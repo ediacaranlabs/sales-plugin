@@ -12,6 +12,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
@@ -20,7 +21,6 @@ import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
-import br.com.uoutec.entity.registry.RegistryException;
 
 public interface OrderRegistry extends PublicBean {
 
@@ -52,9 +52,9 @@ public interface OrderRegistry extends PublicBean {
 
 	/* refound payment */
 	
-	void createRefound(Order order, String message) throws RegistryException;
-			
-	void revertRefound(String order, String message) throws RegistryException;
+	Refund createRefund(Order order, String message) throws OrderRegistryException;
+	
+	Refund createRefund(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException;
 			
 	boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 

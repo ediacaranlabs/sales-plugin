@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
@@ -57,6 +58,9 @@ public class RefundRegistryUtil {
 	
 	@Inject
 	private ShippingRegistry shippingRegistry;
+
+	@Inject
+	private InvoiceRegistry invoiceRegistry;
 	
 	@Inject
 	private ActionRegistry actionRegistry;
@@ -103,6 +107,24 @@ public class RefundRegistryUtil {
 		}
 	}
 	
+	
+	public void updateIndex(Refund refund, Order order) throws RefundRegistryException {
+		try {
+			Refund index = indexEntityAccess.findById(refund.getId());
+			if(index == null) {
+				indexEntityAccess.save(index);
+			}
+			else {
+				indexEntityAccess.update(index);
+			}
+
+			entityAccess.flush();
+		}
+		catch(Throwable e){
+			throw new RefundRegistryException(
+				"refund index error: " + order.getId(), e);
+		}
+	}
 	
 	public RefundResultSearch search(RefundSearch value) throws RefundRegistryException {
 		try{
@@ -234,10 +256,44 @@ public class RefundRegistryUtil {
 	public List<Shipping> getActualShipping(Order order) throws ShippingRegistryException {
 		return shippingRegistry.findByOrder(order.getId());
 	}
+
+	public List<Invoice> getActualInvoice(Order order) throws InvoiceRegistryException {
+		return invoiceRegistry.findByOrder(order.getId());
+	}
 	
 	public void checkAllowedCreateRefund(Order order) throws OrderStatusNotAllowedRegistryException {
 		if(!order.getStatus().isAllowedCreateRefund()) {
 			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
+		}
+	}
+
+	public void checkHasShippedProducts(Refund entity, List<Shipping> actualShiping) throws RefundRegistryException {
+		
+		Map<String, ProductRequest> map = toMap(entity.getProducts());
+
+		for(Shipping e: actualShiping) {
+			
+			for(ProductRequest pr: e.getProducts()) {
+				if(map.containsKey(pr.getSerial())) {
+					throw new RefundRegistryException("product shipped: " + pr.getSerial());
+				}
+			}
+			
+		}
+	}
+
+	public void checkHasInvoicedProduct(Refund entity, List<Invoice> actualInvoice) throws RefundRegistryException {
+		
+		Map<String, ProductRequest> map = toMap(entity.getProducts());
+
+		for(Invoice e: actualInvoice) {
+			
+			for(ProductRequest pr: e.getItens()) {
+				if(map.containsKey(pr.getSerial())) {
+					throw new RefundRegistryException("product shipped: " + pr.getSerial());
+				}
+			}
+			
 		}
 	}
 	

@@ -13,7 +13,9 @@ import br.com.uoutec.i18n.ValidationException;
 
 public interface RefundRegistry extends PublicBean{
 
-	void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException, PaymentGatewayException;
+	void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, 
+	ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException, 
+	PaymentGatewayException, InvoiceRegistryException;
 	
 	void removeRefund(Refund entity) throws RefundRegistryException;
 	
@@ -25,7 +27,8 @@ public interface RefundRegistry extends PublicBean{
 
 	Refund createRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
 	
-	void confirmRefund(Refund shipping) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException;
+	void confirmRefund(Refund shipping) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, 
+	InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException;
 	
 	List<Refund> findRefundByOrder(String id) throws RefundRegistryException;
 	

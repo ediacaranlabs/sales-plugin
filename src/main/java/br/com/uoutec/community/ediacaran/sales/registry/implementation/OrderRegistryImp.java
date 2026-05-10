@@ -23,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
@@ -32,21 +33,18 @@ import br.com.uoutec.community.ediacaran.sales.persistence.OrderIndexEntityAcces
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
-import br.com.uoutec.community.ediacaran.sales.registry.UnmodifiedOrderStatusRegistryException;
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
@@ -562,123 +560,33 @@ public class OrderRegistryImp
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
-	public void createRefound(Order order, String message) throws RegistryException {
+	public Refund createRefund(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRefoundPermission());
+		RefundRegistry refundRegistry  = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
-		try{
-			this.unsafeCreateRefound(order, message);
+		try {
+			return refundRegistry.createRefund(order, itens);
 		}
-		catch(RegistryException e){
-			throw e;
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(e);
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
 		}
 	}
-	
-	private void unsafeCreateRefound(Order order, String message
-			) throws OrderRegistryException, SystemUserRegistryException, ClientRegistryException, InvoiceRegistryException, 
-			PaymentGatewayException, ValidationException, ShippingRegistryException {
-		
-		InvoiceRegistry invoiceRegistry  = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-		Order actualOrder                = OrderRegistryUtil.getActualOrder(order, orderEntityAccess);
-		Client actualClient              = OrderRegistryUtil.getActualClient(actualOrder.getClient(), clientRegistry);
-		PaymentGateway paymentGateway    = OrderRegistryUtil.getPaymentGateway(actualOrder, paymentGatewayRegistry);
-		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
-		
-		OrderRegistryUtil.checkAndUpdateNewOrderStatus(actualOrder, OrderStatus.REFUND);
-		OrderRegistryUtil.refoundOrder(actualOrder, actualClient, order.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
-		
-		if(actualOrder.getStatus() == OrderStatus.REFUND) {
-			OrderRegistryUtil.cancelInvoices(actualInvoices, message, invoiceRegistry);
-			OrderRegistryUtil.postRefundOrder(actualOrder, productTypeRegistry);
-			OrderRegistryUtil.saveOrUpdateIndex(actualOrder, indexEntityAccess);
-			OrderRegistryUtil.registerEvent("Refund #" + actualOrder.getId(), actualOrder, orderEntityAccess);
-		}
-		
-	}
-	
+
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void revertRefound(String orderID, String message) throws RegistryException {
+	@EnableFilters(OrderRegistry.class)
+	public Refund createRefund(Order order, String message) throws OrderRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.REFOUND.getRevertPermission());
+		RefundRegistry refundRegistry  = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
-		try{
-			this.unsafeRevertRefound(orderID, message);
+		try {
+			return refundRegistry.createRefund(order);
 		}
-		catch(RegistryException e){
-			throw e;
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(e);
-		}
-	}
-	
-	private void unsafeRevertRefound(String orderID, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, InvoiceRegistryException{
-
-		throw new UnsupportedOperationException();
-		
-		//Order order = findById(orderID);
-		/*
-		if(order.getStatus() == OrderStatus.CANCELED_REFOUND){
-			throw new UnmodifiedOrderStatusRegistryException("Reembolso cancelado.");
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
 		}
 		
-		//Verifica se o status é o adequado
-		if(!this.isValid(order, OrderStatus.CANCELED_REFOUND)){
-			throw new OrderStatusNotAllowedRegistryException(
-					"novo status não é permitido: " + 
-					order.getStatus() + " -> " + OrderStatus.CANCELED_REFOUND);
-		}
-		 */
-		
-		/*
-		SystemUser user;
-		
-		try{
-			user = this.systemUserRegistry.findById(order.getOwner());
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(
-				"Falha ao recarregar os dados do cliente" + order.getId(), e);
-		}
-		*/
-		
-		//atualiza o status do pedido
-		/*
-		order.setStatus(OrderStatus.CANCELED_REFOUND);
-		
-		Invoice invoice = invoiceRegistry.toInvoice(order);
-		invoiceRegistry.registerInvoice(invoice);
-		*/
-		
-		/*
-		//Processa os itens do pedido
-		for(ProductRequest productRequest: order.getItens()){
-			try{
-				ProductType productType = productTypeRegistry.getProductType(productRequest.getProduct().getProductType());
-				ProductTypeHandler productTypeHandler = productType.getHandler();
-				productTypeHandler.registryItem(user, order, productRequest);
-			}
-			catch(Throwable e){
-				throw new OrderRegistryException(
-					"falha ao processar o produto/serviço " + productRequest.getId());
-			}
-		}
-		*/
-		
-		/*
-		//Registra as alterações do pedido
-		this.registerOrder(order);
-		
-		//Registra o evento no log
-		this.registryLog(order.getId(), message != null? message : "O processo de Reemboldo foi finalizada.");
-		*/
 	}
 	
 	/* log  */
@@ -689,26 +597,6 @@ public class OrderRegistryImp
 		OrderRegistryUtil.registerEvent(message, order, orderEntityAccess);
 	}
 
-	/*
-	public void updateLog(OrderLog log) throws OrderRegistryException{
-		try{
-			orderEntityAccess.updateLog(log);
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(e);
-		}
-	}
-	
-	public void deleteLog(OrderLog log) throws OrderRegistryException{
-		try{
-			orderEntityAccess.deleteLog(log);
-		}
-		catch(Throwable e){
-			throw new OrderRegistryException(e);
-		}
-	}
-	*/
-	
 	@ActivateRequestContext
 	public List<OrderLog> getLogs(String orderID, Integer first, Integer max) throws OrderRegistryException{
 

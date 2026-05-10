@@ -49,6 +49,8 @@ public class Refund implements Serializable {
 	
 	private Map<String, String> addData;
 	
+	private String currency;
+	
 	public Refund(){
 	}
 
@@ -106,6 +108,14 @@ public class Refund implements Serializable {
 
 	public void setProducts(List<ProductRequest> products) {
 		this.products = products;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public void set(String property, String value) {

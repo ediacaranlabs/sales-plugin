@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -32,7 +33,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void registerRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, 
-		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException, PaymentGatewayException {
+		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, ValidationException, PaymentGatewayException, InvoiceRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getRegisterPermission());
 		
@@ -51,15 +52,18 @@ public class RefundRegistryImp implements RefundRegistry {
 	}
 	
 	private void save(Refund entity) throws ValidationException, RefundRegistryException, 
-		ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, PaymentGatewayException {
+		ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, PaymentGatewayException, InvoiceRegistryException {
 		
 		refundRegistryUtil.checkEntityToSave(entity);
 
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
+		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		
 		refundRegistryUtil.checkOrder(entity);
+		refundRegistryUtil.checkHasShippedProducts(entity, actualShiping);
+		refundRegistryUtil.checkHasInvoicedProduct(entity, actualInvoice);
 		refundRegistryUtil.checkAllowedCreateRefund(actualOrder);
 		refundRegistryUtil.checkAllowedRefundStatus(actualOrder);
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
@@ -68,6 +72,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
 		refundRegistryUtil.refoundProducts(actualOrder, entity, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
+		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
@@ -80,16 +85,21 @@ public class RefundRegistryImp implements RefundRegistry {
 	}
 
 	private void update(Refund entity) throws ValidationException, RefundRegistryException, ClientRegistryException, 
-		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException {
+		ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, InvoiceRegistryException {
 		
 		refundRegistryUtil.checkEntityToUpdate(entity);
 		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
+		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
+		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		
 		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
+		refundRegistryUtil.checkHasShippedProducts(entity, actualShiping);
+		refundRegistryUtil.checkHasInvoicedProduct(entity, actualInvoice);
 		refundRegistryUtil.update(actualRefund, actualOrder);
+		refundRegistryUtil.updateIndex(actualRefund, actualOrder);
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		
 		if(actualOrder.getStatus() != OrderStatus.REFUND) {
