@@ -21,25 +21,27 @@ public class RefundRequest {
 	
 	private List<ProductRequest> itens;
 	
+	private boolean partialRefund;
+	
 	public RefundRequest() {
 	}
 	
-	public RefundRequest(Order order, Refund refund) {
-		this(order, order.getClient(), order.getPayment(), refund);
+	public RefundRequest(Order order, Refund refund, boolean partialRefund) {
+		this(order, order.getClient(), order.getPayment(), refund, partialRefund);
 	}
 
-	public RefundRequest(Order order, Client client, Payment payment, Refund refund) {
-		this(order, client, payment, refund, order.getItens());
+	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean partialRefund) {
+		this(order, client, payment, refund, partialRefund, order.getItens());
 	}
 	
-	public RefundRequest(Order order, Client client, Payment payment, Refund refund, List<ProductRequest> products) {
+	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean partialRefund, List<ProductRequest> products) {
 		
 		this.location = new PaymentLocation();
 		this.location.setCountry(client.getCountry());
 		this.location.setCity(client.getCity());
 		this.location.setRegion(client.getRegion());
 		this.location.setZip(client.getZip());
-		
+		this.partialRefund = partialRefund;
 		this.payment = payment;
 		this.refund = refund;
 		this.itens = new ArrayList<>();
@@ -48,6 +50,10 @@ public class RefundRequest {
 		
 	}
 	
+	public boolean isPartialRefund() {
+		return partialRefund;
+	}
+
 	public Refund getRefund() {
 		return refund;
 	}

@@ -273,6 +273,10 @@ public class RefundRegistryUtil {
 
 		for(Shipping e: actualShiping) {
 			
+			if(e.isCanceled()) {
+				continue;
+			}
+			
 			for(ProductRequest pr: e.getProducts()) {
 				if(map.containsKey(pr.getSerial())) {
 					throw new RefundRegistryException("product shipped: " + pr.getSerial());
@@ -287,6 +291,10 @@ public class RefundRegistryUtil {
 		Map<String, ProductRequest> map = toMap(entity.getProducts());
 
 		for(Invoice e: actualInvoice) {
+			
+			if(e.getCancelDate() != null) {
+				continue;
+			}
 			
 			for(ProductRequest pr: e.getItens()) {
 				if(map.containsKey(pr.getSerial())) {
@@ -304,7 +312,7 @@ public class RefundRegistryUtil {
 					order.getStatus() + " -> " + OrderStatus.REFUND);
 		}
 	}
-	
+
 	public void checkRefund(Order order, List<Refund> actualResund, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException, CompletedShippingRegistryException {
 
 		checkIsCompletedRefund(order, actualResund);
@@ -312,8 +320,8 @@ public class RefundRegistryUtil {
 		
 	}
 
-	public void refoundProducts(Order order, Refund refund, List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
-		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, itens));
+	public void refoundProducts(Order order, Refund refund, boolean partialRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
+		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, itens));
 	}
 	
 	public void checkUnits(Order order, List<Refund> actualRefunds, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
@@ -348,6 +356,7 @@ public class RefundRegistryUtil {
 		if(isCompletedRefund(order, refundList)) {
 			throw new CompletedShippingRegistryException();
 		}
+		
 	}
 
 	public boolean isCompletedRefund(Order order, Collection<Refund> refundList) throws InvalidUnitsOrderRegistryException {
@@ -394,6 +403,23 @@ public class RefundRegistryUtil {
 		}
 
 		return false;
+	}
+
+	public boolean isPartialRefund(Refund refund, Order order, Collection<Refund> refundList) throws InvalidUnitsOrderRegistryException {
+		
+		 Map<String, ProductRequest> map = toMap(order.getItens());
+		 
+		 removeConfirmedRefundItens(refundList, refund, map);
+		 
+		for(ProductRequest tpr: map.values()) {
+
+			if(tpr.getUnits() > 0) {
+				return false;
+			}
+			
+		}
+
+		return true;
 	}
 	
 	public boolean isCompletedOrder(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList, Collection<OrderReport> orderReportList) throws InvalidUnitsOrderRegistryException {
@@ -540,6 +566,7 @@ public class RefundRegistryUtil {
 	public void preventChangeRefundSaveSensitiveData(Refund entity, Order order) {
 		entity.setDate(LocalDateTime.now());
 		entity.setRefundDate(null);
+		entity.setId(null);
 		entity.setRefundType(order.getPaymentType());
 	}
 

@@ -69,6 +69,31 @@ public abstract class AbstractPaymentGateway implements PaymentGateway{
 	public void suspectedFraud(Payment payment, PaymentLocation location) throws PaymentGatewayException{
 	}
 	
+	public void refund(RefundRequest refundRequest) throws PaymentGatewayException {
+		
+		if(refundRequest.getRefund().getId() == null) {
+			if(refundRequest.isPartialRefund()) {
+				createPartialRefund(refundRequest);
+			}
+			else {
+				createRefund(refundRequest);
+			}
+		}
+		else {
+			confirmRefund(refundRequest);
+		}
+		
+	}
+
+	public void createRefund(RefundRequest refundRequest) throws PaymentGatewayException {
+	}
+
+	public void createPartialRefund(RefundRequest refundRequest) throws PaymentGatewayException {
+	}
+	
+	public void confirmRefund(RefundRequest refundRequest) throws PaymentGatewayException {
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

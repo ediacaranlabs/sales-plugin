@@ -60,6 +60,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
+		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
 		refundRegistryUtil.checkOrder(entity);
 		refundRegistryUtil.checkHasShippedProducts(entity, actualShiping);
@@ -70,7 +71,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
 		
 		PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
-		refundRegistryUtil.refoundProducts(actualOrder, entity, entity.getProducts(), paymentGateway);
+		refundRegistryUtil.refoundProducts(actualOrder, entity, partialRefund, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
@@ -130,7 +131,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void confirmRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException {
+	public void confirmRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException, PaymentGatewayException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getConfirmPermission());
 
@@ -140,6 +141,10 @@ public class RefundRegistryImp implements RefundRegistry {
 		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
+		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
+		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
+		
+		refundRegistryUtil.refoundProducts(actualOrder, actualRefund, partialRefund, actualRefund.getProducts(), paymentGateway);
 		
 		if(entity != null && entity.getRefundDate() == null) {
 			refundRegistryUtil.confirmRefund(actualRefund);
