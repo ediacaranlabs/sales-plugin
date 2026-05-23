@@ -24,29 +24,29 @@ public class ProductCategory implements Serializable {
 
 	@NotNull(groups = IdValidation.class)
 	@Min(value = 1, groups = IdValidation.class)
-	private int id;
+	protected int id;
 
 	@NotNull(groups = DataValidation.class)
 	@Size(max = 128, groups = DataValidation.class)
-	private String name;
+	protected String name;
 
 	protected volatile transient boolean imageLoaded;
 	
-	private transient Path thumb;
+	protected transient Path thumb;
 
-	private String resourceBundle;
+	protected String resourceBundle;
 
-	private String template;
+	protected String template;
 	
 	@NotNull(groups = DataValidation.class)
 	@Size(groups = DataValidation.class, max=2048)
-	private String description;
+	protected String description;
 	
-	private ProductCategory parent;
+	protected ProductCategory parent;
 	
-	private ProductCategory parent1;
+	protected ProductCategory parent1;
 	
-	private ProductCategory parent2;
+	protected ProductCategory parent2;
 
 	public String getProtectedID() {
 		return id <= 0? null : SecretUtil.toProtectedID(String.valueOf(id));		
