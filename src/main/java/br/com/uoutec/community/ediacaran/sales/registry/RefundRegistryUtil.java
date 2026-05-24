@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -112,10 +114,10 @@ public class RefundRegistryUtil {
 		try {
 			Refund index = indexEntityAccess.findById(refund.getId());
 			if(index == null) {
-				indexEntityAccess.save(index);
+				indexEntityAccess.save(refund);
 			}
 			else {
-				indexEntityAccess.update(index);
+				indexEntityAccess.update(refund);
 			}
 
 			entityAccess.flush();
@@ -450,6 +452,22 @@ public class RefundRegistryUtil {
 		}
 		
 		return transientItens;
+	}
+
+	public void removeNotSelectedItens(Map<String, ProductRequest> productRequests, Map<String, Integer> selected) throws InvalidUnitsOrderRegistryException {
+
+		Set<String> toRemove = new HashSet<>();
+		
+		productRequests.keySet().forEach((e)->{
+			if(!selected.containsKey(e)) {
+				toRemove.add(e);
+			}
+		});
+		
+		toRemove.forEach((e)->{
+			productRequests.remove(e);	
+		});
+		
 	}
 	
 	public void removeAllShippedItens(Collection<Shipping> shippingList, Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {

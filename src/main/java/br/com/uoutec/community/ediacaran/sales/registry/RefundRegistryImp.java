@@ -170,11 +170,9 @@ public class RefundRegistryImp implements RefundRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getCreatePermission());
 		
 		Order actualOrder							= refundRegistryUtil.getActualOrder(order);
-		List<Refund> actualRefunds					= refundRegistryUtil.getActualRefunds(actualOrder);
 		Map<String, ProductRequest> transientItens	= refundRegistryUtil.toMap(actualOrder.getItens());
 		
-		
-		refundRegistryUtil.removeAllRefundItens(actualRefunds, null, transientItens);
+		refundRegistryUtil.removeNotSelectedItens(transientItens, itens);
 		
 		return refundRegistryUtil.toRefund(actualOrder, transientItens.values());
 		
