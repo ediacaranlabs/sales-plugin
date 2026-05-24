@@ -96,7 +96,7 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		RefundRegistry refundRegistry = EntityContextPlugin.getEntity(RefundRegistry.class);
 		Order order = new Order();
 		order.setId(this.order);
-		return refundRegistry.createRefund(order);
+		return refundRegistry.toRefund(order);
 	}
 
 	@Override

@@ -191,7 +191,7 @@ public class RefundAdminPubResource {
 		PaymentGateway selectedPaymentGateway = null;
 		
 		try{
-			refund = refundRegistry.createRefund(order);
+			refund = refundRegistry.toRefund(order);
 			selectedPaymentGateway = paymentGatewayRegistry.getPaymentGateway(refund.getRefundType());
 			paymentGatewayList = Arrays.asList(selectedPaymentGateway);
 		}

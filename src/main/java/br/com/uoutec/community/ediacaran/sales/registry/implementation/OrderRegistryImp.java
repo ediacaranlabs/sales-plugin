@@ -565,7 +565,7 @@ public class OrderRegistryImp
 		RefundRegistry refundRegistry  = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		try {
-			return refundRegistry.createRefund(order, itens);
+			return refundRegistry.toRefund(order, itens);
 		}
 		catch(Throwable ex) {
 			throw new OrderRegistryException(ex);
@@ -581,7 +581,7 @@ public class OrderRegistryImp
 		RefundRegistry refundRegistry  = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		try {
-			return refundRegistry.createRefund(order);
+			return refundRegistry.toRefund(order);
 		}
 		catch(Throwable ex) {
 			throw new OrderRegistryException(ex);
