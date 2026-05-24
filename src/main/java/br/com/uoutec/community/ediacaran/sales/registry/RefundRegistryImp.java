@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +175,18 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		refundRegistryUtil.removeNotSelectedItens(transientItens, itens);
 		
-		return refundRegistryUtil.toRefund(actualOrder, transientItens.values());
+		List<ProductRequest> pItens = new ArrayList<>();
+		
+		transientItens.values().stream().forEach((e)->{
+			Integer u = itens.get(e.getSerial());
+			if(u != null) {
+				ProductRequest i = new ProductRequest(e);
+				i.setUnits(u.intValue());
+				pItens.add(i);
+			}
+		});
+		
+		return refundRegistryUtil.toRefund(actualOrder, pItens);
 		
 	}
 
