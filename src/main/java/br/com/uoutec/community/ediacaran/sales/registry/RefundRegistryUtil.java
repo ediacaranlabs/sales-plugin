@@ -596,7 +596,7 @@ public class RefundRegistryUtil {
 			allRefund.add(refund);
 		}
 		
-		markAsComplete(order, refundList, orderRegistry); 
+		markAsComplete(order, allRefund, orderRegistry); 
 	}
 
 	public void markAsComplete(Order order, Collection<Refund> refunds, 
