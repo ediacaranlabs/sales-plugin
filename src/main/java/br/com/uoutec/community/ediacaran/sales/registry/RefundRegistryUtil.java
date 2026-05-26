@@ -592,7 +592,10 @@ public class RefundRegistryUtil {
 		
 		List<Refund> allRefund = new ArrayList<>(refundList);
 		
-		if(!allRefund.contains(refund)) {
+		if(refund != null) {
+			if(allRefund.contains(refund)) {
+				allRefund.remove(refund);
+			}
 			allRefund.add(refund);
 		}
 		
@@ -628,11 +631,14 @@ public class RefundRegistryUtil {
 		List<OrderReport> orderReportList 	= orderReportRegistry.findByOrder(actualOrder);
 		List<Refund> allRefund				= new ArrayList<>(refundList);
 		
-		if(!allRefund.contains(refund)) {
+		if(refund != null) {
+			if(allRefund.contains(refund)) {
+				allRefund.remove(refund);
+			}
 			allRefund.add(refund);
 		}
 		
-		if(isCompletedOrder(actualOrder, refundList, shippingList, orderReportList)) {
+		if(isCompletedOrder(actualOrder, allRefund, shippingList, orderReportList)) {
 			orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 		}
 		

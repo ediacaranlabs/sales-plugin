@@ -395,6 +395,7 @@ public class OrderRegistryImp
 		try {
 			OrderRegistryUtil.update(order, orderEntityAccess);
 			OrderRegistryUtil.saveOrUpdateIndex(order, indexEntityAccess);
+			o.setStatus(status);
 		}
 		catch(Throwable ex) {
 			throw new OrderRegistryException(ex);

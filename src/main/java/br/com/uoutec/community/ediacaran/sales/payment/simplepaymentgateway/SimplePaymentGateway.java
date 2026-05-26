@@ -9,7 +9,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.RefundRequest;
 
-public class SimplePaymentGateway extends AbstractPaymentGateway{
+public class SimplePaymentGateway extends AbstractPaymentGateway {
 
 	public SimplePaymentGateway() {
 		super("simple", "Simple Payment");
@@ -41,9 +41,18 @@ public class SimplePaymentGateway extends AbstractPaymentGateway{
 	}
 
 	@Override
-	public void refund(RefundRequest refundRequest) throws PaymentGatewayException {
-		refundRequest.getPayment().setStatus(PaymentStatus.PARTIAL_REFUND);
-		refundRequest.getRefund().setRefundDate(LocalDateTime.now());
+	public void createRefund(RefundRequest refundRequest) throws PaymentGatewayException {
+		refundRequest.getPayment().setStatus(PaymentStatus.REFOUND);
 	}
 
+	@Override
+	public void createPartialRefund(RefundRequest refundRequest) throws PaymentGatewayException {
+		refundRequest.getPayment().setStatus(PaymentStatus.PARTIAL_REFUND);
+	}
+	
+	@Override
+	public void confirmRefund(RefundRequest refundRequest) throws PaymentGatewayException {
+		refundRequest.getRefund().setRefundDate(LocalDateTime.now());
+	}
+	
 }

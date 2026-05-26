@@ -139,7 +139,12 @@ public class RefundRegistryImp implements RefundRegistry {
 		Order order = new Order();
 		order.setId(entity.getOrder());
 		
-		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
+		Refund actualRefund = refundRegistryUtil.getActualRefund(entity);
+		
+		if(actualRefund.getRefundDate() != null) {
+			entity.setRefundDate(actualRefund.getRefundDate());
+		}
+		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
@@ -147,12 +152,17 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		refundRegistryUtil.refoundProducts(actualOrder, actualRefund, partialRefund, actualRefund.getProducts(), paymentGateway);
 		
-		if(entity != null && entity.getRefundDate() == null) {
+		if(actualRefund != null && actualRefund.getRefundDate() != null) {
 			refundRegistryUtil.confirmRefund(actualRefund);
 			refundRegistryUtil.update(actualRefund, actualOrder);
 		}
 		
-		refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, null);
+		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, actualRefund);
+		
+		if(actualOrder.getStatus() != OrderStatus.REFUND) {
+			refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, actualRefund);
+		}
+		
 	}
 	
 	@Override
