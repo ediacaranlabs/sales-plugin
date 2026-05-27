@@ -135,7 +135,7 @@ public class ShippingPubEntity extends GenericPubEntity<Shipping> {
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		Order order = new Order();
 		order.setId(this.order);
-		return shippingRegistry.toShipping(order);
+		return shippingRegistry.toShipping(order, this.shippingType);
 	}
 
 	@Override

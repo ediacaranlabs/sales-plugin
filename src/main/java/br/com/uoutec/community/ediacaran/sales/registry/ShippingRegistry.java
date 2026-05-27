@@ -7,8 +7,8 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.i18n.ValidationException;
@@ -25,14 +25,12 @@ public interface ShippingRegistry extends PublicBean{
 	
 	Shipping findById(String id, Client client) throws ShippingRegistryException;
 	
-	Shipping toShipping(Order order
-			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException;
+	Shipping toShipping(Order order, String shippingType) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException, ShippingRegistryException;
 	
 	ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
 	
-	Shipping createShipping(Order orderID, Map<String, Integer> itens, String message) 
-		throws OrderRegistryException, OrderStatusNotAllowedRegistryException,
-		UnmodifiedOrderStatusRegistryException, ClientRegistryException, ShippingRegistryException;
+	Shipping createShipping(Order order, String shippingType, Map<String, String> data, 
+			Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException;
 
 	void cancelShipping(Shipping shipping, String justification
 			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException;

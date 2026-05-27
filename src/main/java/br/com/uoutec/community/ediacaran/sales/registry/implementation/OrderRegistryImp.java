@@ -533,7 +533,7 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(ex);
 		}
 	}
-
+/*
 	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException {
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
@@ -544,7 +544,7 @@ public class OrderRegistryImp
 			throw new OrderRegistryException(ex);
 		}
 	}
-	
+*/	
 	@ActivateRequestContext
 	public boolean isAvailability(Cart cart) 
 			throws ProductTypeHandlerException, ProductTypeRegistryException, 

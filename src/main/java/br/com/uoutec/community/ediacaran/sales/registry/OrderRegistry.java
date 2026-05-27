@@ -13,7 +13,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
-import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -48,7 +47,7 @@ public interface OrderRegistry extends PublicBean {
 
 	/* register shipping */
 	
-	Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException;
+	//Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws OrderRegistryException;
 
 	/* refound payment */
 	

@@ -29,7 +29,6 @@ import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
-import br.com.uoutec.community.ediacaran.system.event.EventRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -41,9 +40,9 @@ import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
-public class ShippingRegistryImp implements ShippingRegistry{
+public class ShippingRegistryImp implements ShippingRegistry {
 
-	private static final String ORDER_EVENT_GROUP = "ORDER";
+	//private static final String ORDER_EVENT_GROUP = "ORDER";
 
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
@@ -60,8 +59,8 @@ public class ShippingRegistryImp implements ShippingRegistry{
 	@Inject
 	private ShippingIndexEntityAccess indexEntityAccess;
 	
-	@Inject
-	private EventRegistry throwSystemEventRegistry;
+	//@Inject
+	//private EventRegistry throwSystemEventRegistry;
 	
 	@Inject
 	private ClientRegistry clientRegistry;
@@ -256,30 +255,35 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		}
 	}
 
+	
 	@Override
 	@ActivateRequestContext
-	public Shipping createShipping(Order order, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
+	public Shipping createShipping(Order order, String shippingType, Map<String, String> data, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
 		
 		try {
-			return unsafeCreateShipping(order, itens, message);
+			Order actualOrder = ShippingRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
+			Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens(), productTypeRegistry);			
+			List<ProductRequest> listItens = ShippingRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
+			Shipping shipping = ShippingRegistryUtil.toShipping(actualOrder, shippingType, data, listItens);
+			shipping.setShippingType(shippingType);
+			registryNewShipping(shipping, actualOrder);
+			return shipping;
 		}
 		catch(ShippingRegistryException e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
 			throw e;
 		}
 		catch(Throwable e){
-			throwSystemEventRegistry.error(ORDER_EVENT_GROUP, null, "Falha ao criar a fatura", e);
 			throw new ShippingRegistryException(e);
 		}
 		
 	}
-
+	
+	
 	@Override
 	@ActivateRequestContext
-	public Shipping toShipping(Order order
-			) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException {
+	public Shipping toShipping(Order order, String shippingType) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException, ShippingRegistryException {
 		
 		Order actualOrder;
 		
@@ -302,7 +306,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 			throw new OrderNotFoundRegistryException(e);
 		}
 		
-		return createShipping(actualOrder, actualShippings);
+		return createShipping(actualOrder, shippingType, null, actualShippings);
 	}
 	
 	@Override
@@ -348,6 +352,7 @@ public class ShippingRegistryImp implements ShippingRegistry{
 		
 	}
 	
+	/*
 	private Shipping unsafeCreateShipping(Order order, Map<String, Integer> itens, String message
 			) throws OrderRegistryException, CountryRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException, OrderReportRegistryException, ValidationException {
 
@@ -360,20 +365,22 @@ public class ShippingRegistryImp implements ShippingRegistry{
 
 		return i;
 	}
-
-	private Shipping createShipping(Order order, List<Shipping> shippings) throws InvalidUnitsOrderRegistryException, CountryRegistryException, ProductTypeRegistryException {
+	*/
+	private Shipping createShipping(Order order, String shippingType, Map<String, String> data, List<Shipping> shippings) throws InvalidUnitsOrderRegistryException, CountryRegistryException, ProductTypeRegistryException, ShippingRegistryException {
 		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens(), productTypeRegistry);
 		ShippingRegistryUtil.loadShippingsToCalculateUnits(shippings, null, transientItens);
-		return ShippingRegistryUtil.toShipping(order, transientItens.values());
+		return ShippingRegistryUtil.toShipping(order, shippingType, data, transientItens.values());
 	}
 	
+	/*
 	private Shipping createShipping(Order order, Map<String, Integer> itens
 			) throws ItemNotFoundOrderRegistryException, CountryRegistryException, ProductTypeRegistryException {
 		Map<String, ProductRequest> transientItens = ShippingRegistryUtil.toMap(order.getItens(), productTypeRegistry);
 		List<ProductRequest> invoiceItens          = ShippingRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
 		return ShippingRegistryUtil.toShipping(order, invoiceItens);
 	}
-
+	*/
+	
 	@Transactional(rollbackOn = Throwable.class)
 	@Override
 	@ActivateRequestContext

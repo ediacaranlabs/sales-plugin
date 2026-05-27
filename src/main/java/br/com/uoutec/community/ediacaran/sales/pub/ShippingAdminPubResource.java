@@ -197,7 +197,7 @@ public class ShippingAdminPubResource {
 		List<ShippingMethod> shippingMethods = null;
 		ShippingMethod selectedShippingMethod = null;
 		try{
-			shipping = shippingRegistry.toShipping(order);
+			shipping = shippingRegistry.toShipping(order, null);
 			shippingMethods = shippingMethodRegistry.getShippingMethods(new ShippingRateRequest(shipping));
 			selectedShippingMethod = shipping.getShippingType() == null? null : shippingMethodRegistry.getShippingMethod(shipping.getShippingType());
 		}

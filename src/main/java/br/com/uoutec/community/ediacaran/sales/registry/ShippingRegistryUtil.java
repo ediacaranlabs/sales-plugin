@@ -27,6 +27,8 @@ import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAc
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
+import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
+import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.VarParser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -452,9 +454,33 @@ public class ShippingRegistryUtil {
 		}
 	}
 	
-	public static Shipping toShipping(Order order, Collection<ProductRequest> itens) throws CountryRegistryException {
-		Shipping i = new Shipping();
-		i.setAddData(new HashMap<>());
+	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, Collection<ProductRequest> itens) throws CountryRegistryException, ShippingRegistryException {
+		Shipping i;
+		
+		if(shippingType == null) {
+			i =  new Shipping();
+		}
+		else{
+			EntityInheritanceManager entityInheritanceUtil = 
+					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+			
+			try {
+				i = entityInheritanceUtil.getInstance(Shipping.class, shippingType);
+			}
+			catch(Throwable ex) {
+				throw new ShippingRegistryException(ex);
+			}
+			
+			if(i == null){
+				i = new Shipping();
+			}
+		}
+	
+		if(data != null){
+			DataUtil.decode(data, i);
+			i.setAddData(data);
+		}
+		
 		i.setDate(LocalDateTime.now());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
@@ -463,7 +489,6 @@ public class ShippingRegistryUtil {
 		i.setProducts(new ArrayList<ProductRequest>(itens));
 		
 		i.setOrder(order.getId());
-		i.setShippingType(null);
 
 		return i;
 	}
