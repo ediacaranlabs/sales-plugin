@@ -176,9 +176,22 @@ public class RefundRegistryImp implements RefundRegistry {
 
 	@Override
 	@ActivateRequestContext
-	public Refund toRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException {
+	public Refund createRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, InvoiceRegistryException, ValidationException, PaymentGatewayException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getCreatePermission());
+		
+		Refund refund = toRefund(order, itens);
+		save(refund);
+		return refund;
+	}
+	
+	@Override
+	@ActivateRequestContext
+	public Refund toRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException {
+		return toRefund(order, new HashMap<>());
+	}
+
+	private Refund toRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException {
 		
 		Order actualOrder							= refundRegistryUtil.getActualOrder(order);
 		Map<String, ProductRequest> transientItens	= refundRegistryUtil.toMap(actualOrder.getItens());
@@ -198,12 +211,6 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		return refundRegistryUtil.toRefund(actualOrder, pItens);
 		
-	}
-
-	@Override
-	@ActivateRequestContext
-	public Refund toRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException {
-		return toRefund(order, new HashMap<>());
 	}
 	
 	@Override

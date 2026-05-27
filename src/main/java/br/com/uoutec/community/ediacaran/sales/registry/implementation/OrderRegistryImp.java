@@ -566,7 +566,7 @@ public class OrderRegistryImp
 		RefundRegistry refundRegistry  = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		try {
-			return refundRegistry.toRefund(order, itens);
+			return refundRegistry.createRefund(order, itens);
 		}
 		catch(Throwable ex) {
 			throw new OrderRegistryException(ex);

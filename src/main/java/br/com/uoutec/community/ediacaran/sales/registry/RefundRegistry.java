@@ -23,7 +23,7 @@ public interface RefundRegistry extends PublicBean{
 
 	RefundResultSearch searchRefund(RefundSearch value) throws RefundRegistryException;
 	
-	Refund toRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
+	Refund createRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, InvoiceRegistryException, ValidationException, PaymentGatewayException;
 
 	Refund toRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
 	
