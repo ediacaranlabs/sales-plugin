@@ -140,7 +140,7 @@ public class ProductRegistryUtil {
 
 	public static void deleteIndex(Product product, ProductIndexEntityAccess entityAccess) throws EntityAccessException {
 		
-		if(entityAccess.findById(product.getId()) != null) {
+		if(product != null && entityAccess.findById(product.getId()) != null) {
 			entityAccess.delete(product);
 		}
 		

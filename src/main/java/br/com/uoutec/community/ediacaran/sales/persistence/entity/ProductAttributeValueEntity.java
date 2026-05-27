@@ -33,7 +33,7 @@ public class ProductAttributeValueEntity implements Serializable {
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductEntity product;
 
-	@ManyToOne(cascade = CascadeType.ALL, optional = true)
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, optional = true)
 	@JoinColumn(name = "cod_product", insertable = false, updatable = false)
 	private ProductIndexEntity productIndex;
 

@@ -183,7 +183,7 @@ public class ProductMetadataEntityAccessImp
 						}
 					}
 					
-					if(e.getId() == null) {
+					if(e.getId() != null) {
 						e = (ProductMetadataAttributeEntity)entityManager.merge(e);
 						entityManager.remove(e);
 					}
