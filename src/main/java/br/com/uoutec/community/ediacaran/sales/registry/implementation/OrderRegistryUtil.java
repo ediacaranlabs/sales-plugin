@@ -708,7 +708,7 @@ public class OrderRegistryUtil {
 			OrderEntityAccess orderEntityAccess, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException, EntityAccessException {
 
 		boolean completedInvoice = InvoiceRegistryUtil.isCompletedInvoice(order, invoices);
-		boolean completedShipping = ShippingRegistryUtil.isCompletedShippingAndReceived(order, shipping, productTypeRegistry);
+		boolean completedShipping = ShippingRegistryUtil.isCompletedShippingAndReceived(order, shipping);
 		boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
 		
 		if(completedInvoice && completedShipping && completedReport) {

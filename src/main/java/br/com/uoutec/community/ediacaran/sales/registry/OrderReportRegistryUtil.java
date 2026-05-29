@@ -165,7 +165,7 @@ public class OrderReportRegistryUtil {
 		
 		
 		try {
-			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry) &&
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet())) &&
 				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
 				orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 			}

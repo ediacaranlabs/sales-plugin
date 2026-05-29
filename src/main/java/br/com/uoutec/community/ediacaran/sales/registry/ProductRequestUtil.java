@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -85,6 +86,30 @@ public class ProductRequestUtil {
 			values.remove(e);
 		});
 		
+	}
+	
+	public static void setUnits(Map<String, ProductRequest> values, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
+		
+		for(Entry<String,Integer> e: itens.entrySet()) {
+			
+			ProductRequest tpr = values.get(e.getKey());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(e.getKey());
+			}
+			
+			tpr.setUnits(e.getValue().intValue());
+		}
+		
+
+	}
+
+	public static Collection<ProductRequest> createCollectionRequest(Collection<ProductRequest> values, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(values);
+		ProductRequestUtil.resetUnits(map);
+		ProductRequestUtil.setUnits(map, itens);
+		ProductRequestUtil.removeEmptyUnits(map);
+		return map.values();
 	}
 	
 }

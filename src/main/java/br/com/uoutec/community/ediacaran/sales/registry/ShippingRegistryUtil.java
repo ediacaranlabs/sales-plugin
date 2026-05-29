@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
@@ -45,7 +44,9 @@ public class ShippingRegistryUtil {
 	public static boolean isCompletedShipping(Order order, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
-		shippingList.stream().forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		shippingList.stream()
+			.filter((e)->!e.isCanceled())
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		for(ProductRequest pr: order.getItens()) {
 			
@@ -303,8 +304,12 @@ public class ShippingRegistryUtil {
 		
 		List<Shipping> allShippings = new ArrayList<>(shippings);
 		
-		if(!allShippings.contains(shipping)) {
+		int indexOf = allShippings.indexOf(shipping);
+		if(indexOf == -1) {
 			allShippings.add(shipping);
+		}
+		else {
+			allShippings.set(indexOf, shipping);
 		}
 		
 		markAsComplete(order, allShippings, orderRegistry); 
@@ -453,26 +458,6 @@ public class ShippingRegistryUtil {
 		
 	}	
 	
-	public static List<ProductRequest> setUnitsAndGetCollection(Map<String, ProductRequest> productRequestMap, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
-		
-		Map<String, ProductRequest> transientItens = new HashMap<>(productRequestMap);
-		List<ProductRequest> invoiceItens = new ArrayList<>();
-		
-		for(Entry<String,Integer> e: itens.entrySet()) {
-			ProductRequest tpr = transientItens.get(e.getKey());
-			
-			if(tpr == null) {
-				throw new ItemNotFoundOrderRegistryException(e.getKey());
-			}
-			
-			tpr.setUnits(e.getValue().intValue());
-			invoiceItens.add(tpr);
-			transientItens.remove(e.getKey());
-		}
-		
-		return invoiceItens;
-	}
-	
 	public static Shipping getActualShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException{
 		try {
 			return entityAccess.findById(shipping.getId());
@@ -482,51 +467,67 @@ public class ShippingRegistryUtil {
 		}
 	}
 	
-	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, Collection<ProductRequest> itens) throws CountryRegistryException, ShippingRegistryException {
-		Shipping i;
+	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, List<Shipping> shippings) throws CountryRegistryException, ShippingRegistryException {
 		
-		if(shippingType == null) {
-			i =  new Shipping();
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		if(shippings != null) {
+			shippings.stream()
+				.filter((e)->!e.isCanceled())
+				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		}
-		else{
-			EntityInheritanceManager entityInheritanceUtil = 
-					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
-			
-			try {
-				i = entityInheritanceUtil.getInstance(Shipping.class, shippingType);
-			}
-			catch(Throwable ex) {
-				throw new ShippingRegistryException(ex);
-			}
-			
-			if(i == null){
-				i = new Shipping();
-			}
-		}
-	
-		if(data != null){
-			DataUtil.decode(data, i);
-			i.setAddData(data);
-		}
+		
+		ProductRequestUtil.removeEmptyUnits(map);
+		
+		Shipping i = createNewInstance(shippingType, data);
 		
 		i.setDate(LocalDateTime.now());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
 		i.getDest().setId(0);
 		i.setClient(order.getClient());
-		i.setProducts(new ArrayList<ProductRequest>(itens));
+		i.setProducts(new ArrayList<ProductRequest>(map.values()));
 		
 		i.setOrder(order.getId());
 
 		return i;
 	}
 
+	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, Map<String, Integer> itens) throws CountryRegistryException, ShippingRegistryException, ItemNotFoundOrderRegistryException {
+		
+		Collection<ProductRequest> list = ProductRequestUtil.createCollectionRequest(order.getItens(), itens);
+		
+		Shipping i = createNewInstance(shippingType, data);
+		
+		i.setDate(LocalDateTime.now());
+		i.setOrigin(ShippingRegistryUtil.getOrigin());
+		i.setDest(new Address(order.getShippingAddress()));
+		i.getDest().setId(0);
+		i.setClient(order.getClient());
+		i.setProducts(new ArrayList<>(list));
+		
+		i.setOrder(order.getId());
+
+		return i;
+	}
+	
 	public static void checkHasBeenInvoiced(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
+		if(shippings.contains(shipping)) {
+			shippings.remove(shipping);
+		}
+		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
 		ProductRequestUtil.resetUnits(map);
-		invoices.stream().forEach((e)->{ProductRequestUtil.addUnits(map, e.getItens());});
-		shippings.stream().forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.addUnits(map, e.getItens());});
+		
+		shippings.stream()
+			.filter((e)->!e.isCanceled())
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		for(ProductRequest pr: shipping.getProducts()) {
 			
@@ -588,6 +589,36 @@ public class ShippingRegistryUtil {
 		if(!order.getStatus().isAllowedChangeShipping()) {
 			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
 		}
+	}
+
+	public static Shipping createNewInstance(String shippingType, Map<String,String> data) throws CountryRegistryException, ShippingRegistryException {
+		Shipping i;
+		
+		if(shippingType == null) {
+			i =  new Shipping();
+		}
+		else{
+			EntityInheritanceManager entityInheritanceUtil = 
+					EntityContextPlugin.getEntity(EntityInheritanceManager.class);
+			
+			try {
+				i = entityInheritanceUtil.getInstance(Shipping.class, shippingType);
+			}
+			catch(Throwable ex) {
+				throw new ShippingRegistryException(ex);
+			}
+			
+			if(i == null){
+				i = new Shipping();
+			}
+		}
+	
+		if(data != null){
+			DataUtil.decode(data, i);
+			i.setAddData(data);
+		}
+		
+		return i;
 	}
 	
 }
