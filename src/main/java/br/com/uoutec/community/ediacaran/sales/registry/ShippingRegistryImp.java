@@ -18,7 +18,6 @@ import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
@@ -413,11 +412,10 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
 		List<Invoice> actualInvoices	= ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
 		
-		ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
-		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		ShippingRegistryUtil.checkShipping(actualOrder, actualShippings, shipping, productTypeRegistry);
+		//ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
+		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
+		ShippingRegistryUtil.checkShipping(shipping, order, actualInvoices, actualShippings, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
-		ShippingRegistryUtil.checkHasBeenInvoiced(shipping, actualOrder, actualInvoices, actualShippings);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
@@ -442,11 +440,10 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		List<Invoice> actualInvoices     = ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
-		ShippingRegistryUtil.checkAllowedUpdateShipping(actualOrder);
-		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		ShippingRegistryUtil.checkShipping(order, actualShippings, shipping, productTypeRegistry);
+		//ShippingRegistryUtil.checkAllowedUpdateShipping(actualOrder);
+		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
+		ShippingRegistryUtil.checkShipping(shipping, order, actualInvoices, actualShippings, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
-		ShippingRegistryUtil.checkHasBeenInvoiced(shipping, actualOrder, actualInvoices, actualShippings);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);

@@ -81,18 +81,6 @@ public class ShippingRegistryUtil {
 		return true;
 	}
 	
-	public static Map<String, Integer> toUnitsMap(Collection<ProductRequest> values){
-		
-		Map<String, Integer> transientItens = new HashMap<>();
-		
-		for(ProductRequest pr: values) {
-			ProductRequest tpr = new ProductRequest(pr);
-			transientItens.put(pr.getSerial(), tpr.getUnits());
-		}
-		
-		return transientItens;
-	}
-
 	public static Map<String, Integer> toQtyMap(Collection<ProductRequest> values){
 		
 		Map<String, Integer> transientItens = new HashMap<>();
@@ -104,7 +92,7 @@ public class ShippingRegistryUtil {
 		
 		return transientItens;
 	}
-	
+	/*
 	public static void removeShippedProducts(Collection<Shipping> shippingList, Shipping actualShipping, 
 			Map<String, Integer> unitsMap) throws InvalidUnitsOrderRegistryException {
 		
@@ -138,7 +126,8 @@ public class ShippingRegistryUtil {
 		}
 		
 	}
-
+   */
+	
 	public static void removeInvoicedProducts(Collection<Invoice> invoicedList, 
 			Map<String, Integer> unitsMap) throws InvalidUnitsOrderRegistryException, ShippingRegistryException {
 		
@@ -173,12 +162,12 @@ public class ShippingRegistryUtil {
 		
 	}
 	
-	public static void checkShipping(Order order, List<Shipping> actualShippings, Shipping shipping, 
+	public static void checkShipping(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings, 
 			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ShippingRegistryException, ProductTypeRegistryException {
 
 		checkShippableProducts(shipping, productTypeRegistry);
-		checkIsCompletedShipping(order, actualShippings);
-		checkUnits(order, actualShippings, shipping);		
+		checkIsCompletedShipping(order, shippings);
+		checkUnits(shipping, order, invoices, shippings);
 		
 	}
 	
@@ -196,25 +185,34 @@ public class ShippingRegistryUtil {
 		
 	}
 	
-	public static void checkUnits(Order order, List<Shipping> actualShippings, Shipping shipping) throws OrderRegistryException, ProductTypeRegistryException {
-
-		Map<String, Integer> unitsMap = toUnitsMap(order.getItens());
+	
+	public static void checkUnits(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
-		removeShippedProducts(actualShippings, null, unitsMap);
-
+		if(shippings.contains(shipping)) {
+			shippings.remove(shipping);
+		}
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		ProductRequestUtil.resetUnits(map);
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.addUnits(map, e.getItens());});
+		
+		shippings.stream()
+			.filter((e)->!e.isCanceled())
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
 		for(ProductRequest pr: shipping.getProducts()) {
 			
-			Integer units = unitsMap.get(pr.getSerial());
+			ProductRequest tpr = map.get(pr.getSerial());
 			
-			if(units == null) {
+			if(tpr == null) {
 				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
 
-			if(pr.getUnits() <= 0 || pr.getUnits() > units) {
-				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
-			}
-			
-			if(units - pr.getUnits() < 0) {
+			if(tpr.getUnits() - pr.getUnits() < 0) {
 				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
 			
@@ -505,13 +503,14 @@ public class ShippingRegistryUtil {
 		i.getDest().setId(0);
 		i.setClient(order.getClient());
 		i.setProducts(new ArrayList<>(list));
+		i.setShippingType(shippingType);
 		
 		i.setOrder(order.getId());
 
 		return i;
 	}
 	
-	public static void checkHasBeenInvoiced(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+	public static void checkHasShippingRequest(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
 		if(shippings.contains(shipping)) {
 			shippings.remove(shipping);
