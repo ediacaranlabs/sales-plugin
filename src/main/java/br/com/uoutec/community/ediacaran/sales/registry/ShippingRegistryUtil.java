@@ -35,51 +35,38 @@ import br.com.uoutec.persistence.EntityAccessException;
 
 public class ShippingRegistryUtil {
 
-	public static void checkIsCompletedShipping(Order order, Collection<Shipping> shippingList,
-			ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static void checkIsCompletedShipping(Order order, Collection<Shipping> shippingList) throws ShippingRegistryException, InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
-		if(isCompletedShipping(order, shippingList, productTypeRegistry)) {
+		if(isCompletedShipping(order, shippingList)) {
 			throw new CompletedShippingRegistryException();
 		}
 	}
 	
-	public static boolean isCompletedShipping(Order order, Collection<Shipping> shippingList,
-			ProductTypeRegistry productTypeRegistry) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static boolean isCompletedShipping(Order order, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
-		if(shippingList.isEmpty()) {
-			return false;
-		}
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		shippingList.stream().forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
-		boolean isComplete = true;
-		
-		 Map<String, ProductRequest> map = toMap(order.getItens(), productTypeRegistry);
-		 loadShippingsToCalculateUnits(shippingList, null,map);
-		 
-		for(ProductRequest tpr: map.values()) {
+		for(ProductRequest pr: order.getItens()) {
+			
+			ProductRequest tpr = map.get(pr.getSerial());
 
+			if(tpr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException("negative unit: " + tpr.getSerial());
+			}
+			
 			if(tpr.getUnits() > 0) {
-				isComplete = false;
-				break;
+				return false;
 			}
 			
 		}
 		
-		/*
-		for(Shipping shipping: shippingList) {
-			if(shipping.getReceivedDate() == null) {
-				isComplete = false;
-				break;
-			}
-		}
-		*/
-		
-		return isComplete;
+		return true;
 	}
 
-	public static boolean isCompletedShippingAndReceived(Order order, Collection<Shipping> shippingList,
-			ProductTypeRegistry productTypeRegistry) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static boolean isCompletedShippingAndReceived(Order order, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
-		if(!isCompletedShipping(order, shippingList, productTypeRegistry)) {
+		if(!isCompletedShipping(order, shippingList)) {
 			return false;
 		}
 		
@@ -93,64 +80,104 @@ public class ShippingRegistryUtil {
 		return true;
 	}
 	
-	public static Map<String, ProductRequest> toMap(Collection<ProductRequest> values, 
-			ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException{
+	public static Map<String, Integer> toUnitsMap(Collection<ProductRequest> values){
 		
-		Map<String, ProductRequest> transientItens = new HashMap<>();
+		Map<String, Integer> transientItens = new HashMap<>();
 		
 		for(ProductRequest pr: values) {
-			
-			ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
-			ProductTypeHandler productTypeHandler = productType.getHandler();
-			
-			if(!productTypeHandler.isSupportShipping(pr)) {
-				continue;
-			}
-			
 			ProductRequest tpr = new ProductRequest(pr);
-			//tpr.setId(null);
-			transientItens.put(pr.getSerial(), tpr);
+			transientItens.put(pr.getSerial(), tpr.getUnits());
+		}
+		
+		return transientItens;
+	}
+
+	public static Map<String, Integer> toQtyMap(Collection<ProductRequest> values){
+		
+		Map<String, Integer> transientItens = new HashMap<>();
+		
+		for(ProductRequest pr: values) {
+			ProductRequest tpr = new ProductRequest(pr);
+			transientItens.put(pr.getSerial(), tpr.getUnits());
 		}
 		
 		return transientItens;
 	}
 	
-	public static void loadShippingsToCalculateUnits(Collection<Shipping> shippingList, Shipping actualShipping, 
-			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
+	public static void removeShippedProducts(Collection<Shipping> shippingList, Shipping actualShipping, 
+			Map<String, Integer> unitsMap) throws InvalidUnitsOrderRegistryException {
 		
-		if(shippingList != null) {
-			for(Shipping i: shippingList) {
-				
-				if(i.getCancelDate() != null) {
-					continue;
-				}
-				
-				if(actualShipping != null && i.getId().equals(actualShipping.getId())) {
-					continue;
-				}
+		if(shippingList == null) {
+			return;
+		}
+		
+		for(Shipping i: shippingList) {
+			
+			if(i.getCancelDate() != null) {
+				continue;
+			}
+			
+			if(actualShipping != null && i.getId().equals(actualShipping.getId())) {
+				continue;
+			}
 
+			
+			for(ProductRequest pr: i.getProducts()) {
+				Integer units = unitsMap.get(pr.getSerial());
+				units = units - pr.getUnits();
 				
-				for(ProductRequest pr: i.getProducts()) {
-					ProductRequest tpr = productRequests.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
+				if(units < 0) {
+					throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 				}
+				
+				unitsMap.put(pr.getSerial(), units);
 				
 			}
+			
 		}
 		
 	}
 
+	public static void removeInvoicedProducts(Collection<Invoice> invoicedList, 
+			Map<String, Integer> unitsMap) throws InvalidUnitsOrderRegistryException, ShippingRegistryException {
+		
+		if(invoicedList == null) {
+			return;
+		}
+		
+		for(Invoice e: invoicedList) {
+			
+			if(e.getCancelDate() != null) {
+				continue;
+			}
+			
+			for(ProductRequest pr: e.getItens()) {
+				Integer i = unitsMap.get(pr.getSerial());
+				
+				if(i == null) {
+					continue;
+				}
+				
+				i = i - pr.getUnits();
+				
+				if(i < 0) {
+					throw new ShippingRegistryException("product not invoiced: " + pr.getSerial());
+				}
+				
+				unitsMap.put(pr.getSerial(), i);
+				
+			}
+			
+		}
+		
+	}
+	
 	public static void checkShipping(Order order, List<Shipping> actualShippings, Shipping shipping, 
 			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ShippingRegistryException, ProductTypeRegistryException {
 
 		checkShippableProducts(shipping, productTypeRegistry);
-		checkIsCompletedShipping(order, actualShippings, productTypeRegistry);
-		checkUnits(order, actualShippings, shipping, productTypeRegistry);		
+		checkIsCompletedShipping(order, actualShippings);
+		checkUnits(order, actualShippings, shipping);		
 		
 	}
 	
@@ -168,27 +195,26 @@ public class ShippingRegistryUtil {
 		
 	}
 	
-	public static void checkUnits(Order order, List<Shipping> actualShippings, Shipping shipping, 
-			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ProductTypeRegistryException {
+	public static void checkUnits(Order order, List<Shipping> actualShippings, Shipping shipping) throws OrderRegistryException, ProductTypeRegistryException {
 
-		Map<String, ProductRequest> map = toMap(order.getItens(), productTypeRegistry);
+		Map<String, Integer> unitsMap = toUnitsMap(order.getItens());
 		
-		loadShippingsToCalculateUnits(actualShippings, null, map);
+		removeShippedProducts(actualShippings, null, unitsMap);
 
 		for(ProductRequest pr: shipping.getProducts()) {
 			
-			ProductRequest tpr = map.get(pr.getSerial());
+			Integer units = unitsMap.get(pr.getSerial());
 			
-			if(tpr == null) {
+			if(units == null) {
 				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
 
-			if(pr.getUnits() <= 0 || pr.getUnits() > tpr.getUnits()) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			if(pr.getUnits() <= 0 || pr.getUnits() > units) {
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
 			
-			if(tpr.getUnits() - pr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+			if(units - pr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
 			
 		}
@@ -212,6 +238,10 @@ public class ShippingRegistryUtil {
 		return entityAccess.findByOrder(order.getId(), client);		
 	}
 
+	public static List<Invoice> getActualInvoices(Order order, InvoiceRegistry invoiceRegistry) throws InvoiceRegistryException {
+		return invoiceRegistry.findByOrder(order.getId());		
+	}
+	
 	public static void confirmShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
 		shipping.setReceivedDate(LocalDateTime.now());
 		shipping.setClosed(true);
@@ -234,7 +264,7 @@ public class ShippingRegistryUtil {
 	}
 
 	public static void updateOrderStatus(Order actualOrder, Client actualClient, Shipping actualShipping, OrderReportRegistry orderReportRegistry, OrderRegistry orderRegistry, 
-			ProductTypeRegistry productTypeRegistry, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
+			ShippingEntityAccess entityAccess) throws ShippingRegistryException {
 		
 		List<Shipping> shippingList;
 		
@@ -257,7 +287,7 @@ public class ShippingRegistryUtil {
 		}
 		
 		try {
-			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet()), productTypeRegistry) &&
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet())) &&
 				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
 				orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 			}
@@ -269,7 +299,7 @@ public class ShippingRegistryUtil {
 	}
 	
 	public static void markAsComplete(Order order, Shipping shipping, List<Shipping> shippings, 
-			OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
+			OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
 		List<Shipping> allShippings = new ArrayList<>(shippings);
 		
@@ -277,7 +307,7 @@ public class ShippingRegistryUtil {
 			allShippings.add(shipping);
 		}
 		
-		markAsComplete(order, allShippings, orderRegistry, productTypeRegistry); 
+		markAsComplete(order, allShippings, orderRegistry); 
 	}
 
 	public static void saveOrUpdateIndex(Shipping e, ShippingIndexEntityAccess indexEntityAccess) throws ShippingRegistryException {
@@ -312,10 +342,9 @@ public class ShippingRegistryUtil {
 		);
 	}
 	
-	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry,
-			ProductTypeRegistry productTypeRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
+	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
-		if(isCompletedShipping(order, shippings, productTypeRegistry)) {
+		if(isCompletedShipping(order, shippings)) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_SHIPPED, orderRegistry);
 			//order.setCompleteShipping(LocalDateTime.now());
 		}
@@ -401,8 +430,7 @@ public class ShippingRegistryUtil {
 
 	public static void cancelShippings(List<Shipping> shippings, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, ShippingIndexEntityAccess indexEntityAccess,
-			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
+			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, ShippingIndexEntityAccess indexEntityAccess) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 			
@@ -421,7 +449,7 @@ public class ShippingRegistryUtil {
 		entityAccess.flush();
 			
 		List<Shipping> actualShippings = getActualShippings(actualOrder, null, entityAccess);
-		markAsComplete(actualOrder, actualShippings, orderRegistry, productTypeRegistry);
+		markAsComplete(actualOrder, actualShippings, orderRegistry);
 		
 	}	
 	
@@ -493,6 +521,29 @@ public class ShippingRegistryUtil {
 		return i;
 	}
 
+	public static void checkHasBeenInvoiced(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		ProductRequestUtil.resetUnits(map);
+		invoices.stream().forEach((e)->{ProductRequestUtil.addUnits(map, e.getItens());});
+		shippings.stream().forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		for(ProductRequest pr: shipping.getProducts()) {
+			
+			ProductRequest tpr = map.get(pr.getSerial());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
+			}
+
+			if(tpr.getUnits() - pr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
+			}
+			
+		}
+		
+	}
+	
 	public static void save(Shipping shipping, Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
 		try {
 			entityAccess.save(shipping);
