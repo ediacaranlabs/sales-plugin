@@ -16,6 +16,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
@@ -46,25 +47,27 @@ public class InvoiceRegistryUtil {
 	public static boolean isCompletedInvoice(Order order, Collection<Invoice> invoices
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		
-		if(invoices.isEmpty()) {
-			return false;
-		}
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
-		boolean isInvoiceComplete = true;
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
 		
-		 Map<String, ProductRequest> map = toMap(order.getItens());
-		 loadInvoicesToCalculateUnits(invoices, null, map);
-		 
-		for(ProductRequest tpr: map.values()) {
+		for(ProductRequest pr: order.getItens()) {
+			
+			ProductRequest tpr = map.get(pr.getSerial());
 
+			if(tpr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException("negative unit: " + tpr.getSerial());
+			}
+			
 			if(tpr.getUnits() > 0) {
-				isInvoiceComplete = false;
-				break;
+				return false;
 			}
 			
 		}
 		
-		return isInvoiceComplete;
+		return true;
 	}
 	
 	public static Map<String, ProductRequest> toMap(Collection<ProductRequest> values){
@@ -121,35 +124,6 @@ public class InvoiceRegistryUtil {
 		return invoiceItens;
 	}
 	
-	public static void loadInvoicesToCalculateUnits(Collection<Invoice> invoices, Invoice actualInvoice, 
-			Map<String, ProductRequest> productRequests) throws InvalidUnitsOrderRegistryException {
-		
-		if(invoices != null) {
-			for(Invoice i: invoices) {
-				
-				if(i.getCancelDate() != null) {
-					continue;
-				}
-				
-				if(actualInvoice != null && i.getId().equals(actualInvoice.getId())) {
-					continue;
-				}
-				
-				for(ProductRequest pr: i.getItens()) {
-					ProductRequest tpr = productRequests.get(pr.getSerial());
-					
-					tpr.setUnits(tpr.getUnits() - pr.getUnits());
-					
-					if(tpr.getUnits() < 0) {
-						throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-					}
-				}
-				
-			}
-		}
-		
-	}
-
 	public static void checkAllowedCreateInvoice(Order order) throws OrderStatusNotAllowedRegistryException {
 		if(!order.getStatus().isAllowedCreateInvoice()) {
 			throw new OrderStatusNotAllowedRegistryException("invalid status #" + order.getStatus());
@@ -162,13 +136,13 @@ public class InvoiceRegistryUtil {
 		}
 	}
 	
-	public static void checkInvoice(Order order, List<Invoice> actualInvoices, Invoice invoice,
+	public static void checkInvoice(Order order, List<Refund> refunds, List<Invoice> invoices, Invoice invoice,
 			Invoice actualInvoice) throws ItemNotFoundOrderRegistryException, 
 		InvalidUnitsOrderRegistryException, InvoiceRegistryException {
 
 		checkCanceledInvoice(invoice, actualInvoice);
-		checkIsCompletedInvoice(order, actualInvoices);
-		checkUnits(order, actualInvoices, invoice);		
+		checkIsCompletedInvoice(order, invoices);
+		checkUnits(order, refunds, invoices, invoice);		
 		
 	}
 
@@ -190,11 +164,23 @@ public class InvoiceRegistryUtil {
 		
 	}
 	
-	public static void checkUnits(Order order, List<Invoice> actualInvoices, Invoice invoice
+	public static void checkUnits(Order order, List<Refund> refunds, List<Invoice> invoices, Invoice invoice
 			) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 
-		Map<String, ProductRequest> map = toMap(order.getItens());
-		 loadInvoicesToCalculateUnits(actualInvoices, null, map);
+		if(invoices.contains(invoice)) {
+			invoices.remove(invoice);
+		}
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		ProductRequestUtil.resetUnits(map);
+		
+		refunds.stream()
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
 		
 		for(ProductRequest pr: invoice.getItens()) {
 			
@@ -204,12 +190,8 @@ public class InvoiceRegistryUtil {
 				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
 
-			if(pr.getUnits() <= 0 || pr.getUnits() > tpr.getUnits()) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
-			}
-			
 			if(tpr.getUnits() - pr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException(tpr.getSerial());
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
 			
 		}
