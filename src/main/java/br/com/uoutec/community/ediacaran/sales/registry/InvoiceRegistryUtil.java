@@ -201,6 +201,10 @@ public class InvoiceRegistryUtil {
 	public static List<Invoice> getActualInvoices(Order order, Client client, InvoiceRegistry registry) throws InvoiceRegistryException{
 		return registry.findByOrder(order.getId());
 	}
+
+	public static List<Refund> getActualRefunds(Order order, RefundRegistry registry) throws RefundRegistryException {
+		return registry.findRefundByOrder(order.getId());
+	}
 	
 	public static List<Invoice> getActualInvoices(Order order, Client client, InvoiceEntityAccess entityAccess) throws PersistenceInvoiceRegistryException{
 		try {

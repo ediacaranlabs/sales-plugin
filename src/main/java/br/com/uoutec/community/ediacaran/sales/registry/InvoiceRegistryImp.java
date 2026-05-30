@@ -22,6 +22,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
@@ -43,7 +44,7 @@ import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.persistence.EntityAccessException;
 
 @Singleton
-public class InvoiceRegistryImp implements InvoiceRegistry{
+public class InvoiceRegistryImp implements InvoiceRegistry {
 
 	private static final Class<?>[] saveValidations = 
 			new Class[] {DataValidation.class, ParentValidation.class};
@@ -389,21 +390,23 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 		return InvoiceRegistryUtil.toInvoice(order, invoiceItens);
 	}
 
-	private void registryNewInvoice(Invoice entity, Order order) throws ValidationException, InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, OrderRegistryException {
+	private void registryNewInvoice(Invoice entity, Order order) throws ValidationException, InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, OrderRegistryException, RefundRegistryException {
 		
 		InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
 		
 		ClientRegistry clientRegistry           = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, entityAccess);
+		List<Refund> refunds               = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
 		
 		//InvoiceRegistryUtil.checkAllowedCreateInvoice(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
 		OrderRegistryUtil.checkPayment(actualOrder);
-		InvoiceRegistryUtil.checkInvoice(actualOrder, actualInvoices, entity, null);
+		InvoiceRegistryUtil.checkInvoice(actualOrder, refunds, actualInvoices, entity, null);
 		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
 		InvoiceRegistryUtil.save(entity, entityAccess);
@@ -415,21 +418,23 @@ public class InvoiceRegistryImp implements InvoiceRegistry{
 	}
 
 	private void updateInvoice(Invoice entity, Order order
-			) throws ValidationException, OrderRegistryException, InvoiceRegistryException, EntityAccessException  {
+			) throws ValidationException, OrderRegistryException, InvoiceRegistryException, EntityAccessException, RefundRegistryException  {
 		
 		InvoiceRegistryUtil.validateInvoice(entity, updateValidations);
 		
 		ClientRegistry clientRegistry            = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry              = EntityContextPlugin.getEntity(OrderRegistry.class);
+		RefundRegistry refundRegistry            = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
 		Invoice actualInvoice              = InvoiceRegistryUtil.getActualInvoice(entity, entityAccess);
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(order, actualClient, entityAccess);
+		List<Refund> refunds               = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
 		
-		InvoiceRegistryUtil.checkAllowedUpdateInvoice(actualOrder);
-		OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
-		InvoiceRegistryUtil.checkInvoice(order, actualInvoices, entity, entityAccess.findById(entity.getId()));
+		//InvoiceRegistryUtil.checkAllowedUpdateInvoice(actualOrder);
+		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
+		InvoiceRegistryUtil.checkInvoice(order, refunds, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, orderRegistry);
