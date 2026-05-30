@@ -173,8 +173,6 @@ public class InvoiceRegistryUtil {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
-		ProductRequestUtil.resetUnits(map);
-		
 		refunds.stream()
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
@@ -384,28 +382,64 @@ public class InvoiceRegistryUtil {
 		invoice.setCancelJustification(actualInvoice.getCancelJustification());
 	}
 	
-	public static Invoice toInvoice(Order order, Collection<ProductRequest> itens) {
+	public static Invoice toInvoice(Order order, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException {
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		if(invoices != null) {
+			invoices.stream()
+				.filter((e)->e.getCancelDate() == null)
+				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
+		}
+		
+		ProductRequestUtil.removeEmptyUnits(map);
+		
 		Invoice i = new Invoice();
 		i.setId(null);
 		i.setClient(order.getClient());
 		i.setDate(LocalDateTime.now());
 		i.setOrder(order.getId());
-		i.setItens(new ArrayList<ProductRequest>(itens));
+		i.setItens(new ArrayList<>(map.values()));
 		i.setCurrency(order.getCurrency());
 
 		if(order.getTaxes() != null) {
-			List<Tax> list = new ArrayList<>();
-			i.setTaxes(list);
+			List<Tax> taxes = new ArrayList<>();
+			i.setTaxes(taxes);
 			for(Tax t: order.getTaxes()) {
 				Tax nt = new Tax(t);
 				nt.setId(null);
-				list.add(nt);
+				taxes.add(nt);
 			}
 		}
 		
 		return i;
 	}
 
+	public static Invoice toInvoice(Order order, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException {
+		
+		Collection<ProductRequest> list = ProductRequestUtil.createCollectionRequest(order.getItens(), itens);
+		
+		Invoice i = new Invoice();
+		i.setId(null);
+		i.setClient(order.getClient());
+		i.setDate(LocalDateTime.now());
+		i.setOrder(order.getId());
+		i.setItens(new ArrayList<>(list));
+		i.setCurrency(order.getCurrency());
+
+		if(order.getTaxes() != null) {
+			List<Tax> taxes = new ArrayList<>();
+			i.setTaxes(taxes);
+			for(Tax t: order.getTaxes()) {
+				Tax nt = new Tax(t);
+				nt.setId(null);
+				taxes.add(nt);
+			}
+		}
+		
+		return i;
+	}
+	
 	public static void cancelInvoices(List<Invoice> invoices, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {

@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,8 +19,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
@@ -226,14 +223,19 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
+		
+		
 		try {
-			return unsafeCreateInvoice(order, itens, message);
+			Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
+			Invoice Invoice = InvoiceRegistryUtil.toInvoice(order, itens);
+			registryNewInvoice(Invoice, actualOrder);
+			return Invoice;
 		}
-		catch(ValidationException e){
-			throw new PersistenceOrderRegistryException(e);
+		catch(InvoiceRegistryException e){
+			throw e;
 		}
-		catch(EntityAccessException e){
-			throw new PersistenceOrderRegistryException(e);
+		catch(Throwable e){
+			throw new InvoiceRegistryException(e);
 		}
 		
 	}
@@ -252,7 +254,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		
 		actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualOrder.getClient(), entityAccess);
 		
-		return createInvoice(actualOrder, actualInvoices);
+		return InvoiceRegistryUtil.toInvoice(actualOrder, actualInvoices);
 	}
 	
 	@Override
@@ -349,47 +351,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		
 	}
 	
-	private Invoice unsafeCreateInvoice(Order order, Map<String, Integer> itens, String message
-			) throws RegistryException, EntityAccessException, ProductTypeHandlerException, ValidationException{
-
-		
-		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-		Order actualOrder = orderRegistry.findById(order.getId());
-
-		if(itens == null) {
-			Invoice newInvoice = toInvoice(actualOrder);
-			itens = new HashMap<>();
-			for(ProductRequest pr: newInvoice.getItens()) {
-				if(pr.getUnits() > 0) {
-					itens.put(pr.getSerial(), pr.getUnits());
-				}
-			}
-		}
-		
-		if(itens.isEmpty()) {
-			throw new EmptyInvoiceException();
-		}
-		
-		Invoice i = createInvoice(actualOrder, itens);
-		
-		registryNewInvoice(i, actualOrder);
-
-		return i;
-	}
-
-	private Invoice createInvoice(Order order, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
-		Map<String, ProductRequest> transientItens = InvoiceRegistryUtil.toMap(order.getItens());
-		InvoiceRegistryUtil.loadInvoicesToCalculateUnits(invoices, null, transientItens);
-		return InvoiceRegistryUtil.toInvoice(order, transientItens.values());
-	}
-	
-	private Invoice createInvoice(Order order, Map<String, Integer> itens
-			) throws ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
-		Map<String, ProductRequest> transientItens = InvoiceRegistryUtil.toMap(order.getItens());
-		List<ProductRequest> invoiceItens          = InvoiceRegistryUtil.setUnitsAndGetCollection(transientItens, itens);
-		return InvoiceRegistryUtil.toInvoice(order, invoiceItens);
-	}
-
 	private void registryNewInvoice(Invoice entity, Order order) throws ValidationException, InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, OrderRegistryException, RefundRegistryException {
 		
 		InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
