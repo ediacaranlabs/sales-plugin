@@ -159,7 +159,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, 
 			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, 
 			InvoiceRegistry invoiceRegistry, ProductTypeRegistry productTypeRegistry) throws ValidationException, OrderReportRegistryException, OrderRegistryException, 
-			ShippingRegistryException, InvoiceRegistryException, ProductTypeRegistryException {
+			ShippingRegistryException, InvoiceRegistryException, ProductTypeRegistryException, RefundRegistryException {
 
 		
 		OrderReportRegistryUtil.validate(entity, updateValidations);

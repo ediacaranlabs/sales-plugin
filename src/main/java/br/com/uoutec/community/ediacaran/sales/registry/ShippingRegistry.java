@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -21,10 +20,6 @@ public interface ShippingRegistry extends PublicBean{
 	
 	Shipping findById(String id) throws ShippingRegistryException;
 
-	Shipping findById(String id, SystemUserID userID) throws ShippingRegistryException;
-	
-	Shipping findById(String id, Client client) throws ShippingRegistryException;
-	
 	Shipping toShipping(Order order, String shippingType) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException, ShippingRegistryException;
 	
 	ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
@@ -33,9 +28,9 @@ public interface ShippingRegistry extends PublicBean{
 			Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException;
 
 	void cancelShipping(Shipping shipping, String justification
-			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException;
+			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException, RefundRegistryException;
 
-	void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException;
+	void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException, RefundRegistryException, OrderReportRegistryException;
 	
 	List<Shipping> findByOrder(String id) throws ShippingRegistryException;
 	

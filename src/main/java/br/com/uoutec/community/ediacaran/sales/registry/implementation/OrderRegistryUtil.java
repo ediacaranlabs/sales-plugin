@@ -19,6 +19,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
@@ -44,6 +45,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistry
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductException;
@@ -141,7 +143,7 @@ public class OrderRegistryUtil {
 		
 	}
 
-	public static void cancelInvoices(List<Invoice> invoices, String justification, InvoiceRegistry invoiceRegistry) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
+	public static void cancelInvoices(List<Invoice> invoices, String justification, InvoiceRegistry invoiceRegistry) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 		
 		for(Invoice i: invoices) {
 			invoiceRegistry.cancelInvoice(i, justification);
@@ -704,12 +706,13 @@ public class OrderRegistryUtil {
 	}
     */
 	
-	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, 
+	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Refund> refunds, List<Shipping> shipping, List<OrderReport> reportList, 
 			OrderEntityAccess orderEntityAccess, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException, EntityAccessException {
 
-		boolean completedInvoice = InvoiceRegistryUtil.isCompletedInvoice(order, invoices);
-		boolean completedShipping = ShippingRegistryUtil.isCompletedShippingAndReceived(order, shipping);
-		boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
+		boolean completedInvoice  = InvoiceRegistryUtil.isCompletedInvoice(order, refunds, invoices);
+		boolean completedShipping = ShippingRegistryUtil.isCompletedShippingAndReceived(order, refunds, shipping);
+		boolean completedReport   = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
+		
 		
 		if(completedInvoice && completedShipping && completedReport) {
 

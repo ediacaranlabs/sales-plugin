@@ -261,7 +261,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
-	public void cancelInvoice(Invoice invoice, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
+	public void cancelInvoice(Invoice invoice, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
@@ -273,7 +273,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
-	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, OrderRegistryException, ShippingRegistryException {
+	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
@@ -289,7 +289,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		unsafeCancelInvoices(invoices, justification);
 	}
 
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);
 		
@@ -300,13 +300,16 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		LocalDateTime cancelDate          = LocalDateTime.now();
 		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		RefundRegistry refundRegistry     = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		for(Entry<String,List<Invoice>> entry: map.entrySet()) {
 			
 			Order order = new Order();
 			order.setId(entry.getKey());
 			
-			InvoiceRegistryUtil.cancelInvoices(invoices, order, justification, 
+			List<Refund> refunds = refundRegistry.findRefundByOrder(entry.getKey());
+			
+			InvoiceRegistryUtil.cancelInvoices(order, refunds, invoices, justification, 
 					cancelDate, orderRegistry, shippingRegistry, entityAccess);
 			
 		}
@@ -372,7 +375,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
 		InvoiceRegistryUtil.save(entity, entityAccess);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
-		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, orderRegistry);
+		InvoiceRegistryUtil.markAsComplete(actualOrder, refunds, actualInvoices, entity, orderRegistry);
 		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
 		InvoiceRegistryUtil.registerNewInvoiceEvent(actionRegistry, entity);
 		
@@ -398,7 +401,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		InvoiceRegistryUtil.checkInvoice(order, refunds, actualInvoices, entity, entityAccess.findById(entity.getId()));
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, entityAccess);
-		InvoiceRegistryUtil.markAsComplete(actualOrder, entity, actualInvoices, orderRegistry);
+		InvoiceRegistryUtil.markAsComplete(actualOrder, refunds, actualInvoices, entity, orderRegistry);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 
 	}

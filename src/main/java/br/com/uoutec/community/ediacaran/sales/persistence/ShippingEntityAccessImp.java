@@ -214,7 +214,7 @@ public class ShippingEntityAccessImp
 	}
 
 	@Override
-	public List<Shipping> findByOrder(String order, Client user) throws EntityAccessException {
+	public List<Shipping> findByOrder(String order) throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -228,10 +228,6 @@ public class ShippingEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 	    	and.add(builder.equal(orderJoin.get("id"), order));
 		    
-	    	if(user != null) {
-		    	and.add(builder.equal(from.get("client"), user.getId()));
-	    	}
-	    	
 		    if(!and.isEmpty()) {
 			    criteria.where(
 			    		builder.and(

@@ -31,23 +31,26 @@ import br.com.uoutec.persistence.EntityAccessException;
 
 public class InvoiceRegistryUtil {
 
-	public static void checkIsCompletedInvoice(Order order, Collection<Invoice> invoices
+	public static void checkIsCompletedInvoice(Order order, Collection<Refund> refunds, Collection<Invoice> invoices
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		
-		if(isCompletedInvoice(order, invoices)) {
+		if(isCompletedInvoice(order, refunds, invoices)) {
 			throw new CompletedInvoiceRegistryException();
 		}
+		
 	}
 
 	public static void validateInvoice(Invoice e, Class<?> ... groups) throws ValidationException{
 		ValidatorBean.validate(e, groups);
 	}
-
 	
-	public static boolean isCompletedInvoice(Order order, Collection<Invoice> invoices
+	public static boolean isCompletedInvoice(Order order, Collection<Refund> refunds, Collection<Invoice> invoices
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		refunds.stream()
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		invoices.stream()
 			.filter((e)->e.getCancelDate() == null)
@@ -141,7 +144,7 @@ public class InvoiceRegistryUtil {
 		InvalidUnitsOrderRegistryException, InvoiceRegistryException {
 
 		checkCanceledInvoice(invoice, actualInvoice);
-		checkIsCompletedInvoice(order, invoices);
+		checkIsCompletedInvoice(order, refunds, invoices);
 		checkUnits(order, refunds, invoices, invoice);		
 		
 	}
@@ -247,22 +250,26 @@ public class InvoiceRegistryUtil {
 		return actualClient;
 	}
 
-	public static void markAsComplete(Order order, Invoice invoice, List<Invoice> invoices, OrderRegistry orderRegistry
+	public static void markAsComplete(Order order, Collection<Refund> refunds, List<Invoice> invoices, Invoice invoice, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		
 		List<Invoice> allInvoices = new ArrayList<>(invoices);
 		
-		if(!allInvoices.contains(invoice)) {
+		int indexOf = allInvoices.indexOf(invoice);
+		if(indexOf == -1) {
 			allInvoices.add(invoice);
 		}
+		else {
+			allInvoices.set(indexOf, invoice);
+		}
 		
-		markAsComplete(order, allInvoices, orderRegistry); 
+		markAsComplete(order, refunds, allInvoices, orderRegistry); 
 	}
 	
-	public static void markAsComplete(Order order, List<Invoice> invoices, OrderRegistry orderRegistry
+	public static void markAsComplete(Order order, Collection<Refund> refunds, Collection<Invoice> invoices, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		
-		if(isCompletedInvoice(order, invoices)) {
+		if(isCompletedInvoice(order, refunds, invoices)) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
 			//order.setCompleteInvoice(LocalDateTime.now());
 		}
@@ -440,7 +447,7 @@ public class InvoiceRegistryUtil {
 		return i;
 	}
 	
-	public static void cancelInvoices(List<Invoice> invoices, Order order, 
+	public static void cancelInvoices(Order order, Collection<Refund> refunds, List<Invoice> invoices, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
@@ -471,7 +478,7 @@ public class InvoiceRegistryUtil {
 			throw new PersistenceInvoiceRegistryException(ex);
 		}
 		
-		InvoiceRegistryUtil.markAsComplete(actualOrder, actualInvoices, orderRegistry);
+		InvoiceRegistryUtil.markAsComplete(actualOrder, refunds, actualInvoices, orderRegistry);
 		
 	}
 

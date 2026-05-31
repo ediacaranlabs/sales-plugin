@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
@@ -20,6 +19,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
@@ -34,17 +34,21 @@ import br.com.uoutec.persistence.EntityAccessException;
 
 public class ShippingRegistryUtil {
 
-	public static void checkIsCompletedShipping(Order order, Collection<Shipping> shippingList) throws ShippingRegistryException, InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static void checkIsCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws ShippingRegistryException, InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
-		if(isCompletedShipping(order, shippingList)) {
+		if(isCompletedShipping(order, refunds, shippings)) {
 			throw new CompletedShippingRegistryException();
 		}
 	}
 	
-	public static boolean isCompletedShipping(Order order, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
-		shippingList.stream()
+		
+		refunds.stream()
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		shippings.stream()
 			.filter((e)->!e.isCanceled())
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
@@ -65,13 +69,13 @@ public class ShippingRegistryUtil {
 		return true;
 	}
 
-	public static boolean isCompletedShippingAndReceived(Order order, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static boolean isCompletedShippingAndReceived(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
 		
-		if(!isCompletedShipping(order, shippingList)) {
+		if(!isCompletedShipping(order, refunds, shippings)) {
 			return false;
 		}
 		
-		for(Shipping shipping: shippingList) {
+		for(Shipping shipping: shippings) {
 			if(shipping.getCancelDate() == null && shipping.getReceivedDate() == null) {
 				return false;
 			}
@@ -162,11 +166,11 @@ public class ShippingRegistryUtil {
 		
 	}
 	
-	public static void checkShipping(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings, 
+	public static void checkShipping(Shipping shipping, Order order, Collection<Refund> refunds, List<Invoice> invoices, List<Shipping> shippings, 
 			ProductTypeRegistry productTypeRegistry) throws OrderRegistryException, ShippingRegistryException, ProductTypeRegistryException {
 
 		checkShippableProducts(shipping, productTypeRegistry);
-		checkIsCompletedShipping(order, shippings);
+		checkIsCompletedShipping(order, refunds, shippings);
 		checkUnits(shipping, order, invoices, shippings);
 		
 	}
@@ -229,16 +233,29 @@ public class ShippingRegistryUtil {
 		}
 	}
 
-	public static List<Shipping> getActualShippings(Order order, Client client, ShippingRegistry registry) throws ShippingRegistryException{
+	public static List<Shipping> getActualShippings(Order order, ShippingRegistry registry) throws ShippingRegistryException{
 		return registry.findByOrder(order.getId());
 	}
 	
-	public static List<Shipping> getActualShippings(Order order, Client client, ShippingEntityAccess entityAccess) throws EntityAccessException{
-		return entityAccess.findByOrder(order.getId(), client);		
+	public static List<Shipping> getActualShippings(Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException{
+		try {
+			return entityAccess.findByOrder(order.getId());
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
 	}
 
 	public static List<Invoice> getActualInvoices(Order order, InvoiceRegistry invoiceRegistry) throws InvoiceRegistryException {
 		return invoiceRegistry.findByOrder(order.getId());		
+	}
+
+	public static List<OrderReport> getActualReports(Order order, OrderReportRegistry orderReportRegistry) throws OrderReportRegistryException {
+		return orderReportRegistry.findByOrder(order);		
+	}
+	
+	public static List<Refund> getActualRefunds(Order order, RefundRegistry refundRegistry) throws RefundRegistryException {
+		return refundRegistry.findRefundByOrder(order.getId());	
 	}
 	
 	public static void confirmShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
@@ -262,42 +279,7 @@ public class ShippingRegistryUtil {
 		return actuaClient;
 	}
 
-	public static void updateOrderStatus(Order actualOrder, Client actualClient, Shipping actualShipping, OrderReportRegistry orderReportRegistry, OrderRegistry orderRegistry, 
-			ShippingEntityAccess entityAccess) throws ShippingRegistryException {
-		
-		List<Shipping> shippingList;
-		
-		try {
-			shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
-		
-		shippingList.add(actualShipping);
-
-		List<OrderReport> orderReportList;
-		
-		try {
-			orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
-		
-		try {
-			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet())) &&
-				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
-				orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
-			}
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
-		
-	}
-	
-	public static void markAsComplete(Order order, Shipping shipping, List<Shipping> shippings, 
+	public static void markAsComplete(Order order, Shipping shipping, Collection<Refund> refunds, List<Shipping> shippings, 
 			OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
 		List<Shipping> allShippings = new ArrayList<>(shippings);
@@ -310,7 +292,7 @@ public class ShippingRegistryUtil {
 			allShippings.set(indexOf, shipping);
 		}
 		
-		markAsComplete(order, allShippings, orderRegistry); 
+		markAsComplete(order, refunds, allShippings, orderRegistry); 
 	}
 
 	public static void saveOrUpdateIndex(Shipping e, ShippingIndexEntityAccess indexEntityAccess) throws ShippingRegistryException {
@@ -345,9 +327,9 @@ public class ShippingRegistryUtil {
 		);
 	}
 	
-	public static void markAsComplete(Order order, List<Shipping> shippings, OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
+	public static void markAsComplete(Order order, Collection<Refund> refunds, List<Shipping> shippings, OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
 		
-		if(isCompletedShipping(order, shippings)) {
+		if(isCompletedShipping(order, refunds, shippings)) {
 			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_SHIPPED, orderRegistry);
 			//order.setCompleteShipping(LocalDateTime.now());
 		}
@@ -409,6 +391,10 @@ public class ShippingRegistryUtil {
 	public static Order getActualOrder(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		return orderRegistry.findById(order.getId());		
 	}
+
+	public static Order getActualOrder(String id, OrderRegistry orderRegistry) throws OrderRegistryException {
+		return orderRegistry.findById(id);		
+	}
 	
 	public static Map<String,List<Shipping>> groupByOrder(List<Shipping> list){
 		Map<String,List<Shipping>> map = new HashMap<>();
@@ -431,7 +417,7 @@ public class ShippingRegistryUtil {
 		return map;
 	}
 
-	public static void cancelShippings(List<Shipping> shippings, Order order, 
+	public static void cancelShippings(Collection<Refund> refunds, List<Shipping> shippings, Order order, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, ShippingIndexEntityAccess indexEntityAccess) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 
@@ -451,8 +437,8 @@ public class ShippingRegistryUtil {
 
 		entityAccess.flush();
 			
-		List<Shipping> actualShippings = getActualShippings(actualOrder, null, entityAccess);
-		markAsComplete(actualOrder, actualShippings, orderRegistry);
+		List<Shipping> actualShippings = getActualShippings(actualOrder, entityAccess);
+		markAsComplete(actualOrder, refunds, actualShippings, orderRegistry);
 		
 	}	
 	
@@ -620,4 +606,27 @@ public class ShippingRegistryUtil {
 		return i;
 	}
 	
+	public static void markOrderAsComplete(Shipping shipping, Order order, List<Refund> refunds, List<Shipping> shippings, List<OrderReport> reports, OrderRegistry orderRegistry) throws ShippingRegistryException {
+		
+		List<Shipping> allShippings = new ArrayList<>(shippings);
+		
+		int indexOf = allShippings.indexOf(shipping);
+		if(indexOf == -1) {
+			allShippings.add(shipping);
+		}
+		else {
+			allShippings.set(indexOf, shipping);
+		}
+		
+		try {
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(order, refunds, shippings) &&
+				OrderReportRegistryUtil.isCompletedOrderReport(order, reports)) {
+				orderRegistry.updateStatus(order, OrderStatus.COMPLETE);
+			}
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
+		}
+		
+	}	
 }

@@ -38,10 +38,8 @@ public class ProductRequestUtil {
 	
 	public static void addUnits(Map<String, ProductRequest> values, Collection<ProductRequest> itens){
 		
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
 		for(ProductRequest pr: itens) {
-			ProductRequest tpr = transientItens.get(pr.getSerial());
+			ProductRequest tpr = values.get(pr.getSerial());
 			if(tpr == null) {
 				continue;
 			}
@@ -53,10 +51,8 @@ public class ProductRequestUtil {
 
 	public static void subUnits(Map<String, ProductRequest> values, Collection<ProductRequest> itens){
 		
-		Map<String, ProductRequest> transientItens = new HashMap<>();
-		
 		for(ProductRequest pr: itens) {
-			ProductRequest tpr = transientItens.get(pr.getSerial());
+			ProductRequest tpr = values.get(pr.getSerial());
 			if(tpr == null) {
 				continue;
 			}

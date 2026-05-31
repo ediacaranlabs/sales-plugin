@@ -18,7 +18,7 @@ public interface ShippingEntityAccess {
 	
 	List<Shipping> getList(Integer first, Integer max, Client client) throws EntityAccessException;
 	
-	List<Shipping> findByOrder(String order, Client client) throws EntityAccessException;
+	List<Shipping> findByOrder(String order) throws EntityAccessException;
 	
 	void flush();
 	

@@ -142,17 +142,19 @@ public class OrderRegistryImp
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		ShippingRegistry shippingRegistry	    = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                = OrderRegistryUtil.getActualOrder(entity, orderEntityAccess);
 		Client actualClient              = OrderRegistryUtil.getActualClient(entity.getClient(), clientRegistry);
-		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(entity, actualClient, shippingRegistry);
+		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(entity, shippingRegistry);
 		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
 		List<OrderReport> actualReports  = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
+		List<Refund> refunds             = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
 		
 		OrderRegistryUtil.validateOrder(entity, updateValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		
-		OrderRegistryUtil.markAsCompleteOrder(actualOrder, actualInvoices, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, actualInvoices, refunds, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
 		
 		if(!actualOrder.getStatus().isClosed()) {
 			OrderRegistryUtil.update(entity, orderEntityAccess);

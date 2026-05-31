@@ -23,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
@@ -32,6 +33,7 @@ import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBui
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.ValidationException;
 import br.com.uoutec.i18n.ValidatorBean;
 import br.com.uoutec.persistence.EntityAccessException;
@@ -139,33 +141,22 @@ public class OrderReportRegistryUtil {
 	}
 	
 	public static void updateOrderStatus(OrderReport entity,OrderRegistry orderRegistry, 
-			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, ProductTypeRegistry productTypeRegistry, OrderReportEntityAccess entityAccess) throws OrderRegistryException, ShippingRegistryException {
-		Order actualOrder   = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
-		Client actualClient = OrderReportRegistryUtil.getActualClient(entity, actualOrder, clientRegistry);
-		List<OrderReport> orderReportList;
+			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, ProductTypeRegistry productTypeRegistry, OrderReportEntityAccess entityAccess) throws OrderRegistryException, ShippingRegistryException, RefundRegistryException, OrderReportRegistryException {
 		
-		try {
-			orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
+		RefundRegistry refundRegistry = EntityContextPlugin.getEntity(RefundRegistry.class);
+		
+		Order actualOrder                 = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
+		List<OrderReport> orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
+		List<Refund> refunds              = OrderReportRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
 		
 		orderReportList.add(entity);
 
 
-		List<Shipping> shippingList;
-		
-		try {
-			shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, shippingRegistry);
-		}
-		catch(Throwable ex) {
-			throw new ShippingRegistryException(ex);
-		}
+		List<Shipping> shippingList = ShippingRegistryUtil.getActualShippings(actualOrder, shippingRegistry);
 		
 		
 		try {
-			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, shippingList.stream().collect(Collectors.toSet())) &&
+			if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, refunds, shippingList) &&
 				OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
 				orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 			}
@@ -511,6 +502,10 @@ public class OrderReportRegistryUtil {
 		}
 		
 		return actuaClient;
+	}
+	
+	public static List<Refund> getActualRefunds(Order order, RefundRegistry registry) throws RefundRegistryException {
+		return registry.findRefundByOrder(order.getId());
 	}
 	
 	public static void reloadClient(OrderReport orderReport, ClientRegistry systemUserRegistry) throws OrderReportRegistryException {

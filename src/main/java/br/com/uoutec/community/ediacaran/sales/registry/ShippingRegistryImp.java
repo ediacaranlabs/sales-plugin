@@ -15,21 +15,18 @@ import javax.transaction.Transactional;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
-import br.com.uoutec.community.ediacaran.security.Principal;
-import br.com.uoutec.community.ediacaran.security.Subject;
-import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -65,13 +62,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	private ClientRegistry clientRegistry;
 
 	@Inject
-	private OrderRegistry orderRegistry;
-	
-	@Inject
 	private ProductTypeRegistry productTypeRegistry;
-	
-	@Inject
-	private SubjectProvider subjectProvider;
 	
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
@@ -80,13 +71,10 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRegisterPermission());
 		
-		if(entity.getOrder() == null) {
-			throw new ShippingRegistryException("order is empty");
-		}
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		
 		try{
-			OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-			Order order = orderRegistry.findById(entity.getOrder());
+			Order order = ShippingRegistryUtil.getActualOrder(entity.getOrder(), orderRegistry);
 			
 			if(order == null) {
 				throw new InvoiceRegistryException("order not found #" + entity.getOrder());
@@ -134,20 +122,23 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException {
+	public void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException, RefundRegistryException, OrderReportRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getConfirmPermission());
 
 		Order order = new Order();
 		order.setId(shipping.getOrder());
 		
-		Client client = shipping.getClient();
-		
+		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
-		Shipping actualShipping = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
-		Order actualOrder       = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient     = ShippingRegistryUtil.getActualClient(actualOrder, client, clientRegistry);
+		Order actualOrder                = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
+		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, entityAccess);
+		List<Refund> refunds             = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
+		List<OrderReport> actualReports  = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
+		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
+		
 		
 		if(actualShipping != null && !actualShipping.isClosed()) {
 			ShippingRegistryUtil.confirmShipping(actualShipping, entityAccess);
@@ -155,7 +146,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		}
 		
-		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, actualShipping, orderReportRegistry, orderRegistry, entityAccess);
+		ShippingRegistryUtil.markOrderAsComplete(actualShipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 	}
 	
 	@Override
@@ -164,39 +155,10 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 		
-		return unsafeFindById(id, null);
+		return unsafeFindById(id);
 	}
 
-	@ActivateRequestContext
-	public Shipping findById(String id, SystemUserID userID) throws ShippingRegistryException{
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
-
-		Client client = null;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			client = getSystemUser(userID);
-		}
-		catch (ClientRegistryException e) {
-			throw new ShippingRegistryException(e);
-		}
-		
-		return unsafeFindById(id, client);
-		
-	}
-	
-	@ActivateRequestContext
-	public Shipping findById(String id, Client systemUser) throws ShippingRegistryException{
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
-		
-		return unsafeFindById(id, systemUser);
-	}
-	
-	private Shipping unsafeFindById(String id, Client client) throws ShippingRegistryException {
+	private Shipping unsafeFindById(String id) throws ShippingRegistryException {
 		
 		try{
 			Shipping e = entityAccess.findById(id);
@@ -205,14 +167,6 @@ public class ShippingRegistryImp implements ShippingRegistry {
 				
 				if(e.getOrder() == null) {
 					return null;
-				}
-				
-				
-				if(client != null) {
-					Order order = orderRegistry.findByCartID(e.getOrder());
-					if(order == null || order.getClient().getId() != client.getId()) {
-						return null;
-					}
 				}
 				
 				e.setClient(e.getClient() == null? null : clientRegistry.findClientById(e.getClient().getId()));					
@@ -296,7 +250,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		List<Shipping> actualShippings;
 		try {
-			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, actualOrder.getClient(), entityAccess);
+			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
 		}
 		catch(Throwable e) {
 			throw new OrderNotFoundRegistryException(e);
@@ -312,7 +266,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 		
 		try {
-			return entityAccess.findByOrder(id, null);
+			return entityAccess.findByOrder(id);
 		}
 		catch(Throwable ex) {
 			throw new ShippingRegistryException(ex);
@@ -325,22 +279,10 @@ public class ShippingRegistryImp implements ShippingRegistry {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
 
-		Client client = null;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			client = getSystemUser(userID);
-		}
-		catch (ClientRegistryException e) {
-			throw new ShippingRegistryException(e);
-		}
-		
 		try {
 			Order order = new Order();
 			order.setId(id);
-			return ShippingRegistryUtil.getActualShippings(order, client, entityAccess);
+			return ShippingRegistryUtil.getActualShippings(order, entityAccess);
 		}
 		catch(Throwable ex) {
 			throw new ShippingRegistryException(ex);
@@ -352,7 +294,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	@Override
 	@ActivateRequestContext
 	public void cancelShipping(Shipping shipping, String justification
-			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException {
+			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException, RefundRegistryException {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
 		List<Shipping> list;
@@ -374,7 +316,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	}
 	
 	private void unsafeCancelShippings(List<Shipping> shippings, String justification
-			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException, ProductTypeRegistryException {
+			) throws EntityAccessException, OrderRegistryException, CompletedInvoiceRegistryException, ShippingRegistryException, ProductTypeRegistryException, RefundRegistryException {
 
 		Map<String,List<Shipping>> map = ShippingRegistryUtil.groupByOrder(shippings);
 		
@@ -385,13 +327,16 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		LocalDateTime cancelDate          = LocalDateTime.now();
 		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		RefundRegistry refundRegistry     = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		for(Entry<String,List<Shipping>> entry: map.entrySet()) {
 			
 			Order order = new Order();
 			order.setId(entry.getKey());
 			
-			ShippingRegistryUtil.cancelShippings(shippings, order, justification, 
+			List<Refund> refunds = InvoiceRegistryUtil.getActualRefunds(order, refundRegistry);
+			
+			ShippingRegistryUtil.cancelShippings(refunds, shippings, order, justification, 
 					cancelDate, orderRegistry, shippingRegistry, entityAccess, indexEntityAccess);
 			
 		}
@@ -399,84 +344,64 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	}
 	
 	private void registryNewShipping(Shipping shipping, Order order
-			) throws ValidationException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
+			) throws ValidationException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException, RefundRegistryException, OrderReportRegistryException {
 		
 		validateShipping(shipping, saveValidations);
 		
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry             = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		RefundRegistry refundRegistry            = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient				= ShippingRegistryUtil.getActualClient(actualOrder, order.getClient(), clientRegistry);		
-		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, actualClient, entityAccess);
+		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
 		List<Invoice> actualInvoices	= ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
+		List<Refund> refunds            = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
+		List<OrderReport> actualReports = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
 		
 		//ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		ShippingRegistryUtil.checkShipping(shipping, order, actualInvoices, actualShippings, productTypeRegistry);
+		ShippingRegistryUtil.checkShipping(shipping, order, refunds, actualInvoices, actualShippings, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
-		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry);
+		ShippingRegistryUtil.markAsComplete(order, shipping, refunds, actualShippings, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
-		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, shipping, orderReportRegistry, orderRegistry, entityAccess);
+		ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 		
 	}
 
 	private void updateShipping(Shipping shipping, Order order
-			) throws ValidationException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException {
+			) throws ValidationException, OrderRegistryException, ShippingRegistryException, EntityAccessException, ProductTypeRegistryException, InvoiceRegistryException, RefundRegistryException, OrderReportRegistryException {
 		
 		validateShipping(shipping, updateValidations);
 		
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
-		Client actualClient              = ShippingRegistryUtil.getActualClient(order, order.getClient(), clientRegistry);
-		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, actualClient, entityAccess);
+		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, entityAccess);
 		List<Invoice> actualInvoices     = ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
+		List<Refund> refunds             = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
+		List<OrderReport> actualReports  = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
 		//ShippingRegistryUtil.checkAllowedUpdateShipping(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		ShippingRegistryUtil.checkShipping(shipping, order, actualInvoices, actualShippings, productTypeRegistry);
+		ShippingRegistryUtil.checkShipping(shipping, order, refunds, actualInvoices, actualShippings, productTypeRegistry);
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
-		ShippingRegistryUtil.markAsComplete(order, shipping, actualShippings, orderRegistry);
+		ShippingRegistryUtil.markAsComplete(order, shipping, refunds, actualShippings, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-		ShippingRegistryUtil.updateOrderStatus(actualOrder, actualClient, actualShipping, orderReportRegistry, orderRegistry, entityAccess);
+		ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 		
 	}
 	
 	private void validateShipping(Shipping e, Class<?> ... groups) throws ValidationException{
 		ValidatorBean.validate(e, groups);
 	}
-
-	private Client getSystemUser(SystemUserID userID) throws ClientRegistryException {
-		Client client = clientRegistry.getClientBySystemID(String.valueOf(userID.getSystemID()));
-		
-		if(client == null) {
-			throw new ClientRegistryException(String.valueOf(userID));
-		}
-		
-		return client;
-	}
-
-	private SystemUserID getSystemUserID() throws ClientRegistryException {
-		Subject subject = subjectProvider.getSubject();
-		
-		if(!subject.isAuthenticated()) {
-			throw new ClientRegistryException();
-		}
-		
-		Principal principal = subject.getPrincipal();
-		java.security.Principal jaaPrincipal = principal.getUserPrincipal();
-		
-		return ()->jaaPrincipal.getName();
-	}
-
 	
 }
