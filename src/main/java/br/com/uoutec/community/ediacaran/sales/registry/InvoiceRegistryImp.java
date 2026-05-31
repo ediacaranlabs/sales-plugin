@@ -23,14 +23,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
-import br.com.uoutec.community.ediacaran.security.Principal;
-import br.com.uoutec.community.ediacaran.security.Subject;
-import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -59,14 +53,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	private InvoiceIndexEntityAccess indexEntityAccess;
 	
 	@Inject
-	private SystemUserRegistry systemUserRegistry;
-	
-	@Inject
 	private ProductTypeRegistry productTypeRegistry;
 
-	@Inject
-	private SubjectProvider subjectProvider;
-	
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
@@ -136,32 +124,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		return unsafeFindById(id, null);
 	}
 
-	@ActivateRequestContext
-	@EnableFilters(InvoiceRegistry.class)
-	public Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException{
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
-
-		SystemUser systemUser = null;
-		
-		if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-			userID = getSystemUserID();
-		}
-		systemUser = getSystemUser(userID);
-		
-		return unsafeFindById(id, systemUser);
-		
-	}
-	
-	@ActivateRequestContext
-	@EnableFilters(InvoiceRegistry.class)
-	public Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException{
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
-		
-		return unsafeFindById(id, systemUser);
-	}
-	
 	private Invoice unsafeFindById(String id, SystemUser systemUser) throws InvoiceRegistryException {
 		
 		try{
@@ -280,7 +242,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		List<Invoice> invoices;
 		
 		try {
-			invoices = entityAccess.findByOrder(order.getId(), order.getClient());
+			invoices = entityAccess.findByOrder(order.getId());
 		}
 		catch (EntityAccessException e) {
 			throw new InvoiceRegistryException(e);
@@ -324,36 +286,13 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 		
 		try {
-			return entityAccess.findByOrder(id, null);
+			return entityAccess.findByOrder(id);
 		}
 		catch(Throwable ex) {
 			throw new PersistenceInvoiceRegistryException(ex);
 		}
 	}
 
-	@Override
-	@ActivateRequestContext
-	@EnableFilters(InvoiceRegistry.class)
-	public List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException{
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
-
-		SystemUser systemUser = null;
-		
-		if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-			userID = getSystemUserID();
-		}
-		systemUser = getSystemUser(userID);
-		
-		try {
-			return entityAccess.findByOrder(id, systemUser);
-		}
-		catch(Throwable ex) {
-			throw new PersistenceInvoiceRegistryException(ex);
-		}
-		
-	}
-	
 	private void registryNewInvoice(Invoice entity, Order order) throws ValidationException, InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException, OrderRegistryException, RefundRegistryException {
 		
 		InvoiceRegistryUtil.validateInvoice(entity, saveValidations);
@@ -370,9 +309,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		//InvoiceRegistryUtil.checkAllowedCreateInvoice(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
 		OrderRegistryUtil.checkPayment(actualOrder);
-		InvoiceRegistryUtil.checkInvoice(actualOrder, refunds, actualInvoices, entity, null);
-		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
+		InvoiceRegistryUtil.checkCanceledInvoice(entity);
+		InvoiceRegistryUtil.checkIsCompletedInvoice(order, refunds, actualInvoices);
+		InvoiceRegistryUtil.checkUnits(entity, order, refunds, actualInvoices);		
 		InvoiceRegistryUtil.preventChangeInvoiceSaveSensitiveData(entity);
+		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.save(entity, entityAccess);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, refunds, actualInvoices, entity, orderRegistry);
@@ -398,36 +339,14 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		
 		//InvoiceRegistryUtil.checkAllowedUpdateInvoice(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
-		InvoiceRegistryUtil.checkInvoice(order, refunds, actualInvoices, entity, entityAccess.findById(entity.getId()));
+		InvoiceRegistryUtil.checkCanceledInvoiceDate(entity, actualInvoice);
+		InvoiceRegistryUtil.checkIsCompletedInvoice(order, refunds, actualInvoices);
+		InvoiceRegistryUtil.checkUnits(entity, order, refunds, actualInvoices);		
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, entityAccess);
 		InvoiceRegistryUtil.markAsComplete(actualOrder, refunds, actualInvoices, entity, orderRegistry);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 
 	}
-	
-	private SystemUser getSystemUser(SystemUserID userID) throws SystemUserRegistryException {
-		SystemUser user = systemUserRegistry.getBySystemID(userID);
-		
-		if(user == null) {
-			throw new SystemUserRegistryException(String.valueOf(userID));
-		}
-		
-		return user;
-	}
-
-	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
-		Subject subject = subjectProvider.getSubject();
-		
-		if(!subject.isAuthenticated()) {
-			throw new SystemUserRegistryException();
-		}
-		
-		Principal principal = subject.getPrincipal();
-		java.security.Principal jaaPrincipal = principal.getUserPrincipal();
-		
-		return ()->jaaPrincipal.getName();
-	}
-
 	
 }

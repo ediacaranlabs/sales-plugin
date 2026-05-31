@@ -7,9 +7,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.entity.registry.RegistryException;
 import br.com.uoutec.i18n.ValidationException;
@@ -23,10 +20,6 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	Invoice findById(String id) throws InvoiceRegistryException;
 
-	Invoice findById(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException;
-	
-	Invoice findById(String id, SystemUser systemUser) throws InvoiceRegistryException;
-	
 	Invoice toInvoice(Order order)  throws OrderRegistryException, PersistenceInvoiceRegistryException;
 	
 	InvoicesResultSearch searchInvoice(InvoiceSearch value) throws InvoiceRegistryException;
@@ -38,7 +31,5 @@ public interface InvoiceRegistry extends PublicBean{
 	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException, ProductTypeHandlerException;
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
-	
-	List<Invoice> findByOrder(String id, SystemUserID userID) throws InvoiceRegistryException, SystemUserRegistryException;
 	
 }

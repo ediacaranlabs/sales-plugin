@@ -5,7 +5,7 @@ import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.i18n.ValidationException;
 
@@ -21,7 +21,9 @@ public class InvoicePanelPubEntity extends InvoicePubEntity{
 	@Override
 	protected Invoice reloadEntity() throws Throwable {
 		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-		return invoiceRegistry.findById(getId(), SystemUserRegistry.CURRENT_USER);
+		Invoice invoice = invoiceRegistry.findById(getId());
+		
+		return invoice != null && SystemUserIDProvider.getSystemUser().getId().equals(invoice.getClient().getId())? invoice : null;
 	}
 
 	@Override

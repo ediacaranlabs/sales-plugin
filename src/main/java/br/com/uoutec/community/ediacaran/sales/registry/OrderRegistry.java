@@ -16,7 +16,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
-import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
@@ -61,10 +60,6 @@ public interface OrderRegistry extends PublicBean {
 	
 	Order findById(String id) throws OrderRegistryException;
 
-	Order findById(String id, SystemUserID userID) throws OrderRegistryException;
-	
-	Order findById(String id, SystemUser systemUser) throws OrderRegistryException;
-	
 	Order findByCartID(String id) throws OrderRegistryException;
 
 	OrderResultSearch searchOrder(OrderSearch value) throws OrderRegistryException;

@@ -4,7 +4,7 @@ import org.brandao.brutos.annotation.Transient;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
-import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
 public class OrderPanelPubEntity 
@@ -16,7 +16,8 @@ public class OrderPanelPubEntity
 	@Override
 	protected Order reloadEntity() throws Throwable {
 		OrderRegistry r = EntityContextPlugin.getEntity(OrderRegistry.class);
-		return r.findById(super.getId(), SystemUserRegistry.CURRENT_USER);
+		Order order = r.findById(super.getId());
+		return order != null && SystemUserIDProvider.getSystemUser().getId().equals(order.getClient().getId())? order : null;
 	}
 
 	protected void copyTo(Order o, boolean reload, boolean override,

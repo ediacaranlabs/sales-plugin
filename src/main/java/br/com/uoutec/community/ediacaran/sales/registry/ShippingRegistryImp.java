@@ -72,19 +72,18 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getRegisterPermission());
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		Order order = ShippingRegistryUtil.getActualOrder(entity.getOrder(), orderRegistry);
+		
+		if(order == null) {
+			throw new OrderRegistryException("order not found #" + entity.getOrder());
+		}
 		
 		try{
-			Order order = ShippingRegistryUtil.getActualOrder(entity.getOrder(), orderRegistry);
-			
-			if(order == null) {
-				throw new InvoiceRegistryException("order not found #" + entity.getOrder());
-			}
-			
 			if(entity.getId() == null){
-				this.registryNewShipping(entity, order);
+				registryNewShipping(entity, order);
 			}
 			else{
-				this.updateShipping(entity, order);
+				updateShipping(entity, order);
 			}
 		}
 		catch(OrderRegistryException e){
@@ -349,9 +348,9 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		validateShipping(shipping, saveValidations);
 		
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
-		InvoiceRegistry invoiceRegistry             = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
-		RefundRegistry refundRegistry            = EntityContextPlugin.getEntity(RefundRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
 		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
@@ -361,10 +360,12 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		//ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		ShippingRegistryUtil.checkShipping(shipping, order, refunds, actualInvoices, actualShippings, productTypeRegistry);
+		ShippingRegistryUtil.checkShippableProducts(shipping, productTypeRegistry);
+		ShippingRegistryUtil.checkIsCompletedShipping(order, refunds, actualShippings);
+		ShippingRegistryUtil.checkUnits(shipping, order, actualInvoices, actualShippings);
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
-		ShippingRegistryUtil.markAsComplete(order, shipping, refunds, actualShippings, orderRegistry);
+		ShippingRegistryUtil.markAsComplete(shipping, order, refunds, actualShippings, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
@@ -391,10 +392,13 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		//ShippingRegistryUtil.checkAllowedUpdateShipping(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
-		ShippingRegistryUtil.checkShipping(shipping, order, refunds, actualInvoices, actualShippings, productTypeRegistry);
+		ShippingRegistryUtil.checkShippableProducts(shipping, productTypeRegistry);
+		ShippingRegistryUtil.checkIsCompletedShipping(order, refunds, actualShippings);
+		ShippingRegistryUtil.checkUnits(shipping, order, actualInvoices, actualShippings);
+		
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
-		ShippingRegistryUtil.markAsComplete(order, shipping, refunds, actualShippings, orderRegistry);
+		ShippingRegistryUtil.markAsComplete(shipping, order, refunds, actualShippings, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 		

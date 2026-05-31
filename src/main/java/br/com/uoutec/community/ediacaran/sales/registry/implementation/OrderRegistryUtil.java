@@ -35,7 +35,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ExistOrderRegistryExcept
 import br.com.uoutec.community.ediacaran.sales.registry.IncompleteClientRegistrationException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
@@ -606,26 +605,6 @@ public class OrderRegistryUtil {
 		return orderRegistry.findById(order.getId());
 	}
 	
-	public static boolean isCompletedOrder(Order order, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException {
-		
-		if(order.getCompleteInvoice() == null ) {
-			return false;
-		}
-		
-		for(ProductRequest pr: order.getItens()) {
-
-			ProductType productType = productTypeRegistry.getProductType(pr.getProduct().getProductType());
-			ProductTypeHandler productTypeHandler = productType.getHandler();
-			
-			if(productTypeHandler.isSupportShipping(pr)) {
-				return false;
-			}
-			
-		}
-		
-		return true;
-	}
-
 	public static void updateStatus(Order order, OrderStatus orderStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
 		orderRegistry.updateStatus(order, orderStatus);
 	}
@@ -634,104 +613,33 @@ public class OrderRegistryUtil {
 		orderRegistry.registerOrder(order);
 	}
 	
-	/*
-	public static void markAsCompleteOrder(Order order, Invoice invoice, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
-			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
-		
-		List<Invoice> allInvoices = new ArrayList<>(invoices);
-		
-		if(!allInvoices.contains(invoice)) {
-			allInvoices.add(invoice);
-		}
-		
-		
-		markAsCompleteOrder(order, allInvoices, shipping, reportList, orderRegistry, productTypeRegistry); 
-			
-	}
-    */
-	
 	public static void checkPayment(Order order) throws InvoiceRegistryException {
 		if(order.getPayment().getReceivedFrom() == null) {
 			throw new InvoiceRegistryException("payment has not yet been made");
 		}
 	}
-
-	/*
-	public static void markAsCompleteOrder(Order order, Invoice invoice, Shipping shipping, List<Invoice> invoices, List<Shipping> shippings, List<OrderReport> reportList, OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry
-			) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
-
-		List<Invoice> allInvoices = new ArrayList<>(invoices);
-		
-		if(invoice != null && !allInvoices.contains(invoice)) {
-			allInvoices.add(invoice);
-		}
-		
-		List<Shipping> allShippings = new ArrayList<>(shippings);
-		
-		if(shipping != null && !allShippings.contains(shipping)) {
-			allShippings.add(shipping);
-		}
-		
-		markAsCompleteOrder(order, allInvoices, allShippings, reportList, orderRegistry, productTypeRegistry);
-	}
-			
-	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Shipping> shipping, List<OrderReport> reportList, 
-			OrderRegistry orderRegistry, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException {
-
-		boolean completedInvoice = InvoiceRegistryUtil.isCompletedInvoice(order, invoices);
-		boolean completedShipping = ShippingRegistryUtil.isCompletedShipping(order, shipping, productTypeRegistry);
-		//boolean completedReport = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
-		
-		if(completedInvoice && completedShipping) {
-
-			if(isCompletedOrder(order, productTypeRegistry)) {
-
-				orderRegistry.updateStatus(order, OrderStatus.COMPLETE);
-				
-				LocalDateTime now = LocalDateTime.now();
-				if(order.getCompleteInvoice() == null) {
-					order.setCompleteInvoice(now);
-				}
-				
-				if(order.getCompleteShipping() == null) {
-					order.setCompleteShipping(now);
-				}
-				
-				orderRegistry.registerOrder(order);
-				
-			}
-			
-		}
-			
-	}
-    */
 	
-	public static void markAsCompleteOrder(Order order, List<Invoice> invoices, List<Refund> refunds, List<Shipping> shipping, List<OrderReport> reportList, 
+	public static void markAsCompleteOrder(Order order, List<Refund> refunds, List<Shipping> shipping, List<OrderReport> reportList, 
 			OrderEntityAccess orderEntityAccess, ProductTypeRegistry productTypeRegistry) throws ProductTypeRegistryException, InvoiceRegistryException, OrderRegistryException, EntityAccessException {
 
-		boolean completedInvoice  = InvoiceRegistryUtil.isCompletedInvoice(order, refunds, invoices);
 		boolean completedShipping = ShippingRegistryUtil.isCompletedShippingAndReceived(order, refunds, shipping);
 		boolean completedReport   = OrderReportRegistryUtil.isCompletedOrderReport(order, reportList);
 		
 		
-		if(completedInvoice && completedShipping && completedReport) {
+		if(completedShipping && completedReport) {
 
-			if(isCompletedOrder(order, productTypeRegistry)) {
-
-				if(OrderRegistryUtil.acceptNewOrderStatus(order, OrderStatus.COMPLETE)) {
-					order.setStatus(OrderStatus.COMPLETE);
-				}
-				
-				LocalDateTime now = LocalDateTime.now();
-				
-				if(order.getCompleteInvoice() == null) {
-					order.setCompleteInvoice(now);
-				}
-				
-				if(order.getCompleteShipping() == null) {
-					order.setCompleteShipping(now);
-				}
-				
+			if(OrderRegistryUtil.acceptNewOrderStatus(order, OrderStatus.COMPLETE)) {
+				order.setStatus(OrderStatus.COMPLETE);
+			}
+			
+			LocalDateTime now = LocalDateTime.now();
+			
+			if(order.getCompleteInvoice() == null) {
+				order.setCompleteInvoice(now);
+			}
+			
+			if(order.getCompleteShipping() == null) {
+				order.setCompleteShipping(now);
 			}
 			
 		}

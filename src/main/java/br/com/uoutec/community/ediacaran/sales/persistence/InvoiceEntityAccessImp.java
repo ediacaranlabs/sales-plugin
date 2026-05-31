@@ -207,7 +207,7 @@ public class InvoiceEntityAccessImp
 	}
 
 	@Override
-	public List<Invoice> findByOrder(String order, SystemUser user) throws EntityAccessException {
+	public List<Invoice> findByOrder(String order) throws EntityAccessException {
 		
 		try {
 			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -221,10 +221,6 @@ public class InvoiceEntityAccessImp
 		    List<Predicate> and = new ArrayList<Predicate>();
 	    	and.add(builder.equal(orderJoin.get("id"), order));
 		    
-	    	if(user != null) {
-		    	and.add(builder.equal(from.get("client"), user.getId()));
-	    	}
-	    	
 		    if(!and.isEmpty()) {
 			    criteria.where(
 			    		builder.and(

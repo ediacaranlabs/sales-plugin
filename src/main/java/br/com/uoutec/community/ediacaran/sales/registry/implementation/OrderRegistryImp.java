@@ -12,7 +12,6 @@ import javax.transaction.Transactional;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.DoPrivilegedException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
-import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -45,9 +44,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
-import br.com.uoutec.community.ediacaran.security.Principal;
-import br.com.uoutec.community.ediacaran.security.Subject;
-import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
@@ -88,9 +84,6 @@ public class OrderRegistryImp
 	@Inject
 	private OrderIndexEntityAccess indexEntityAccess;
 	
-	@Inject
-	private SubjectProvider subjectProvider;
-
 	@Inject
 	private ClientRegistry clientRegistry;
 	
@@ -139,22 +132,19 @@ public class OrderRegistryImp
 	
 	private void updateOrder(Order entity) throws Throwable {
 		
-		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		ShippingRegistry shippingRegistry	    = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                = OrderRegistryUtil.getActualOrder(entity, orderEntityAccess);
-		Client actualClient              = OrderRegistryUtil.getActualClient(entity.getClient(), clientRegistry);
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(entity, shippingRegistry);
-		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, invoiceRegistry);
 		List<OrderReport> actualReports  = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
 		List<Refund> refunds             = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
 		
 		OrderRegistryUtil.validateOrder(entity, updateValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		
-		OrderRegistryUtil.markAsCompleteOrder(actualOrder, actualInvoices, refunds, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
+		OrderRegistryUtil.markAsCompleteOrder(actualOrder, refunds, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
 		
 		if(!actualOrder.getStatus().isClosed()) {
 			OrderRegistryUtil.update(entity, orderEntityAccess);
@@ -200,55 +190,8 @@ public class OrderRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
 		
-		return unsafeFindById(id, null);
-	}
-
-	@Override
-	@ActivateRequestContext
-	public Order findById(String id, SystemUserID userID) throws OrderRegistryException {
-
-		if(!SystemUserRegistry.CURRENT_USER.equals(userID)) {
-			ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
-		}
-
-		SystemUser systemUser = null;
-		
-		try {
-			if(SystemUserRegistry.CURRENT_USER.equals(userID)) {
-				userID = getSystemUserID();
-			}
-			systemUser = getSystemUser(userID);
-		}
-		catch (SystemUserRegistryException e) {
-			throw new OrderRegistryException(e);
-		}
-		
-		return unsafeFindById(id, systemUser);
-	}
-
-	@Override
-	@ActivateRequestContext
-	public Order findById(String id, SystemUser systemUser) throws OrderRegistryException {
-		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
-		
-		return unsafeFindById(id, systemUser);
-	}
-
-	private Order unsafeFindById(String id, SystemUser systemUser) throws OrderRegistryException {
-		
 		try{
-			Order order = orderEntityAccess.findById(id);
-			
-			if(order != null) {
-				if(systemUser != null && order.getClient().getId() != systemUser.getId()) {
-					return null;
-				}
-			}
-			
-			order.setClient(order.getClient() == null? null : clientRegistry.findClientById(order.getClient().getId()));					
-			
-			return order;
+			return orderEntityAccess.findById(id);			
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);
@@ -631,17 +574,4 @@ public class OrderRegistryImp
 		return user;
 	}
 
-	private SystemUserID getSystemUserID() throws SystemUserRegistryException {
-		Subject subject = subjectProvider.getSubject();
-		
-		if(!subject.isAuthenticated()) {
-			throw new SystemUserRegistryException();
-		}
-		
-		Principal principal = subject.getPrincipal();
-		java.security.Principal jaaPrincipal = principal.getUserPrincipal();
-		
-		return ()->jaaPrincipal.getName();
-	}
-	
 }

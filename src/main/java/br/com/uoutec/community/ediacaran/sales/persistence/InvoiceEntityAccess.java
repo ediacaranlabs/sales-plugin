@@ -19,7 +19,7 @@ public interface InvoiceEntityAccess {
 	
 	List<Invoice> getList(Integer first, Integer max, SystemUser user) throws EntityAccessException;
 	
-	List<Invoice> findByOrder(String order, SystemUser user) throws EntityAccessException;
+	List<Invoice> findByOrder(String order) throws EntityAccessException;
 	
 	void flush();
 	

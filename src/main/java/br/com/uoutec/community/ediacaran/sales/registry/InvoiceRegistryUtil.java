@@ -139,48 +139,38 @@ public class InvoiceRegistryUtil {
 		}
 	}
 	
-	public static void checkInvoice(Order order, List<Refund> refunds, List<Invoice> invoices, Invoice invoice,
-			Invoice actualInvoice) throws ItemNotFoundOrderRegistryException, 
-		InvalidUnitsOrderRegistryException, InvoiceRegistryException {
-
-		checkCanceledInvoice(invoice, actualInvoice);
-		checkIsCompletedInvoice(order, refunds, invoices);
-		checkUnits(order, refunds, invoices, invoice);		
-		
-	}
-
-	public static void checkCanceledInvoice(Invoice invoice, Invoice actualInvoice) throws InvoiceRegistryException {
-		
-		if(actualInvoice != null) {
-			
-			if(actualInvoice.getCancelDate() != null) {
-			
-				if(invoice.getCancelDate() == null || actualInvoice.getCancelDate().compareTo(invoice.getCancelDate()) != 0) {
-					throw new InvoiceRegistryException("invalid cancelation data");
-				}
-			}
+	public static void checkCanceledInvoice(Invoice invoice) throws CanceledInvoiceRegistryException {
+		if(isCanceledInvoice(invoice)) {
+			throw new CanceledInvoiceRegistryException(invoice.getId());
 		}
-		else
-		if(invoice.getCancelDate() != null || invoice.getCancelJustification() != null) {
-			throw new InvoiceRegistryException("cancelation data not allowed");
-		}
-		
 	}
 	
-	public static void checkUnits(Order order, List<Refund> refunds, List<Invoice> invoices, Invoice invoice
+	public static boolean isCanceledInvoice(Invoice invoice) {
+		return invoice.getCancelDate() != null || invoice.getCancelJustification() != null;
+	}
+		
+	public static void checkCanceledInvoiceDate(Invoice invoice, Invoice actualInvoice) throws InvoiceRegistryException {
+		
+		if(actualInvoice.getCancelDate() != null) {
+		
+			if(invoice.getCancelDate() == null || actualInvoice.getCancelDate().compareTo(invoice.getCancelDate()) != 0) {
+				throw new InvoiceRegistryException("invalid cancelation data");
+			}
+			
+		}
+			
+	}
+	
+	public static void checkUnits(Invoice invoice, Order order, List<Refund> refunds, List<Invoice> invoices
 			) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 
-		if(invoices.contains(invoice)) {
-			invoices.remove(invoice);
-		}
-		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		invoices.stream()
-			.filter((e)->e.getCancelDate() == null)
+			.filter((e)->!e.equals(invoice) && e.getCancelDate() == null)
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
 		
 		for(ProductRequest pr: invoice.getItens()) {
@@ -209,7 +199,7 @@ public class InvoiceRegistryUtil {
 	
 	public static List<Invoice> getActualInvoices(Order order, Client client, InvoiceEntityAccess entityAccess) throws PersistenceInvoiceRegistryException{
 		try {
-			return entityAccess.findByOrder(order.getId(), client);
+			return entityAccess.findByOrder(order.getId());
 		}
 		catch(EntityAccessException e) {
 			throw new PersistenceInvoiceRegistryException(e);
@@ -313,16 +303,6 @@ public class InvoiceRegistryUtil {
 				throw new InvoiceRegistryException("exist shipping: #" + shipping.getId());
 			}
 		}
-	}
-	
-	public static void checkCanceledInvoice(Invoice invoice) throws CanceledInvoiceRegistryException {
-		if(isCanceledInvoice(invoice)) {
-			throw new CanceledInvoiceRegistryException(invoice.getId());
-		}
-	}
-	
-	public static boolean isCanceledInvoice(Invoice invoice) {
-		return invoice.getCancelDate() != null;
 	}
 	
 	public static void registerProducts(Invoice invoice, SystemUser user, Order order, ProductTypeRegistry productTypeRegistry) throws InvoiceRegistryException, ProductTypeRegistryException, ProductTypeHandlerException {
@@ -472,7 +452,7 @@ public class InvoiceRegistryUtil {
 		List<Invoice> actualInvoices;
 		
 		try {
-			actualInvoices = entityAccess.findByOrder(actualOrder.getId(), null);
+			actualInvoices = entityAccess.findByOrder(actualOrder.getId());
 		}
 		catch(Throwable ex) {
 			throw new PersistenceInvoiceRegistryException(ex);

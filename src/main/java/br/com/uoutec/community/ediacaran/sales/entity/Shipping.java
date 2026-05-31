@@ -198,6 +198,10 @@ public class Shipping implements Serializable{
 		this.cancelJustification = cancelJustification;
 	}
 
+	public boolean isReceived() {
+		return receivedDate != null;
+	}
+	
 	public LocalDateTime getReceivedDate() {
 		return receivedDate;
 	}
