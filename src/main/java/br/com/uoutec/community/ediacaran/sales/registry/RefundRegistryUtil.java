@@ -414,24 +414,6 @@ public class RefundRegistryUtil {
 		return true;
 	}
 	
-	public boolean isCompletedOrder(Order order, Collection<Refund> refundList, Collection<Shipping> shippingList, Collection<OrderReport> orderReportList) throws InvalidUnitsOrderRegistryException {
-		
-		 Map<String, ProductRequest> map = toMap(order.getItens());
-		 
-		 removeCompletedShippingItens(shippingList, map);
-		 removeConfirmedRefundItens(refundList, null, map);
-		 
-		for(ProductRequest tpr: map.values()) {
-
-			if(tpr.getUnits() > 0) {
-				return false;
-			}
-			
-		}
-
-		return OrderReportRegistryUtil.isCompletedOrderReport(order, orderReportList);
-	}
-	
 	public Map<String, ProductRequest> toMap(Collection<ProductRequest> values) {
 		
 		Map<String, ProductRequest> transientItens = new HashMap<>();
@@ -628,7 +610,8 @@ public class RefundRegistryUtil {
 			allRefund.add(refund);
 		}
 		
-		if(isCompletedOrder(actualOrder, allRefund, shippingList, orderReportList)) {
+		if(ShippingRegistryUtil.isCompletedShippingAndReceived(actualOrder, refundList, shippingList) &&
+			OrderReportRegistryUtil.isCompletedOrderReport(actualOrder, orderReportList)) {
 			orderRegistry.updateStatus(actualOrder, OrderStatus.COMPLETE);
 		}
 		

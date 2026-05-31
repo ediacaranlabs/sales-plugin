@@ -41,7 +41,7 @@ public class ShippingRegistryUtil {
 		}
 	}
 	
-	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
@@ -69,7 +69,7 @@ public class ShippingRegistryUtil {
 		return true;
 	}
 
-	public static boolean isCompletedShippingAndReceived(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException, ProductTypeRegistryException {
+	public static boolean isCompletedShippingAndReceived(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
 		
 		if(!isCompletedShipping(order, refunds, shippings)) {
 			return false;
@@ -524,5 +524,6 @@ public class ShippingRegistryUtil {
 			throw new ShippingRegistryException(ex);
 		}
 		
-	}	
+	}
+	
 }
