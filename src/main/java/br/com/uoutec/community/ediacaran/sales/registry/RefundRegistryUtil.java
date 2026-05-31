@@ -269,42 +269,32 @@ public class RefundRegistryUtil {
 		}
 	}
 
-	public void checkHasShippedProducts(Refund entity, List<Shipping> actualShiping) throws RefundRegistryException {
+	public void checkCanBeRefund(Refund entity, Order order, Collection<Refund> refunds, Collection<Invoice> invoices) throws RefundRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
-		Map<String, ProductRequest> map = toMap(entity.getProducts());
-
-		for(Shipping e: actualShiping) {
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		refunds.stream()
+			.filter((e)->!entity.equals(e))
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
+		
+		for(ProductRequest pr: entity.getProducts()) {
 			
-			if(e.isCanceled()) {
-				continue;
+			ProductRequest tpr = map.get(pr.getSerial());
+			
+			if(tpr == null) {
+				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
-			
-			for(ProductRequest pr: e.getProducts()) {
-				if(map.containsKey(pr.getSerial())) {
-					throw new RefundRegistryException("product shipped: " + pr.getSerial());
-				}
+
+			if(tpr.getUnits() - pr.getUnits() < 0) {
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
 			
 		}
-	}
-
-	public void checkHasInvoicedProduct(Refund entity, List<Invoice> actualInvoice) throws RefundRegistryException {
 		
-		Map<String, ProductRequest> map = toMap(entity.getProducts());
-
-		for(Invoice e: actualInvoice) {
-			
-			if(e.getCancelDate() != null) {
-				continue;
-			}
-			
-			for(ProductRequest pr: e.getItens()) {
-				if(map.containsKey(pr.getSerial())) {
-					throw new RefundRegistryException("product shipped: " + pr.getSerial());
-				}
-			}
-			
-		}
 	}
 	
 	public void checkAllowedRefundStatus(Order order) throws OrderStatusNotAllowedRegistryException {

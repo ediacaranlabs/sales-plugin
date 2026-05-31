@@ -101,10 +101,6 @@ public class ShippingRegistryUtil {
 	
 	public static void checkUnits(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
-		if(shippings.contains(shipping)) {
-			shippings.remove(shipping);
-		}
-		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		ProductRequestUtil.resetUnits(map);
@@ -114,7 +110,7 @@ public class ShippingRegistryUtil {
 			.forEach((e)->{ProductRequestUtil.addUnits(map, e.getItens());});
 		
 		shippings.stream()
-			.filter((e)->!e.isCanceled())
+			.filter((e)->!e.equals(shipping) && !e.isCanceled())
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		for(ProductRequest pr: shipping.getProducts()) {

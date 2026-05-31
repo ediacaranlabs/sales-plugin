@@ -55,9 +55,6 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	@Inject
 	private ShippingIndexEntityAccess indexEntityAccess;
 	
-	//@Inject
-	//private EventRegistry throwSystemEventRegistry;
-	
 	@Inject
 	private ClientRegistry clientRegistry;
 

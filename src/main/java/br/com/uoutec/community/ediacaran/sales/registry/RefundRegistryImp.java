@@ -64,8 +64,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
 		refundRegistryUtil.checkOrder(entity);
-		refundRegistryUtil.checkHasShippedProducts(entity, actualShiping);
-		refundRegistryUtil.checkHasInvoicedProduct(entity, actualInvoice);
+		refundRegistryUtil.checkCanBeRefund(entity, actualOrder, actualRefunds, actualInvoice);
 		refundRegistryUtil.checkAllowedCreateRefund(actualOrder);
 		refundRegistryUtil.checkAllowedRefundStatus(actualOrder);
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
@@ -94,12 +93,10 @@ public class RefundRegistryImp implements RefundRegistry {
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
-		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		
 		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
-		refundRegistryUtil.checkHasShippedProducts(entity, actualShiping);
-		refundRegistryUtil.checkHasInvoicedProduct(entity, actualInvoice);
+		refundRegistryUtil.checkCanBeRefund(entity, actualOrder, actualRefunds, actualInvoice);
 		refundRegistryUtil.update(actualRefund, actualOrder);
 		refundRegistryUtil.updateIndex(actualRefund, actualOrder);
 		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
