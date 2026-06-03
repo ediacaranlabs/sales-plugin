@@ -75,12 +75,35 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
-		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
+		//refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
 		refundRegistryUtil.registerNewRefundEvent(entity);
 		
-		if(actualOrder.getStatus() != OrderStatus.REFUND) {
-			refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
+		OrderStatus nextStatus = OrderStatus.getNextStatus(actualOrder.getStatus(), (name)->{
+			switch (name) {
+			case OrderStatus.PAYMENT:
+				return actualOrder.getPayment();
+			case OrderStatus.INVOICES:
+				return actualInvoice;
+			case OrderStatus.SHIPPINGS:
+				return actualShiping;
+			case OrderStatus.REFUNDS:
+				int indexOf = actualRefunds.indexOf(entity);
+				if(indexOf < 0 ) {
+					actualRefunds.add(entity);
+				}
+				else {
+					actualRefunds.set(indexOf, entity);
+				}
+				return actualRefunds;
+			case OrderStatus.ORDER:
+				return actualOrder;
+			}
+			return null;
+		});
+		
+		if(nextStatus != null) {
+			refundRegistryUtil.updateOrderStatus(actualOrder, nextStatus);
 		}
 		
 	}

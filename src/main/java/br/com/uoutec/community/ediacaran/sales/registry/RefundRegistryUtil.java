@@ -616,6 +616,10 @@ public class RefundRegistryUtil {
 		}
 		
 	}
+
+	public void updateOrderStatus(Order actualOrder, OrderStatus nextStatus) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
+		orderRegistry.updateStatus(actualOrder, nextStatus);
+	}
 	
 	public void checkAllowedUpdateRefund(Order order) throws OrderStatusNotAllowedRegistryException {
 		if(!order.getStatus().isAllowedChangeRefund()) {

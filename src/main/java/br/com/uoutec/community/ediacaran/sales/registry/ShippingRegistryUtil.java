@@ -75,6 +75,11 @@ public class ShippingRegistryUtil {
 			return false;
 		}
 		
+		return isShippingReceived(order, refunds, shippings);
+	}
+
+	public static boolean isShippingReceived(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
+		
 		for(Shipping shipping: shippings) {
 			if(!shipping.isCompleted()) {
 				return false;
