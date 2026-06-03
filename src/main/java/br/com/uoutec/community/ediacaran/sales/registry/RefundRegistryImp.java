@@ -14,7 +14,6 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
@@ -75,36 +74,9 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
-		//refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
+		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
 		refundRegistryUtil.registerNewRefundEvent(entity);
-		
-		OrderStatus nextStatus = OrderStatus.getNextStatus(actualOrder.getStatus(), (name)->{
-			switch (name) {
-			case OrderStatus.PAYMENT:
-				return actualOrder.getPayment();
-			case OrderStatus.INVOICES:
-				return actualInvoice;
-			case OrderStatus.SHIPPINGS:
-				return actualShiping;
-			case OrderStatus.REFUNDS:
-				int indexOf = actualRefunds.indexOf(entity);
-				if(indexOf < 0 ) {
-					actualRefunds.add(entity);
-				}
-				else {
-					actualRefunds.set(indexOf, entity);
-				}
-				return actualRefunds;
-			case OrderStatus.ORDER:
-				return actualOrder;
-			}
-			return null;
-		});
-		
-		if(nextStatus != null) {
-			refundRegistryUtil.updateOrderStatus(actualOrder, nextStatus);
-		}
 		
 	}
 
@@ -117,16 +89,13 @@ public class RefundRegistryImp implements RefundRegistry {
 		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
+		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		
 		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
 		refundRegistryUtil.checkCanBeRefund(entity, actualOrder, actualRefunds, actualInvoice);
 		refundRegistryUtil.update(actualRefund, actualOrder);
 		refundRegistryUtil.updateIndex(actualRefund, actualOrder);
-		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, entity);
-		
-		if(actualOrder.getStatus() != OrderStatus.REFUND) {
-			refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, entity);
-		}
+		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		
 	}
 	
@@ -152,7 +121,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	@Override
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
-	public void confirmRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException, PaymentGatewayException {
+	public void confirmRefund(Refund entity) throws RefundRegistryException, ShippingRegistryException, InvoiceRegistryException, PaymentGatewayException, OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getConfirmPermission());
 
@@ -167,6 +136,8 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
+		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
+		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
 		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
@@ -177,11 +148,7 @@ public class RefundRegistryImp implements RefundRegistry {
 			refundRegistryUtil.update(actualRefund, actualOrder);
 		}
 		
-		refundRegistryUtil.markAsComplete(actualOrder, actualRefunds, actualRefund);
-		
-		if(actualOrder.getStatus() != OrderStatus.REFUND) {
-			refundRegistryUtil.updateOrderStatus(actualOrder, actualRefunds, actualRefund);
-		}
+		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		
 	}
 	

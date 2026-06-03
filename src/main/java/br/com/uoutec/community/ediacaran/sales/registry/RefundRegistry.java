@@ -27,8 +27,7 @@ public interface RefundRegistry extends PublicBean{
 
 	Refund toRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException;
 	
-	void confirmRefund(Refund entity) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, 
-	InvalidUnitsOrderRegistryException, OrderReportRegistryException, OrderRegistryException, PaymentGatewayException;
+	void confirmRefund(Refund entity) throws RefundRegistryException, ShippingRegistryException, InvoiceRegistryException, PaymentGatewayException, OrderRegistryException;
 	
 	List<Refund> findRefundByOrder(String id) throws RefundRegistryException;
 	

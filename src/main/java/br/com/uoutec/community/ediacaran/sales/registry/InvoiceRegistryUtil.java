@@ -196,6 +196,10 @@ public class InvoiceRegistryUtil {
 	public static List<Refund> getActualRefunds(Order order, RefundRegistry registry) throws RefundRegistryException {
 		return registry.findRefundByOrder(order.getId());
 	}
+
+	public static List<Shipping> getActualShippings(Order order, ShippingRegistry registry) throws ShippingRegistryException {
+		return registry.findByOrder(order.getId());
+	}
 	
 	public static List<Invoice> getActualInvoices(Order order, Client client, InvoiceEntityAccess entityAccess) throws PersistenceInvoiceRegistryException{
 		try {
@@ -240,6 +244,44 @@ public class InvoiceRegistryUtil {
 		return actualClient;
 	}
 
+	public static void updateStatus(Invoice entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice, OrderRegistry orderRegistry) throws OrderRegistryException {
+		
+		OrderStatus nextStatus = OrderStatus.getNextStatus(order.getStatus(), (name)->{
+			switch (name) {
+			case OrderStatus.PAYMENT:
+				return order.getPayment();
+			case OrderStatus.INVOICES:
+				if(entity != null) {
+					int indexOf = actualInvoice.indexOf(entity);
+					if(indexOf < 0 ) {
+						actualInvoice.add(entity);
+					}
+					else {
+						actualInvoice.set(indexOf, entity);
+					}
+				}
+				return actualInvoice;
+			case OrderStatus.SHIPPINGS:
+				return actualShiping;
+			case OrderStatus.REFUNDS:
+				return actualRefunds;
+			case OrderStatus.ORDER:
+				return order;
+			}
+			return null;
+		});
+		
+		if(nextStatus != null) {
+			updateOrderStatus(order, nextStatus, orderRegistry);
+		}
+		
+	}
+	
+	public static void updateOrderStatus(Order actualOrder, OrderStatus nextStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(actualOrder, nextStatus);
+	}
+	
+	/*
 	public static void markAsComplete(Order order, Collection<Refund> refunds, List<Invoice> invoices, Invoice invoice, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		
@@ -255,7 +297,9 @@ public class InvoiceRegistryUtil {
 		
 		markAsComplete(order, refunds, allInvoices, orderRegistry); 
 	}
+	*/
 	
+	/*
 	public static void markAsComplete(Order order, Collection<Refund> refunds, Collection<Invoice> invoices, OrderRegistry orderRegistry
 			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
 		
@@ -269,16 +313,9 @@ public class InvoiceRegistryUtil {
 			//order.setCompleteInvoice(null);
 		}
 		
-		/*
-		try {
-			orderRegistry.registerOrder(order);
-		}
-		catch(Throwable ex) {
-			throw new InvoiceRegistryException(ex);
-		}
-		*/
 	}
-
+   */
+	
 	public static void checkIfExistsShipping(Order order, ShippingRegistry shippingRegistry
 			) throws InvoiceRegistryException, ShippingRegistryException {
 		
@@ -427,7 +464,7 @@ public class InvoiceRegistryUtil {
 		return i;
 	}
 	
-	public static void cancelInvoices(Order order, Collection<Refund> refunds, List<Invoice> invoices, 
+	public static void cancelInvoices(Order order, List<Refund> refunds, List<Invoice> invoices, List<Shipping> shippings,
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
@@ -449,16 +486,7 @@ public class InvoiceRegistryUtil {
 
 		entityAccess.flush();
 			
-		List<Invoice> actualInvoices;
-		
-		try {
-			actualInvoices = entityAccess.findByOrder(actualOrder.getId());
-		}
-		catch(Throwable ex) {
-			throw new PersistenceInvoiceRegistryException(ex);
-		}
-		
-		InvoiceRegistryUtil.markAsComplete(actualOrder, refunds, actualInvoices, orderRegistry);
+		updateStatus(null, actualOrder, refunds, shippings, invoices, orderRegistry);
 		
 	}
 

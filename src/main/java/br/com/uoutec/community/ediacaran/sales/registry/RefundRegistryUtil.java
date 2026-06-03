@@ -17,7 +17,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
@@ -29,7 +28,6 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.RefundRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundIndexEntityAccess;
-import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -560,6 +558,38 @@ public class RefundRegistryUtil {
 		entity.setRefundType(order.getPaymentType());
 	}
 
+	public void updateStatus(Refund entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice) throws OrderRegistryException {
+		
+		OrderStatus nextStatus = OrderStatus.getNextStatus(order.getStatus(), (name)->{
+			switch (name) {
+			case OrderStatus.PAYMENT:
+				return order.getPayment();
+			case OrderStatus.INVOICES:
+				return actualInvoice;
+			case OrderStatus.SHIPPINGS:
+				return actualShiping;
+			case OrderStatus.REFUNDS:
+				int indexOf = actualRefunds.indexOf(entity);
+				if(indexOf < 0 ) {
+					actualRefunds.add(entity);
+				}
+				else {
+					actualRefunds.set(indexOf, entity);
+				}
+				return actualRefunds;
+			case OrderStatus.ORDER:
+				return order;
+			}
+			return null;
+		});
+		
+		if(nextStatus != null) {
+			updateOrderStatus(order, nextStatus);
+		}
+		
+	}
+	
+	/*
 	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		List<Refund> allRefund = new ArrayList<>(refundList);
@@ -573,7 +603,9 @@ public class RefundRegistryUtil {
 		
 		markAsComplete(order, allRefund, orderRegistry); 
 	}
-
+    */
+	
+	/*
 	public void markAsComplete(Order order, Collection<Refund> refunds, 
 			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
@@ -583,7 +615,8 @@ public class RefundRegistryUtil {
 		}
 		
 	}
-
+    */
+	
 	public void registerEvent(String message, Order order) throws OrderRegistryException {
 		orderRegistry.registryLog(order, message);
 	}
@@ -617,7 +650,7 @@ public class RefundRegistryUtil {
 		
 	}
 
-	public void updateOrderStatus(Order actualOrder, OrderStatus nextStatus) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
+	public void updateOrderStatus(Order actualOrder, OrderStatus nextStatus) throws OrderRegistryException {
 		orderRegistry.updateStatus(actualOrder, nextStatus);
 	}
 	
