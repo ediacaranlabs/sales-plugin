@@ -198,32 +198,44 @@ public class ShippingRegistryUtil {
 		return actuaClient;
 	}
 
-	public static void markAsComplete(Shipping shipping, Order order, Collection<Refund> refunds, List<Shipping> shippings, 
-			OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
+	
+	public static void updateStatus(Shipping entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice, List<OrderReport> reports, OrderRegistry orderRegistry) throws OrderRegistryException {
 		
-		List<Shipping> allShippings = new ArrayList<>(shippings);
+		OrderStatus nextStatus = OrderStatus.getNextStatus(order.getStatus(), (name)->{
+			switch (name) {
+			case OrderStatus.PAYMENT:
+				return order.getPayment();
+			case OrderStatus.INVOICES:
+				return actualInvoice;
+			case OrderStatus.SHIPPINGS:
+				if(entity != null) {
+					int indexOf = actualShiping.indexOf(entity);
+					if(indexOf < 0 ) {
+						actualShiping.add(entity);
+					}
+					else {
+						actualShiping.set(indexOf, entity);
+					}
+				}
+				return actualShiping;
+			case OrderStatus.REFUNDS:
+				return actualRefunds;
+			case OrderStatus.REPORT:
+				return reports;
+			case OrderStatus.ORDER:
+				return order;
+			}
+			return null;
+		});
 		
-		int indexOf = allShippings.indexOf(shipping);
-		if(indexOf == -1) {
-			allShippings.add(shipping);
+		if(nextStatus != null) {
+			updateOrderStatus(order, nextStatus, orderRegistry);
 		}
-		else {
-			allShippings.set(indexOf, shipping);
-		}
 		
-		markAsComplete(order, refunds, allShippings, orderRegistry); 
 	}
-
-	public static void markAsComplete(Order order, Collection<Refund> refunds, List<Shipping> shippings, 
-			OrderRegistry orderRegistry) throws ShippingRegistryException, ProductTypeRegistryException, OrderRegistryException{
-		
-		if(isCompletedShipping(order, refunds, shippings)) {
-			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_SHIPPED, orderRegistry);
-		}
-		else {
-			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
-		}
-		
+	
+	public static void updateOrderStatus(Order actualOrder, OrderStatus nextStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
+		orderRegistry.updateStatus(actualOrder, nextStatus);
 	}
 	
 	public static void saveOrUpdateIndex(Shipping e, ShippingIndexEntityAccess indexEntityAccess) throws ShippingRegistryException {
@@ -327,7 +339,7 @@ public class ShippingRegistryUtil {
 		return map;
 	}
 
-	public static void cancelShippings(Collection<Refund> refunds, List<Shipping> shippings, Order order, 
+	public static void cancelShippings(Order order, List<Refund> refunds, List<Invoice> invoices, List<Shipping> shippings, List<OrderReport> reports, 
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, ShippingIndexEntityAccess indexEntityAccess) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 
@@ -348,7 +360,8 @@ public class ShippingRegistryUtil {
 		entityAccess.flush();
 			
 		List<Shipping> actualShippings = getActualShippings(actualOrder, entityAccess);
-		markAsComplete(actualOrder, refunds, actualShippings, orderRegistry);
+		
+		updateStatus(null, actualOrder, refunds, actualShippings, invoices, reports, orderRegistry);
 		
 	}	
 	

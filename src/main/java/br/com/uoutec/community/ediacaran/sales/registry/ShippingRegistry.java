@@ -28,9 +28,9 @@ public interface ShippingRegistry extends PublicBean{
 			Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException;
 
 	void cancelShipping(Shipping shipping, String justification
-			) throws ShippingRegistryException, CompletedInvoiceRegistryException, OrderRegistryException, ProductTypeRegistryException, RefundRegistryException;
+			) throws ShippingRegistryException, OrderRegistryException, ProductTypeRegistryException, RefundRegistryException, OrderReportRegistryException, InvoiceRegistryException;
 
-	void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException, RefundRegistryException, OrderReportRegistryException;
+	void confirmShipping(Shipping shipping) throws ShippingRegistryException, OrderRegistryException, RefundRegistryException, OrderReportRegistryException, InvoiceRegistryException;
 	
 	List<Shipping> findByOrder(String id) throws ShippingRegistryException;
 	
