@@ -310,7 +310,7 @@ public class RefundRegistryUtil {
 		
 	}
 
-	public void refoundProducts(Order order, Refund refund, boolean partialRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
+	public void refundProducts(Order order, Refund refund, boolean partialRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
 		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, itens));
 	}
 	

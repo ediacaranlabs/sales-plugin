@@ -70,7 +70,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
 		
 		PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
-		refundRegistryUtil.refoundProducts(actualOrder, entity, partialRefund, entity.getProducts(), paymentGateway);
+		refundRegistryUtil.refundProducts(actualOrder, entity, partialRefund, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
@@ -136,19 +136,19 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
-		//List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
-		//List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
+		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
+		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
 		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
-		refundRegistryUtil.refoundProducts(actualOrder, actualRefund, partialRefund, actualRefund.getProducts(), paymentGateway);
+		refundRegistryUtil.refundProducts(actualOrder, actualRefund, partialRefund, actualRefund.getProducts(), paymentGateway);
 		
 		if(actualRefund != null && actualRefund.getRefundDate() != null) {
 			refundRegistryUtil.confirmRefund(actualRefund);
 			refundRegistryUtil.update(actualRefund, actualOrder);
 		}
 		
-		//refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
+		refundRegistryUtil.updateStatus(actualRefund, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		
 	}
 	

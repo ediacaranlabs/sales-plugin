@@ -1,9 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -122,17 +124,8 @@ public enum OrderStatusValue implements OrderStatus {
 			
 			Collection<Invoice> invoices   = (Collection<Invoice>)request.getValue(OrderStatus.INVOICES);
 			Collection<Refund> refunds     = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
-			Collection<Shipping> shippings = (Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS);
+			List<Invoice> activeInvoices   = new ArrayList<>();
 			Order order                    = (Order)request.getValue(OrderStatus.ORDER);
-			
-			
-			if(shippings != null) {
-				for(Shipping i: shippings) {
-					if(!i.isCanceled()) {
-						return false;
-					}
-				}
-			}
 			
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 			
@@ -141,19 +134,14 @@ public enum OrderStatusValue implements OrderStatus {
 			
 			invoices.stream()
 				.filter((e)->e.getCancelDate() == null)
-				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
+				.forEach((e)->{
+					activeInvoices.add(e);
+					ProductRequestUtil.subUnits(map, e.getItens());
+				});
 			
-			for(ProductRequest pr: order.getItens()) {
-				
-				ProductRequest tpr = map.get(pr.getSerial());
-
-				if(tpr.getUnits() < 0 || tpr.getUnits() > 0) {
-					return false;
-				}
-				
-			}
+			ProductRequestUtil.removeEmptyUnits(map);
 			
-			return true;
+			return map.isEmpty() && !activeInvoices.isEmpty();
 		}
 		
 		public boolean isAllowedCreateShipping() {
@@ -197,6 +185,7 @@ public enum OrderStatusValue implements OrderStatus {
 			
 			Collection<Shipping> shippings  = (Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS);
 			Collection<Refund> refunds      = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
+			List<Shipping> activeShippings  = new ArrayList<>();
 			Order order                     = (Order)request.getValue(OrderStatus.ORDER);
 			
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
@@ -206,19 +195,14 @@ public enum OrderStatusValue implements OrderStatus {
 			
 			shippings.stream()
 				.filter((e)->e.isCompleted())
-				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+				.forEach((e)->{
+					activeShippings.add(e);
+					ProductRequestUtil.subUnits(map, e.getProducts());
+				});
 			
-			for(ProductRequest pr: order.getItens()) {
-				
-				ProductRequest tpr = map.get(pr.getSerial());
-
-				if(tpr.getUnits() < 0 || tpr.getUnits() > 0) {
-					return false;
-				}
-				
-			}
+			ProductRequestUtil.removeEmptyUnits(map);
 			
-			return true;
+			return map.isEmpty() && !activeShippings.isEmpty();
 		}
 		
 		public boolean isAllowedCreateOrderReport() {
@@ -259,23 +243,20 @@ public enum OrderStatusValue implements OrderStatus {
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 			
 			refunds.stream()
-				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+				.filter((e)->e.isCompleted())
+				.forEach((e)->{
+					ProductRequestUtil.subUnits(map, e.getProducts());
+				});
 			
 			shippings.stream()
 				.filter((e)->e.isCompleted())
-				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+				.forEach((e)->{
+					ProductRequestUtil.subUnits(map, e.getProducts());
+				});
 			
-			for(ProductRequest pr: order.getItens()) {
-				
-				ProductRequest tpr = map.get(pr.getSerial());
-
-				if(tpr.getUnits() < 0 || tpr.getUnits() > 0) {
-					return false;
-				}
-				
-			}
+			ProductRequestUtil.removeEmptyUnits(map);
 			
-			return true;
+			return map.isEmpty();
 		}
 		
 	},
@@ -307,23 +288,20 @@ public enum OrderStatusValue implements OrderStatus {
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
 			Collection<Refund> refunds      = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
+			List<Refund> activeRefunds      = new ArrayList<>();
 			Order order                     = (Order)request.getValue(OrderStatus.ORDER);
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 			
 			refunds.stream()
-				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+				.filter((e)->e.isCompleted())
+				.forEach((e)->{
+					activeRefunds.add(e);
+					ProductRequestUtil.subUnits(map, e.getProducts());
+				});
 			
-			for(ProductRequest pr: order.getItens()) {
-				
-				ProductRequest tpr = map.get(pr.getSerial());
-
-				if(tpr.getUnits() < 0 || tpr.getUnits() > 0) {
-					return false;
-				}
-				
-			}
+			ProductRequestUtil.removeEmptyUnits(map);
 			
-			return true;
+			return map.isEmpty() && !activeRefunds.isEmpty();
 		}
 		
 	};
