@@ -136,8 +136,8 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
-		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
-		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
+		//List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
+		//List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
 		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
@@ -148,7 +148,7 @@ public class RefundRegistryImp implements RefundRegistry {
 			refundRegistryUtil.update(actualRefund, actualOrder);
 		}
 		
-		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
+		//refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		
 	}
 	

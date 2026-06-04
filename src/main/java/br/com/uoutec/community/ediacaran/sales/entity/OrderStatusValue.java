@@ -68,8 +68,19 @@ public enum OrderStatusValue implements OrderStatus {
 	PAYMENT_RECEIVED(){
 
 		@Override
+		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
 			try {
+				Collection<Invoice> invoices = (Collection<Invoice>)request.getValue(OrderStatus.INVOICES);
+				
+				if(invoices != null) {
+					for(Invoice i: invoices) {
+						if(i.getCancelDate() == null) {
+							return false;
+						}
+					}
+				}
+				
 				Payment payment = (Payment)request.getValue(OrderStatus.PAYMENT);
 				return payment != null && OrderRegistryUtil.toOrderStatus(payment.getStatus()) == OrderStatus.PAYMENT_RECEIVED;
 			}
@@ -109,9 +120,19 @@ public enum OrderStatusValue implements OrderStatus {
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
 			
-			Collection<Invoice> invoices    = (Collection<Invoice>)request.getValue(OrderStatus.INVOICES);
-			Collection<Refund> refunds      = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
-			Order order                     = (Order)request.getValue(OrderStatus.ORDER);
+			Collection<Invoice> invoices   = (Collection<Invoice>)request.getValue(OrderStatus.INVOICES);
+			Collection<Refund> refunds     = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
+			Collection<Shipping> shippings = (Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS);
+			Order order                    = (Order)request.getValue(OrderStatus.ORDER);
+			
+			
+			if(shippings != null) {
+				for(Shipping i: shippings) {
+					if(!i.isCanceled()) {
+						return false;
+					}
+				}
+			}
 			
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 			
@@ -184,7 +205,7 @@ public enum OrderStatusValue implements OrderStatus {
 				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 			
 			shippings.stream()
-				.filter((e)->!e.isCanceled())
+				.filter((e)->e.isCompleted())
 				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 			
 			for(ProductRequest pr: order.getItens()) {
@@ -273,7 +294,10 @@ public enum OrderStatusValue implements OrderStatus {
 	
 	CANCELED(){
 		public boolean isValidStatus(OrderStatusRequest request) {
-			return true;
+			Order order = (Order)request.getValue(OrderStatus.ORDER);
+			Payment payment = order.getPayment();
+			return (payment.getStatus() == PaymentStatus.NEW || payment.getStatus() == PaymentStatus.ON_HOLD || payment.getStatus() == PaymentStatus.REFOUND) &&
+					order.getDaysAfterCreated() > 5;
 		}
 	},
 
