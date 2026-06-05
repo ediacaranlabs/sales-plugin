@@ -66,10 +66,16 @@ public interface OrderStatus {
 	Set<OrderStatus> getNexStatus();
 	
 	boolean isValidStatus(OrderStatusRequest request);
+
+	OrderStatus getNextStatus(OrderStatusRequest request);
 	
 	public static OrderStatus getNextStatus(OrderStatus actualStatus, OrderStatusRequest request) {
 		
 		Set<OrderStatus> set = actualStatus.getNexStatus();
+		
+		if(set == null) {
+			return null;
+		}
 		
 		for(OrderStatus status: set) {
 			if(status.isValidStatus(request)) {

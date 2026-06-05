@@ -14,6 +14,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
@@ -238,7 +239,7 @@ public class InvoiceRegistryUtil {
 
 	public static void updateStatus(Invoice entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice, OrderRegistry orderRegistry) throws OrderRegistryException {
 		
-		OrderStatus nextStatus = OrderStatus.getNextStatus(order.getStatus(), (name)->{
+		OrderStatusRequest osr = (name)->{
 			switch (name) {
 			case OrderStatus.PAYMENT:
 				return order.getPayment();
@@ -261,7 +262,9 @@ public class InvoiceRegistryUtil {
 				return order;
 			}
 			return null;
-		});
+		};
+		
+		OrderStatus nextStatus = order.getStatus().getNextStatus(osr);
 		
 		if(nextStatus != null) {
 			updateOrderStatus(order, nextStatus, orderRegistry);

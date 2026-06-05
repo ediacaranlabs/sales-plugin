@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRequestUtil;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
@@ -70,11 +69,6 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		public boolean isValidStatus(OrderStatusRequest request) {
 			try {
-				
-				if(ORDER_INVOICED.isValidStatus(request)) {
-					return false;
-				}
-				
 				return OrderStatusUtil.isPaymentReceivedOrder((Order)request.getValue(OrderStatus.ORDER), (Payment)request.getValue(OrderStatus.PAYMENT));
 			}
 			catch(Throwable ex) {
@@ -113,10 +107,6 @@ public enum OrderStatusValue implements OrderStatus {
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
 			try {
-				if(ORDER_SHIPPED.isValidStatus(request)) {
-					return false;
-				}
-				
 				return OrderStatusUtil.isInvoicedOrder(
 						(Order)request.getValue(OrderStatus.ORDER), 
 						(Collection<Invoice>)request.getValue(OrderStatus.INVOICES), 
@@ -168,10 +158,6 @@ public enum OrderStatusValue implements OrderStatus {
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
 			try {
-				if(COMPLETE.isValidStatus(request)) {
-					return false;
-				}
-				
 				return OrderStatusUtil.isShippedOrder(
 						(Order)request.getValue(OrderStatus.ORDER), 
 						(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
@@ -203,54 +189,32 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
-			
-			Collection<Shipping> shippings  = (Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS);
-			Collection<Refund> refunds      = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
-			Collection<OrderReport> reports = (Collection<OrderReport>)request.getValue(OrderStatus.REPORT);
-			Order order                     = (Order)request.getValue(OrderStatus.ORDER);
-			
-			if(reports == null) {
+			try {
+				return OrderStatusUtil.isCompletedOrder(
+						(Order)request.getValue(OrderStatus.ORDER), 
+						(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
+						(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS), 
+						(Collection<OrderReport>)request.getValue(OrderStatus.REPORT)
+				);
+			}
+			catch(Throwable ex) {
 				return false;
 			}
-			
-			Collection<OrderReport> openReports = reports.stream()
-				.filter((e)->!e.isClosed())
-				.collect(Collectors.toList());
-			
-			if(!openReports.isEmpty()) {
-				return false;
-			}
-			
-			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
-			
-			refunds.stream()
-				.filter((e)->e.isCompleted())
-				.forEach((e)->{
-					ProductRequestUtil.subUnits(map, e.getProducts());
-				});
-			
-			shippings.stream()
-				.filter((e)->e.isCompleted())
-				.forEach((e)->{
-					ProductRequestUtil.subUnits(map, e.getProducts());
-				});
-			
-			ProductRequestUtil.removeEmptyUnits(map);
-			
-			return map.isEmpty();
 		}
 		
 	},
 	
 	CLOSED(){
 		public boolean isValidStatus(OrderStatusRequest request) {
-			return true;
+			Order order = (Order)request.getValue(OrderStatus.ORDER);
+			return order.getDaysAfterCreated() > 30;
 		}
 	},
 	
 	ARCHIVED(){
 		public boolean isValidStatus(OrderStatusRequest request) {
-			return true;
+			Order order = (Order)request.getValue(OrderStatus.ORDER);
+			return order.getDaysAfterCreated() > 120;
 		}
 	},
 	
@@ -258,7 +222,7 @@ public enum OrderStatusValue implements OrderStatus {
 		public boolean isValidStatus(OrderStatusRequest request) {
 			Order order = (Order)request.getValue(OrderStatus.ORDER);
 			Payment payment = order.getPayment();
-			return (payment.getStatus() == PaymentStatus.NEW || payment.getStatus() == PaymentStatus.ON_HOLD || payment.getStatus() == PaymentStatus.REFOUND) &&
+			return (payment.getStatus() == PaymentStatus.NEW || payment.getStatus() == PaymentStatus.ON_HOLD) &&
 					order.getDaysAfterCreated() > 5;
 		}
 	},
@@ -319,8 +283,10 @@ public enum OrderStatusValue implements OrderStatus {
 				);
 			
 			nextState.put(OrderStatusValue.ON_HOLD, 
-				new HashSet<OrderStatusValue>(Arrays.asList(OrderStatusValue.values()))
-			);
+					new HashSet<OrderStatusValue>(Arrays.asList(
+							OrderStatusValue.PENDING_PAYMENT,
+							OrderStatusValue.PAYMENT_RECEIVED))
+				);
 			
 			nextState.put(OrderStatusValue.PENDING_PAYMENT, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
@@ -336,14 +302,14 @@ public enum OrderStatusValue implements OrderStatus {
 
 			nextState.put(OrderStatusValue.ORDER_INVOICED, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
-							OrderStatusValue.PAYMENT_RECEIVED,
+							//OrderStatusValue.PAYMENT_RECEIVED,
 							OrderStatusValue.ORDER_SHIPPED,
 							OrderStatusValue.COMPLETE))
 				);
 
 			nextState.put(OrderStatusValue.ORDER_SHIPPED, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
-							OrderStatusValue.ORDER_INVOICED,
+							//OrderStatusValue.ORDER_INVOICED,
 							OrderStatusValue.COMPLETE))
 				);
 
@@ -434,12 +400,27 @@ public enum OrderStatusValue implements OrderStatus {
 	@Override
 	public Set<OrderStatus> getNexStatus() {
 		Set<OrderStatusValue> set = StatusCheck.getNexStatus(this);
-		return new HashSet<>(set);
+		return set == null? null : new HashSet<>(set);
 	}
 
 	@Override
 	public boolean isValidStatus(OrderStatusRequest request) {
 		return false;
+	}
+
+	@Override
+	public OrderStatus getNextStatus(OrderStatusRequest request) {
+		
+		OrderStatus status = null;
+		OrderStatus current = NEW;
+		
+		while(current != null) {
+			status = current;
+			current = OrderStatus.getNextStatus(current, request);
+		}
+		
+		return status;
+		//return OrderStatus.getNextStatus(this, request);
 	}
 	
 }

@@ -17,7 +17,6 @@ import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryExc
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -126,7 +125,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		order.setId(shipping.getOrder());
 		
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
-		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		//OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		
@@ -134,7 +133,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, entityAccess);
 		List<Invoice> actualInvoices     = ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
 		List<Refund> refunds             = ShippingRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
-		List<OrderReport> actualReports  = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
+		//List<OrderReport> actualReports  = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
 		
@@ -144,7 +143,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		}
 		
-		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, actualReports, orderRegistry);
+		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, null, orderRegistry);
 	}
 	
 	@Override
@@ -327,7 +326,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		ShippingRegistry shippingRegistry       = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
-		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		//OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		
 		for(Entry<String,List<Shipping>> entry: map.entrySet()) {
 			
@@ -335,10 +334,10 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			order.setId(entry.getKey());
 			
 			List<Refund> refunds = ShippingRegistryUtil.getActualRefunds(order, refundRegistry);
-			List<OrderReport> reports = ShippingRegistryUtil.getActualReports(order, orderReportRegistry);
+			//List<OrderReport> reports = ShippingRegistryUtil.getActualReports(order, orderReportRegistry);
 			List<Invoice> invoices = ShippingRegistryUtil.getActualInvoices(order, invoiceRegistry);
 			
-			ShippingRegistryUtil.cancelShippings(order, refunds, invoices, shippings, reports, 
+			ShippingRegistryUtil.cancelShippings(order, refunds, invoices, shippings, null, 
 					justification, cancelDate, orderRegistry, shippingRegistry, entityAccess, indexEntityAccess);
 			
 		}
@@ -352,14 +351,14 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		//OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder				= ShippingRegistryUtil.getActualOrder(order, orderRegistry);
 		List<Shipping> actualShippings	= ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
 		List<Invoice> actualInvoices	= ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
 		List<Refund> refunds            = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
-		List<OrderReport> actualReports = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
+		//List<OrderReport> actualReports = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
 		
 		//ShippingRegistryUtil.checkAllowedCreateShipping(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_SHIPPED);
@@ -368,11 +367,11 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		ShippingRegistryUtil.checkUnits(shipping, order, actualInvoices, actualShippings);
 		ShippingRegistryUtil.preventChangeShippingSaveSensitiveData(shipping);
 		ShippingRegistryUtil.save(shipping, actualOrder, entityAccess);
-		ShippingRegistryUtil.updateStatus(shipping, actualOrder, refunds, actualShippings, actualInvoices, actualReports, orderRegistry);
+		ShippingRegistryUtil.updateStatus(shipping, actualOrder, refunds, actualShippings, actualInvoices, null, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
 		OrderRegistryUtil.registerEvent("Criada envio #" + shipping.getId(), actualOrder, orderRegistry);
 		ShippingRegistryUtil.registerNewShippingEvent(actionRegistry, shipping);
-		ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
+		//ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 		
 	}
 
@@ -383,14 +382,14 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		//OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                = ShippingRegistryUtil.getActualOrder(order, orderRegistry);
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(order, entityAccess);
 		List<Invoice> actualInvoices     = ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
 		List<Refund> refunds             = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
-		List<OrderReport> actualReports  = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
+		//List<OrderReport> actualReports  = ShippingRegistryUtil.getActualReports(actualOrder, orderReportRegistry);
 		Shipping actualShipping          = ShippingRegistryUtil.getActualShipping(shipping.getId(), entityAccess);
 		
 		//ShippingRegistryUtil.checkAllowedUpdateShipping(actualOrder);
@@ -401,9 +400,9 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		
 		ShippingRegistryUtil.preventChangeShippingSensitiveData(shipping, actualShipping);
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
-		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, actualReports, orderRegistry);
+		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, null, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-		ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
+		//ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 		
 	}
 	

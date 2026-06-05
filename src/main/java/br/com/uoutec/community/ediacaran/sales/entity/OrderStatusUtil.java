@@ -23,7 +23,8 @@ public class OrderStatusUtil {
 	}
 
 	public static boolean isPaymentReceivedOrder(Order order, Payment payment) throws OrderRegistryException {
-		return payment != null && OrderRegistryUtil.toOrderStatus(payment.getStatus()) == OrderStatus.PAYMENT_RECEIVED;
+		OrderStatus paymentStatus = OrderRegistryUtil.toOrderStatus(payment.getStatus());
+		return payment != null && (paymentStatus == OrderStatus.PAYMENT_RECEIVED || paymentStatus == OrderStatus.REFUND);
 	}
 	
 	public static boolean isInvoicedOrder(Order order, Collection<Invoice> invoices, 
@@ -33,6 +34,10 @@ public class OrderStatusUtil {
 
 	public static boolean isShippedOrder(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws OrderRegistryException {
 		return ShippingRegistryUtil.isCompletedShipping(order, refunds, shippings);
+	}
+
+	public static boolean isCompletedOrder(Order order, Collection<Refund> refunds, Collection<Shipping> shippings, Collection<OrderReport> reports) throws OrderRegistryException {
+		return OrderRegistryUtil.isCompletedOrder(order, shippings, refunds, reports);
 	}
 	
 }

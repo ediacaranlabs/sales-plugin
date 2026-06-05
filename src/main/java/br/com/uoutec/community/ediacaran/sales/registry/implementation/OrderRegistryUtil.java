@@ -2,7 +2,10 @@ package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.ActionsPluginInstaller;
@@ -41,6 +44,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRequestUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
@@ -617,6 +621,39 @@ public class OrderRegistryUtil {
 		if(order.getPayment().getReceivedFrom() == null) {
 			throw new InvoiceRegistryException("payment has not yet been made");
 		}
+	}
+	
+	public static boolean isCompletedOrder(Order order, Collection<Shipping> shippings, Collection<Refund> refunds, Collection<OrderReport> reports) {
+		
+		if(reports == null) {
+			return false;
+		}
+		
+		Collection<OrderReport> openReports = reports.stream()
+			.filter((e)->!e.isClosed())
+			.collect(Collectors.toList());
+		
+		if(!openReports.isEmpty()) {
+			return false;
+		}
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		refunds.stream()
+			.filter((e)->e.isCompleted())
+			.forEach((e)->{
+				ProductRequestUtil.subUnits(map, e.getProducts());
+			});
+		
+		shippings.stream()
+			.filter((e)->e.isCompleted())
+			.forEach((e)->{
+				ProductRequestUtil.subUnits(map, e.getProducts());
+			});
+		
+		ProductRequestUtil.removeEmptyUnits(map);
+		
+		return map.isEmpty();
 	}
 	
 	public static void markAsCompleteOrder(Order order, List<Refund> refunds, List<Shipping> shipping, List<OrderReport> reportList, 
