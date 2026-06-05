@@ -231,8 +231,11 @@ public enum OrderStatusValue implements OrderStatus {
 			Collection<OrderReport> reports = (Collection<OrderReport>)request.getValue(OrderStatus.REPORT);
 			Order order                     = (Order)request.getValue(OrderStatus.ORDER);
 			
+			if(reports == null) {
+				return false;
+			}
 			
-			Collection<OrderReport>  openReports = reports.stream()
+			Collection<OrderReport> openReports = reports.stream()
 				.filter((e)->!e.isClosed())
 				.collect(Collectors.toList());
 			
