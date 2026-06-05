@@ -43,30 +43,22 @@ public class ShippingRegistryUtil {
 	
 	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
 		
+		List<Shipping> activeShippings  = new ArrayList<>();
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		shippings.stream()
-			.filter((e)->!e.isCanceled())
-			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+			.filter((e)->e.isCompleted())
+			.forEach((e)->{
+				activeShippings.add(e);
+				ProductRequestUtil.subUnits(map, e.getProducts());
+			});
 		
-		for(ProductRequest pr: order.getItens()) {
-			
-			ProductRequest tpr = map.get(pr.getSerial());
-
-			if(tpr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException("negative unit: " + tpr.getSerial());
-			}
-			
-			if(tpr.getUnits() > 0) {
-				return false;
-			}
-			
-		}
+		ProductRequestUtil.removeEmptyUnits(map);
 		
-		return true;
+		return map.isEmpty() && !activeShippings.isEmpty();
 	}
 
 	public static boolean isCompletedShippingAndReceived(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {

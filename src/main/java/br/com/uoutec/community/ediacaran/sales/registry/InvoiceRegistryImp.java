@@ -302,13 +302,13 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		ClientRegistry clientRegistry           = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
-		ShippingRegistry shippingRegistry       = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		//ShippingRegistry shippingRegistry       = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualClient, entityAccess);
 		List<Refund> refunds               = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
-		List<Shipping> shippings           = InvoiceRegistryUtil.getActualShippings(actualOrder, shippingRegistry);
+		//List<Shipping> shippings           = InvoiceRegistryUtil.getActualShippings(actualOrder, shippingRegistry);
 		
 		//InvoiceRegistryUtil.checkAllowedCreateInvoice(actualOrder);
 		//OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
@@ -320,7 +320,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.save(entity, entityAccess);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
-		InvoiceRegistryUtil.updateStatus(entity, actualOrder, refunds, shippings, actualInvoices, orderRegistry);
+		InvoiceRegistryUtil.updateStatus(entity, actualOrder, refunds, null, actualInvoices, orderRegistry);
 		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
 		InvoiceRegistryUtil.registerNewInvoiceEvent(actionRegistry, entity);
 		

@@ -47,6 +47,7 @@ public class InvoiceRegistryUtil {
 	public static boolean isCompletedInvoice(Order order, Collection<Refund> refunds, Collection<Invoice> invoices
 			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
 		
+		List<Invoice> activeInvoices    = new ArrayList<>();
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
@@ -54,23 +55,14 @@ public class InvoiceRegistryUtil {
 		
 		invoices.stream()
 			.filter((e)->e.getCancelDate() == null)
-			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
+			.forEach((e)->{
+				activeInvoices.add(e);
+				ProductRequestUtil.subUnits(map, e.getItens());
+			});
 		
-		for(ProductRequest pr: order.getItens()) {
-			
-			ProductRequest tpr = map.get(pr.getSerial());
-
-			if(tpr.getUnits() < 0) {
-				throw new InvalidUnitsOrderRegistryException("negative unit: " + tpr.getSerial());
-			}
-			
-			if(tpr.getUnits() > 0) {
-				return false;
-			}
-			
-		}
+		ProductRequestUtil.removeEmptyUnits(map);
 		
-		return true;
+		return map.isEmpty() && !activeInvoices.isEmpty();
 	}
 	
 	public static Map<String, ProductRequest> toMap(Collection<ProductRequest> values){
