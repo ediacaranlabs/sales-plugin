@@ -333,8 +333,20 @@ public class OrderRegistryImp
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getRegisterPaymentPermission());
 		
-		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
+		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		ShippingRegistry shippingRegistry         = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		
+		Order order                  = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+		List<Refund> refunds         = OrderRegistryUtil.getActualRefunds(order, refundRegistry);
+		List<Shipping> shipping      = OrderRegistryUtil.getActualShippings(order, shippingRegistry);
+		List<Invoice> invoices       = OrderRegistryUtil.getActualInvoices(order, invoiceRegistry);
+		List<OrderReport> reportList = OrderRegistryUtil.getActualReports(order, orderReportRegistry);
+		
+		
 		OrderRegistryUtil.checkNewOrderStatus(order, status);
+		OrderRegistryUtil.checkAcceptNewOrderStatus(order, status, refunds, shipping, invoices, reportList);
 		order.setStatus(status);
 	
 		try {

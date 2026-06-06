@@ -297,7 +297,8 @@ public enum OrderStatusValue implements OrderStatus {
 			nextState.put(OrderStatusValue.PAYMENT_RECEIVED, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
 							OrderStatusValue.REFUND,
-							OrderStatusValue.ORDER_INVOICED))
+							OrderStatusValue.ORDER_INVOICED,
+							OrderStatusValue.ORDER_SHIPPED))
 				);
 
 			nextState.put(OrderStatusValue.ORDER_INVOICED, 

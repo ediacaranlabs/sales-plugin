@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ItensCollection;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -41,6 +42,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException
 import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
@@ -48,7 +50,9 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductRequestUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeHandlerException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductException;
@@ -576,6 +580,35 @@ public class OrderRegistryUtil {
 		}
 	}
 	
+	public static void checkAcceptNewOrderStatus(Order order, OrderStatus newStatus, List<Refund> actualRefunds, List<Shipping> actualShiping, 
+			List<Invoice> actualInvoice, List<OrderReport> reports) throws OrderRegistryException {
+		
+		OrderStatusRequest osr = (name)->{
+			switch (name) {
+			case OrderStatus.PAYMENT:
+				return order.getPayment();
+			case OrderStatus.INVOICES:
+				return actualInvoice;
+			case OrderStatus.SHIPPINGS:
+				return actualShiping;
+			case OrderStatus.REFUNDS:
+				return actualRefunds;
+			case OrderStatus.REPORT:
+				return reports;
+			case OrderStatus.ORDER:
+				return order;
+			}
+			return null;
+		};
+		
+		if(!newStatus.isValidStatus(osr)) {
+			throw new OrderStatusNotAllowedRegistryException(
+					"invalid status #" + order.getId() + ": " + 
+					order.getStatus() + " -> " + newStatus);
+		}
+		
+	}
+	
 	public static void checkPayment(Payment payment, Order order) throws OrderRegistryException {
 		if(!order.getCurrency().equals(payment.getCurrency())) {
 			throw new OrderRegistryException(order.getCurrency() + " <> " + payment.getCurrency());
@@ -596,6 +629,42 @@ public class OrderRegistryUtil {
 		}
 	}
 
+	public static List<Shipping> getActualShippings(Order order, ShippingRegistry registry) throws OrderNotFoundRegistryException {
+		try {
+			return registry.findByOrder(order.getId());
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(order.getId(), e);
+		}
+	}
+
+	public static List<Invoice> getActualInvoices(Order order, InvoiceRegistry invoiceRegistry) throws OrderNotFoundRegistryException {
+		try {
+			return invoiceRegistry.findByOrder(order.getId());
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(order.getId(), e);
+		}
+	}
+
+	public static List<OrderReport> getActualReports(Order order, OrderReportRegistry orderReportRegistry) throws OrderNotFoundRegistryException {
+		try {
+			return orderReportRegistry.findByOrder(order);
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(order.getId(), e);
+		}
+	}
+	
+	public static List<Refund> getActualRefunds(Order order, RefundRegistry refundRegistry) throws OrderNotFoundRegistryException {
+		try {
+			return refundRegistry.findRefundByOrder(order.getId());
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(order.getId(), e);
+		}
+	}
+	
 	public static Payment getActualPayment(Payment payment, Order order) throws OrderRegistryException {
 		
 		if(payment.getId() != order.getPayment().getId()) {
