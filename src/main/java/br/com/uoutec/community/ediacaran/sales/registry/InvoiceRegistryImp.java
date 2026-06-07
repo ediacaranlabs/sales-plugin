@@ -186,8 +186,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
-		
-		
 		try {
 			Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
 			Invoice Invoice = InvoiceRegistryUtil.toInvoice(order, itens);
