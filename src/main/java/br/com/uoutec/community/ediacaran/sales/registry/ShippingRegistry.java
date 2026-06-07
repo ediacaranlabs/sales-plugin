@@ -25,7 +25,8 @@ public interface ShippingRegistry extends PublicBean{
 	ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
 	
 	Shipping createShipping(Order order, String shippingType, Map<String, String> data, 
-			Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException;
+			Map<String, Integer> itens, String message) throws ShippingRegistryException, OrderRegistryException, InvoiceRegistryException, 
+			RefundRegistryException, OrderReportRegistryException, ValidationException;
 
 	void cancelShipping(Shipping shipping, String justification
 			) throws ShippingRegistryException, OrderRegistryException, ProductTypeRegistryException, RefundRegistryException, OrderReportRegistryException, InvoiceRegistryException;

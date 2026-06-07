@@ -386,7 +386,7 @@ public class ShippingRegistryUtil {
 		return i;
 	}
 
-	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, Map<String, Integer> itens) throws CountryRegistryException, ShippingRegistryException, ItemNotFoundOrderRegistryException {
+	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException, ShippingRegistryException, CountryRegistryException {
 		
 		Collection<ProductRequest> list = ProductRequestUtil.createCollectionRequest(order.getItens(), itens);
 		
@@ -485,7 +485,7 @@ public class ShippingRegistryUtil {
 		}
 	}
 
-	public static Shipping createNewInstance(String shippingType, Map<String,String> data) throws CountryRegistryException, ShippingRegistryException {
+	public static Shipping createNewInstance(String shippingType, Map<String,String> data) throws ShippingRegistryException {
 		Shipping i;
 		
 		if(shippingType == null) {

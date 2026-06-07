@@ -208,7 +208,8 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	
 	@Override
 	@ActivateRequestContext
-	public Shipping createShipping(Order order, String shippingType, Map<String, String> data, Map<String, Integer> itens, String message) throws ShippingRegistryException, ClientRegistryException {
+	public Shipping createShipping(Order order, String shippingType, Map<String, String> data, Map<String, Integer> itens, 
+			String message) throws ShippingRegistryException, OrderRegistryException, InvoiceRegistryException, RefundRegistryException, OrderReportRegistryException, ValidationException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getCreatePermission());
 		
@@ -218,11 +219,26 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			registryNewShipping(shipping, actualOrder);
 			return shipping;
 		}
-		catch(ShippingRegistryException e){
-			throw e;
+		catch(ShippingRegistryException ex) {
+			throw ex;
 		}
-		catch(Throwable e){
-			throw new ShippingRegistryException(e);
+		catch(OrderRegistryException ex) {
+			throw ex;
+		}
+		catch(InvoiceRegistryException ex) {
+			throw ex;
+		}
+		catch(RefundRegistryException ex) {
+			throw ex;
+		}
+		catch(OrderReportRegistryException ex) {
+			throw ex;
+		}
+		catch(ValidationException ex) {
+			throw ex;
+		}
+		catch(Throwable ex) {
+			throw new ShippingRegistryException(ex);
 		}
 		
 	}
