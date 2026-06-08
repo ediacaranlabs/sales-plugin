@@ -51,7 +51,7 @@ public class ShippingRegistryUtil {
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		shippings.stream()
-			.filter((e)->e.isCompleted())
+			.filter((e)->!e.isCanceled())
 			.forEach((e)->{
 				activeShippings.add(e);
 				ProductRequestUtil.subUnits(map, e.getProducts());
@@ -379,7 +379,7 @@ public class ShippingRegistryUtil {
 				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		}
 		
-		ProductRequestUtil.removeEmptyUnits(map);
+		//ProductRequestUtil.removeEmptyUnits(map);
 		
 		Shipping i = createNewInstance(shippingType, data);
 		

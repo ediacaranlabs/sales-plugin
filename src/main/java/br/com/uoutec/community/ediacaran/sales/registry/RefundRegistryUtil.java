@@ -686,6 +686,31 @@ public class RefundRegistryUtil {
 		refund.setRefundDate(LocalDateTime.now());
 	}
 
+	public Refund toRefund(Order order, List<Invoice> invoices, List<Refund> refunds) throws ItemNotFoundOrderRegistryException {
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		refunds.stream()
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
+		
+		Refund i = new Refund();
+		
+		i.setRefundDate(null);
+		i.setAddData(new HashMap<>());
+		i.setDate(LocalDateTime.now());
+		i.setClient(order.getClient());
+		i.setProducts(new ArrayList<ProductRequest>(map.values()));
+		i.setRefundType(null);
+		i.setOrder(order.getId());
+		i.setRefundType(order.getPaymentType());
+		
+		return i;
+	}
+	
 	public Refund toRefund(Order order, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException {
 		
 		Collection<ProductRequest> list = ProductRequestUtil.createCollectionRequest(order.getItens(), itens);

@@ -100,7 +100,7 @@ public class ProductRequestUtil {
 
 	}
 
-	public static Collection<ProductRequest> createCollectionRequest(Collection<ProductRequest> values, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException{
+	public static Collection<ProductRequest> createCollectionRequest(Collection<ProductRequest> values, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException {
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(values);
 		ProductRequestUtil.resetUnits(map);
 		ProductRequestUtil.setUnits(map, itens);

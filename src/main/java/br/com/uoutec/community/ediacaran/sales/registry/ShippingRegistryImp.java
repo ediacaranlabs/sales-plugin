@@ -246,28 +246,12 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	
 	@Override
 	@ActivateRequestContext
-	public Shipping toShipping(Order order, String shippingType) throws InvalidUnitsOrderRegistryException, CountryRegistryException, OrderNotFoundRegistryException, ProductTypeRegistryException, ShippingRegistryException {
+	public Shipping toShipping(Order order, String shippingType) throws CountryRegistryException, ShippingRegistryException, OrderRegistryException {
 		
-		Order actualOrder;
+		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
 		
-		try {
-			actualOrder = ShippingRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
-		}
-		catch(Throwable e) {
-			throw new OrderNotFoundRegistryException(e);
-		}
-		
-		if(actualOrder == null) {
-			throw new OrderNotFoundRegistryException(order.getId());
-		}
-		
-		List<Shipping> actualShippings;
-		try {
-			actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
-		}
-		catch(Throwable e) {
-			throw new OrderNotFoundRegistryException(e);
-		}
+		Order actualOrder              = ShippingRegistryUtil.getActualOrder(order, orderRegistry);		
+		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
 		
 		return ShippingRegistryUtil.toShipping(actualOrder, shippingType, null, actualShippings);
 	}

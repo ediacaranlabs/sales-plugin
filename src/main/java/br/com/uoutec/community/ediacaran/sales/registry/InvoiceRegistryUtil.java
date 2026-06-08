@@ -416,7 +416,7 @@ public class InvoiceRegistryUtil {
 				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
 		}
 		
-		ProductRequestUtil.removeEmptyUnits(map);
+		//ProductRequestUtil.removeEmptyUnits(map);
 		
 		Invoice i = new Invoice();
 		i.setId(null);
