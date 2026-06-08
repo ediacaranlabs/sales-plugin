@@ -218,13 +218,13 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 
 	@Override
 	@ActivateRequestContext
-	public List<OrderReport> findByOrder(Order order) throws OrderReportRegistryException {
+	public List<OrderReport> findByOrder(String id) throws OrderReportRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getFindPermission());
 		
 		ClientRegistry clientRegistry = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
-		List<OrderReport> list = OrderReportRegistryUtil.findByOrder(order, entityAccess);
+		List<OrderReport> list = OrderReportRegistryUtil.findByOrder(id, entityAccess);
 		List<OrderReport> r = new ArrayList<>();
 		
 		for(OrderReport e: list) {

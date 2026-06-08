@@ -27,7 +27,7 @@ public interface OrderReportRegistry extends PublicBean {
 	
 	OrderReport toOrderReport(Order order) throws OrderReportRegistryException;
 	
-	List<OrderReport> findByOrder(Order order) throws OrderReportRegistryException;
+	List<OrderReport> findByOrder(String id) throws OrderReportRegistryException;
 	
 	OrderReportResultSearch searchOrderReport(OrderReportSearch value) throws OrderReportRegistryException;
 	

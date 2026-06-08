@@ -167,7 +167,7 @@ public class OrderPanelPubResource {
 			//client = clientRegistry.findClientById(order.getClient().getId());
 			invoices = invoiceRegistry.findByOrder(order.getId());
 			shippings = shippingRegistry.findByOrder(order.getId());
-			ordersReport = orderReportRegistry.findByOrder(order);
+			ordersReport = orderReportRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

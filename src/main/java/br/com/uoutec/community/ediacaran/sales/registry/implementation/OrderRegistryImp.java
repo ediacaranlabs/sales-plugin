@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -116,6 +117,7 @@ public class OrderRegistryImp
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	private void registryNewOrder(Order entity) throws Throwable {
 		
 		PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(entity, paymentGatewayRegistry);
@@ -123,7 +125,12 @@ public class OrderRegistryImp
 		OrderRegistryUtil.validateOrder(entity, saveValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
 		OrderRegistryUtil.preOrder(entity, productTypeRegistry);
-		OrderRegistryUtil.registerNewOrder(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.updateStatus(entity, OrderStatus.NEW);
+		OrderRegistryUtil.save(entity, orderEntityAccess);
+		OrderRegistryUtil.registerPayment(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.updateStatusByPaymentStatus(entity);
+		OrderRegistryUtil.checkAcceptNewOrderStatus(entity, entity.getStatus(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+		OrderRegistryUtil.update(entity, orderEntityAccess);
 		OrderRegistryUtil.postOrder(entity, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Pedido criado #" + entity.getId(), entity, orderEntityAccess);
 		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, entity);
@@ -135,16 +142,18 @@ public class OrderRegistryImp
 		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		ShippingRegistry shippingRegistry	    = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
+		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		
 		Order actualOrder                = OrderRegistryUtil.getActualOrder(entity, orderEntityAccess);
 		List<Shipping> actualShippings   = ShippingRegistryUtil.getActualShippings(entity, shippingRegistry);
 		List<OrderReport> actualReports  = OrderReportRegistryUtil.findByOrder(actualOrder, orderReportRegistry);
 		List<Refund> refunds             = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
+		List<Invoice> actualInvoices     = InvoiceRegistryUtil.getActualInvoices(actualOrder, null, invoiceRegistry);
 		
 		OrderRegistryUtil.validateOrder(entity, updateValidations);
 		OrderRegistryUtil.checkCurrency(entity, entity.getCurrency());
-		
 		OrderRegistryUtil.markAsCompleteOrder(actualOrder, refunds, actualShippings, actualReports, orderEntityAccess, productTypeRegistry);
+		OrderRegistryUtil.checkAcceptNewOrderStatus(actualOrder, actualOrder.getStatus(), refunds, actualShippings, actualInvoices, actualReports);
 		
 		if(!actualOrder.getStatus().isClosed()) {
 			OrderRegistryUtil.update(entity, orderEntityAccess);
@@ -344,8 +353,7 @@ public class OrderRegistryImp
 		List<Invoice> invoices       = OrderRegistryUtil.getActualInvoices(order, invoiceRegistry);
 		List<OrderReport> reportList = OrderRegistryUtil.getActualReports(order, orderReportRegistry);
 		
-		
-		OrderRegistryUtil.checkNewOrderStatus(order, status);
+		//OrderRegistryUtil.checkNewOrderStatus(order, status);
 		OrderRegistryUtil.checkAcceptNewOrderStatus(order, status, refunds, shipping, invoices, reportList);
 		order.setStatus(status);
 	
@@ -447,7 +455,7 @@ public class OrderRegistryImp
 				
 				Order order           = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
 				Payment actualPayment = OrderRegistryUtil.getActualPayment(payment, order);
-				
+
 				OrderRegistryUtil.updatePaymentStatus(actualPayment, order, paymentStatus);
 				
 				updateOrder(order);

@@ -1,6 +1,5 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
-import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
@@ -174,29 +172,13 @@ public class RefundRegistryImp implements RefundRegistry {
 	
 	@Override
 	@ActivateRequestContext
-	public Refund toRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException {
+	public Refund toRefund(Order order) throws RefundRegistryException, InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 		return toRefund(order, new HashMap<>());
 	}
 
-	private Refund toRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException {
-		
-		Order actualOrder							= refundRegistryUtil.getActualOrder(order);
-		Map<String, ProductRequest> transientItens	= refundRegistryUtil.toMap(actualOrder.getItens());
-		
-		refundRegistryUtil.removeNotSelectedItens(transientItens, itens);
-		
-		List<ProductRequest> pItens = new ArrayList<>();
-		
-		transientItens.values().stream().forEach((e)->{
-			Integer u = itens.get(e.getSerial());
-			if(u != null) {
-				ProductRequest i = new ProductRequest(e);
-				i.setUnits(u.intValue());
-				pItens.add(i);
-			}
-		});
-		
-		return refundRegistryUtil.toRefund(actualOrder, pItens);
+	private Refund toRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
+		Order actualOrder = refundRegistryUtil.getActualOrder(order);
+		return refundRegistryUtil.toRefund(actualOrder, itens);
 		
 	}
 	

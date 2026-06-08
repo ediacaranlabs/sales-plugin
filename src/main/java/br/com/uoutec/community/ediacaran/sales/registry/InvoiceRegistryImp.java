@@ -19,6 +19,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
@@ -195,6 +196,12 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		catch(InvoiceRegistryException e){
 			throw e;
 		}
+		catch(ShippingRegistryException e){
+			throw e;
+		}
+		catch(OrderRegistryException e){
+			throw e;
+		}
 		catch(Throwable e){
 			throw new InvoiceRegistryException(e);
 		}
@@ -222,7 +229,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
-	public void cancelInvoice(Invoice invoice, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+	public void cancelInvoice(Invoice invoice, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException, OrderReportRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
@@ -234,7 +241,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
-	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException {
+	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException, OrderReportRegistryException {
 
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
 		
@@ -250,7 +257,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		unsafeCancelInvoices(invoices, justification);
 	}
 
-	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException, OrderReportRegistryException {
 
 		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);
 		
@@ -258,10 +265,11 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 			return;
 		}
 		
-		LocalDateTime cancelDate          = LocalDateTime.now();
-		OrderRegistry orderRegistry       = EntityContextPlugin.getEntity(OrderRegistry.class);
-		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-		RefundRegistry refundRegistry     = EntityContextPlugin.getEntity(RefundRegistry.class);
+		LocalDateTime cancelDate                = LocalDateTime.now();
+		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
+		ShippingRegistry shippingRegistry       = EntityContextPlugin.getEntity(ShippingRegistry.class);
+		RefundRegistry refundRegistry           = EntityContextPlugin.getEntity(RefundRegistry.class);
+		OrderReportRegistry orderReportRegistry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
 		
 		for(Entry<String,List<Invoice>> entry: map.entrySet()) {
 			
@@ -270,8 +278,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 			
 			List<Refund> refunds = refundRegistry.findRefundByOrder(entry.getKey());
 			List<Shipping> shippings = shippingRegistry.findByOrder(entry.getKey());
+			List<OrderReport> reports = orderReportRegistry.findByOrder(entry.getKey());
 			
-			InvoiceRegistryUtil.cancelInvoices(order, refunds, invoices, shippings, justification, 
+			InvoiceRegistryUtil.cancelInvoices(order, refunds, invoices, shippings, reports, justification, 
 					cancelDate, orderRegistry, shippingRegistry, entityAccess);
 			
 		}

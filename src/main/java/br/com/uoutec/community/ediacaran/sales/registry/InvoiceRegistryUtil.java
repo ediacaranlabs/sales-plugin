@@ -13,6 +13,7 @@ import br.com.uoutec.community.ediacaran.sales.ProductTypeHandler;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
@@ -157,6 +158,10 @@ public class InvoiceRegistryUtil {
 	public static void checkUnits(Invoice invoice, Order order, List<Refund> refunds, List<Invoice> invoices
 			) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 
+		if(invoice.getItens().isEmpty()) {
+			throw new InvalidUnitsOrderRegistryException();
+		}
+		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
@@ -459,13 +464,14 @@ public class InvoiceRegistryUtil {
 		return i;
 	}
 	
-	public static void cancelInvoices(Order order, List<Refund> refunds, List<Invoice> invoices, List<Shipping> shippings,
+	public static void cancelInvoices(Order order, List<Refund> refunds, List<Invoice> invoices, List<Shipping> shippings, List<OrderReport> reports,
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
 			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		
-		OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.PAYMENT_RECEIVED);
+		OrderRegistryUtil.checkAcceptNewOrderStatus(actualOrder, OrderStatus.PAYMENT_RECEIVED, refunds, shippings, invoices, reports);
+		//OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.PAYMENT_RECEIVED);
 		InvoiceRegistryUtil.checkShipping(actualOrder, shippingRegistry);
 			
 		for(Invoice i: invoices) {

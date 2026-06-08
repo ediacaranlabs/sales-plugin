@@ -270,6 +270,10 @@ public class RefundRegistryUtil {
 
 	public void checkCanBeRefund(Refund entity, Order order, Collection<Refund> refunds, Collection<Invoice> invoices) throws RefundRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
+		if(entity.getProducts().isEmpty()) {
+			throw new InvalidUnitsOrderRegistryException();
+		}
+		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
@@ -288,6 +292,10 @@ public class RefundRegistryUtil {
 				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
 
+			if(pr.getUnits() <= 0) {
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
+			}
+			
 			if(tpr.getUnits() - pr.getUnits() < 0) {
 				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
@@ -637,7 +645,7 @@ public class RefundRegistryUtil {
 	public void updateOrderStatus(Order actualOrder, Collection<Refund> refundList, Refund refund) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		List<Shipping> shippingList			= shippingRegistry.findByOrder(actualOrder.getId());
-		List<OrderReport> orderReportList 	= orderReportRegistry.findByOrder(actualOrder);
+		List<OrderReport> orderReportList 	= orderReportRegistry.findByOrder(actualOrder.getId());
 		List<Refund> allRefund				= new ArrayList<>(refundList);
 		
 		if(refund != null) {
@@ -678,14 +686,17 @@ public class RefundRegistryUtil {
 		refund.setRefundDate(LocalDateTime.now());
 	}
 
-	public Refund toRefund(Order order, Collection<ProductRequest> itens) {
+	public Refund toRefund(Order order, Map<String, Integer> itens) throws ItemNotFoundOrderRegistryException {
+		
+		Collection<ProductRequest> list = ProductRequestUtil.createCollectionRequest(order.getItens(), itens);
+		
 		Refund i = new Refund();
 		
 		i.setRefundDate(null);
 		i.setAddData(new HashMap<>());
 		i.setDate(LocalDateTime.now());
 		i.setClient(order.getClient());
-		i.setProducts(new ArrayList<ProductRequest>(itens));
+		i.setProducts(new ArrayList<ProductRequest>(list));
 		i.setRefundType(null);
 		i.setOrder(order.getId());
 		i.setRefundType(order.getPaymentType());

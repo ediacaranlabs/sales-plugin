@@ -99,6 +99,10 @@ public class ShippingRegistryUtil {
 	
 	public static void checkUnits(Shipping shipping, Order order, List<Invoice> invoices, List<Shipping> shippings) throws ShippingRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
+		if(shipping.getProducts().isEmpty()) {
+			throw new InvalidUnitsOrderRegistryException();
+		}
+		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		ProductRequestUtil.resetUnits(map);
@@ -119,6 +123,10 @@ public class ShippingRegistryUtil {
 				throw new ItemNotFoundOrderRegistryException(pr.getSerial());
 			}
 
+			if(pr.getUnits() <= 0) {
+				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
+			}
+			
 			if(tpr.getUnits() - pr.getUnits() < 0) {
 				throw new InvalidUnitsOrderRegistryException(pr.getSerial());
 			}
@@ -163,7 +171,7 @@ public class ShippingRegistryUtil {
 	}
 
 	public static List<OrderReport> getActualReports(Order order, OrderReportRegistry orderReportRegistry) throws OrderReportRegistryException {
-		return orderReportRegistry.findByOrder(order);		
+		return orderReportRegistry.findByOrder(order.getId());		
 	}
 	
 	public static List<Refund> getActualRefunds(Order order, RefundRegistry refundRegistry) throws RefundRegistryException {
@@ -339,8 +347,9 @@ public class ShippingRegistryUtil {
 			ShippingRegistry shippingRegistry, ShippingEntityAccess entityAccess, ShippingIndexEntityAccess indexEntityAccess) throws OrderRegistryException, EntityAccessException, ShippingRegistryException, ProductTypeRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
-			
-		OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
+		
+		OrderRegistryUtil.checkAcceptNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED, refunds, shippings, invoices, reports);
+		//OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
 		
 		for(Shipping i: shippings) {
 			

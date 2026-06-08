@@ -274,7 +274,7 @@ public class OrderAdminPubResource {
 			refunds = refundRegistry.findRefundByOrder(order.getId());
 			//client = clientRegistry.findClientById(order.getClient().getId());
 			shippings = shippingRegistry.findByOrder(order.getId());
-			ordersReport = orderReportRegistry.findByOrder(order);
+			ordersReport = orderReportRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry

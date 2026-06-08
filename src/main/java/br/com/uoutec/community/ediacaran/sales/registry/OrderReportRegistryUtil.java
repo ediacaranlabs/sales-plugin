@@ -146,7 +146,7 @@ public class OrderReportRegistryUtil {
 		RefundRegistry refundRegistry = EntityContextPlugin.getEntity(RefundRegistry.class);
 		
 		Order actualOrder                 = OrderReportRegistryUtil.getActualOrder(entity, orderRegistry);
-		List<OrderReport> orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder, entityAccess);
+		List<OrderReport> orderReportList = OrderReportRegistryUtil.findByOrder(actualOrder.getId(), entityAccess);
 		List<Refund> refunds              = OrderReportRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
 		
 		orderReportList.add(entity);
@@ -174,19 +174,19 @@ public class OrderReportRegistryUtil {
 		}
 	}
 	
-	public static List<OrderReport> findByOrder(Order e, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
+	public static List<OrderReport> findByOrder(String id, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
 		try {
-			return entityAccess.findByOrder(e.getId());
+			return entityAccess.findByOrder(id);
 		}
 		catch(Throwable x){
 			throw new OrderReportRegistryException(
-				"order report error: " + e.getId(), x);
+				"order report error: " + id, x);
 		}
 	}
 
 	public static List<OrderReport> findByOrder(Order e, OrderReportRegistry registry) throws OrderReportRegistryException {
 		try {
-			return registry.findByOrder(e);
+			return registry.findByOrder(e.getId());
 		}
 		catch(Throwable x){
 			throw new OrderReportRegistryException(

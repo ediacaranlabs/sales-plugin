@@ -24,9 +24,9 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	InvoicesResultSearch searchInvoice(InvoiceSearch value) throws InvoiceRegistryException;
 	
-	void cancelInvoice(Invoice invoice, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException;
+	void cancelInvoice(Invoice invoice, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException, OrderReportRegistryException;
 	
-	void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException;
+	void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException, OrderReportRegistryException;
 
 	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException, ProductTypeHandlerException;
 

@@ -43,6 +43,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderNotFoundRegistryExc
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderStatusNotAllowedRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.PersistenceOrderRegistryException;
@@ -132,25 +133,39 @@ public class OrderRegistryUtil {
 			productTypeHandler.preRegisterOrder(order.getClient(), order, pr);
 		}
 	}
-	
-	public static void registerNewOrder(Order order, Client client, Payment payment, String message, 
-			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException, ValidationException {
-		
-			order.setStatus(OrderStatus.NEW);
-			
-			save(order, entityAccess);
-			
-			paymentGateway.payment(new PaymentRequest(order));
-			
-			checkPayment(payment, order);
-			order.getPayment().setStatus(payment.getStatus());
-			checkAndUpdateNewOrderStatus(order, toOrderStatus(order.getPayment().getStatus()));
-			
-			update(order, entityAccess);
-		
+
+	public static void updateStatus(Order order, OrderStatus status){
+		order.setStatus(status);
 	}
 
-	public static void cancelInvoices(List<Invoice> invoices, String justification, InvoiceRegistry invoiceRegistry) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+	public static void updateStatusByPaymentStatus(Order order) throws OrderRegistryException{
+		order.setStatus(toOrderStatus(order.getPayment().getStatus()));
+	}
+	
+	public static void registerPayment(Order order, Client client, Payment payment, String message, 
+			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException {
+		
+			//order.setStatus(OrderStatus.NEW);
+			
+			//save(order, entityAccess);
+			
+			paymentGateway.payment(new PaymentRequest(order));
+			checkPayment(payment, order);
+			order.getPayment().setStatus(payment.getStatus());
+
+			//OrderStatus newStatus = toOrderStatus(order.getPayment().getStatus());
+			//checkAcceptNewOrderStatus(order, newStatus, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+			//order.setStatus(newStatus);
+			
+			//checkAndUpdateNewOrderStatus(order, toOrderStatus(order.getPayment().getStatus()));
+			
+			///update(order, entityAccess);
+		
+	}
+	
+	public static void cancelInvoices(List<Invoice> invoices, String justification, 
+			InvoiceRegistry invoiceRegistry) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, 
+	ShippingRegistryException, OrderReportRegistryException {
 		
 		for(Invoice i: invoices) {
 			invoiceRegistry.cancelInvoice(i, justification);
@@ -517,11 +532,13 @@ public class OrderRegistryUtil {
 		
 	}
 	
+	/*
 	public static void checkAndUpdateNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		checkNewOrderStatus(order, newStatus);
 		order.setStatus(newStatus);		
 	}
-
+    */
+	
 	public static PaymentGateway getPaymentGateway(Order order, PaymentGatewayRegistry paymentGatewayRegistry) throws OrderRegistryException {
 		PaymentGateway paymentGateway = paymentGatewayRegistry.getPaymentGateway(order.getPaymentType());
 		
@@ -532,6 +549,7 @@ public class OrderRegistryUtil {
 		return paymentGateway;
 	}
 
+	/*
 	public static void markPaymentAsReceived(Payment payment, Order order) throws OrderRegistryException {
 		
 		checkPayment(payment, order);
@@ -545,14 +563,19 @@ public class OrderRegistryUtil {
 		}
 		
 	}
-
+    */
+	
 	public static void updatePaymentStatus(Payment payment, Order order, PaymentStatus paymentStatus) throws OrderRegistryException {
 		
 		payment.setStatus(paymentStatus);
+		
 		OrderStatus newOrderStatus = toOrderStatus(paymentStatus);
 		
 		checkPayment(payment, order);
-		checkAndSetNewOrderStatus(order, newOrderStatus);
+		
+		order.setStatus(newOrderStatus);
+		
+		//checkAndSetNewOrderStatus(order, newOrderStatus);
 		
 		if(paymentStatus == PaymentStatus.PAYMENT_RECEIVED) {
 			payment.setReceivedFrom(LocalDateTime.now());
@@ -563,15 +586,18 @@ public class OrderRegistryUtil {
 		
 	}
 	
+	/*
 	public static void checkAndSetNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		checkNewOrderStatus(order, newStatus);
 		order.setStatus(newStatus);
 	}
-
+    */
+	
 	public static boolean acceptNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		return order.getStatus().isValidNextStatus(newStatus);
 	}
 	
+	/*
 	public static void checkNewOrderStatus(Order order, OrderStatus newStatus) throws OrderStatusNotAllowedRegistryException {
 		if(order.getStatus() != newStatus && !order.getStatus().isValidNextStatus(newStatus)){
 			throw new OrderStatusNotAllowedRegistryException(
@@ -579,6 +605,7 @@ public class OrderRegistryUtil {
 					order.getStatus() + " -> " + newStatus);
 		}
 	}
+	*/
 	
 	public static void checkAcceptNewOrderStatus(Order order, OrderStatus newStatus, List<Refund> actualRefunds, List<Shipping> actualShiping, 
 			List<Invoice> actualInvoice, List<OrderReport> reports) throws OrderRegistryException {
@@ -649,7 +676,7 @@ public class OrderRegistryUtil {
 
 	public static List<OrderReport> getActualReports(Order order, OrderReportRegistry orderReportRegistry) throws OrderNotFoundRegistryException {
 		try {
-			return orderReportRegistry.findByOrder(order);
+			return orderReportRegistry.findByOrder(order.getId());
 		}
 		catch(Throwable e){
 			throw new OrderNotFoundRegistryException(order.getId(), e);
