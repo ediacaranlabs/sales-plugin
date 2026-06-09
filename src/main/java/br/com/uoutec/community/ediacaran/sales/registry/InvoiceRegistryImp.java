@@ -210,19 +210,13 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
-	public Invoice toInvoice(Order order) throws OrderRegistryException, PersistenceInvoiceRegistryException {
+	public Invoice toInvoice(Order order) throws OrderRegistryException, PersistenceInvoiceRegistryException, RefundRegistryException {
 		
-		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
+		Order actualOrder            = InvoiceRegistryUtil.getActualOrder(order, EntityContextPlugin.getEntity(OrderRegistry.class));
+		List<Invoice> actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualOrder.getClient(), entityAccess);
+		List<Refund> actualRefunds   = InvoiceRegistryUtil.getActualRefunds(actualOrder, EntityContextPlugin.getEntity(RefundRegistry.class));
 		
-		if(actualOrder == null) {
-			throw new OrderNotFoundRegistryException(order.getId());
-		}
-
-		List<Invoice> actualInvoices;
-		
-		actualInvoices = InvoiceRegistryUtil.getActualInvoices(actualOrder, actualOrder.getClient(), entityAccess);
-		
-		return InvoiceRegistryUtil.toInvoice(actualOrder, actualInvoices);
+		return InvoiceRegistryUtil.toInvoice(actualOrder, actualRefunds, actualInvoices);
 	}
 	
 	@Override

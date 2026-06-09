@@ -20,7 +20,7 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	Invoice findById(String id) throws InvoiceRegistryException;
 
-	Invoice toInvoice(Order order)  throws OrderRegistryException, PersistenceInvoiceRegistryException;
+	Invoice toInvoice(Order order) throws OrderRegistryException, PersistenceInvoiceRegistryException, RefundRegistryException;
 	
 	InvoicesResultSearch searchInvoice(InvoiceSearch value) throws InvoiceRegistryException;
 	

@@ -246,14 +246,16 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	
 	@Override
 	@ActivateRequestContext
-	public Shipping toShipping(Order order, String shippingType) throws CountryRegistryException, ShippingRegistryException, OrderRegistryException {
+	public Shipping toShipping(Order order, String shippingType) throws CountryRegistryException, ShippingRegistryException, OrderRegistryException, InvoiceRegistryException {
 		
 		OrderRegistry orderRegistry = EntityContextPlugin.getEntity(OrderRegistry.class);
+		InvoiceRegistry invoiceRegistry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
 		
 		Order actualOrder              = ShippingRegistryUtil.getActualOrder(order, orderRegistry);		
 		List<Shipping> actualShippings = ShippingRegistryUtil.getActualShippings(actualOrder, entityAccess);
+		List<Invoice> actualInvoices   = ShippingRegistryUtil.getActualInvoices(actualOrder, invoiceRegistry);
 		
-		return ShippingRegistryUtil.toShipping(actualOrder, shippingType, null, actualShippings);
+		return ShippingRegistryUtil.toShipping(actualOrder, shippingType, null, actualInvoices, actualShippings);
 	}
 	
 	@Override

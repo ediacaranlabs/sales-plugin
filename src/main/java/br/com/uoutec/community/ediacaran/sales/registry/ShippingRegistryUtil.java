@@ -369,15 +369,19 @@ public class ShippingRegistryUtil {
 		
 	}	
 	
-	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, List<Shipping> shippings) throws CountryRegistryException, ShippingRegistryException {
+	public static Shipping toShipping(Order order, String shippingType, Map<String,String> data, List<Invoice> invoices, List<Shipping> shippings) throws CountryRegistryException, ShippingRegistryException {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
-		if(shippings != null) {
-			shippings.stream()
-				.filter((e)->!e.isCanceled())
-				.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
-		}
+		ProductRequestUtil.resetUnits(map);
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.addUnits(map, e.getItens());});
+		
+		shippings.stream()
+			.filter((e)->!e.isCanceled())
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		//ProductRequestUtil.removeEmptyUnits(map);
 		

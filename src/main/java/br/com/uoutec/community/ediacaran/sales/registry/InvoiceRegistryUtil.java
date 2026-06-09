@@ -406,9 +406,12 @@ public class InvoiceRegistryUtil {
 		invoice.setCancelJustification(actualInvoice.getCancelJustification());
 	}
 	
-	public static Invoice toInvoice(Order order, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException {
+	public static Invoice toInvoice(Order order, List<Refund> refunds, List<Invoice> invoices) throws ItemNotFoundOrderRegistryException {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		refunds.stream()
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		if(invoices != null) {
 			invoices.stream()

@@ -38,7 +38,7 @@ public class RefundIndexEntity implements Serializable{
 	@Column(name="dat_created")
 	private LocalDateTime date;
 
-	@Column(name="dat_refund_date")
+	@Column(name="dat_refund")
 	private LocalDateTime refundDate;
 	
 	public RefundIndexEntity(){

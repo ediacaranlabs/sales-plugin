@@ -66,7 +66,7 @@ public class RefundEntity implements Serializable {
 	@Column(name="dat_created")
 	private LocalDateTime date;
 
-	@Column(name="dat_refound")
+	@Column(name="dat_refund")
 	private LocalDateTime refundDate;
 	
 	@OneToMany(mappedBy = "refund")
