@@ -4,8 +4,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.simplepaymentgateway.SimplePayment;
 import br.com.uoutec.community.ediacaran.sales.payment.simplepaymentgateway.SimplePaymentGateway;
-import br.com.uoutec.community.ediacaran.sales.payment.simplepaymentgateway.SimplePaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.SimplePaymentPubEntity;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 

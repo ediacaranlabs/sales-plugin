@@ -1,7 +1,7 @@
-package br.com.uoutec.community.ediacaran.sales.payment.simplepaymentgateway;
+package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
+import br.com.uoutec.community.ediacaran.sales.payment.simplepaymentgateway.SimplePayment;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritance;
 
 @EntityInheritance(base=PaymentPubEntity.class, name="simple")
