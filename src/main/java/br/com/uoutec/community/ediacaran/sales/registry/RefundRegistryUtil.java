@@ -319,6 +319,16 @@ public class RefundRegistryUtil {
 		
 	}
 
+	public void scheduleRefund(Refund refund) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.REGISTER_REFUND_INFO, 
+				ActionExecutorRequestBuilder.builder()
+					.withId("EDIACARAN:REFUND_PAYMENT:REFUND:" + refund.getId())
+					.withParameter("refund", refund.getId())
+				.build()
+		);
+	}
+
 	public void refundProducts(Order order, Refund refund, boolean partialRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
 		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, itens));
 	}

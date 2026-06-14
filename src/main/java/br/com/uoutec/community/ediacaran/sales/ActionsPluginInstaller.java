@@ -4,6 +4,7 @@ import java.time.temporal.ChronoUnit;
 
 import br.com.uoutec.community.ediacaran.sales.actions.cart.CreateInvoiceAction;
 import br.com.uoutec.community.ediacaran.sales.actions.cart.RegisterPaymntInfoAction;
+import br.com.uoutec.community.ediacaran.sales.actions.cart.RegisterRefundInfoAction;
 import br.com.uoutec.community.ediacaran.sales.registry.EmptyInvoiceException;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -24,6 +25,8 @@ public class ActionsPluginInstaller {
 	
 	public static final String REGISTER_PAYMENT_INFO 		= "register_payment_info";
 
+	public static final String REGISTER_REFUND_INFO 		= "register_refund_info";
+	
 	public static final String CREATE_INVOICE 				= "create_invoice";
 	
 	public ActionsPluginInstaller() {
@@ -55,6 +58,7 @@ public class ActionsPluginInstaller {
 		
 		actionRegistry.registerAction(REGISTER_PAYMENT_INFO, 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(RegisterPaymntInfoAction.class));
 		actionRegistry.registerAction(CREATE_INVOICE,			3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(CreateInvoiceAction.class));
+		actionRegistry.registerAction(REGISTER_REFUND_INFO, 	3, 10, ChronoUnit.SECONDS, EntityContextPlugin.getEntity(RegisterRefundInfoAction.class));
 		
 		actionRegistry.executeAfter(NEW_ORDER_REGISTERED,	REGISTER_PAYMENT_INFO);
 		actionRegistry.executeAfter(REGISTER_PAYMENT_INFO,	CREATE_INVOICE);
@@ -68,6 +72,7 @@ public class ActionsPluginInstaller {
 		actionRegistry.removeAction(NEW_INVOICE_REGISTERED);
 		actionRegistry.removeAction(NEW_SHIPPING_REGISTERED);
 		actionRegistry.removeAction(REGISTER_PAYMENT_INFO);
+		actionRegistry.removeAction(REGISTER_REFUND_INFO);
 		actionRegistry.removeAction(NEW_ORDER_REPORT);
 		actionRegistry.removeAction(CREATE_INVOICE);
 	}

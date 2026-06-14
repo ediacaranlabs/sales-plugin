@@ -57,7 +57,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
-		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
+		//boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
 		refundRegistryUtil.checkOrder(entity);
 		refundRegistryUtil.checkCanBeRefund(entity, actualOrder, actualRefunds, actualInvoice);
@@ -66,13 +66,14 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
 		
-		PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
-		refundRegistryUtil.refundProducts(actualOrder, entity, partialRefund, entity.getProducts(), paymentGateway);
+		//PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
+		//refundRegistryUtil.refundProducts(actualOrder, entity, partialRefund, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
 		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
+		refundRegistryUtil.scheduleRefund(entity);
 		refundRegistryUtil.registerNewRefundEvent(entity);
 		
 	}
@@ -93,6 +94,24 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.update(actualRefund, actualOrder);
 		refundRegistryUtil.updateIndex(actualRefund, actualOrder);
 		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
+		
+	}
+	
+	@Override
+	@ActivateRequestContext
+	@Transactional(rollbackOn = Throwable.class)
+	public void scheduleRefund(Refund entity) throws RefundRegistryException {
+		
+		if(entity == null || entity.getId() == null) {
+			throw new NullPointerException();
+		}
+		
+		Refund actualRefund = refundRegistryUtil.getActualRefund(entity);	
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getRegisterPermission());
+		
+		if(!actualRefund.isCompleted()) {
+			refundRegistryUtil.scheduleRefund(entity);
+		}
 		
 	}
 	
