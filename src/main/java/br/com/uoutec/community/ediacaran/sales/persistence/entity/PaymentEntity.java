@@ -83,7 +83,7 @@ public class PaymentEntity implements Serializable{
 	private String typeName;
 	
 	@Lob
-	@Column(name="dsc_ext_data")
+	@Column(name="dsc_ext_data", length=2048)
 	private String extendData;
 
 	public PaymentEntity(){
