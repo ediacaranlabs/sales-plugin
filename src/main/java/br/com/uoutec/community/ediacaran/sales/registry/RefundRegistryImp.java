@@ -146,8 +146,9 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		Refund actualRefund = refundRegistryUtil.getActualRefund(entity);
 		
-		if(actualRefund.getRefundDate() != null) {
+		if(actualRefund.isCompleted()) {
 			entity.setRefundDate(actualRefund.getRefundDate());
+			return;
 		}
 		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
@@ -162,6 +163,8 @@ public class RefundRegistryImp implements RefundRegistry {
 		if(actualRefund != null && actualRefund.getRefundDate() != null) {
 			refundRegistryUtil.confirmRefund(actualRefund);
 			refundRegistryUtil.update(actualRefund, actualOrder);
+			
+			entity.setRefundDate(actualRefund.getRefundDate());
 		}
 		
 		refundRegistryUtil.updateStatus(actualRefund, actualOrder, actualRefunds, actualShiping, actualInvoice);
