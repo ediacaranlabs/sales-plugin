@@ -689,6 +689,7 @@ public class RefundRegistryUtil {
 		refund.setOrder(actualRefund.getOrder());
 		refund.setRefundType(actualRefund.getRefundType());
 		refund.setProducts(actualRefund.getProducts());
+		refund.setCurrency(actualRefund.getCurrency());
 		
 	}
 
@@ -717,6 +718,7 @@ public class RefundRegistryUtil {
 		i.setRefundType(null);
 		i.setOrder(order.getId());
 		i.setRefundType(order.getPaymentType());
+		i.setCurrency(order.getCurrency());
 		
 		return i;
 	}
@@ -735,6 +737,7 @@ public class RefundRegistryUtil {
 		i.setRefundType(null);
 		i.setOrder(order.getId());
 		i.setRefundType(order.getPaymentType());
+		i.setCurrency(order.getCurrency());
 		
 		return i;
 	}

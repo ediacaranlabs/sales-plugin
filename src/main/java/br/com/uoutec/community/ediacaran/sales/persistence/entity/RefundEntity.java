@@ -69,6 +69,9 @@ public class RefundEntity implements Serializable {
 	@Column(name="dat_refund")
 	private LocalDateTime refundDate;
 	
+	@Column(name="dsc_currency", length=3)
+	private String currency;
+	
 	@OneToMany(mappedBy = "refund")
 	private List<ProductRequestRefundEntity> products;
 	
@@ -90,6 +93,8 @@ public class RefundEntity implements Serializable {
 		this.refundDate = e.getRefundDate();
 		this.client = e.getClient() == null? null : e.getClient().getId();
 		this.refundType = e.getRefundType();
+		this.currency = e.getCurrency();
+		
 		if(e.getProducts() != null) {
 			this.products = new ArrayList<>();
 			for(ProductRequest p: e.getProducts()) {
@@ -151,6 +156,22 @@ public class RefundEntity implements Serializable {
 		this.products = products;
 	}
 
+	public String getRefundType() {
+		return refundType;
+	}
+
+	public void setRefundType(String refundType) {
+		this.refundType = refundType;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
 	public Refund toEntity(){
 		return this.toEntity(null);
 	}
@@ -186,6 +207,7 @@ public class RefundEntity implements Serializable {
 			e.setRefundDate(this.refundDate);
 			e.setRefundType(this.refundType);
 			e.setDate(this.date);
+			e.setCurrency(this.currency);
 			
 			if(this.client != null) {
 				Client c = new Client();
