@@ -34,7 +34,6 @@ import br.com.uoutec.community.ediacaran.sales.entity.Checkout;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
-import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.PaymentPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ProductPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
@@ -324,7 +323,7 @@ public class CartPubResource {
 		
 		try{
 			Checkout checkoutResult = cartService.checkout(cart, payment, "Pedido criado via website.");
-			String paymentResource = checkoutResult.getPaymentGateway().redirectView(new PaymentRequest(checkoutResult.getOrder()));
+			String paymentResource = checkoutResult.getPaymentResource();
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/" + checkoutResult.getOrder().getId());			
 		}
 		catch(EmptyOrderException ex){

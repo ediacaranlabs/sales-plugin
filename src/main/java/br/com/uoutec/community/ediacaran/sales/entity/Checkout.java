@@ -6,6 +6,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 
 public class Checkout implements Serializable {
 
@@ -34,4 +36,7 @@ public class Checkout implements Serializable {
 		return paymentGateway;
 	}
 	
+	public String getPaymentResource() throws PaymentGatewayException {
+		return paymentGateway.redirectView(new PaymentRequest(order));
+	}
 }
