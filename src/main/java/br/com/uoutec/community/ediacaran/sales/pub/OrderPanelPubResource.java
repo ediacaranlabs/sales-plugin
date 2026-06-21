@@ -181,6 +181,7 @@ public class OrderPanelPubResource {
 
 		PaymentGateway paymentGateway = null;
 		String view                   = null;
+		String remotePayment          = null;
 		
 		try{
 			paymentGateway = 
@@ -190,6 +191,7 @@ public class OrderPanelPubResource {
 			
 			if(paymentGateway != null){
 				view = paymentGateway.getOwnerView(new PaymentRequest(order));
+				remotePayment = paymentGateway.redirectView(new PaymentRequest(order));
 			}
 			
 		}
@@ -210,6 +212,7 @@ public class OrderPanelPubResource {
 		map.put("shippings",      shippings);
 		map.put("paymentGateway",  paymentGateway);
 		map.put("payment_view",    view);
+		map.put("remote_payment",  remotePayment);
 		return map;
 	}
 	

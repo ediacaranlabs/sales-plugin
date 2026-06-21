@@ -230,6 +230,8 @@
 					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
 						<span id="payment_type_tab">
 					    <c:if test="${!empty vars['payment_view']}">
+					    	<ec:include uri="${vars['payment_view']}" resolved="true" />
+					    <%--
 							<script type="text/javascript">
 								$.AppContext.onload(function(){			
 									$.AppContext.utils
@@ -239,6 +241,7 @@
 										);
 								});	
 							</script>
+						--%>
 					    </c:if>
 						</span>
 					</ec:tabs-item>
