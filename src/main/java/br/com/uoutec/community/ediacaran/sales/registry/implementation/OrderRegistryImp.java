@@ -426,7 +426,7 @@ public class OrderRegistryImp
 	@EnableFilters(OrderRegistry.class)
 	public void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
 		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-		updatePaymentStatus0(order.getPayment(), order, PaymentStatus.PAYMENT_RECEIVED);
+		updatePaymentStatus0(order.getPayment(), order, null);
 	}
 
 	@Override
@@ -446,16 +446,28 @@ public class OrderRegistryImp
 		updatePaymentStatus0(payment, o, paymentStatus);
 	}
 
-	private void updatePaymentStatus0(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
+	private void updatePaymentStatus0(Payment payment, Order o, PaymentStatus paymentStatusParam) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getUpdatePaymentPermission(payment.getPaymentType().toLowerCase()));
 		
 		try {
 			ContextSystemSecurityCheck.doPrivileged(()->{
 				
-				Order order           = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-				Payment actualPayment = OrderRegistryUtil.getActualPayment(payment, order);
+				PaymentStatus paymentStatus = paymentStatusParam;
+				Order order                 = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
+				Payment actualPayment       = OrderRegistryUtil.getActualPayment(payment, order);
 
+				if(paymentStatus == null) {
+					PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
+					paymentStatus = OrderRegistryUtil.getRemotePaymentStatus(order, paymentGateway);
+					
+					if(paymentStatus == null) {
+						return null;
+					}
+					
+				}
+				
+				
 				OrderRegistryUtil.updatePaymentStatus(actualPayment, order, paymentStatus);
 				
 				updateOrder(order);

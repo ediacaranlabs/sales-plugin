@@ -3,7 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.payment;
 import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 
-public abstract class AbstractPaymentGateway implements PaymentGateway{
+public abstract class AbstractPaymentGateway implements PaymentGateway {
 
 	private final String id;
 	

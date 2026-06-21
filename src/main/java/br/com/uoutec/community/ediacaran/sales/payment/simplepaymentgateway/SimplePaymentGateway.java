@@ -54,5 +54,10 @@ public class SimplePaymentGateway extends AbstractPaymentGateway {
 	public void confirmRefund(RefundRequest refundRequest) throws PaymentGatewayException {
 		refundRequest.getRefund().setRefundDate(LocalDateTime.now());
 	}
+
+	@Override
+	public PaymentStatus getPaymentStatus(PaymentRequest paymentRequest) throws PaymentGatewayException {
+		return paymentRequest.getPayment().getStatus();
+	}
 	
 }

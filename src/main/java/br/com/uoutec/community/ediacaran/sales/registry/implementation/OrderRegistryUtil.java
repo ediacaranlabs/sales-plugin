@@ -162,6 +162,10 @@ public class OrderRegistryUtil {
 			///update(order, entityAccess);
 		
 	}
+
+	public static PaymentStatus getRemotePaymentStatus(Order order, PaymentGateway paymentGateway) throws PaymentGatewayException {
+			return paymentGateway.getPaymentStatus(new PaymentRequest(order));
+	}
 	
 	public static void cancelInvoices(List<Invoice> invoices, String justification, 
 			InvoiceRegistry invoiceRegistry) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, 

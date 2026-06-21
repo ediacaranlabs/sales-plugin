@@ -56,4 +56,9 @@ public class FreePaymentGateway extends  AbstractPaymentGateway{
 	public void refund(RefundRequest paymentRequest) throws PaymentGatewayException {
 	}
 
+	@Override
+	public PaymentStatus getPaymentStatus(PaymentRequest paymentRequest) throws PaymentGatewayException {
+		return PaymentStatus.PAYMENT_RECEIVED;
+	}
+
 }
