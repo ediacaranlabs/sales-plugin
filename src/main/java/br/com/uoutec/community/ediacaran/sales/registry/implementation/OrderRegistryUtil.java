@@ -164,7 +164,7 @@ public class OrderRegistryUtil {
 	}
 
 	public static PaymentStatus getRemotePaymentStatus(Order order, PaymentGateway paymentGateway) throws PaymentGatewayException {
-			return paymentGateway.getPaymentStatus(new PaymentRequest(order));
+		return paymentGateway.getPaymentStatus(new PaymentRequest(order));
 	}
 	
 	public static void cancelInvoices(List<Invoice> invoices, String justification, 

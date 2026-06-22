@@ -28,6 +28,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
+import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
@@ -433,15 +434,6 @@ public class OrderRegistryImp
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
-	public void registerPendingPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
-		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-		updatePaymentStatus0(order.getPayment(), order, PaymentStatus.PENDING_PAYMENT_CONFIRMATION);
-	}
-	
-	@Override
-	@Transactional(rollbackOn = Throwable.class)
-	@ActivateRequestContext
-	@EnableFilters(OrderRegistry.class)
 	public void updatePaymentStatus(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
 		updatePaymentStatus0(payment, o, paymentStatus);
 	}
@@ -458,12 +450,10 @@ public class OrderRegistryImp
 				Payment actualPayment       = OrderRegistryUtil.getActualPayment(payment, order);
 
 				if(paymentStatus == null) {
-					PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
-					paymentStatus = OrderRegistryUtil.getRemotePaymentStatus(order, paymentGateway);
 					
-					if(paymentStatus == null) {
-						return null;
-					}
+					PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
+					paymentGateway.payment(new PaymentRequest(order));
+					paymentStatus = order.getPayment().getStatus();
 					
 				}
 				

@@ -34,9 +34,12 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 			capture(paymentRequest);
 			
 			if(paymentRequest.getPayment().getStatus() == PaymentStatus.SUSPECTED_FRAUD) {
-				suspectedFraud(paymentRequest.getPayment(), paymentRequest.getLocation());
+				suspectedFraud(paymentRequest);
 			}
 			
+		}
+		else {
+			syncPayment(paymentRequest);
 		}
 		
 	}
@@ -51,7 +54,7 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 	}
 	
 	protected PaymentStatus getStartPaymentTransactionStatus() {
-		return PaymentStatus.PENDING_PAYMENT;
+		return PaymentStatus.PENDING_PAYMENT_CONFIRMATION;
 	}
 
 	protected PaymentStatus getEndPaymentTransactionStatus() {
@@ -66,7 +69,10 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 		changePaymentStatus(paymentRequest.getPayment(), getEndPaymentTransactionStatus());
 	}
 
-	public void suspectedFraud(Payment payment, PaymentLocation location) throws PaymentGatewayException{
+	public void syncPayment(PaymentRequest paymentRequest) throws PaymentGatewayException{
+	}
+
+	public void suspectedFraud(PaymentRequest paymentRequest) throws PaymentGatewayException{
 	}
 	
 	public void refund(RefundRequest refundRequest) throws PaymentGatewayException {

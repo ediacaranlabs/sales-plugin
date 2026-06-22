@@ -34,8 +34,6 @@ public interface OrderRegistry extends PublicBean {
 
 	/* register payment */
 	
-	void registerPendingPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;
-	
 	void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException ;
 	
 	void updatePaymentStatus(Payment payment, Order o, PaymentStatus paymentStatus) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException;

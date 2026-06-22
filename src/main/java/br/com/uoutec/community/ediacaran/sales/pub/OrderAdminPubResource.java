@@ -200,7 +200,7 @@ public class OrderAdminPubResource {
 							OrderAdminPubResourceMessages.payment.error.fail_register, 
 							locale);
 			
-			throw new InvalidRequestException(error, ex);
+			throw new InvalidRequestException(error + " ( " + ex.getMessage() + " )", ex);
 		}
 		
 		return order;
