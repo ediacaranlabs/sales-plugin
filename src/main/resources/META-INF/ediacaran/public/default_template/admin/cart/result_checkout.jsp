@@ -14,19 +14,10 @@
 	</script>
 </c:if>
 <c:if test="${empty exception}">
-	<c:set var="paymentResource" value="${checkout.paymentResource}"/>
 	<script type="text/javascript">
 		$.AppContext.onload(
 			function (){
-				var $paymentResource = "${paymentResource}";
-				var $orderResource   = "#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${checkout.order.id}";
-				if ($paymentResource.trim().length === 0) {
-					$.AppContext.utils.updateContent($orderResource);    
-				}
-				else{
-					$.AppContext.openLink($paymentResource);
-				}
-				
+				$.AppContext.utils.updateContent("#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${checkout.order.id}");    
 			}
 		);
 	</script>
