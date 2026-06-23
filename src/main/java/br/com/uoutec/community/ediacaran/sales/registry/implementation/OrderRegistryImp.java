@@ -128,6 +128,7 @@ public class OrderRegistryImp
 		OrderRegistryUtil.preOrder(entity, productTypeRegistry);
 		OrderRegistryUtil.updateStatus(entity, OrderStatus.NEW);
 		OrderRegistryUtil.save(entity, orderEntityAccess);
+		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderRegistryUtil.registerPayment(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
 		OrderRegistryUtil.updateStatusByPaymentStatus(entity);
 		OrderRegistryUtil.checkAcceptNewOrderStatus(entity, entity.getStatus(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
@@ -135,7 +136,6 @@ public class OrderRegistryImp
 		OrderRegistryUtil.postOrder(entity, productTypeRegistry);
 		OrderRegistryUtil.registerEvent("Pedido criado #" + entity.getId(), entity, orderEntityAccess);
 		OrderRegistryUtil.registerNewOrderEvent(actionRegistry, entity);
-		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 	}
 	
 	private void updateOrder(Order entity) throws Throwable {

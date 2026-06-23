@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.transaction.Transactional;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
@@ -99,7 +98,6 @@ public class CartService {
 		cartRegistry.remove(cart, serial);
 	}
 	
-	@Transactional(rollbackOn = Throwable.class)
 	public Checkout checkout(Cart cart, Payment payment, String message) throws
 			OrderRegistryException, PaymentGatewayException, SystemUserRegistryException{
 		return cartRegistry.checkout(cart, payment, message);
