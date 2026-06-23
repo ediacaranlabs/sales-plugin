@@ -273,10 +273,10 @@ public class OrderReportRegistryUtil {
 	
 	public static OrderReport toOrderReport(Order order, OrderRegistry orderRegistry) throws OrderReportRegistryException {
 		
-		Order e;
+		Order actualOrder;
 		
 		try {
-			e = orderRegistry.findById(order.getId());
+			actualOrder = orderRegistry.findById(order.getId());
 		}
 		catch(Throwable ex) {
 			throw new OrderReportRegistryException(ex);
@@ -284,14 +284,14 @@ public class OrderReportRegistryUtil {
 		
 		List<ProductRequestReport> list = new ArrayList<>();
 		
-		for(ProductRequest r: e.getItens()) {
+		for(ProductRequest r: actualOrder.getItens()) {
 			ProductRequestReport pr = new ProductRequestReport(r);
 			pr.setCause(null);
 			list.add(pr);
 		}
 		
 		
-		return createOrderReport(order, list);
+		return createOrderReport(actualOrder, list);
 	}
 
 	public static OrderReport createOrderReport(Order order, List<ProductRequestReport> products) throws OrderReportRegistryException {
