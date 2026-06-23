@@ -46,7 +46,7 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 
 	protected void changePaymentStatus(Payment payment, PaymentStatus newStatus) throws PaymentGatewayException {
 		
-		if(!payment.getStatus().isValidNextStatus(newStatus)) {
+		if(payment.getStatus() != newStatus && !payment.getStatus().isValidNextStatus(newStatus)) {
 			throw new PaymentGatewayException("invalid status: " + payment.getStatus() + " -> " + newStatus);
 		}
 	

@@ -122,7 +122,9 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.shipping.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button label="#{confirm.label}" actionType="submit" style="light" align="right" bundle="${messages}"/>
+		<c:if test="${!vars.shipping.closed}">
+			<ec:button label="#{confirm.label}" actionType="submit" style="light" align="right" bundle="${messages}"/>
+		</c:if>
 	</ec:box-footer>
 </ec:box>
 </ec:form>
