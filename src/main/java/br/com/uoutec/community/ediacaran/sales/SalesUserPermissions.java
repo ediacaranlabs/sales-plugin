@@ -156,6 +156,8 @@ public final class SalesUserPermissions {
 
 		public static final String SAVE		= ALL + ":SAVE";
 
+		public static final String CONFIRM	= ALL + ":CONFIRM";
+		
 		public static final String DELETE	= ALL + ":DELETE";
 		
 		public static final class FIELDS {

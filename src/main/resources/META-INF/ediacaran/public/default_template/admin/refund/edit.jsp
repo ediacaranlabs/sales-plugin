@@ -183,8 +183,14 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/orders/edit/${vars.refund.order}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
-			bundle="${messages}" enabled="${empty vars.refund.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/save" />
+		<c:if test="${empty vars.refund.id}">
+			<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
+				bundle="${messages}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/save" />
+		</c:if>
+		<c:if test="${!empty vars.refund.id && !vars.refund.completed}">
+			<ec:button actionType="submit" label="#{confirm.label}" align="right"  style="light"
+				bundle="${messages}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/confirm" />
+		</c:if>
 	</ec:box-footer>
 </ec:box>
 </ec:form>

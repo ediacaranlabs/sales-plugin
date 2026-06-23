@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -190,6 +191,17 @@ public class RefundRegistryImp implements RefundRegistry {
 		save(refund);
 		return refund;
 	}
+
+	@Override
+	@ActivateRequestContext
+	public Refund createRefund(Order order, String currency, BigDecimal value) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, InvoiceRegistryException, ValidationException, PaymentGatewayException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.REFUND_REGISTRY.getCreatePermission());
+		
+		Refund refund = toRefund0(order, currency, value);
+		save(refund);
+		return refund;
+	}
 	
 	@Override
 	@ActivateRequestContext
@@ -202,10 +214,27 @@ public class RefundRegistryImp implements RefundRegistry {
 		return refundRegistryUtil.toRefund(actualOrder, actualInvoice, actualRefunds);
 	}
 
+	@Override
+	@ActivateRequestContext
+	public Refund toRefund(Order order, String currency, BigDecimal value) throws RefundRegistryException, InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException, InvoiceRegistryException {
+		return toRefund0(order, currency, value);
+	}
+	
 	private Refund toRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
-		
 		Order actualOrder = refundRegistryUtil.getActualOrder(order);
 		return refundRegistryUtil.toRefund(actualOrder, itens);
+	}
+
+	private Refund toRefund0(Order order, String currency, BigDecimal value) throws RefundRegistryException, InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException, InvoiceRegistryException {
+		Order actualOrder = refundRegistryUtil.getActualOrder(order);
+		List<Refund> actualRefunds  = refundRegistryUtil.getActualRefunds(actualOrder);
+		List<Invoice> actualInvoice	= refundRegistryUtil.getActualInvoice(actualOrder);
+		
+		if(!actualOrder.getCurrency().equals(currency)) {
+			throw new RefundRegistryException("invalid currency: " + actualOrder.getCurrency() + " <> " + currency );
+		}
+		
+		return refundRegistryUtil.toRefund(actualOrder, value, actualInvoice, actualRefunds);
 	}
 	
 	@Override

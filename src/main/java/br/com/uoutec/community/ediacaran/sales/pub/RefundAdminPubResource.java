@@ -263,6 +263,50 @@ public class RefundAdminPubResource {
 		return map;
 	}
 	
+	@Action("/confirm")
+	@View("${plugins.ediacaran.sales.template}/admin/refund/result")
+	@Result("vars")
+	@RequestMethod("POST")
+	@RequireAnyRole(BasicRoles.USER)
+	@RequiresPermissions(SalesUserPermissions.REFUND.CONFIRM)
+	public Map<String,Object> confirm(
+			@DetachedName
+			RefundPubEntity refundPubEntity,
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Refund refund;
+		try{
+			refund = refundPubEntity.rebuild(true, false, true);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		try{
+			refundRegistry.confirmRefund(refund);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							RefundAdminPubResourceMessages.RESOURCE_BUNDLE,
+							RefundAdminPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("refund", refund);
+		return map;
+	}	
 	@Action("/recalc")
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)

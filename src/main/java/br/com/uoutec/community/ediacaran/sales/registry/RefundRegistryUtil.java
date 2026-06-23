@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -734,6 +735,52 @@ public class RefundRegistryUtil {
 		i.setDate(LocalDateTime.now());
 		i.setClient(order.getClient());
 		i.setProducts(new ArrayList<ProductRequest>(list));
+		i.setRefundType(null);
+		i.setOrder(order.getId());
+		i.setRefundType(order.getPaymentType());
+		i.setCurrency(order.getCurrency());
+		
+		return i;
+	}
+
+	public Refund toRefund(Order order, BigDecimal value, List<Invoice> invoices, List<Refund> refunds) throws ItemNotFoundOrderRegistryException {
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+		
+		refunds.stream()
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
+		
+		invoices.stream()
+			.filter((e)->e.getCancelDate() == null)
+			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
+		
+		Collection<ProductRequest> units = ProductRequestUtil.createCollectionUnits(map.values());
+		List<ProductRequest> selected = new ArrayList<>();
+		
+		BigDecimal[] total = new BigDecimal[]{value};
+		
+		units.stream().forEach((e)->{
+			
+			if(total[0].compareTo(BigDecimal.ZERO) >= 0) {
+				selected.add(e);
+			}
+			
+			total[0] = total[0].subtract(e.getTotal());
+			
+
+		});
+		
+		ProductRequestUtil.resetUnits(map);
+		ProductRequestUtil.addUnits(map, selected);
+		ProductRequestUtil.removeEmptyUnits(map);
+		
+		Refund i = new Refund();
+		
+		i.setRefundDate(null);
+		i.setAddData(new HashMap<>());
+		i.setDate(LocalDateTime.now());
+		i.setClient(order.getClient());
+		i.setProducts(new ArrayList<ProductRequest>(map.values()));
 		i.setRefundType(null);
 		i.setOrder(order.getId());
 		i.setRefundType(order.getPaymentType());

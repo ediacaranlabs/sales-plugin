@@ -1,8 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -106,6 +109,23 @@ public class ProductRequestUtil {
 		ProductRequestUtil.setUnits(map, itens);
 		ProductRequestUtil.removeEmptyUnits(map);
 		return map.values();
+	}
+
+	public static Collection<ProductRequest> createCollectionUnits(Collection<ProductRequest> values) {
+		List<ProductRequest> result = new ArrayList<>();
+		
+		values.stream().forEach((e)->{
+			
+			for(int i=0;i<e.getUnits();i++) {
+				ProductRequest npr = new ProductRequest(e);
+				npr.setUnits(1);
+				result.add(npr);
+			}
+		});
+		
+		Collections.sort(result, (a,b)->a.getTotal().subtract(b.getTotal()).intValue());
+		
+		return result;
 	}
 	
 }
