@@ -5,13 +5,130 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer"   prefix="ed"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions"              prefix="fn"%>
 <ec:import-object id="menubar/front/default" var="defaultMenu"/>
+<style>
+/*
+.inner-headline.top-header{
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+*/
+header .fa:not([class*="fa-inverse"]){
+	color: #ffffff;
+}
 
+.navbar .navbar-toggler i {
+	color: #ffffff;
+}
+.navbar .container{
+	padding: 10px 10px;
+}
+/*
+.top-header .logo {
+	flex: 0 0 25%;
+	max-width: 25%;
+}
+
+.top-header .form {
+	flex: 0 0 67%;
+	max-width: 67%;
+}
+
+.top-header .cart {
+	flex: 0 0 8%;
+	max-width: 8%;
+}
+*/
+
+.search-section.logo-area {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;	
+	flex-basis: unset;
+}
+
+.search-section.form-area {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+	flex-basis: unset;
+}
+
+.search-section.cart-area {
+	display: none;
+}
+
+@media screen and (min-width: 768px){
+	
+	.search-section.logo-area {
+		flex: 0 0 25%;
+		max-width: 25%;
+	}
+
+	.search-section.form-area {
+		flex: 0 0 75%;
+		max-width: 75%;
+	}
+
+	.search-section.cart-area {
+		display: none;
+	}
+	
+}
+
+@media screen and (min-width: 992px){
+
+	.search-section.logo-area {
+		flex: 0 0 17%;
+		max-width: 17%;
+		flex-basis: unset;
+	}
+
+	.search-section.form-area {
+		flex: 0 0 83%;
+		max-width: 83%;
+		flex-basis: unset;
+	}
+
+	.search-section.cart-area {
+	}
+
+	
+}
+
+@media screen and (min-width: 1200px){
+
+	.search-section.logo-area {
+		flex: 0 0 17%;
+		max-width: 17%;
+	}
+
+	.search-section.form-area {
+		flex: 0 0 75%;
+		max-width: 75%;
+	}
+
+	.search-section.cart-area {
+		flex: 0 0 8%;
+		max-width: 8%;
+		display: block;
+	}
+
+}
+
+
+
+</style>
     <!-- start header -->
    <header>
 		<ec:menu-bar id="top_menu" 
 				expand="xl" 
 				style="light">
 			<ed:container>
+			<ec:menu-toggler menuID="top_menu_body">
+				<ec:icon icon="bars"/>
+			</ec:menu-toggler>
 			<ec:menu-bar-brand>
 				<c:if test="${empty plugins.ediacaran.front.image_logo}">
 					<h1>${plugins.ediacaran.front.text_logo}</h1>
@@ -21,9 +138,6 @@
 				</c:if>
 				<%--<ec:image src="/img/logo.png"/>--%>
 			</ec:menu-bar-brand>
-			<ec:menu-toggler menuID="top_menu_body">
-				<ec:icon icon="bars" />
-			</ec:menu-toggler>
 			<ec:menu-body collapse="true">
 				<ec:menu-itens align="right">
 					<c:forEach items="${defaultMenu.itens}" var="menu">
@@ -85,8 +199,8 @@
 		<section class="inner-headline top-header">
 			<ed:container>
 				<form action="${plugins.ediacaran.sales.web_path}/products/" method="post">
-					<ed:row classStyle="form">
-						<ed:col size="2">
+					<ed:row>
+						<ed:col classStyle="search-section logo-area">
 							<c:if test="${empty plugins.ediacaran.front.image_logo}">
 								<h3>${plugins.ediacaran.front.text_logo}</h3>
 							</c:if>
@@ -94,7 +208,7 @@
 								<ec:image src="${plugins.ediacaran.front.image_logo}"/>
 							</c:if>
 						</ed:col>
-						<ed:col size="9">
+						<ed:col classStyle="search-section form-area">
 							<ec:center>
 									<input type="hidden" name="resultPerPage" value="9">
 									<ec:field-group>
@@ -112,8 +226,8 @@
 									</ec:field-group>					
 							</ec:center>
 						</ed:col>
-						<ed:col size="1">
-							<ec:center><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:center>
+						<ed:col classStyle="search-section cart-area">
+							<ec:right><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>
 						</ed:col>
 					</ed:row>
 				</form>

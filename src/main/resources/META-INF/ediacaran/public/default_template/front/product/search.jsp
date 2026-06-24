@@ -14,12 +14,6 @@
 <style type="text/css">
 
 
-@media screen and (min-width: 1200px) {
-    .sidebar-group .sidebar-content {
-        margin-left: 350px;
-    }
-}
-
 .sidebar-group .sidebar {
     width: 350px;
 }
@@ -104,6 +98,34 @@
 	padding-bottom: 0.3rem;
 }
 
+.products-group .filter-close {
+	display: none;
+}
+
+@media screen and (min-width: 768px){
+	
+	.products-group .filter-close {
+		display: block;
+	}
+	
+}
+
+@media screen and (min-width: 992px){
+
+}
+
+@media screen and (min-width: 1200px){
+
+	.products-group .filter-close {
+		display: none;
+	}
+
+    .sidebar-group .sidebar-content {
+        margin-left: 350px;
+    }
+
+}
+
 </style>
 <title><fmt:message key="header.title" bundle="${messages}"/></title>
 </head>
@@ -139,7 +161,7 @@
 	</section>
 
 	<ec:data-table id="search_form" action="${plugins.ediacaran.sales.web_path}/products/search">
-		<ec:sidebar-group id="pageBody" show="true">
+		<ec:sidebar-group id="pageBody" show="true" extAttrs="products-group">
 			<ec:sidebar>
 				<ec:body id="detachedFilters">
 				</ec:body>
@@ -166,10 +188,9 @@
 								<!-- start search result  -->
 								<ec:data-result var="response" from="search_form">
 									<ed:row>
+									
 										<script type="text/javascript">
-											var $tmpResponse = '!{JSON.stringify(response)}';
-											var response = JSON.parse($tmpResponse);
-											
+											var response = JSON.parse(!{JSON.stringify(JSON.stringify(response))});
 											var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
 											var $pageBody = $.AppContext.utils.getById('pageBody');
 
@@ -193,10 +214,12 @@
 												$pageBody.removeClass('show');
 												$filter_toggler.setVisible(false);
 											}
-											
+
 										</script>
+									
 										<ec:forEach items="!{response.itens}" var="item">
 											<ed:col size="3">
+												<ec:center>
 													<span class="product">
 														<ed:row style="form">
 															<ed:col size="12">
@@ -213,10 +236,12 @@
 														<ed:row>
 															<ed:col size="12">
 																<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
+																<ec:right>
 																<ec:if test="!{item.hasDiscount}">
 																	<span class="discount">!{item.valueWithoutDiscount}</span><br>
 																</ec:if>
 																!{item.productValue.symbol}<span class="price">!{item.productValue.wholeNumberString}</span>!{item.productValue.fractionalPartString}<br>
+																</ec:right>
 															</ed:col>
 														</ed:row>
 														<ed:row>
@@ -235,6 +260,7 @@
 														</ed:row>
 														
 													</span>
+												</ec:center>
 											</ed:col>
 										</ec:forEach>
 									</ed:row>
@@ -252,8 +278,17 @@
 
 	<ec:template var="response" id="filterTemplate">
 		<ec:if test="!{response.categories.length > 0}">
-			<b><fmt:message key="filters.category.title" bundle="${messages}" /></b>
-			<hr>
+			<ed:row style="form">
+				<ed:col>
+					<b><fmt:message key="filters.category.title" bundle="${messages}" /></b>
+					<ec:right classStyle="filter-close">
+		 				<ec:menu-toggler menuID="pageBody">
+							<ec:icon icon="close" size="1" />
+						</ec:menu-toggler>
+					</ec:right>
+					<hr>
+				</ed:col>
+			</ed:row>
 			<ed:row>
 				<ed:col id="category_filter">
 					<ec:forEach items="!{response.categories}" var="category">
