@@ -11,6 +11,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <ec:include uri="/includes/head.jsp"/>
 <title>${plugins.ediacaran.sales.portal_title}</title>
+<style>
+
+.body .carousel-group {
+	display: block;
+}
+
+.body .list-group {
+	display: none;
+}
+
+
+@media screen and (min-width: 768px){
+	
+}
+
+@media screen and (min-width: 992px){
+
+}
+
+@media screen and (min-width: 1200px){
+
+	.body .carousel-group {
+		display: none;
+	}
+	
+	.body .list-group {
+		display: block;
+	}
+
+}
+</style>
 </head>
 
 <body>
@@ -54,8 +85,10 @@
 			<h3><fmt:message key="sections.offers" bundle="${messages}" /></h3>
 			
 			<ed:row>
+			
 				<c:forEach items="${vars.offers}" var="item">
 					<ed:col size="3">
+					
 						<span class="product">
 							<ed:row style="form">
 								<ed:col size="12">
@@ -108,49 +141,106 @@
 			<h3><fmt:message key="sections.products" bundle="${messages}" /></h3>
 			
 			<ed:row>
+			
+				<ed:col classStyle="carousel-group">
+					<ec:carousel>
+						<c:forEach items="${vars.products}" var="item">
+							<ec:carousel-item>
+								<ec:center>
+									<span class="product">
+										<ed:row style="form">
+											<ed:col size="12">
+												<a class="image" href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">
+												<c:if test="${item.publicThumb == null}">
+													<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid" align="center"/>
+												</c:if>
+												<c:if test="${item.publicThumb != null}">
+													<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${item.publicThumb}" style="fluid" align="center"/>
+												</c:if>
+												</a>
+											</ed:col>
+										</ed:row>
+										<ed:row>
+											<ed:col size="12">
+												<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">${item.name}</a></span><br>
+												<ec:right>
+													<c:if test="${item.hasDiscount()}">
+														<span class="discount">${item.getProductValue(false).symbol}${item.getProductValue(false).wholeNumberString}${item.getProductValue(false).fractionalPartString}</span><br>
+													</c:if>
+													${item.productValue.symbol}<span class="price">${item.productValue.wholeNumberString}</span>${item.productValue.fractionalPartString}<br>
+												</ec:right>
+											</ed:col>
+										</ed:row>
+										<ed:row>
+											<ed:col size="12">
+												<ec:button 
+													label="#{cart.add_button}" 
+													align="right"
+													size="small"
+													style="default"
+													bundle="${messages}">
+													<ec:event type="click">
+														location.href = '${plugins.ediacaran.sales.web_path}/cart/add/${item.protectedID}'; 
+													</ec:event>
+												</ec:button>
+											</ed:col>
+										</ed:row>
+									</span>
+								</ec:center>
+							</ec:carousel-item>
+						</c:forEach>
+					</ec:carousel>
+				</ed:col>
+			
+			
 				<c:forEach items="${vars.products}" var="item">
-					<ed:col size="3">
-						<span class="product">
-							<ed:row style="form">
-								<ed:col size="12">
-									<a class="image" href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">
-									<c:if test="${item.publicThumb == null}">
-										<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid" align="center"/>
-									</c:if>
-									<c:if test="${item.publicThumb != null}">
-										<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${item.publicThumb}" style="fluid" align="center"/>
-									</c:if>
-									</a>
-								</ed:col>
-							</ed:row>
-							<ed:row>
-								<ed:col size="12">
-									<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">${item.name}</a></span><br>
-									<c:if test="${item.hasDiscount()}">
-										<span class="discount">${item.getProductValue(false).symbol}${item.getProductValue(false).wholeNumberString}${item.getProductValue(false).fractionalPartString}</span><br>
-									</c:if>
-									${item.productValue.symbol}<span class="price">${item.productValue.wholeNumberString}</span>${item.productValue.fractionalPartString}<br>
-								</ed:col>
-							</ed:row>
-							<ed:row>
-								<ed:col size="12">
-									<ec:button 
-										label="#{cart.add_button}" 
-										align="right"
-										size="small"
-										style="default"
-										bundle="${messages}">
-										<ec:event type="click">
-											location.href = '${plugins.ediacaran.sales.web_path}/cart/add/${item.protectedID}'; 
-										</ec:event>
-									</ec:button>
-								</ed:col>
-							</ed:row>
-							
-						</span>
+					<ed:col size="3" classStyle="list-group">
+						<ec:center>
+							<span class="product">
+								<ed:row style="form">
+									<ed:col size="12">
+										<a class="image" href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">
+										<c:if test="${item.publicThumb == null}">
+											<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid" align="center"/>
+										</c:if>
+										<c:if test="${item.publicThumb != null}">
+											<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${item.publicThumb}" style="fluid" align="center"/>
+										</c:if>
+										</a>
+									</ed:col>
+								</ed:row>
+								<ed:row>
+									<ed:col size="12">
+										<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products${item.publicID}">${item.name}</a></span><br>
+										<ec:right>
+											<c:if test="${item.hasDiscount()}">
+												<span class="discount">${item.getProductValue(false).symbol}${item.getProductValue(false).wholeNumberString}${item.getProductValue(false).fractionalPartString}</span><br>
+											</c:if>
+											${item.productValue.symbol}<span class="price">${item.productValue.wholeNumberString}</span>${item.productValue.fractionalPartString}<br>
+										</ec:right>
+									</ed:col>
+								</ed:row>
+								<ed:row>
+									<ed:col size="12">
+										<ec:button 
+											label="#{cart.add_button}" 
+											align="right"
+											size="small"
+											style="default"
+											bundle="${messages}">
+											<ec:event type="click">
+												location.href = '${plugins.ediacaran.sales.web_path}/cart/add/${item.protectedID}'; 
+											</ec:event>
+										</ec:button>
+									</ed:col>
+								</ed:row>
+							</span>
+						</ec:center>
 					</ed:col>
 				</c:forEach>
-			</ed:row>				
+				
+		</ed:row>
+							
 		</ed:container>		
 	</section>
 	</c:if>

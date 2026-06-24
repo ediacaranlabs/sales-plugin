@@ -89,7 +89,7 @@ public class SelectProductPortalExecutorService
 				
 				result.add(p);
 				
-				if(result.size() >= 12) {
+				if(result.size() >= 8) {
 					break list;
 				}
 				

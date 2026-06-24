@@ -99,14 +99,23 @@
 }
 
 .products-group .filter-close {
+	display: block;
+}
+
+.products-group .filter-close {
+	display: block;
+}
+
+.products-group .carousel-group {
+	display: block;
+}
+
+.products-group .list-group {
 	display: none;
 }
 
+
 @media screen and (min-width: 768px){
-	
-	.products-group .filter-close {
-		display: block;
-	}
 	
 }
 
@@ -124,6 +133,14 @@
         margin-left: 350px;
     }
 
+	.products-group .carousel-group {
+		display: none;
+	}
+	
+	.products-group .list-group {
+		display: block;
+	}
+
 }
 
 </style>
@@ -135,6 +152,19 @@
 		$.AppContext.onload(function(){
 			var $search_form = $.AppContext.utils.getById('search_form');
 			$search_form.submit();
+
+			var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
+			var $pageBody = $.AppContext.utils.getById('pageBody');
+			
+			if(window.innerWidth >= 992){
+				$filter_toggler.setVisible(true);
+				$pageBody.addClass('show');
+			}
+			else{
+				$pageBody.removeClass('show');
+				$filter_toggler.setVisible(false);
+			}
+			
 		});
 	</script>
 
@@ -161,7 +191,7 @@
 	</section>
 
 	<ec:data-table id="search_form" action="${plugins.ediacaran.sales.web_path}/products/search">
-		<ec:sidebar-group id="pageBody" show="true" extAttrs="products-group">
+		<ec:sidebar-group id="pageBody" classStyle="products-group">
 			<ec:sidebar>
 				<ec:body id="detachedFilters">
 				</ec:body>
@@ -190,7 +220,7 @@
 									<ed:row>
 									
 										<script type="text/javascript">
-											var response = JSON.parse(!{JSON.stringify(JSON.stringify(response))});
+
 											var $filter_toggler = $.AppContext.utils.getById('filter_toggler');
 											var $pageBody = $.AppContext.utils.getById('pageBody');
 
@@ -207,8 +237,14 @@
 												$.AppContext.utils.content.update("detachedFilters", $tmp);
 												
 												/* show filters */
-												$filter_toggler.setVisible(true);
-												$pageBody.addClass('show');
+												if(window.innerWidth >= 992){
+													$filter_toggler.setVisible(true);
+													$pageBody.addClass('show');
+												}
+												else{
+													$pageBody.removeClass('show');
+													$filter_toggler.setVisible(false);
+												}
 											}
 											else{
 												$pageBody.removeClass('show');
@@ -216,9 +252,60 @@
 											}
 
 										</script>
-									
+										
+										<ed:col classStyle="carousel-group">
+										<ec:carousel>
+											<ec:forEach items="!{response.itens}" var="item">
+												<ec:carousel-item>
+													<ec:center>
+														<span class="product">
+															<ed:row style="form">
+																<ed:col size="12">
+																	<a class="image" href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">
+																	<ec:if test="!{item.thumbnail == null}">
+																		<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid" align="center"/>
+																	</ec:if>
+																	<ec:if test="!{item.thumbnail != null}">
+																		<ec:image src="${plugins.ediacaran.sales.image_prefix_address}!{item.thumbnail}" style="fluid" align="center"/>
+																	</ec:if>
+																	</a>
+																</ed:col>
+															</ed:row>
+															<ed:row>
+																<ed:col size="12">
+																	<span class="title"><a href="${plugins.ediacaran.sales.web_path}/products!{item.publicID}">!{item.name}</a></span><br>
+																	<ec:right>
+																	<ec:if test="!{item.hasDiscount}">
+																		<span class="discount">!{item.valueWithoutDiscount}</span><br>
+																	</ec:if>
+																	!{item.productValue.symbol}<span class="price">!{item.productValue.wholeNumberString}</span>!{item.productValue.fractionalPartString}<br>
+																	</ec:right>
+																</ed:col>
+															</ed:row>
+															<ed:row>
+																<ed:col size="12">
+																	<ec:button 
+																		label="#{result.add_cart.label}" 
+																		align="right"
+																		size="small"
+																		style="default"
+																		bundle="${messages}">
+																		<ec:event type="click">
+																			location.href = '${plugins.ediacaran.sales.web_path}/cart/add/!{item.protectedID}'; 
+																		</ec:event>
+																	</ec:button>
+																</ed:col>
+															</ed:row>
+															
+														</span>
+													</ec:center>
+												</ec:carousel-item>
+											</ec:forEach>
+										</ec:carousel>
+										</ed:col>
+
 										<ec:forEach items="!{response.itens}" var="item">
-											<ed:col size="3">
+											<ed:col size="3" classStyle="list-group">
 												<ec:center>
 													<span class="product">
 														<ed:row style="form">
@@ -263,6 +350,7 @@
 												</ec:center>
 											</ed:col>
 										</ec:forEach>
+										
 									</ed:row>
 								</ec:data-result>
 								<!-- end search result  -->

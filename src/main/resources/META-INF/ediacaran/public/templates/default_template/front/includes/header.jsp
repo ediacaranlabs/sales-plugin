@@ -99,6 +99,10 @@ header .fa:not([class*="fa-inverse"]){
 
 @media screen and (min-width: 1200px){
 
+	.menu-section.cart-area {
+		display: none;
+	}
+
 	.search-section.logo-area {
 		flex: 0 0 17%;
 		max-width: 17%;
@@ -129,6 +133,7 @@ header .fa:not([class*="fa-inverse"]){
 			<ec:menu-toggler menuID="top_menu_body">
 				<ec:icon icon="bars"/>
 			</ec:menu-toggler>
+			<ec:right classStyle="menu-section cart-area"><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>			
 			<ec:menu-bar-brand>
 				<c:if test="${empty plugins.ediacaran.front.image_logo}">
 					<h1>${plugins.ediacaran.front.text_logo}</h1>
