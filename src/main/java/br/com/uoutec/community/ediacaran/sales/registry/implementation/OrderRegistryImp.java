@@ -231,7 +231,7 @@ public class OrderRegistryImp
 		
 		try{
 			int page = value.getPage() == null? 1 : value.getPage().intValue();
-			int maxItens = value.getResultPerPage() == null? 10 : value.getResultPerPage();
+			int maxItens = value.getResultPerPage() == null || value.getResultPerPage() > 10? 6 : value.getResultPerPage();
 			
 			int firstResult = (page - 1)*maxItens;
 			int maxResults = maxItens + 1;

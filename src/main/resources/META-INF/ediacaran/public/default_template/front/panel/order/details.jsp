@@ -5,7 +5,37 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 
 <ec:setBundle var="messages" locale="${locale}"/>
+<style>
+.order-box .carousel-group {
+	display: block;
+}
 
+.order-box .list-group {
+	display: none;
+}
+
+
+@media screen and (min-width: 768px){
+	
+}
+
+@media screen and (min-width: 992px){
+
+}
+
+@media screen and (min-width: 1200px){
+
+	.order-box .carousel-group {
+		display: none;
+	}
+	
+	.order-box .list-group {
+		display: block;
+	}
+
+}
+
+</style>
 <section class="inner-headline">
 	<ed:row>
 		<ed:col size="4">
@@ -22,45 +52,114 @@
 	</ed:row>
 </section>
 
-<ec:box>
+<ec:box classStyle="order-box">
 	<ec:box-header><b><fmt:message key="title" bundle="${messages}"/></b> #${vars.order.id}</ec:box-header>
 	<ec:box-body>
 	
 		<ed:row>
-			<ed:col>
-				<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.order.toStringDate(locale)}</h3>
+			<ed:col size="4">
+				<ed:row>
+					<ed:col>
+						<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.order.toStringDate(locale)}</h3>
+					</ed:col>
+				</ed:row>
+				<ed:row>
+					<ed:col>
+						<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.order.id}<br>
+						<b><fmt:message key="payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(locale)}<br>
+						<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
+					</ed:col>
+				</ed:row>
+			</ed:col>
+			<ed:col size="4">
+				<ed:row>
+					<ed:col>
+						<h3><fmt:message key="billing_address.title" bundle="${messages}"/></h3>
+					</ed:col>
+				</ed:row>
+				<ed:row>
+					<ed:col>
+						${vars.order.billingAddress.firstName} ${vars.order.billingAddress.lastName}<br>
+						${vars.order.billingAddress.addressLine1}<br>
+						${vars.order.billingAddress.addressLine2}<br>
+						${vars.order.billingAddress.zip} ${vars.order.billingAddress.city} ${vars.order.billingAddress.region} ${vars.order.billingAddress.country.name}
+					</ed:col>
+				</ed:row>
+			</ed:col>
+			<ed:col size="4">
+				<ed:row>
+					<ed:col>
+						<h3><fmt:message key="shipping_address.title" bundle="${messages}"/></h3>
+					</ed:col>
+				</ed:row>
+				<ed:row>
+					<ed:col>
+						${vars.order.shippingAddress.firstName} ${vars.order.shippingAddress.lastName}<br>
+						${vars.order.shippingAddress.addressLine1}<br>
+						${vars.order.shippingAddress.addressLine2}<br>
+						${vars.order.shippingAddress.zip} ${vars.order.shippingAddress.city} ${vars.order.shippingAddress.region} ${vars.order.shippingAddress.country.name}
+					</ed:col>
+				</ed:row>
 			</ed:col>
 		</ed:row>
-		<ed:row>
+		<ed:row classStyle="carousel-group">
 			<ed:col>
-				<%--<b><fmt:message key="invoice_id" bundle="${messages}"/>:</b> #${vars.order.invoice.id}<br>--%>
-				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.order.id}<br>
-				<b><fmt:message key="payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(locale)}<br>
-				<%--<b><fmt:message key="account" bundle="${messages}"/>:</b> ${vars.order.client}<br>--%>
-				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.order.status.getName(locale)}
-			</ed:col>
-			<ed:col>
-				<b><fmt:message key="billing_address.title" bundle="${messages}"/></b><p>
-				${vars.order.billingAddress.firstName} ${vars.order.billingAddress.lastName}<br>
-				${vars.order.billingAddress.addressLine1}<br>
-				${vars.order.billingAddress.addressLine2}<br>
-				${vars.order.billingAddress.zip} ${vars.order.billingAddress.city} ${vars.order.billingAddress.region} ${vars.order.billingAddress.country.name}
-			</ed:col>
-			<ed:col>
-				<b><fmt:message key="shipping_address.title" bundle="${messages}"/></b><p>
-				${vars.order.shippingAddress.firstName} ${vars.order.shippingAddress.lastName}<br>
-				${vars.order.shippingAddress.addressLine1}<br>
-				${vars.order.shippingAddress.addressLine2}<br>
-				${vars.order.shippingAddress.zip} ${vars.order.shippingAddress.city} ${vars.order.shippingAddress.region} ${vars.order.shippingAddress.country.name}
+				<ec:carousel>
+					<c:forEach items="${vars.order.itens}" var="product">
+						<ec:carousel-item>
+							<ec:box>
+								<ec:box-header>
+									<b>${product.product.name}</b>
+								</ec:box-header>
+								<ec:box-body>
+									<ed:row style="form">
+										<ed:col>
+											<c:if test="${product.product.publicThumb == null}">
+												<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${plugins.ediacaran.sales.template}/front/cart/imgs/product.png" style="fluid" align="center"/>
+											</c:if>
+											<c:if test="${product.product.publicThumb != null}">
+												<ec:image src="${plugins.ediacaran.sales.image_prefix_address}${product.product.publicThumb}" style="fluid" align="center"/>
+											</c:if>
+										</ed:col>
+									</ed:row>
+									<ed:row style="form">
+										<ed:col>
+											<b><fmt:message key="table_product.quantity" bundle="${messages}"/></b>: ${product.units}
+										</ed:col>
+									</ed:row>
+									<ed:row style="form">
+										<ed:col>
+											<b><fmt:message key="table_product.subtotal" bundle="${messages}"/></b>: ${product.displaySubtotal}
+										</ed:col>
+									</ed:row>
+									<ed:row style="form">
+										<ed:col>
+											<b><fmt:message key="table_product.discount" bundle="${messages}"/></b>: ${product.displayDiscount}
+										</ed:col>
+									</ed:row>
+									<ed:row style="form">
+										<ed:col>
+											<b><fmt:message key="table_product.tax" bundle="${messages}"/></b>: ${product.displayTax}
+										</ed:col>
+									</ed:row>
+									<ed:row style="form">
+										<ed:col>
+											<b><fmt:message key="table_product.total" bundle="${messages}"/></b>: ${product.displayTotal}
+										</ed:col>
+									</ed:row>
+								</ec:box-body>
+							</ec:box>
+						</ec:carousel-item>
+					</c:forEach>
+				</ec:carousel>
 			</ed:col>
 		</ed:row>
-		<ed:row>
+		<ed:row classStyle="list-group">
 			<ed:col>
 				<ec:table>
 					<ec:table-header>
 						<ec:table-col><center><fmt:message key="table_product.serial" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.product" bundle="${messages}"/></center></ec:table-col>
-						<%--<ec:table-col><center><fmt:message key="table_product.description" bundle="${messages}"/></center></ec:table-col>--%>
 						<ec:table-col><center><fmt:message key="table_product.quantity" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.subtotal" bundle="${messages}"/></center></ec:table-col>
 						<ec:table-col><center><fmt:message key="table_product.discount" bundle="${messages}"/></center></ec:table-col>
@@ -72,7 +171,6 @@
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<%--<ec:table-col><center>${product.product.shortDescription}</center></ec:table-col>--%>
 								<ec:table-col><center>${product.units}</center></ec:table-col>
 								<ec:table-col><center>${product.displaySubtotal}</center></ec:table-col>
 								<ec:table-col><center>${product.displayDiscount}</center></ec:table-col>
@@ -103,9 +201,8 @@
 				</p>
 			</ed:col>
 			<ed:col size="8">
-				<ec:tabs>
-					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
-					
+				<ec:accordion>
+					<ec:accordion-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
 						<ec:description-list>
 							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
 								${vars.order.displaySubtotal}
@@ -119,29 +216,9 @@
 								${vars.order.displayTax}
 							</ec:description>
 						</ec:description-list>
-						
-						<%--
-						<ec:description-list>
-							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
-								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.value}"/>
-							</ec:description>
-							<c:forEach items="${vars.order.taxes}" var="tax">
-							<ec:description title="${tax.name}" truncate="false">
-								<c:if test="${tax.type == 'UNIT'}">${vars.order.payment.currency}</c:if>
-								<c:if test="${tax.discount}">-</c:if>
-								 <fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/>
-								<c:if test="${tax.type == 'PERCENTAGE'}"> %</c:if>
-							</ec:description>
-							</c:forEach>
-							<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
-								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.total}"/>
-							</ec:description>
-						</ec:description-list>
-						--%>
-					</ec:tabs-item>
-					<ec:tabs-item title="#{tabs.invoices.title}" bundle="${messages}">
-					
-						<ec:table>
+					</ec:accordion-item>
+					<ec:accordion-item title="#{tabs.invoices.title}" bundle="${messages}">
+						<ec:table style="responsive">
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_invoice.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_invoice.date" bundle="${messages}"/></small></center></ec:table-col>
@@ -169,10 +246,9 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:tabs-item>
-					<ec:tabs-item title="#{tabs.shipping.title}" bundle="${messages}">
-					
-						<ec:table>
+					</ec:accordion-item>
+					<ec:accordion-item title="#{tabs.shipping.title}" bundle="${messages}">
+						<ec:table style="responsive">
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_shipping.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_shipping.date" bundle="${messages}"/></small></center></ec:table-col>
@@ -203,10 +279,9 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:tabs-item>
-					<ec:tabs-item title="#{tabs.order_report.title}" bundle="${messages}">
-					
-						<ec:table>
+					</ec:accordion-item>
+					<ec:accordion-item title="#{tabs.order_report.title}" bundle="${messages}">
+						<ec:table style="responsive">
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_report.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_report.date" bundle="${messages}"/></small></center></ec:table-col>
@@ -226,8 +301,8 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:tabs-item>
-					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
+					</ec:accordion-item>
+					<ec:accordion-item title="#{widgets.payment}" bundle="${messages}">
 						<span id="payment_type_tab">
 					    <c:if test="${!empty vars['payment_view']}">
 					    	<ec:include uri="${vars['payment_view']}" resolved="true" />
@@ -244,9 +319,9 @@
 						--%>
 					    </c:if>
 						</span>
-					</ec:tabs-item>
+					</ec:accordion-item>
 					<c:forEach items="${vars.widgets}" var="widget">
-						<ec:tabs-item title="${widget.title}" >
+						<ec:accordion-item title="${widget.title}">
 							<span id="${widget.id}_tab">
 								<script type="text/javascript">
 									$.AppContext.onload(function(){			
@@ -258,9 +333,9 @@
 									});	
 								</script>
 							</span>
-						</ec:tabs-item>
+						</ec:accordion-item>
 					</c:forEach>
-				</ec:tabs>
+				</ec:accordion>
 			</ed:col>
 		</ed:row>
 	</ec:box-body>

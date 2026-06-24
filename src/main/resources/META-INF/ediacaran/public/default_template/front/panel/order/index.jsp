@@ -50,7 +50,7 @@
 		    			</ec:dateField>
 		    		</ec:field-group>
 				</ed:col>
-				<ed:col size="2">
+				<ed:col size="3">
 					<ec:select name="status">
 						<ec:option value=""><fmt:message key="form.status.placeholder" bundle="${messages}"/></ec:option>
 						<c:forEach items="${vars.statusList}" var="status">
@@ -64,40 +64,86 @@
 		    			<ec:textfield name="maxTotal" placeholder="#{form.maxtotal.placeholder}" bundle="${messages}"/>
 		    		</ec:field-group>
 				</ed:col>
-				<ed:col size="1">
-					<ec:button icon="search" style="info" actionType="submit" align="right"/>
+			</ed:row>
+			<ed:row>
+				<ed:col size="12">
+					<ec:button label="Pesquisar" style="info" actionType="submit" align="right"/>
 				</ed:col>
 			</ed:row>
 
 			<ec:data-result var="response">
-				<ec:table>
-					<ec:table-header>
-						<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
-						<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
-					</ec:table-header>
-					<ec:table-body>
-						<ec:forEach items="!{response.data}" var="item">
-						<ec:table-row>
-							<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
-							<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
-							<ec:table-col>
-								<ec:center>
-								<ec:button id="!{item.id}_button" icon="search" style="info" actionType="button">
-									<ec:event type="click">
-										$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
-									</ec:event>
-								</ec:button>
-								</ec:center>
-							</ec:table-col>
-						</ec:table-row>
-						</ec:forEach>
-					</ec:table-body>
-				</ec:table>
+			
+				<ec:if test="!{window.innerWidth < 992}">
+					<ec:forEach items="!{response.data}" var="item">
+						<ec:box classStyle="carousel-group">
+							<ec:box-header>
+								<h3>!{item.id}</h3>
+							</ec:box-header>
+							<ec:box-body>
+								<ed:row style="form">
+									<ed:col>
+										<b><fmt:message key="table.data" bundle="${messages}"/></b>: !{item.date}
+									</ed:col>
+								</ed:row>
+								<ed:row style="form">
+									<ed:col>
+										<b><fmt:message key="table.status" bundle="${messages}"/></b>: !{item.status}
+									</ed:col>
+								</ed:row>
+								<ed:row style="form">
+									<ed:col>
+										<b><fmt:message key="table.total" bundle="${messages}"/></b>: !{item.total}
+									</ed:col>
+								</ed:row>
+								<ed:row>
+									<ed:col>
+										<ec:button id="!{item.id}_button" label="Ver" style="info" align="right" actionType="button">
+											<ec:event type="click">
+												$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+											</ec:event>
+										</ec:button>
+									</ed:col>
+								</ed:row>
+							</ec:box-body>
+						</ec:box>
+					</ec:forEach>
+				</ec:if>
+				
+				<ec:if test="!{window.innerWidth >= 992}">
+				
+					<ec:table>
+						<ec:table-header>
+							<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+							<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
+							<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
+							<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+							<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
+						</ec:table-header>
+						<ec:table-body>
+							<ec:forEach items="!{response.data}" var="item">
+							<ec:table-row>
+								<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+								<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
+								<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
+								<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+								<ec:table-col>
+									<ec:center>
+									<ec:button id="!{item.id}_button" icon="search" style="info" actionType="button">
+										<ec:event type="click">
+											$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+										</ec:event>
+									</ec:button>
+									</ec:center>
+								</ec:table-col>
+							</ec:table-row>
+							</ec:forEach>
+						</ec:table-body>
+					</ec:table>
+				
+				
+				</ec:if>
+				
+				
 			</ec:data-result>
 		</ec:data-table>
 		
