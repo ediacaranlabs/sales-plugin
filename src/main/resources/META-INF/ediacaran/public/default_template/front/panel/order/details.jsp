@@ -5,37 +5,6 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 
 <ec:setBundle var="messages" locale="${locale}"/>
-<style>
-.order-box .carousel-group {
-	display: block;
-}
-
-.order-box .list-group {
-	display: none;
-}
-
-
-@media screen and (min-width: 768px){
-	
-}
-
-@media screen and (min-width: 992px){
-
-}
-
-@media screen and (min-width: 1200px){
-
-	.order-box .carousel-group {
-		display: none;
-	}
-	
-	.order-box .list-group {
-		display: block;
-	}
-
-}
-
-</style>
 <section class="inner-headline">
 	<ed:row>
 		<ed:col size="4">
@@ -53,17 +22,17 @@
 </section>
 
 <ec:box classStyle="order-box">
-	<ec:box-header><b><fmt:message key="title" bundle="${messages}"/></b> #${vars.order.id}</ec:box-header>
+	<ec:box-header classStyle="full-mode"><b><fmt:message key="title" bundle="${messages}"/></b> #${vars.order.id}</ec:box-header>
 	<ec:box-body>
 	
-		<ed:row>
+		<ed:row style="form">
 			<ed:col size="4">
-				<ed:row>
+				<ed:row style="form">
 					<ed:col>
 						<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.order.toStringDate(locale)}</h3>
 					</ed:col>
 				</ed:row>
-				<ed:row>
+				<ed:row style="form">
 					<ed:col>
 						<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.order.id}<br>
 						<b><fmt:message key="payment_due" bundle="${messages}"/>:</b> ${vars.order.toStringDate(locale)}<br>
@@ -71,13 +40,13 @@
 					</ed:col>
 				</ed:row>
 			</ed:col>
-			<ed:col size="4">
-				<ed:row>
+			<ed:col size="4" classStyle="full-mode">
+				<ed:row style="form">
 					<ed:col>
 						<h3><fmt:message key="billing_address.title" bundle="${messages}"/></h3>
 					</ed:col>
 				</ed:row>
-				<ed:row>
+				<ed:row style="form">
 					<ed:col>
 						${vars.order.billingAddress.firstName} ${vars.order.billingAddress.lastName}<br>
 						${vars.order.billingAddress.addressLine1}<br>
@@ -86,13 +55,13 @@
 					</ed:col>
 				</ed:row>
 			</ed:col>
-			<ed:col size="4">
-				<ed:row>
+			<ed:col size="4" classStyle="full-mode">
+				<ed:row style="form">
 					<ed:col>
 						<h3><fmt:message key="shipping_address.title" bundle="${messages}"/></h3>
 					</ed:col>
 				</ed:row>
-				<ed:row>
+				<ed:row style="form">
 					<ed:col>
 						${vars.order.shippingAddress.firstName} ${vars.order.shippingAddress.lastName}<br>
 						${vars.order.shippingAddress.addressLine1}<br>
@@ -102,15 +71,12 @@
 				</ed:row>
 			</ed:col>
 		</ed:row>
-		<ed:row classStyle="carousel-group">
+		<ed:row classStyle="simplified-mode">
 			<ed:col>
 				<ec:carousel>
-					<c:forEach items="${vars.order.itens}" var="product">
+					<c:forEach items="${vars.order.itensResponse}" var="product">
 						<ec:carousel-item>
 							<ec:box>
-								<ec:box-header>
-									<b>${product.product.name}</b>
-								</ec:box-header>
 								<ec:box-body>
 									<ed:row style="form">
 										<ed:col>
@@ -124,29 +90,90 @@
 									</ed:row>
 									<ed:row style="form">
 										<ed:col>
-											<b><fmt:message key="table_product.quantity" bundle="${messages}"/></b>: ${product.units}
+											<b>${product.product.name}</b><br>
+											<b><fmt:message key="table_product.quantity" bundle="${messages}"/></b>: ${product.units}<br>
+											<b><fmt:message key="table_product.subtotal" bundle="${messages}"/></b>: ${product.displaySubtotal}<br>
+											<b><fmt:message key="table_product.discount" bundle="${messages}"/></b>: ${product.displayDiscount}<br>
+											<b><fmt:message key="table_product.tax" bundle="${messages}"/></b>: ${product.displayTax}<br>
+											<b><fmt:message key="table_product.total" bundle="${messages}"/></b>: ${product.displayTotal}<br>
 										</ed:col>
 									</ed:row>
-									<ed:row style="form">
+									
+									<ed:row>
 										<ed:col>
-											<b><fmt:message key="table_product.subtotal" bundle="${messages}"/></b>: ${product.displaySubtotal}
+											<ec:tabs>
+												<ec:tabs-item active="true" title="#{widgets.payment}" bundle="${messages}">
+													<span id="payment_type_tab">
+												    <c:if test="${!empty vars['payment_view']}">
+												    	<ec:include uri="${vars['payment_view']}" resolved="true" />
+												    <%--
+														<script type="text/javascript">
+															$.AppContext.onload(function(){			
+																$.AppContext.utils
+																	.updateContentByID(
+																			"#!${vars['payment_view']}", 
+																			"payment_type_tab"
+																	);
+															});	
+														</script>
+													--%>
+												    </c:if>
+													</span>
+												</ec:tabs-item>
+												
+												<ec:tabs-item title="#{tabs.shipping.title}" bundle="${messages}">
+													<ec:table>
+														<ec:table-header>
+															<ec:table-col><center><small><fmt:message key="table_shipping.date" bundle="${messages}"/></small></center></ec:table-col>
+															<ec:table-col><small><fmt:message key="table_shipping.dest" bundle="${messages}"/></small></ec:table-col>
+															<ec:table-col><center><small><fmt:message key="table_shipping.actions" bundle="${messages}"/></small></center></ec:table-col>
+														</ec:table-header>
+														<ec:table-body>
+															<c:forEach items="${vars.shippings}" var="shipping">
+															<ec:table-row style="${shipping.cancelDate != null? 'danger' : ''}">
+																<ec:table-col><center><small>${shipping.toStringDate(locale)}</small></center></ec:table-col>
+																<ec:table-col>
+																	<small>
+																		${shipping.dest.firstName} ${vars.shipping.dest.lastName}<br>
+																		${shipping.dest.addressLine1}<br>
+																		${shipping.dest.addressLine2}<br>
+																		${shipping.dest.zip} ${shipping.dest.city} ${shipping.dest.region} ${shipping.dest.country.name}
+																	</small>
+																</ec:table-col>
+																<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/show/${shipping.id}">
+																	<fmt:message key="table_shipping.actions.details" bundle="${messages}"/>
+																</a></small></center></ec:table-col>
+															</ec:table-row>
+															</c:forEach>
+														</ec:table-body>
+													</ec:table>												
+												</ec:tabs-item>
+												
+												<ec:tabs-item title="#{tabs.order_report.title}" bundle="${messages}">
+													<ec:table>
+														<ec:table-header>
+															<ec:table-col><center><small><fmt:message key="table_report.date" bundle="${messages}"/></small></center></ec:table-col>
+															<ec:table-col><center><small><fmt:message key="table_report.status" bundle="${messages}"/></small></center></ec:table-col>
+															<ec:table-col><center><small><fmt:message key="table_report.actions" bundle="${messages}"/></small></center></ec:table-col>
+														</ec:table-header>
+														<ec:table-body>
+															<c:forEach items="${vars.orderReportList}" var="orderReport">
+															<ec:table-row>
+																<ec:table-col><center><small>${orderReport.toStringDate(locale)}</small></center></ec:table-col>
+																<ec:table-col><center><small>${orderReport.status.getName(locale)}</small></center></ec:table-col>
+																<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/show/${orderReport.id}">
+																	<fmt:message key="table_report.actions.details" bundle="${messages}"/>
+																</a></small></center></ec:table-col>
+															</ec:table-row>
+															</c:forEach>
+														</ec:table-body>
+													</ec:table>
+												</ec:tabs-item>
+
+											</ec:tabs>
 										</ed:col>
 									</ed:row>
-									<ed:row style="form">
-										<ed:col>
-											<b><fmt:message key="table_product.discount" bundle="${messages}"/></b>: ${product.displayDiscount}
-										</ed:col>
-									</ed:row>
-									<ed:row style="form">
-										<ed:col>
-											<b><fmt:message key="table_product.tax" bundle="${messages}"/></b>: ${product.displayTax}
-										</ed:col>
-									</ed:row>
-									<ed:row style="form">
-										<ed:col>
-											<b><fmt:message key="table_product.total" bundle="${messages}"/></b>: ${product.displayTotal}
-										</ed:col>
-									</ed:row>
+									
 								</ec:box-body>
 							</ec:box>
 						</ec:carousel-item>
@@ -154,7 +181,7 @@
 				</ec:carousel>
 			</ed:col>
 		</ed:row>
-		<ed:row classStyle="list-group">
+		<ed:row classStyle="full-mode">
 			<ed:col>
 				<ec:table>
 					<ec:table-header>
@@ -182,18 +209,8 @@
 				</ec:table>
 			</ed:col>
 		</ed:row>
-		<c:if test="${vars.order.status.allowedCreateOrderReport}">
-		<ed:row>
-			<ed:col>
-				<ec:button label="Report a problem" align="right">
-					<ec:event type="click">
-						$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/new/${vars.order.id}');			
-					</ec:event>
-				</ec:button>
-			</ed:col>
-		</ed:row>
-		</c:if>
-		<ed:row>
+
+		<ed:row classStyle="full-mode">
 			<ed:col size="4">
 				<p>
 					<fmt:message key="payment_due" bundle="${messages}"/>
@@ -201,8 +218,9 @@
 				</p>
 			</ed:col>
 			<ed:col size="8">
-				<ec:accordion>
-					<ec:accordion-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
+				<ec:tabs>
+					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
+					
 						<ec:description-list>
 							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
 								${vars.order.displaySubtotal}
@@ -216,9 +234,29 @@
 								${vars.order.displayTax}
 							</ec:description>
 						</ec:description-list>
-					</ec:accordion-item>
-					<ec:accordion-item title="#{tabs.invoices.title}" bundle="${messages}">
-						<ec:table style="responsive">
+						
+						<%--
+						<ec:description-list>
+							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
+								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.value}"/>
+							</ec:description>
+							<c:forEach items="${vars.order.taxes}" var="tax">
+							<ec:description title="${tax.name}" truncate="false">
+								<c:if test="${tax.type == 'UNIT'}">${vars.order.payment.currency}</c:if>
+								<c:if test="${tax.discount}">-</c:if>
+								 <fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/>
+								<c:if test="${tax.type == 'PERCENTAGE'}"> %</c:if>
+							</ec:description>
+							</c:forEach>
+							<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
+								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.total}"/>
+							</ec:description>
+						</ec:description-list>
+						--%>
+					</ec:tabs-item>
+					<ec:tabs-item title="#{tabs.invoices.title}" bundle="${messages}">
+					
+						<ec:table>
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_invoice.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_invoice.date" bundle="${messages}"/></small></center></ec:table-col>
@@ -246,9 +284,10 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:accordion-item>
-					<ec:accordion-item title="#{tabs.shipping.title}" bundle="${messages}">
-						<ec:table style="responsive">
+					</ec:tabs-item>
+					<ec:tabs-item title="#{tabs.shipping.title}" bundle="${messages}">
+					
+						<ec:table>
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_shipping.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_shipping.date" bundle="${messages}"/></small></center></ec:table-col>
@@ -279,9 +318,10 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:accordion-item>
-					<ec:accordion-item title="#{tabs.order_report.title}" bundle="${messages}">
-						<ec:table style="responsive">
+					</ec:tabs-item>
+					<ec:tabs-item title="#{tabs.order_report.title}" bundle="${messages}">
+					
+						<ec:table>
 							<ec:table-header>
 								<ec:table-col><center><small><fmt:message key="table_report.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_report.date" bundle="${messages}"/></small></center></ec:table-col>
@@ -301,27 +341,16 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:accordion-item>
-					<ec:accordion-item title="#{widgets.payment}" bundle="${messages}">
+					</ec:tabs-item>
+					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
 						<span id="payment_type_tab">
 					    <c:if test="${!empty vars['payment_view']}">
 					    	<ec:include uri="${vars['payment_view']}" resolved="true" />
-					    <%--
-							<script type="text/javascript">
-								$.AppContext.onload(function(){			
-									$.AppContext.utils
-										.updateContentByID(
-												"#!${vars['payment_view']}", 
-												"payment_type_tab"
-										);
-								});	
-							</script>
-						--%>
 					    </c:if>
 						</span>
-					</ec:accordion-item>
+					</ec:tabs-item>
 					<c:forEach items="${vars.widgets}" var="widget">
-						<ec:accordion-item title="${widget.title}">
+						<ec:tabs-item title="${widget.title}" >
 							<span id="${widget.id}_tab">
 								<script type="text/javascript">
 									$.AppContext.onload(function(){			
@@ -333,17 +362,25 @@
 									});	
 								</script>
 							</span>
-						</ec:accordion-item>
+						</ec:tabs-item>
 					</c:forEach>
-				</ec:accordion>
+				</ec:tabs>
 			</ed:col>
 		</ed:row>
+		
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Search" align="right">
+		<ec:button label="#{actions.back}" align="right" bundle="${messages}">
 			<ec:event type="click">
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders');			
 			</ec:event>
 		</ec:button>
+		<c:if test="${vars.order.status.allowedCreateOrderReport}">
+			<ec:button label="#{actions.support}" align="right" bundle="${messages}">
+				<ec:event type="click">
+					$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/new/${vars.order.id}');			
+				</ec:event>
+			</ec:button>
+		</c:if>
 	</ec:box-footer>
 </ec:box>

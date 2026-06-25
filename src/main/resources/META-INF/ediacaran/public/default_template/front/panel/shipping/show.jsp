@@ -30,45 +30,67 @@
 <ec:form id="shippingForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/shippings/confirm" method="POST" update="shippingFormResult">
 	<input type="hidden" name="id" value="${vars.shipping.id}">
 <ec:box>
-	<ec:box-header><b><fmt:message key="shipping_id" bundle="${messages}"/></b> #${vars.shipping.id}</ec:box-header>
+	<ec:box-header classStyle="full-mode"><b><fmt:message key="shipping_id" bundle="${messages}"/></b> #${vars.shipping.id}</ec:box-header>
 	<ec:box-body>
 	
-		<ed:row>
-			<ed:col>
-				<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.shipping.toStringDate(locale)}</h3>
+		<ed:row style="form">
+			<ed:col size="4">
+				<ed:row style="form">
+					<ed:col>
+						<h3><fmt:message key="date" bundle="${messages}"/>: ${vars.shipping.toStringDate(locale)}</h3>
+					</ed:col>
+				</ed:row>
+				<ed:row style="form">
+					<ed:col>
+						<b><fmt:message key="shipping_code" bundle="${messages}"/>:</b> #${vars.shipping.id}<br>
+						<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringDate(locale)}<br>
+						<b><fmt:message key="canceled_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringCancelDate(locale)}<br>
+						<b><fmt:message key="received_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringReceivedDate(locale)}<br>
+						<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.shipping.order}<br>
+						<b><fmt:message key="closed" bundle="${messages}"/>:</b>
+						<c:if test="${vars.shipping.closed}">
+							<fmt:message key="closed" bundle="${messages}"/><br>
+						</c:if> 
+						<c:if test="${!vars.shipping.closed}">
+							<fmt:message key="not_closed" bundle="${messages}"/><br>
+						</c:if> 
+					</ed:col>
+				</ed:row>
+			</ed:col>
+			<ed:col size="4">
+				<ed:row style="form">
+					<ed:col>
+						<h3><fmt:message key="origin_address.title" bundle="${messages}"/></h3>
+					</ed:col>
+				</ed:row>
+				<ed:row style="form">
+					<ed:col>
+						${vars.shipping.origin.firstName} ${vars.shipping.origin.lastName}<br>
+						${vars.shipping.origin.addressLine1}<br>
+						${vars.shipping.origin.addressLine2}<br>
+						${vars.shipping.origin.zip} ${vars.shipping.origin.city} ${vars.shipping.origin.region} ${vars.shipping.origin.country.name}
+					</ed:col>
+				</ed:row>
+			</ed:col>
+			<ed:col size="4">
+				<ed:row style="form">
+					<ed:col>
+						<h3><fmt:message key="destination_address.title" bundle="${messages}"/></h3>
+					</ed:col>
+				</ed:row>
+				<ed:row style="form">
+					<ed:col>
+						${vars.shipping.dest.firstName} ${vars.shipping.dest.lastName}<br>
+						${vars.shipping.dest.addressLine1}<br>
+						${vars.shipping.dest.addressLine2}<br>
+						${vars.shipping.dest.zip} ${vars.shipping.dest.city} ${vars.shipping.dest.region} ${vars.shipping.dest.country.name}
+					</ed:col>
+				</ed:row>
+				
 			</ed:col>
 		</ed:row>
-		<ed:row>
-			<ed:col size="4">
-				<b><fmt:message key="shipping_code" bundle="${messages}"/>:</b> #${vars.shipping.id}<br>
-				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringDate(locale)}<br>
-				<b><fmt:message key="canceled_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringCancelDate(locale)}<br>
-				<b><fmt:message key="received_in" bundle="${messages}"/>:</b> ${vars.shipping.toStringReceivedDate(locale)}<br>
-				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.shipping.order}<br>
-				<b><fmt:message key="closed" bundle="${messages}"/>:</b>
-				<c:if test="${vars.shipping.closed}">
-					<fmt:message key="closed" bundle="${messages}"/><br>
-				</c:if> 
-				<c:if test="${!vars.shipping.closed}">
-					<fmt:message key="not_closed" bundle="${messages}"/><br>
-				</c:if> 
-			</ed:col>
-			<ed:col size="4">
-				<b><fmt:message key="origin_address.title" bundle="${messages}"/></b><p>
-				${vars.shipping.origin.firstName} ${vars.shipping.origin.lastName}<br>
-				${vars.shipping.origin.addressLine1}<br>
-				${vars.shipping.origin.addressLine2}<br>
-				${vars.shipping.origin.zip} ${vars.shipping.origin.city} ${vars.shipping.origin.region} ${vars.shipping.origin.country.name}
-			</ed:col>
-			<ed:col size="4">
-				<b><fmt:message key="destination_address.title" bundle="${messages}"/></b><p>
-				${vars.shipping.dest.firstName} ${vars.shipping.dest.lastName}<br>
-				${vars.shipping.dest.addressLine1}<br>
-				${vars.shipping.dest.addressLine2}<br>
-				${vars.shipping.dest.zip} ${vars.shipping.dest.city} ${vars.shipping.dest.region} ${vars.shipping.dest.country.name}
-			</ed:col>
-		</ed:row>
-		<ed:row>
+		
+		<ed:row classStyle="full-mode">
 			<ed:col>
 				<ec:table>
 					<ec:table-header>

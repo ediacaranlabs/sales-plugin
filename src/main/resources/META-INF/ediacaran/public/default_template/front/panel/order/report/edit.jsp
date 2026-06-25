@@ -51,7 +51,7 @@
 			<ed:col size="4">
 			</ed:col>
 		</ed:row>
-		<ed:row>
+		<ed:row classStyle="full-mode">
 			<ed:col>
 				<ec:table>
 					<ec:table-header>
@@ -63,6 +63,39 @@
 						<c:forEach items="${vars.orderReport.products}" var="product">
 							<ec:table-row>
 								<ec:table-col><center>${product.serial}</center></ec:table-col>
+								<ec:table-col><center>${product.product.name}</center></ec:table-col>
+								<ec:table-col classStyle="cause form-group has-feedback" >
+									<c:if test="${!empty vars.orderReport.id}">
+										<ec:center>${product.cause.getName(locale)}</ec:center>
+									</c:if>
+									<c:if test="${empty vars.orderReport.id}">
+										<span formgroup="products" formgrouptype="index">
+											<input type="hidden" name="serial" value="${product.serial}">
+											<ec:select name="cause" form="orderReportForm">
+												<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
+												<c:forEach items="${vars.causeList}" var="cause">
+													<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
+												</c:forEach>
+											</ec:select>
+										</span>
+									</c:if>
+								</ec:table-col>
+							</ec:table-row>
+						</c:forEach>
+					</ec:table-body>
+				</ec:table>
+			</ed:col>
+		</ed:row>
+		<ed:row classStyle="simplified-mode">
+			<ed:col>
+				<ec:table>
+					<ec:table-header>
+						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.cause" bundle="${messages}"/></center></ec:table-col>
+					</ec:table-header>
+					<ec:table-body>
+						<c:forEach items="${vars.orderReport.products}" var="product">
+							<ec:table-row>
 								<ec:table-col><center>${product.product.name}</center></ec:table-col>
 								<ec:table-col classStyle="cause form-group has-feedback" >
 									<c:if test="${!empty vars.orderReport.id}">

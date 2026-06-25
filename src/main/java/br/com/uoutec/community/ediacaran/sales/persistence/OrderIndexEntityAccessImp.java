@@ -117,7 +117,7 @@ public class OrderIndexEntityAccessImp
 		    }
 
 		    if(value.getStatus() != null) {
-			    and.add(builder.equal(from.get("status"), value.getStatus()));
+			    and.add(builder.equal(from.get("status"), value.getStatus().getCode()));
 		    }
 		    
 		    if(value.getOwnerName() != null && !value.getOwnerName().trim().isEmpty()) {

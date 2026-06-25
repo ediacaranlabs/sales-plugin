@@ -34,7 +34,7 @@
 </ec:form>
 
 <ec:box>
-	<ec:box-header>
+	<ec:box-header classStyle="full-mode">
 		<b><fmt:message key="order_report_id" bundle="${messages}"/></b>#${vars.orderReport.id}
 	</ec:box-header>
 	<ec:box-body>
@@ -55,7 +55,25 @@
 			<ed:col size="4">
 			</ed:col>
 		</ed:row>
-		<ed:row>
+		<ed:row classStyle="simplified-mode">
+			<ed:col>
+				<ec:table>
+					<ec:table-header>
+						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
+						<ec:table-col><center><fmt:message key="product_table.cause" bundle="${messages}"/></center></ec:table-col>
+					</ec:table-header>
+					<ec:table-body>
+						<c:forEach items="${vars.orderReport.products}" var="product">
+							<ec:table-row>
+								<ec:table-col><center>${product.product.name}</center></ec:table-col>
+								<ec:table-col><ec:center>${product.cause.getName(locale)}</ec:center></ec:table-col>
+							</ec:table-row>
+						</c:forEach>
+					</ec:table-body>
+				</ec:table>
+			</ed:col>
+		</ed:row>
+		<ed:row classStyle="full-mode">
 			<ed:col>
 				<ec:table>
 					<ec:table-header>

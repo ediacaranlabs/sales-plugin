@@ -133,6 +133,7 @@ header .fa:not([class*="fa-inverse"]){
 			<ec:menu-toggler menuID="top_menu_body">
 				<ec:icon icon="bars"/>
 			</ec:menu-toggler>
+			<ec:right classStyle="menu-section cart-area"><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><ec:icon icon="cogs" style="default" /></a></ec:right>			
 			<ec:right classStyle="menu-section cart-area"><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>			
 			<ec:menu-bar-brand>
 				<c:if test="${empty plugins.ediacaran.front.image_logo}">

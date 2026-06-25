@@ -7,9 +7,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -18,6 +20,15 @@ import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -222,6 +233,156 @@ public class Order implements Serializable{
 				status == OrderStatus.CLOSED || 
 				status == OrderStatus.COMPLETE;
 	}
+	
+	/* invoice methods */
+	
+	private volatile List<Invoice> invoices;
+	
+	private volatile boolean invoiceLoaded = false;
+	
+	public void setInvoices(List<Invoice> invoices) {
+		if(invoices == null) {
+			this.invoices = null;
+			this.invoiceLoaded = false;
+		}
+		else {
+			this.invoices = invoices;
+			this.invoiceLoaded = true;
+		}
+	}
+	
+	public List<Invoice> getInvoices() throws InvoiceRegistryException {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!invoiceLoaded) {
+			InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+			this.invoices = registry.findByOrder(this.id);
+			this.invoiceLoaded = true;
+		}
+		
+		return invoices;
+	}
+	
+	/* Shipping methods */
+	
+	private volatile List<Shipping> shippings;
+	
+	private volatile boolean shippingsLoaded = false;
+	
+	public void setShippings(List<Shipping> value) {
+		if(value == null) {
+			this.shippings = null;
+			this.shippingsLoaded = false;
+		}
+		else {
+			this.shippings = value;
+			this.shippingsLoaded = true;
+		}
+	}
+	
+	public List<Shipping> getShippings() throws ShippingRegistryException {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!shippingsLoaded) {
+			ShippingRegistry registry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+			this.shippings = registry.findByOrder(this.id);
+			this.shippingsLoaded = true;
+		}
+		
+		return shippings;
+	}
+
+	/* Refund methods */
+	
+	private volatile List<Refund> refunds;
+	
+	private volatile boolean refundsLoaded = false;
+	
+	public void setRefunds(List<Refund> value) {
+		if(value == null) {
+			this.refunds = null;
+			this.refundsLoaded = false;
+		}
+		else {
+			this.refunds = value;
+			this.refundsLoaded = true;
+		}
+	}
+	
+	public List<Refund> getRefunds() throws RefundRegistryException {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!refundsLoaded) {
+			RefundRegistry registry = EntityContextPlugin.getEntity(RefundRegistry.class);
+			this.refunds = registry.findRefundByOrder(this.id);
+			this.refundsLoaded = true;
+		}
+		
+		return refunds;
+	}
+
+	/* Order Report methods */
+	
+	private volatile List<OrderReport> orderReports;
+	
+	private volatile boolean orderReportsLoaded = false;
+	
+	public void setOrderReports(List<OrderReport> value) {
+		if(value == null) {
+			this.orderReports = null;
+			this.orderReportsLoaded = false;
+		}
+		else {
+			this.orderReports = value;
+			this.orderReportsLoaded = true;
+		}
+	}
+	
+	public List<OrderReport> getOrderReport() throws OrderReportRegistryException {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!orderReportsLoaded) {
+			OrderReportRegistry registry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+			this.orderReports = registry.findByOrder(this.id);
+			this.orderReportsLoaded = true;
+		}
+		
+		return orderReports;
+	}
+	
+	public List<ProductResponse> getItensResponse() throws InvoiceRegistryException, ShippingRegistryException, RefundRegistryException, OrderReportRegistryException{
+		List<ProductResponse> list = new ArrayList<>();
+		
+		if(itens != null) {
+			for(ProductRequest i: itens) {
+				list.add(
+					new ProductResponse(
+							i, 
+							getInvoices().stream().collect(Collectors.toSet()), 
+							getShippings().stream().collect(Collectors.toSet()), 
+							getRefunds().stream().collect(Collectors.toSet()), 
+							getOrderReport().stream().collect(Collectors.toSet())
+					)
+				);
+			}
+			
+		}
+		
+		return list;
+	}
+	
 	public List<Tax> getTaxes() {
 		return taxes;
 	}

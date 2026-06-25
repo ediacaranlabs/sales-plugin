@@ -14,6 +14,20 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 
 public class ProductRequestUtil {
 
+	public static Map<String, ProductRequest> toMapCollections(Collection<Collection<ProductRequest>> values){
+		
+		Map<String, ProductRequest> transientItens = new HashMap<>();
+		
+		for(Collection<ProductRequest> c: values) {
+			for(ProductRequest pr: c) {
+				ProductRequest tpr = new ProductRequest(pr);
+				transientItens.put(pr.getSerial(), tpr);
+			}
+		}
+		
+		return transientItens;
+	}
+	
 	public static Map<String, ProductRequest> toMap(Collection<ProductRequest> values){
 		
 		Map<String, ProductRequest> transientItens = new HashMap<>();

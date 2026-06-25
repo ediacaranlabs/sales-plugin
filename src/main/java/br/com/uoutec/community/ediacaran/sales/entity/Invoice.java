@@ -8,6 +8,7 @@ import java.time.format.FormatStyle;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -288,6 +289,23 @@ public class Invoice implements Serializable{
 
 	public String getDisplayTotal() {
 		return CurrencyUtil.toString(currency, getTotal());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Invoice other = (Invoice) obj;
+		return Objects.equals(id, other.id);
 	}
 	
 }
