@@ -28,7 +28,6 @@
 	}
 	
 	#product-image {
-		flex-grow: unset;
 		margin-left: 2rem;
         margin-right: 2rem;
 	}

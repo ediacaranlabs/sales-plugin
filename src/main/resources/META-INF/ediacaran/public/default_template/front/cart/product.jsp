@@ -10,12 +10,15 @@
 	</ec:box-header>
 	<ec:box-body>
 	
-		<ed:row id="product-line-min">
+		<span class="simplified-mode">
+		<ed:row>
 			<ed:col id="product-image">
 				<ec:center><ec:image 
 				 	style="fluid"
 					src="${plugins.ediacaran.sales.image_prefix_address}${empty productRequest.product.thumb? plugins.ediacaran.sales.template.concat('/front/cart/imgs/product.png') : productRequest.product.publicThumb}"/></ec:center>
 			</ed:col>
+		</ed:row>
+		<ed:row>
 			<ed:col>
 				<ed:row>
 					<ed:col size="12">
@@ -53,22 +56,6 @@
 									</ec:append-field>
 								</c:if>
 							</ec:field-group>
-							<%--
-							<ec:select name="units"> <!-- style="width: 60px" -->
-								<ec:option value="1" selected="${productRequest.units == 1}">1${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:option>
-								<c:if test="${productRequest.maxExtra > 1}">
-									<c:forEach var="units" begin="2" end="${productRequest.maxExtra + 1}">
-										<ec:option value="${units}" selected="${productRequest.units == units}">${units}${empty productRequest.product.measurementUnit || productRequest.product.measurementUnit == 'UNITS'? '' : '/'.concat(productRequest.product.measurementUnit.getName(locale))}</ec:option>
-									</c:forEach>
-								</c:if>
-								<ec:event type="change">
-									var $form  = $.AppContext.utils.getById('update-item-cart-form-min-${productRequest.serial}');
-									var $units = $form.getField('units');
-									var $qty   = $units.getValue();
-									$.AppContext.utils.updateContentByID('${plugins.ediacaran.sales.web_path}/cart/units/${productRequest.serial}/' + $qty, "product_content");
-								</ec:event>
-							</ec:select>
-							 --%>
 						</ec:form>
 					</ed:col>
 					<ed:col id="cart_item_value_${step.index}">
@@ -87,9 +74,10 @@
 				</ed:row>
 			</ed:col>
 		</ed:row>
+		</span>
 		
-		
-		<ed:row id="product-line">
+		<span class="full-mode">
+		<ed:row>
 			<ed:col size="2">
 				<ec:center>
 				<ec:image 
@@ -161,6 +149,7 @@
 				</ec:form>
 			</ed:col>
 		</ed:row>
-	
+		</span>
+		
 	</ec:box-body>
 </ec:box>
