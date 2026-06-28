@@ -106,15 +106,6 @@
 	display: block;
 }
 
-.products-group .carousel-group {
-	display: block;
-}
-
-.products-group .list-group {
-	display: none;
-}
-
-
 @media screen and (min-width: 768px){
 	
 }
@@ -132,14 +123,6 @@
     .sidebar-group .sidebar-content {
         margin-left: 350px;
     }
-
-	.products-group .carousel-group {
-		display: none;
-	}
-	
-	.products-group .list-group {
-		display: block;
-	}
 
 }
 
@@ -252,8 +235,8 @@
 											}
 
 										</script>
-										
-										<ed:col classStyle="carousel-group">
+										<%--
+										<ed:col classStyle="simplified-mode">
 										<ec:carousel>
 											<ec:forEach items="!{response.itens}" var="item">
 												<ec:carousel-item>
@@ -303,9 +286,9 @@
 											</ec:forEach>
 										</ec:carousel>
 										</ed:col>
-
+										--%>
 										<ec:forEach items="!{response.itens}" var="item">
-											<ed:col size="3" classStyle="list-group">
+											<ed:col size="3">
 												<ec:center>
 													<span class="product">
 														<ed:row style="form">

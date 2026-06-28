@@ -25,6 +25,264 @@
 <ec:box>
 	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
 	<ec:box-body>
+			<ec:tabs>
+				<ec:tabs-item title="#{tabs.pending.title}" id="pendingTabs" active="true" bundle="${messages}">
+					<ec:event type="click">
+						var $search_form = $.AppContext.utils.getById('pendingOrderSearchForm');
+						$search_form.submit();
+					</ec:event>
+					<ec:data-table id="pendingOrderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/search">
+						<input type="hidden" name="status" value="PENDING_PAYMENT">
+						
+						<ec:data-result var="response">
+						
+							<span class="simplified-mode">
+								<ec:forEach items="!{response.data}" var="item">
+									<ec:box classStyle="carousel-group">
+										<ec:box-header>
+											<h3>!{item.id}</h3>
+										</ec:box-header>
+										<ec:box-body>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.data" bundle="${messages}"/></b>: !{item.date}
+												</ed:col>
+											</ed:row>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.status" bundle="${messages}"/></b>: !{item.status}
+												</ed:col>
+											</ed:row>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.total" bundle="${messages}"/></b>: !{item.total}
+												</ed:col>
+											</ed:row>
+											<ed:row>
+												<ed:col>
+													<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+														<ec:event type="click">
+															$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+														</ec:event>
+													</ec:button>
+												</ed:col>
+											</ed:row>
+										</ec:box-body>
+									</ec:box>
+								</ec:forEach>
+							</span>
+							
+							<span class="full-mode">
+							
+								<ec:table>
+									<ec:table-header>
+										<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
+									</ec:table-header>
+									<ec:table-body>
+										<ec:forEach items="!{response.data}" var="item">
+										<ec:table-row>
+											<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+											<ec:table-col>
+												<ec:center>
+												<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+													<ec:event type="click">
+														$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+													</ec:event>
+												</ec:button>
+												</ec:center>
+											</ec:table-col>
+										</ec:table-row>
+										</ec:forEach>
+									</ec:table-body>
+								</ec:table>
+							</span>
+						</ec:data-result>
+					</ec:data-table>	
+				</ec:tabs-item>
+				<ec:tabs-item title="#{tabs.paid.title}" id="paymentTabs" bundle="${messages}">
+					<ec:event type="click">
+						var $search_form = $.AppContext.utils.getById('paymentOrderSearchForm');
+						$search_form.submit();
+					</ec:event>
+					<ec:data-table id="paymentOrderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/search">
+						<input type="hidden" name="status" value="PAYMENT_RECEIVED">
+						
+						<ec:data-result var="response">
+						
+							<span class="simplified-mode">
+								<ec:forEach items="!{response.data}" var="item">
+									<ec:box classStyle="carousel-group">
+										<ec:box-header>
+											<h3>!{item.id}</h3>
+										</ec:box-header>
+										<ec:box-body>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.data" bundle="${messages}"/></b>: !{item.date}
+												</ed:col>
+											</ed:row>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.status" bundle="${messages}"/></b>: !{item.status}
+												</ed:col>
+											</ed:row>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.total" bundle="${messages}"/></b>: !{item.total}
+												</ed:col>
+											</ed:row>
+											<ed:row>
+												<ed:col>
+													<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+														<ec:event type="click">
+															$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+														</ec:event>
+													</ec:button>
+												</ed:col>
+											</ed:row>
+										</ec:box-body>
+									</ec:box>
+								</ec:forEach>
+							</span>
+							
+							<span class="full-mode">
+							
+								<ec:table>
+									<ec:table-header>
+										<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
+									</ec:table-header>
+									<ec:table-body>
+										<ec:forEach items="!{response.data}" var="item">
+										<ec:table-row>
+											<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+											<ec:table-col>
+												<ec:center>
+												<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+													<ec:event type="click">
+														$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+													</ec:event>
+												</ec:button>
+												</ec:center>
+											</ec:table-col>
+										</ec:table-row>
+										</ec:forEach>
+									</ec:table-body>
+								</ec:table>
+							</span>
+						</ec:data-result>
+					</ec:data-table>	
+				
+				</ec:tabs-item>
+				<ec:tabs-item title="#{tabs.shipped.title}" id="shippingTabs" bundle="${messages}">
+				
+					<ec:event type="click">
+						var $search_form = $.AppContext.utils.getById('shippedOrderSearchForm');
+						$search_form.submit();
+					</ec:event>
+					<ec:data-table id="shippedOrderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/search">
+						<input type="hidden" name="status" value="ORDER_SHIPPED">
+						
+						<ec:data-result var="response">
+						
+							<span class="simplified-mode">
+								<ec:forEach items="!{response.data}" var="item">
+									<ec:box classStyle="carousel-group">
+										<ec:box-header>
+											<h3>!{item.id}</h3>
+										</ec:box-header>
+										<ec:box-body>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.data" bundle="${messages}"/></b>: !{item.date}
+												</ed:col>
+											</ed:row>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.status" bundle="${messages}"/></b>: !{item.status}
+												</ed:col>
+											</ed:row>
+											<ed:row style="form">
+												<ed:col>
+													<b><fmt:message key="table.total" bundle="${messages}"/></b>: !{item.total}
+												</ed:col>
+											</ed:row>
+											<ed:row>
+												<ed:col>
+													<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+														<ec:event type="click">
+															$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+														</ec:event>
+													</ec:button>
+												</ed:col>
+											</ed:row>
+										</ec:box-body>
+									</ec:box>
+								</ec:forEach>
+							</span>
+							
+							<span class="full-mode">
+							
+								<ec:table>
+									<ec:table-header>
+										<ec:table-col><ec:center><fmt:message key="table.id" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.data" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.status" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.total" bundle="${messages}"/></ec:center></ec:table-col>
+										<ec:table-col><ec:center><fmt:message key="table.action" bundle="${messages}"/></ec:center></ec:table-col>
+									</ec:table-header>
+									<ec:table-body>
+										<ec:forEach items="!{response.data}" var="item">
+										<ec:table-row>
+											<ec:table-col><ec:center><small>!{item.id}</small></ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.date}</ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.status}</ec:center></ec:table-col>
+											<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
+											<ec:table-col>
+												<ec:center>
+												<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+													<ec:event type="click">
+														$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
+													</ec:event>
+												</ec:button>
+												</ec:center>
+											</ec:table-col>
+										</ec:table-row>
+										</ec:forEach>
+									</ec:table-body>
+								</ec:table>
+							</span>
+						</ec:data-result>
+					</ec:data-table>	
+				
+				
+				</ec:tabs-item>
+			</ec:tabs>
+	</ec:box-body>	
+</ec:box>
+<script type="text/javascript">
+	$.AppContext.onload(function(){
+		var $search_form = $.AppContext.utils.getById('pendingOrderSearchForm');
+		$search_form.submit();
+	});
+</script>
+<%--
+<ec:box>
+	<ec:box-header><fmt:message key="table.title" bundle="${messages}"/></ec:box-header>
+	<ec:box-body>
 		<ec:data-table id="orderSearchForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/search">
 			<ed:row>
 				<ed:col size="2">
@@ -149,3 +407,4 @@
 		
 	</ec:box-body>
 </ec:box>
+--%>
