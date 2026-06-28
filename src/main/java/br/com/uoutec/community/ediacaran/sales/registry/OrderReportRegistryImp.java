@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
@@ -216,6 +217,15 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		return OrderReportRegistryUtil.searchOrderReport(value, entityAccess, indexEntityAccess, clientRegistry, orderRegistry);
 	}
 
+	@Override
+	@ActivateRequestContext
+	public OrderReportResultSearch searchProductsWithPendingReceiptInLast60Days(Client client, Integer page, Integer resultPerPage) throws OrderReportRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
+		
+		return OrderReportRegistryUtil.searchProductsWithPendingReceiptInLast60Days(client, page, resultPerPage, entityAccess);
+	}
+	
 	@Override
 	@ActivateRequestContext
 	public List<OrderReport> findByOrder(String id) throws OrderReportRegistryException {

@@ -196,7 +196,7 @@ public class OrderReportRegistryUtil {
 	
 	public static OrderReportResultSearch searchOrderReport(OrderReportSearch value, OrderReportEntityAccess entityAccess, OrderReportIndexEntityAccess indexEntityAccess, ClientRegistry clientRegistry, OrderRegistry orderRegistry) throws OrderReportRegistryException {
 		
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getSearchPermission());
 		
 		try{
 			int page = value.getPage() == null? 1 : value.getPage().intValue();
@@ -219,6 +219,25 @@ public class OrderReportRegistryUtil {
 		}
 	}
 
+	public static OrderReportResultSearch searchProductsWithPendingReceiptInLast60Days(Client client, Integer page, Integer resultPerPage, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDERREPORT_REGISTRY.getSearchPermission());
+		
+		try{
+			page = page == null? 1 : page;
+			int maxItens = resultPerPage == null? 4 : resultPerPage;
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<OrderReport> itens = entityAccess.getOpenedSupportByClient(client.getId(), firstResult, maxResults);
+			
+			return new OrderReportResultSearch(false, -1, page, itens);
+		}
+		catch(Throwable e){
+			throw new OrderReportRegistryException(e);
+		}
+	}
+	
 	public static void registerOrderReportRegisterEvent(ActionRegistry actionRegistry, OrderReport e, boolean newOrderReport) {
 		
 		if(newOrderReport) {

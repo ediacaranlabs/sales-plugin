@@ -141,7 +141,7 @@
 			<h3><fmt:message key="sections.products" bundle="${messages}" /></h3>
 			
 			<ed:row>
-			
+			<%--
 				<ed:col classStyle="carousel-group">
 					<ec:carousel>
 						<c:forEach items="${vars.products}" var="item">
@@ -191,10 +191,10 @@
 						</c:forEach>
 					</ec:carousel>
 				</ed:col>
-			
+			--%>
 			
 				<c:forEach items="${vars.products}" var="item">
-					<ed:col size="3" classStyle="list-group">
+					<ed:col size="3" classStyle="product-wrapper">
 						<ec:center>
 							<span class="product">
 								<ed:row style="form">

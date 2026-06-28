@@ -15,6 +15,8 @@ public interface OrderReportEntityAccess {
 	
 	void delete(OrderReport value) throws EntityAccessException;
 	
+	List<OrderReport> getOpenedSupportByClient(Integer id, Integer firstResult, Integer maxResults) throws EntityAccessException;
+	
 	List<OrderReport> findByOrder(String order) throws EntityAccessException;
 	
 	void flush();

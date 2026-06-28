@@ -25,10 +25,12 @@ import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
 import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReportCause;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportClientPubEntity;
@@ -39,6 +41,10 @@ import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
+import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -273,6 +279,60 @@ public class OrderReportPanelPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("orderReportMessage", orderReportMessage);
 		return map;
+	}
+
+	@Action("/widgets/active")
+	@View("${plugins.ediacaran.sales.template}/front/panel/widgets/active_order_report")
+	@Result("vars")
+	@RequireAnyRole({BasicRoles.CLIENT,BasicRoles.MANAGER,BasicRoles.USER})
+	public Map<String,Object> searchProductsWithPendingReceiptInLast60Days(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Client client;
+		try{
+			client = new Client();
+			client.setId(getCurrentUserID());
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		OrderReportResultSearch orderReports;
+		try{
+			orderReports = orderReportRegistry.searchProductsWithPendingReceiptInLast60Days(client, null, null);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderReportPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderReportPanelPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("orderReports", orderReports.getItens());
+		return map;
+	}
+	
+	public Integer getCurrentUserID() throws SystemUserRegistryException {
+		SystemUserRegistry systemUserRegistry = EntityContextPlugin.getEntity(SystemUserRegistry.class);
+		Integer userID = systemUserRegistry.getIDBySystemID(SystemUserIDProvider.getSystemUserID());
+		
+		if(userID == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return userID;
 	}
 	
 }

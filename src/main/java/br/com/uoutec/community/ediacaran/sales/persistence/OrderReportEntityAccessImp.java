@@ -2,7 +2,9 @@ package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -17,6 +19,8 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderReportEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestReportEntity;
@@ -163,6 +167,70 @@ public class OrderReportEntityAccessImp
 
 	}
 	
+	@Override
+	public List<OrderReport> getOpenedSupportByClient(Integer id, Integer firstResult, Integer maxResults) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestReportEntity> criteria = builder.createQuery(ProductRequestReportEntity.class);
+		    Root<ProductRequestReportEntity> from = criteria.from(ProductRequestReportEntity.class);
+		    Join<ProductRequestReportEntity, OrderReportEntity> orderReportJoin = from.join("orderReport");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(orderReportJoin.get("client"), id));
+	    	and.add(builder.notEqual(orderReportJoin.get("status"), OrderReportStatus.CLOSED));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+	    	
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(orderReportJoin.get("date")));
+	    	
+		    TypedQuery<ProductRequestReportEntity> typed = entityManager.createQuery(criteria);
+
+		    if(firstResult != null) {
+		    	typed.setFirstResult(firstResult);
+			}
+
+		    if(maxResults != null) {
+		    	typed.setMaxResults(maxResults);
+			}
+		    
+		    List<ProductRequestReportEntity> list = (List<ProductRequestReportEntity>)typed.getResultList();
+    
+		    Map<String, OrderReport> map = new HashMap<>();
+		    
+		    for(ProductRequestReportEntity e: list) {
+		    	ProductRequestReport pr = e.toEntity();
+		    	
+		    	OrderReport orderReport = map.get(e.getId().getOrderReportID());
+		    	
+		    	if(orderReport == null) {
+		    		e.getOrderReport().setProducts(new ArrayList<>());
+		    		orderReport = e.getOrderReport().toEntity();
+		    		orderReport.setProducts(new ArrayList<>());
+		    		map.put(e.getId().getOrderReportID(), orderReport);
+		    	}
+		    	
+		    	orderReport.getProducts().add(pr);
+		    }
+		    
+			return new ArrayList<>(map.values());
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}	
 	@Override
 	public OrderReport findById(String id) throws EntityAccessException {
 		return super.findById(id);

@@ -2,6 +2,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.util.List;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
@@ -30,6 +31,8 @@ public interface OrderReportRegistry extends PublicBean {
 	List<OrderReport> findByOrder(String id) throws OrderReportRegistryException;
 	
 	OrderReportResultSearch searchOrderReport(OrderReportSearch value) throws OrderReportRegistryException;
+	
+	OrderReportResultSearch searchProductsWithPendingReceiptInLast60Days(Client client, Integer page, Integer resultPerPage) throws OrderReportRegistryException;
 	
 	void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException;
 
