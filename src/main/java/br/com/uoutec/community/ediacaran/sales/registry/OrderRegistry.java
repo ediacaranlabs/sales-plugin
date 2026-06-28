@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.registry;
 import java.util.List;
 import java.util.Map;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -61,6 +62,8 @@ public interface OrderRegistry extends PublicBean {
 	Order findByCartID(String id) throws OrderRegistryException;
 
 	OrderResultSearch searchOrder(OrderSearch value) throws OrderRegistryException;
+	
+	OrderResultSearch searchProductsWithPendingPaymentLast6Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException;
 	
 	List<Order> getOrders(OrderStatus status, Integer first, 
 			Integer max) throws OrderRegistryException, SystemUserRegistryException;

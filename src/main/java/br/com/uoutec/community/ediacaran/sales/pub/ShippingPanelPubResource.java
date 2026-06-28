@@ -20,7 +20,9 @@ import org.brandao.brutos.annotation.View;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPanelPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
@@ -31,6 +33,10 @@ import br.com.uoutec.community.ediacaran.sales.shipping.ShippingRateRequest;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
+import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
+import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.web.EdiacaranWebInvoker;
 import br.com.uoutec.pub.entity.InvalidRequestException;
 
@@ -137,6 +143,60 @@ public class ShippingPanelPubResource {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("shipping", shipping);
 		return map;
+	}
+
+	@Action("/widgets/pending")
+	@View("${plugins.ediacaran.sales.template}/front/panel/widgets/pending_confirmation_shipping")
+	@Result("vars")
+	@RequireAnyRole({BasicRoles.CLIENT,BasicRoles.MANAGER,BasicRoles.USER})
+	public Map<String,Object> productsWithPendingReceiptInLast60Days(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Client client;
+		try{
+			client = new Client();
+			client.setId(getCurrentUserID());
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.edit.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+
+		ShippingResultSearch shippings;
+		try{
+			shippings = shippingRegistry.searchProductsWithPendingReceiptInLast60Days(client, null, null);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							ShippingAdminPubResourceMessages.RESOURCE_BUNDLE,
+							ShippingAdminPubResourceMessages.save.error.register, 
+							locale);
+			
+			throw new InvalidRequestException(error + " (" + ex.getMessage() + ")", ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("shippings", shippings.getItens());
+		return map;
+	}
+	
+	public Integer getCurrentUserID() throws SystemUserRegistryException {
+		SystemUserRegistry systemUserRegistry = EntityContextPlugin.getEntity(SystemUserRegistry.class);
+		Integer userID = systemUserRegistry.getIDBySystemID(SystemUserIDProvider.getSystemUserID());
+		
+		if(userID == null) {
+			throw new SystemUserRegistryException(String.valueOf(userID));
+		}
+		
+		return userID;
 	}
 	
 }

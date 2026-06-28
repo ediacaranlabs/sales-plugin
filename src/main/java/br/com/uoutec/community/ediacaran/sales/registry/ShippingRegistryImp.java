@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
@@ -205,6 +206,28 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		}
 	}
 
+	@Override
+	@ActivateRequestContext
+	public ShippingResultSearch searchProductsWithPendingReceiptInLast60Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
+		
+		try{
+			LocalDateTime endDate =  LocalDateTime.now();
+			LocalDateTime startDate = endDate.minusDays(60);
+			page = page == null? 1 : page;
+			int maxItens = resultPerPage == null? 4 : resultPerPage;
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<Shipping> itens = entityAccess.getNotConfirmedProductsByClient(client.getId(), startDate, endDate, firstResult, maxResults);
+			
+			return new ShippingResultSearch(false, -1, page, itens);
+		}
+		catch(Throwable e){
+			throw new ShippingRegistryException(e);
+		}
+	}
 	
 	@Override
 	@ActivateRequestContext

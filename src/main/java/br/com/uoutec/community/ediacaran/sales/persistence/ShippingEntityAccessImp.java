@@ -1,8 +1,11 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -18,6 +21,7 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
@@ -250,6 +254,88 @@ public class ShippingEntityAccessImp
 		    }
 		    
 			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
+	@Override
+	public List<Shipping> getNotConfirmedProductsByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestShippingEntity> criteria = builder.createQuery(ProductRequestShippingEntity.class);
+		    Root<ProductRequestShippingEntity> from = criteria.from(ProductRequestShippingEntity.class);
+		    Join<ProductRequestShippingEntity, ShippingEntity> shippingJoin = from.join("shipping");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(shippingJoin.get("client"), id));
+	    	and.add(builder.isNull(shippingJoin.get("cancelDate")));
+	    	and.add(builder.isNull(shippingJoin.get("receivedDate")));
+		    
+		    if(startDate != null || endDate != null) {
+		    	
+		    	if(startDate != null && endDate != null) {
+				    and.add(builder.between(shippingJoin.get("date"), startDate, endDate));
+		    	}
+		    	else
+		    	if(startDate != null) {
+				    and.add(builder.greaterThanOrEqualTo(shippingJoin.get("date"), startDate));
+		    	}
+		    	else
+		    	if(endDate != null) {
+				    and.add(builder.lessThanOrEqualTo(shippingJoin.get("date"), endDate));
+		    	}
+		    	
+		    }
+	    	
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+	    	
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(shippingJoin.get("date")));
+	    	
+		    TypedQuery<ProductRequestShippingEntity> typed = entityManager.createQuery(criteria);
+
+		    if(firstResult != null) {
+		    	typed.setFirstResult(firstResult);
+			}
+
+		    if(maxResults != null) {
+		    	typed.setMaxResults(maxResults);
+			}
+		    
+		    List<ProductRequestShippingEntity> list = (List<ProductRequestShippingEntity>)typed.getResultList();
+    
+		    Map<String, Shipping> map = new HashMap<>();
+		    
+		    for(ProductRequestShippingEntity e: list) {
+		    	ProductRequest pr = e.toEntity();
+		    	
+		    	Shipping shipping = map.get(e.getId().getShippingID());
+		    	
+		    	if(shipping == null) {
+		    		e.getShipping().setProducts(new ArrayList<>());
+		    		shipping = e.getShipping().toEntity();
+		    		shipping.setProducts(new ArrayList<>());
+		    		map.put(e.getId().getShippingID(), shipping);
+		    	}
+		    	
+		    	shipping.getProducts().add(pr);
+		    }
+		    
+			return new ArrayList<>(map.values());
 		}
 		catch (Throwable e) {
 			throw new EntityAccessException(e);

@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
@@ -15,6 +16,8 @@ public interface ShippingEntityAccess {
 	void update(Shipping value) throws EntityAccessException;
 	
 	void delete(Shipping value) throws EntityAccessException;
+	
+	List<Shipping> getNotConfirmedProductsByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException;
 	
 	List<Shipping> getList(Integer first, Integer max, Client client) throws EntityAccessException;
 	

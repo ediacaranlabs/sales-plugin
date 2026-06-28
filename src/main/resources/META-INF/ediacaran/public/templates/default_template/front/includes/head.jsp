@@ -1,6 +1,7 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <ec:resources type="css"/>
 <ec:resources type="js"/>
+<meta name="generator" content="Ediacaran 1.0.0" />
 <style type="text/css">
 
 .btn-default {
@@ -70,14 +71,14 @@ header {
 	border: 1px solid #f5f5f5;
 	display: inline-grid;
 	border-radius: 4px;
-	padding: 1em 1em;
+	padding: 0.5em 0.5em;
 }
 
-.product {
-	border: 1px solid #f5f5f5;
-	display: inline-grid;
-	border-radius: 4px;
-	padding: 1em 1em;
+.product-wrapper {
+	flex: 0 0 50%;
+	max-width: 50%;
+	padding-right: 5px;
+	padding-left: 5px;	
 }
 
 .product .discount, .discount {
@@ -100,14 +101,13 @@ header {
 }
 
 .product .title {
-	font-size: 16px;
+	font-size: 10px;
     line-height: 24px;
 }
 
 .product .price {
-	font-size: 28px;
+	font-size: 16px;
 }
-
     
 .navbar-brand{
 	display: none;
@@ -157,6 +157,65 @@ header {
 
 section.body{
 	padding-top: 1em;
+}
+
+@media screen and (min-width: 768px){
+	
+}
+
+@media screen and (min-width: 992px){
+
+}
+
+@media screen and (min-width: 1200px){
+
+	.product {
+		border: 1px solid #f5f5f5;
+		display: inline-grid;
+		border-radius: 4px;
+		padding: 1em 1em;
+	}
+	
+	.product-wrapper {
+		flex: 0 0 25%;
+		max-width: 25%;
+		padding-right: 15px;
+		padding-left: 15px;	
+	}
+	
+	.product .discount, .discount {
+		text-decoration: line-through;
+	}
+	
+	.product  a{
+		color: #000000;
+		text-decoration: none;
+	}
+	
+	.product  a:hover {
+		color: inherit;
+		text-decoration: none;
+	}
+	
+	.product .image img {
+		max-height: 220px;
+		aspect-ratio: 1/1;
+	}
+	
+	.product .title {
+		font-size: 16px;
+	    line-height: 24px;
+	}
+	
+	.product .price {
+		font-size: 28px;
+	}
+	
+	    
+	.navbar-brand{
+		display: none;
+	} 
+
 }
 
 </style>

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -23,6 +24,8 @@ public interface ShippingRegistry extends PublicBean{
 	Shipping toShipping(Order order, String shippingType) throws CountryRegistryException, ShippingRegistryException, OrderRegistryException, InvoiceRegistryException;
 	
 	ShippingResultSearch searchShipping(ShippingSearch value) throws ShippingRegistryException;
+	
+	ShippingResultSearch searchProductsWithPendingReceiptInLast60Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException;
 	
 	Shipping createShipping(Order order, String shippingType, Map<String, String> data, 
 			Map<String, Integer> itens, String message) throws ShippingRegistryException, OrderRegistryException, InvoiceRegistryException, 

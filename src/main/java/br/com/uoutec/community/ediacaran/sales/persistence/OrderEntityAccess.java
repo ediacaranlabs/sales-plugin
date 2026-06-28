@@ -1,6 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.persistence;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
@@ -29,6 +30,8 @@ public interface OrderEntityAccess {
 
 	ProductRequest getProductRequest(String orderID, String id) throws EntityAccessException;
 
+	List<Order> getOrderWithoutPaymentByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException;
+	
 	ProductRequest getProductRequestBySerial(String orderID, String id) throws EntityAccessException;
 	
 	void registryLog(Order order, String message) throws EntityAccessException;

@@ -1,5 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry.implementation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.transaction.Transactional;
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.application.security.DoPrivilegedException;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
+import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
@@ -45,6 +47,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -249,6 +252,29 @@ public class OrderRegistryImp
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);
+		}
+	}
+	
+	@Override
+	@ActivateRequestContext
+	public OrderResultSearch searchProductsWithPendingPaymentLast6Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
+		
+		try{
+			LocalDateTime endDate =  LocalDateTime.now();
+			LocalDateTime startDate = endDate.minusDays(6);
+			page = page == null? 1 : page;
+			int maxItens = resultPerPage == null? 4 : resultPerPage;
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<Order> itens = orderEntityAccess.getOrderWithoutPaymentByClient(client.getId(), startDate, endDate, firstResult, maxResults);
+			
+			return new OrderResultSearch(false, -1, page, itens);
+		}
+		catch(Throwable e){
+			throw new ShippingRegistryException(e);
 		}
 	}
 	

@@ -3,7 +3,9 @@ package br.com.uoutec.community.ediacaran.sales.persistence;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity;
+import br.com.uoutec.community.ediacaran.sales.persistence.entity.PaymentEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
@@ -295,6 +298,89 @@ public class OrderEntityAccessImp
 	}
 
 
+	
+	@Override
+	public List<Order> getOrderWithoutPaymentByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestEntity> criteria = builder.createQuery(ProductRequestEntity.class);
+		    Root<ProductRequestEntity> from = criteria.from(ProductRequestEntity.class);
+		    Join<ProductRequestEntity, OrderEntity> orderJoin = from.join("order");
+		    Join<OrderEntity, PaymentEntity> paymentJoin = orderJoin.join("payment");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(orderJoin.get("client"), id));
+	    	and.add(builder.isNull(paymentJoin.get("receivedFrom")));
+		    
+		    if(startDate != null || endDate != null) {
+		    	
+		    	if(startDate != null && endDate != null) {
+				    and.add(builder.between(orderJoin.get("date"), startDate, endDate));
+		    	}
+		    	else
+		    	if(startDate != null) {
+				    and.add(builder.greaterThanOrEqualTo(orderJoin.get("date"), startDate));
+		    	}
+		    	else
+		    	if(endDate != null) {
+				    and.add(builder.lessThanOrEqualTo(orderJoin.get("date"), endDate));
+		    	}
+		    	
+		    }
+	    	
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+	    	
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(orderJoin.get("date")));
+	    	
+		    TypedQuery<ProductRequestEntity> typed = entityManager.createQuery(criteria);
+
+		    if(firstResult != null) {
+		    	typed.setFirstResult(firstResult);
+			}
+
+		    if(maxResults != null) {
+		    	typed.setMaxResults(maxResults);
+			}
+		    
+		    List<ProductRequestEntity> list = (List<ProductRequestEntity>)typed.getResultList();
+    
+		    Map<String, Order> map = new HashMap<>();
+		    
+		    for(ProductRequestEntity e: list) {
+		    	ProductRequest pr = e.toEntity();
+		    	
+		    	Order order = map.get(e.getOrder().getId());
+		    	
+		    	if(order == null) {
+		    		e.getOrder().setItens(new ArrayList<>());
+		    		order = e.getOrder().toEntity();
+		    		order.setItens(new ArrayList<>());
+		    		map.put(e.getOrder().getId(), order);
+		    	}
+		    	
+		    	order.getItens().add(pr);
+		    }
+		    
+			return new ArrayList<>(map.values());
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
 	public List<Order> getOrders(Integer owner, Integer first, Integer max)
 			throws EntityAccessException {
 		

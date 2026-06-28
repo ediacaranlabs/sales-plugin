@@ -38,6 +38,8 @@ public class PluginInstaller extends AbstractPlugin {
 	
 	private ThemesPluginInstaller themesPluginInstaller;
 	
+	private WidgetsPluginInstaller widgetsPluginInstaller;
+	
 	public PluginInstaller() {
 		this.themesPluginInstaller = new ThemesPluginInstaller();
 		this.portalEntitiesPluginInstaller = new PortalEntitiesPluginInstaller();
@@ -54,6 +56,7 @@ public class PluginInstaller extends AbstractPlugin {
 		this.productViewerPluginInstaller = new ProductViewerPluginInstaller();
 		this.shippingMethodInstaller = new ShippingMethodInstaller();
 		this.simplePaymentGatewayInstaller = new SimplePaymentGatewayInstaller();
+		this.widgetsPluginInstaller = new WidgetsPluginInstaller();
 	}
 	
 	@Override
@@ -73,10 +76,12 @@ public class PluginInstaller extends AbstractPlugin {
 		productViewerPluginInstaller.install();
 		shippingMethodInstaller.install();
 		simplePaymentGatewayInstaller.install();
+		widgetsPluginInstaller.install();
 	}
 
 	@Override
 	public void uninstall() throws Throwable {
+		widgetsPluginInstaller.uninstall();
 		themesPluginInstaller.uninstall();
 		portalEntitiesPluginInstaller.uninstall();
 		simplePaymentGatewayInstaller.uninstall();

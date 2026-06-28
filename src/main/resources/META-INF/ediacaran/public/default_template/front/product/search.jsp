@@ -74,7 +74,7 @@
 	overflow-y: auto;
 }
 
-.group_title{
+.group_title {
 	color: #acacac;
 	text-transform: uppercase;
 	font-weight: bold;
@@ -288,7 +288,7 @@
 										</ed:col>
 										--%>
 										<ec:forEach items="!{response.itens}" var="item">
-											<ed:col size="3">
+											<ed:col size="3" classStyle="product-wrapper">
 												<ec:center>
 													<span class="product">
 														<ed:row style="form">
