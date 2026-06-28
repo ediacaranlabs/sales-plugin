@@ -308,6 +308,49 @@ public class OrderPanelPubResource {
 		map.put("orders", orders.getData());
 		return map;
 	}
+
+	@Action("/widgets/paid")
+	@View("${plugins.ediacaran.sales.template}/front/panel/widgets/paid_orders")
+	@Result("vars")
+	@RequireAnyRole({BasicRoles.CLIENT,BasicRoles.MANAGER,BasicRoles.USER})
+	public Map<String,Object> paidOrders(
+			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
+			Locale locale
+	) throws InvalidRequestException{
+		
+		Client client;
+		try{
+			client = new Client();
+			client.setId(getCurrentUserID());
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderPanelPubResourceMessages.order_detail.error.fail_load_entity, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+
+		OrderResultSearch orders;
+		try{
+			orders = orderRegistry.searchPaidOrders(client, null, null);
+		}
+		catch(Throwable ex){
+			String error = i18nRegistry
+					.getString(
+							OrderPanelPubResourceMessages.RESOURCE_BUNDLE,
+							OrderPanelPubResourceMessages.order_detail.error.fail_load_payment_gateway, 
+							locale);
+			
+			throw new InvalidRequestException(error, ex);
+		}
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("orders", orders.getData());
+		return map;
+	}
 	
 	public Integer getCurrentUserID() throws SystemUserRegistryException {
 		SystemUserRegistry systemUserRegistry = EntityContextPlugin.getEntity(SystemUserRegistry.class);

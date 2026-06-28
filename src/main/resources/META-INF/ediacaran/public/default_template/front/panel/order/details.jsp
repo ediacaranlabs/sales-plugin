@@ -76,8 +76,7 @@
 				<ec:carousel>
 					<c:forEach items="${vars.order.itensResponse}" var="product">
 						<ec:carousel-item>
-							<ec:box>
-								<ec:box-body>
+
 									<ed:row style="form">
 										<ed:col>
 											<c:if test="${product.product.publicThumb == null}">
@@ -173,9 +172,7 @@
 											</ec:tabs>
 										</ed:col>
 									</ed:row>
-									
-								</ec:box-body>
-							</ec:box>
+
 						</ec:carousel-item>
 					</c:forEach>
 				</ec:carousel>

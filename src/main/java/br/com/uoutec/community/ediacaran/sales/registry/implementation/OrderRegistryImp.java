@@ -47,7 +47,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -257,7 +256,7 @@ public class OrderRegistryImp
 	
 	@Override
 	@ActivateRequestContext
-	public OrderResultSearch searchProductsWithPendingPaymentLast6Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException {
+	public OrderResultSearch searchProductsWithPendingPaymentLast6Days(Client client, Integer page, Integer resultPerPage) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
@@ -274,13 +273,13 @@ public class OrderRegistryImp
 			return new OrderResultSearch(false, -1, page, itens);
 		}
 		catch(Throwable e){
-			throw new ShippingRegistryException(e);
+			throw new OrderRegistryException(e);
 		}
 	}
 
 	@Override
 	@ActivateRequestContext
-	public OrderResultSearch searchCompletedOrdersLast30Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException {
+	public OrderResultSearch searchCompletedOrdersLast30Days(Client client, Integer page, Integer resultPerPage) throws OrderRegistryException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
@@ -297,7 +296,28 @@ public class OrderRegistryImp
 			return new OrderResultSearch(false, -1, page, itens);
 		}
 		catch(Throwable e){
-			throw new ShippingRegistryException(e);
+			throw new OrderRegistryException(e);
+		}
+	}
+
+	@Override
+	@ActivateRequestContext
+	public OrderResultSearch searchPaidOrders(Client client, Integer page, Integer resultPerPage) throws OrderRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
+		
+		try{
+			page = page == null? 1 : page;
+			int maxItens = resultPerPage == null? 4 : resultPerPage;
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<Order> itens = orderEntityAccess.getPaidOrdersByClient(client.getId(), null, null, firstResult, maxResults);
+			
+			return new OrderResultSearch(false, -1, page, itens);
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException(e);
 		}
 	}
 	

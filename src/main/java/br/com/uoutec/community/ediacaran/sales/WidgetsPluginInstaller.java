@@ -38,6 +38,12 @@ public class WidgetsPluginInstaller {
 					.withResource(varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/widgets/completed"))
 				.build()
 			);
+		wgs.addWidget(
+				Widget.builder()
+					.withName("paidOrders")
+					.withResource(varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/widgets/paid"))
+				.build()
+			);
 	}
 	
 	public void uninstall() throws Throwable {
