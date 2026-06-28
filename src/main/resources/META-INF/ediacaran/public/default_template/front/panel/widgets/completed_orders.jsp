@@ -41,4 +41,9 @@
 			</ec:table-body>
 		</ec:table>
 	</ec:box-body>
+	<ec:box-footer>
+		<ec:button label="Mais" actionType="button" 
+			align="right" bundle="${messages}">
+		</ec:button>
+	</ec:box-footer>
 </ec:box>
