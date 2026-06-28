@@ -32,6 +32,12 @@ public class WidgetsPluginInstaller {
 					.withResource(varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/widgets/active"))
 				.build()
 			);
+		wgs.addWidget(
+				Widget.builder()
+					.withName("completedOrders")
+					.withResource(varParser.getValue("${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/widgets/completed"))
+				.build()
+			);
 	}
 	
 	public void uninstall() throws Throwable {
@@ -39,6 +45,7 @@ public class WidgetsPluginInstaller {
 		wgs.removeWidget("pendingConfirmationShipping");
 		wgs.removeWidget("pendingConfirmationPayment");
 		wgs.removeWidget("activeOrderReport");
+		wgs.removeWidget("completedOrders");
 	}
 	
 }

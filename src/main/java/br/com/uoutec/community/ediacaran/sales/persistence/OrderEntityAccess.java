@@ -32,6 +32,8 @@ public interface OrderEntityAccess {
 
 	List<Order> getOrderWithoutPaymentByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException;
 	
+	List<Order> getCompletedOrdersByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException;
+	
 	ProductRequest getProductRequestBySerial(String orderID, String id) throws EntityAccessException;
 	
 	void registryLog(Order order, String message) throws EntityAccessException;

@@ -65,6 +65,8 @@ public interface OrderRegistry extends PublicBean {
 	
 	OrderResultSearch searchProductsWithPendingPaymentLast6Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException;
 	
+	OrderResultSearch searchCompletedOrdersLast30Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException;
+
 	List<Order> getOrders(OrderStatus status, Integer first, 
 			Integer max) throws OrderRegistryException, SystemUserRegistryException;
 

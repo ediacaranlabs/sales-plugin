@@ -24,7 +24,6 @@ import org.brandao.brutos.annotation.web.MediaTypes;
 import org.brandao.brutos.annotation.web.RequestMethod;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 
-import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
@@ -39,7 +38,6 @@ import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderReportMessageSear
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
-import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
 import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -193,8 +191,7 @@ public class OrderReportPanelPubResource {
 	@RequestMethod("POST")
 	@AcceptRequestType(MediaTypes.APPLICATION_JSON)
 	@ResponseType(MediaTypes.APPLICATION_JSON)
-	@RequireAnyRole({BasicRoles.USER,BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER, BasicRoles.CLIENT})
 	@Result(mappingType = MappingTypes.OBJECT)
 	public OrderReportMessageSearchResultPubEntity getMessages(
 			@DetachedName OrderReportClientPubEntity orderReportClientPubEntity,
@@ -238,8 +235,7 @@ public class OrderReportPanelPubResource {
 	@View("${plugins.ediacaran.sales.template}/admin/order/report/result_message")
 	@Result("vars")
 	@RequestMethod("POST")
-	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
-	@RequiresPermissions(SalesUserPermissions.ORDER.REPORT.MESSAGE)
+	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER, BasicRoles.CLIENT})
 	public Map<String,Object> sendMessage(
 			@DetachedName
 			OrderReportMessageClientPubEntity orderReportMessageClientPubEntity,

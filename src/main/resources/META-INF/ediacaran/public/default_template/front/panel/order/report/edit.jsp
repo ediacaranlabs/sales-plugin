@@ -27,9 +27,6 @@
 	</ed:row>
 </section>
 
-<ec:form id="orderReportForm" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" method="POST" update="orderReportFormResult">
-	<input type="hidden" name="order" value="${vars.orderReport.order.id}">
-	<input type="hidden" name="id" value="${vars.orderReport.id}">
 <ec:box>
 	<ec:box-header><b><fmt:message key="order_report_id" bundle="${messages}"/></b> #${vars.orderReport.id}</ec:box-header>
 	<ec:box-body>
@@ -53,70 +50,78 @@
 		</ed:row>
 		<ed:row classStyle="full-mode">
 			<ed:col>
-				<ec:table>
-					<ec:table-header>
-						<ec:table-col><center><fmt:message key="product_table.id" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="product_table.cause" bundle="${messages}"/></center></ec:table-col>
-					</ec:table-header>
-					<ec:table-body>
-						<c:forEach items="${vars.orderReport.products}" var="product">
-							<ec:table-row>
-								<ec:table-col><center>${product.serial}</center></ec:table-col>
-								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col classStyle="cause form-group has-feedback" >
-									<c:if test="${!empty vars.orderReport.id}">
-										<ec:center>${product.cause.getName(locale)}</ec:center>
-									</c:if>
-									<c:if test="${empty vars.orderReport.id}">
-										<span formgroup="products" formgrouptype="index">
-											<input type="hidden" name="serial" value="${product.serial}">
-											<ec:select name="cause" form="orderReportForm">
-												<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
-												<c:forEach items="${vars.causeList}" var="cause">
-													<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
-												</c:forEach>
-											</ec:select>
-										</span>
-									</c:if>
-								</ec:table-col>
-							</ec:table-row>
-						</c:forEach>
-					</ec:table-body>
-				</ec:table>
+				<ec:form id="orderReportFormFullMode" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" method="POST" update="orderReportFormResult">
+					<input type="hidden" name="order" value="${vars.orderReport.order.id}">
+					<input type="hidden" name="id" value="${vars.orderReport.id}">
+					<ec:table>
+						<ec:table-header>
+							<ec:table-col><center><fmt:message key="product_table.id" bundle="${messages}"/></center></ec:table-col>
+							<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
+							<ec:table-col><center><fmt:message key="product_table.cause" bundle="${messages}"/></center></ec:table-col>
+						</ec:table-header>
+						<ec:table-body>
+							<c:forEach items="${vars.orderReport.products}" var="product">
+								<ec:table-row>
+									<ec:table-col><center>${product.serial}</center></ec:table-col>
+									<ec:table-col><center>${product.product.name}</center></ec:table-col>
+									<ec:table-col classStyle="cause form-group has-feedback" >
+										<c:if test="${!empty vars.orderReport.id}">
+											<ec:center>${product.cause.getName(locale)}</ec:center>
+										</c:if>
+										<c:if test="${empty vars.orderReport.id}">
+											<span formgroup="products" formgrouptype="index">
+												<input type="hidden" name="serial" value="${product.serial}">
+												<ec:select name="cause">
+													<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
+													<c:forEach items="${vars.causeList}" var="cause">
+														<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
+													</c:forEach>
+												</ec:select>
+											</span>
+										</c:if>
+									</ec:table-col>
+								</ec:table-row>
+							</c:forEach>
+						</ec:table-body>
+					</ec:table>
+				</ec:form>
 			</ed:col>
 		</ed:row>
 		<ed:row classStyle="simplified-mode">
 			<ed:col>
-				<ec:table>
-					<ec:table-header>
-						<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
-						<ec:table-col><center><fmt:message key="product_table.cause" bundle="${messages}"/></center></ec:table-col>
-					</ec:table-header>
-					<ec:table-body>
-						<c:forEach items="${vars.orderReport.products}" var="product">
-							<ec:table-row>
-								<ec:table-col><center>${product.product.name}</center></ec:table-col>
-								<ec:table-col classStyle="cause form-group has-feedback" >
-									<c:if test="${!empty vars.orderReport.id}">
-										<ec:center>${product.cause.getName(locale)}</ec:center>
-									</c:if>
-									<c:if test="${empty vars.orderReport.id}">
-										<span formgroup="products" formgrouptype="index">
-											<input type="hidden" name="serial" value="${product.serial}">
-											<ec:select name="cause" form="orderReportForm">
-												<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
-												<c:forEach items="${vars.causeList}" var="cause">
-													<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
-												</c:forEach>
-											</ec:select>
-										</span>
-									</c:if>
-								</ec:table-col>
-							</ec:table-row>
-						</c:forEach>
-					</ec:table-body>
-				</ec:table>
+				<ec:form id="orderReportFormSimplifiedMode" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" method="POST" update="orderReportFormResult">
+					<input type="hidden" name="order" value="${vars.orderReport.order.id}">
+					<input type="hidden" name="id" value="${vars.orderReport.id}">
+					<ec:table>
+						<ec:table-header>
+							<ec:table-col><center><fmt:message key="product_table.product" bundle="${messages}"/></center></ec:table-col>
+							<ec:table-col><center><fmt:message key="product_table.cause" bundle="${messages}"/></center></ec:table-col>
+						</ec:table-header>
+						<ec:table-body>
+							<c:forEach items="${vars.orderReport.products}" var="product">
+								<ec:table-row>
+									<ec:table-col><center>${product.product.name}</center></ec:table-col>
+									<ec:table-col classStyle="cause form-group has-feedback" >
+										<c:if test="${!empty vars.orderReport.id}">
+											<ec:center>${product.cause.getName(locale)}</ec:center>
+										</c:if>
+										<c:if test="${empty vars.orderReport.id}">
+											<span formgroup="products" formgrouptype="index">
+												<input type="hidden" name="serial" value="${product.serial}">
+												<ec:select name="cause">
+													<ec:option value=""><fmt:message key="product_table.form.cause.empty_value" bundle="${messages}"/></ec:option>
+													<c:forEach items="${vars.causeList}" var="cause">
+														<ec:option value="${cause}">${cause.getName(locale)}</ec:option>
+													</c:forEach>
+												</ec:select>
+											</span>
+										</c:if>
+									</ec:table-col>
+								</ec:table-row>
+							</c:forEach>
+						</ec:table-body>
+					</ec:table>
+				</ec:form>
 			</ed:col>
 		</ed:row>
 		<ed:row>
@@ -131,8 +136,10 @@
 				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${vars.orderReport.order.id}');			
 			</ec:event>
 		</ec:button>
-		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
+		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success" classStyle="full-mode" form="orderReportFormFullMode"
+			bundle="${messages}" enabled="${empty vars.orderReport.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" />
+		<ec:button actionType="submit" label="#{save.label}" align="right"  style="success" classStyle="simplified-mode" form="orderReportFormSimplifiedMode"
 			bundle="${messages}" enabled="${empty vars.orderReport.id}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/report/save" />
 	</ec:box-footer>
 </ec:box>
-</ec:form>
+

@@ -277,6 +277,29 @@ public class OrderRegistryImp
 			throw new ShippingRegistryException(e);
 		}
 	}
+
+	@Override
+	@ActivateRequestContext
+	public OrderResultSearch searchCompletedOrdersLast30Days(Client client, Integer page, Integer resultPerPage) throws ShippingRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
+		
+		try{
+			LocalDateTime endDate =  LocalDateTime.now();
+			LocalDateTime startDate = endDate.minusDays(30);
+			page = page == null? 1 : page;
+			int maxItens = resultPerPage == null? 4 : resultPerPage;
+			
+			int firstResult = (page - 1)*maxItens;
+			int maxResults = maxItens + 1;
+			List<Order> itens = orderEntityAccess.getCompletedOrdersByClient(client.getId(), startDate, endDate, firstResult, maxResults);
+			
+			return new OrderResultSearch(false, -1, page, itens);
+		}
+		catch(Throwable e){
+			throw new ShippingRegistryException(e);
+		}
+	}
 	
 	@ActivateRequestContext
 	public List<Order> getOrders(Integer first, Integer max)

@@ -60,7 +60,7 @@
 											</ed:row>
 											<ed:row>
 												<ed:col>
-													<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+													<ec:button label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
 														<ec:event type="click">
 															$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
 														</ec:event>
@@ -91,7 +91,7 @@
 											<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
 											<ec:table-col>
 												<ec:center>
-												<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+												<ec:button label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
 													<ec:event type="click">
 														$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
 													</ec:event>
@@ -140,7 +140,7 @@
 											</ed:row>
 											<ed:row>
 												<ed:col>
-													<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+													<ec:button label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
 														<ec:event type="click">
 															$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
 														</ec:event>
@@ -171,7 +171,7 @@
 											<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
 											<ec:table-col>
 												<ec:center>
-												<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+												<ec:button label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
 													<ec:event type="click">
 														$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
 													</ec:event>
@@ -222,7 +222,7 @@
 											</ed:row>
 											<ed:row>
 												<ed:col>
-													<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+													<ec:button label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
 														<ec:event type="click">
 															$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
 														</ec:event>
@@ -253,7 +253,7 @@
 											<ec:table-col><ec:center>!{item.total}</ec:center></ec:table-col>
 											<ec:table-col>
 												<ec:center>
-												<ec:button id="!{item.id}_button" label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
+												<ec:button label="#{table.button_show}" style="info" align="right" actionType="button" bundle="${messages}">
 													<ec:event type="click">
 														$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/!{item.id}');
 													</ec:event>

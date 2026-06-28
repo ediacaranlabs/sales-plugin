@@ -5,7 +5,7 @@
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
 <ec:box>
 	<ec:box-header>
-		<h3>Products without payment</h3>
+		<h3>Completed orders</h3>
 	</ec:box-header>
 	<ec:box-body>
 		<ec:table>

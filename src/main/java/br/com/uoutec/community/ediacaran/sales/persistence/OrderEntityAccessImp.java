@@ -296,8 +296,6 @@ public class OrderEntityAccessImp
 	protected Serializable toPersistenceID(Serializable value) throws Throwable {
 		return value;
 	}
-
-
 	
 	@Override
 	public List<Order> getOrderWithoutPaymentByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException {
@@ -381,6 +379,75 @@ public class OrderEntityAccessImp
 
 	}
 	
+	@Override
+	public List<Order> getCompletedOrdersByClient(Integer id, LocalDateTime startDate, LocalDateTime endDate, Integer firstResult, Integer maxResults) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderEntity> criteria = builder.createQuery(OrderEntity.class);
+		    Root<OrderEntity> from = criteria.from(OrderEntity.class);
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(from.get("client"), id));
+	    	and.add(builder.equal(from.get("status"), OrderStatus.COMPLETE.toString()));
+		    /*
+		    if(startDate != null || endDate != null) {
+		    	
+		    	if(startDate != null && endDate != null) {
+				    and.add(builder.between(from.get("date"), startDate, endDate));
+		    	}
+		    	else
+		    	if(startDate != null) {
+				    and.add(builder.greaterThanOrEqualTo(from.get("date"), startDate));
+		    	}
+		    	else
+		    	if(endDate != null) {
+				    and.add(builder.lessThanOrEqualTo(from.get("date"), endDate));
+		    	}
+		    	
+		    }
+	    	*/
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+	    	
+		    
+	    	List<javax.persistence.criteria.Order> orderList = 
+	    			new ArrayList<javax.persistence.criteria.Order>();
+	    	orderList.add(builder.desc(from.get("date")));
+	    	
+		    TypedQuery<OrderEntity> typed = entityManager.createQuery(criteria);
+
+		    if(firstResult != null) {
+		    	typed.setFirstResult(firstResult);
+			}
+
+		    if(maxResults != null) {
+		    	typed.setMaxResults(maxResults);
+			}
+		    
+		    List<OrderEntity> list = (List<OrderEntity>)typed.getResultList();
+		    List<Order> itens = new ArrayList<>();
+    
+		    
+		    for(OrderEntity e: list) {
+	    		Order order = e.toEntity();
+	    		itens.add(order);
+		    }
+		    
+			return itens;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}	
 	public List<Order> getOrders(Integer owner, Integer first, Integer max)
 			throws EntityAccessException {
 		
