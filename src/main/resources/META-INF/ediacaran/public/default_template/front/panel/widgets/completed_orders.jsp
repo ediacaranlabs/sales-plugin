@@ -3,21 +3,22 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" 				prefix="fn"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
+<ec:setBundle var="messages" locale="${locale}"/>
 <ec:box>
 	<ec:box-header>
-		<h3>Completed orders</h3>
+		<h3><fmt:message key="title" bundle="${messages}"/></h3>
 	</ec:box-header>
 	<ec:box-body>
 		<ec:table>
 			<ec:table-header>
 				<ec:table-col>
-					<ec:center>Product</ec:center>
+					<ec:center><fmt:message key="table.product" bundle="${messages}"/></ec:center>
 				</ec:table-col>
 				<ec:table-col>
-					<ec:center>Date</ec:center>
+					<ec:center><fmt:message key="table.date" bundle="${messages}"/></ec:center>
 				</ec:table-col>
 				<ec:table-col>
-					<ec:center>Actions</ec:center>
+					<ec:center><fmt:message key="table.actions" bundle="${messages}"/></ec:center>
 				</ec:table-col>
 			</ec:table-header>
 			<ec:table-body>
@@ -31,9 +32,13 @@
 								<ec:center>${order.toStringDate(locale)}</ec:center>
 							</ec:table-col>
 							<ec:table-col>
-								<center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id}">
-										Details
-								</a></small></center>						
+								<center>
+									<small>
+										<a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/${order.id}">
+											<fmt:message key="table.actions.details" bundle="${messages}"/>
+										</a>
+									</small>
+								</center>
 							</ec:table-col>
 						</ec:table-row>
 					</c:forEach>
@@ -42,8 +47,10 @@
 		</ec:table>
 	</ec:box-body>
 	<ec:box-footer>
-		<ec:button label="Mais" actionType="button" 
-			align="right" bundle="${messages}">
+		<ec:button label="#{more}" actionType="button" align="right" bundle="${messages}">
+			<ec:event type="click">
+				$.AppContext.utils.updateContent('#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/');			
+			</ec:event>
 		</ec:button>
 	</ec:box-footer>
 </ec:box>

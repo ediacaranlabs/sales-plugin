@@ -342,6 +342,8 @@ public class OrderEntityAccessImp
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(orderJoin.get("date")));
 	    	
+	    	criteria.orderBy(orderList);
+	    	
 		    TypedQuery<ProductRequestEntity> typed = entityManager.createQuery(criteria);
 
 		    if(firstResult != null) {
@@ -391,7 +393,9 @@ public class OrderEntityAccessImp
 
 		    List<Predicate> and = new ArrayList<Predicate>();
 	    	and.add(builder.equal(from.get("client"), id));
-	    	and.add(builder.equal(from.get("status"), OrderStatus.COMPLETE.toString()));
+	    	//and.add(builder.equal(from.get("status"), OrderStatus.COMPLETE.toString()));
+	    	and.add(from.get("status").in(OrderStatus.COMPLETE.toString(), OrderStatus.ORDER_SHIPPED.toString()));
+	    	//and.add(builder.isNotNull(from.get("completeShipping")));
 		    
 		    if(startDate != null || endDate != null) {
 		    	
@@ -421,6 +425,8 @@ public class OrderEntityAccessImp
 	    	List<javax.persistence.criteria.Order> orderList = 
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
+	    	
+	    	criteria.orderBy(orderList);
 	    	
 		    TypedQuery<OrderEntity> typed = entityManager.createQuery(criteria);
 
@@ -461,7 +467,8 @@ public class OrderEntityAccessImp
 
 		    List<Predicate> and = new ArrayList<Predicate>();
 	    	and.add(builder.equal(from.get("client"), id));
-	    	and.add(builder.equal(from.get("status"), OrderStatus.PAYMENT_RECEIVED.toString()));
+	    	//and.add(builder.equal(from.get("status"), OrderStatus.PAYMENT_RECEIVED.toString()));
+	    	and.add(from.get("status").in(OrderStatus.PAYMENT_RECEIVED.toString(), OrderStatus.ORDER_INVOICED.toString()));
 		    
 		    if(startDate != null || endDate != null) {
 		    	
@@ -491,6 +498,8 @@ public class OrderEntityAccessImp
 	    	List<javax.persistence.criteria.Order> orderList = 
 	    			new ArrayList<javax.persistence.criteria.Order>();
 	    	orderList.add(builder.desc(from.get("date")));
+	    	
+	    	criteria.orderBy(orderList);
 	    	
 		    TypedQuery<OrderEntity> typed = entityManager.createQuery(criteria);
 
