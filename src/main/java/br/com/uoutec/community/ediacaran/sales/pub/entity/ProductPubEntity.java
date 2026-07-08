@@ -94,9 +94,9 @@ public class ProductPubEntity extends GenericPubEntity<Product>{
 	@Size(min=3,groups=DataValidation.class)
 	private String currency;
 
-	protected LocalDate offerDate;
+	private LocalDate offerDate;
 	
-	protected BigDecimal offerDiscount;
+	private BigDecimal offerDiscount;
 	
 	@Size(max = 600)
 	@Pattern(regexp="^([^\"\',]+)(,([^\"\',]+))*$")
