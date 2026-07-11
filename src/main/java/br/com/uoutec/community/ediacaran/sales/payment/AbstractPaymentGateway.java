@@ -25,6 +25,10 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 	@Override
 	public void payment(PaymentRequest paymentRequest) throws PaymentGatewayException {
 		
+		if(paymentRequest.getNewPayment() != null) {
+			updatePayment(paymentRequest.getNewPayment(), paymentRequest.getPayment());
+		}
+		
 		if(paymentRequest.getPayment().getStatus() == PaymentStatus.NEW) {
 			authorize(paymentRequest);
 		}
@@ -59,6 +63,9 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 
 	protected PaymentStatus getEndPaymentTransactionStatus() {
 		return PaymentStatus.PAYMENT_RECEIVED;
+	}
+	
+	protected void updatePayment(Payment newPayment, Payment payment) {
 	}
 	
 	public void authorize(PaymentRequest paymentRequest) throws PaymentGatewayException{

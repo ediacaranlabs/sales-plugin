@@ -521,7 +521,7 @@ public class OrderRegistryImp
 				if(paymentStatus == null) {
 					
 					PaymentGateway paymentGateway = OrderRegistryUtil.getPaymentGateway(order, paymentGatewayRegistry);
-					paymentGateway.payment(new PaymentRequest(order));
+					paymentGateway.payment(new PaymentRequest(order, payment));
 					paymentStatus = order.getPayment().getStatus();
 					
 				}

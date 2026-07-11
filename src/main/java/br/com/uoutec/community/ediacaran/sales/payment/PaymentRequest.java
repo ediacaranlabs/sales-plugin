@@ -14,6 +14,8 @@ public class PaymentRequest {
 	
 	private Payment payment;
 	
+	private Payment newPayment;
+	
 	private PaymentLocation location;
 	
 	private List<ProductRequest> itens;
@@ -25,11 +27,19 @@ public class PaymentRequest {
 		this(order, order.getClient(), order.getPayment());
 	}
 
-	public PaymentRequest(Order order, Client client, Payment payment) {
-		this(order, client, payment, order.getItens());
+	public PaymentRequest(Order order, Payment newPayment) {
+		this(order, order.getClient(), newPayment, order.getPayment());
 	}
 	
-	public PaymentRequest(Order order, Client client, Payment payment, List<ProductRequest> products) {
+	public PaymentRequest(Order order, Client client, Payment payment) {
+		this(order, client, null, payment, order.getItens());
+	}
+
+	public PaymentRequest(Order order, Client client, Payment newPayment, Payment payment) {
+		this(order, client, newPayment, payment, order.getItens());
+	}
+	
+	public PaymentRequest(Order order, Client client, Payment newPayment, Payment payment, List<ProductRequest> products) {
 		
 		this.location = new PaymentLocation();
 		this.location.setCountry(client.getCountry());
@@ -45,6 +55,14 @@ public class PaymentRequest {
 		
 	}
 	
+	public Payment getNewPayment() {
+		return newPayment;
+	}
+
+	public void setNewPayment(Payment newPayment) {
+		this.newPayment = newPayment;
+	}
+
 	public Payment getPayment() {
 		return payment;
 	}
