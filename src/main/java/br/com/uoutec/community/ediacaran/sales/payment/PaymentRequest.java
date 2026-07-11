@@ -48,6 +48,7 @@ public class PaymentRequest {
 		this.location.setZip(client.getZip());
 		
 		this.payment = payment;
+		this.newPayment = newPayment;
 		
 		this.itens = new ArrayList<>();
 		products.stream().forEach((e)->this.itens.add(new ProductRequest(e)));

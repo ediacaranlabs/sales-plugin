@@ -84,7 +84,7 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 	
 	public void refund(RefundRequest refundRequest) throws PaymentGatewayException {
 		
-		if(refundRequest.getRefund().getId() == null) {
+		if(refundRequest.isNewRefund()) {
 			if(refundRequest.isPartialRefund()) {
 				createPartialRefund(refundRequest);
 			}

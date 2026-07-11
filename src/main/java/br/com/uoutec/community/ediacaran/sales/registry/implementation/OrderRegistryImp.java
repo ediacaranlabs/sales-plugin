@@ -495,8 +495,7 @@ public class OrderRegistryImp
 	@ActivateRequestContext
 	@EnableFilters(OrderRegistry.class)
 	public void registerPayment(Order o) throws OrderRegistryException, PaymentGatewayException, ClientRegistryException {
-		Order order = OrderRegistryUtil.getActualOrder(o, orderEntityAccess);
-		updatePaymentStatus0(order.getPayment(), order, null);
+		updatePaymentStatus0(o.getPayment(), o, null);
 	}
 
 	@Override

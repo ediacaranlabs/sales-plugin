@@ -330,8 +330,8 @@ public class RefundRegistryUtil {
 		);
 	}
 
-	public void refundProducts(Order order, Refund refund, boolean partialRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
-		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, itens));
+	public void refundProducts(Order order, Refund refund, boolean partialRefund, boolean newRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
+		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, newRefund, itens));
 	}
 	
 	public void checkUnits(Order order, List<Refund> actualRefunds, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {

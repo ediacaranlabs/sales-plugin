@@ -58,7 +58,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
-		//boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
+		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
 		refundRegistryUtil.checkOrder(entity);
 		refundRegistryUtil.checkCanBeRefund(entity, actualOrder, actualRefunds, actualInvoice);
@@ -67,8 +67,8 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.checkRefund(actualOrder, actualRefunds, entity, actualShiping);
 		refundRegistryUtil.preventChangeRefundSaveSensitiveData(entity, actualOrder);
 		
-		//PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
-		//refundRegistryUtil.refundProducts(actualOrder, entity, partialRefund, entity.getProducts(), paymentGateway);
+		PaymentGateway paymentGateway = refundRegistryUtil.getPaymentGateway(entity);
+		refundRegistryUtil.refundProducts(actualOrder, entity, partialRefund, true, entity.getProducts(), paymentGateway);
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
@@ -159,7 +159,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
 		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
-		refundRegistryUtil.refundProducts(actualOrder, actualRefund, partialRefund, actualRefund.getProducts(), paymentGateway);
+		refundRegistryUtil.refundProducts(actualOrder, actualRefund, partialRefund, false, actualRefund.getProducts(), paymentGateway);
 		
 		if(actualRefund != null && actualRefund.getRefundDate() != null) {
 			refundRegistryUtil.confirmRefund(actualRefund);
@@ -182,6 +182,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	}
 
 	@Override
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public Refund createRefund(Order order, Map<String, Integer> itens) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, InvoiceRegistryException, ValidationException, PaymentGatewayException {
 		
@@ -193,6 +194,7 @@ public class RefundRegistryImp implements RefundRegistry {
 	}
 
 	@Override
+	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public Refund createRefund(Order order, String currency, BigDecimal value) throws RefundRegistryException, ClientRegistryException, ShippingRegistryException, OrderRegistryException, OrderReportRegistryException, InvoiceRegistryException, ValidationException, PaymentGatewayException {
 		

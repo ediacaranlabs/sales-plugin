@@ -23,6 +23,8 @@ public class RefundRequest {
 	
 	private boolean partialRefund;
 	
+	private boolean newRefund;
+	
 	public RefundRequest() {
 	}
 	
@@ -30,11 +32,19 @@ public class RefundRequest {
 		this(order, order.getClient(), order.getPayment(), refund, partialRefund);
 	}
 
-	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean partialRefund) {
-		this(order, client, payment, refund, partialRefund, order.getItens());
+	public RefundRequest(Order order, Refund refund, boolean partialRefund, boolean newRefund) {
+		this(order, order.getClient(), order.getPayment(), refund, newRefund, partialRefund);
 	}
 	
-	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean partialRefund, List<ProductRequest> products) {
+	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean partialRefund) {
+		this(order, client, payment, refund, false, partialRefund, order.getItens());
+	}
+	
+	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean newRefund, boolean partialRefund) {
+		this(order, client, payment, refund, partialRefund, newRefund, order.getItens());
+	}
+	
+	public RefundRequest(Order order, Client client, Payment payment, Refund refund, boolean partialRefund, boolean newRefund, List<ProductRequest> products) {
 		
 		this.location = new PaymentLocation();
 		this.location.setCountry(client.getCountry());
@@ -44,12 +54,17 @@ public class RefundRequest {
 		this.partialRefund = partialRefund;
 		this.payment = payment;
 		this.refund = refund;
+		this.newRefund = newRefund;
 		this.itens = new ArrayList<>();
 		products.stream().forEach((e)->this.itens.add(new ProductRequest(e)));
 		this.order = order;
 		
 	}
 	
+	public boolean isNewRefund() {
+		return newRefund;
+	}
+
 	public boolean isPartialRefund() {
 		return partialRefund;
 	}
