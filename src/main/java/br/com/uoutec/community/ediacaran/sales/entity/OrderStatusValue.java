@@ -227,6 +227,53 @@ public enum OrderStatusValue implements OrderStatus {
 		}
 	},
 
+	PARTIAL_REFUND(){
+		
+		@Override
+		@SuppressWarnings("unchecked")
+		public boolean isValidStatus(OrderStatusRequest request) {
+			Collection<Refund> refunds      = (Collection<Refund>)request.getValue(OrderStatus.REFUNDS);
+			List<Refund> activeRefunds      = new ArrayList<>();
+			Order order                     = (Order)request.getValue(OrderStatus.ORDER);
+			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
+			
+			refunds.stream()
+				.filter((e)->e.isCompleted())
+				.forEach((e)->{
+					activeRefunds.add(e);
+					ProductRequestUtil.subUnits(map, e.getProducts());
+				});
+			
+			ProductRequestUtil.removeEmptyUnits(map);
+			
+			return !map.isEmpty() && !activeRefunds.isEmpty();
+		}
+		
+		public boolean isAllowedCreateInvoice() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeInvoice() {
+			return true;
+		}
+
+		@Override
+		public boolean isClosed() {
+			return false;
+		}
+		
+		@Override
+		public boolean isAllowedCreateRefund() {
+			return true;
+		}
+
+		@Override
+		public boolean isAllowedChangeRefund() {
+			return true;
+		}
+		
+	},
+	
 	REFUND(){
 		
 		@Override
@@ -297,6 +344,7 @@ public enum OrderStatusValue implements OrderStatus {
 			nextState.put(OrderStatusValue.PAYMENT_RECEIVED, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
 							OrderStatusValue.REFUND,
+							OrderStatusValue.PARTIAL_REFUND,
 							OrderStatusValue.ORDER_INVOICED,
 							OrderStatusValue.ORDER_SHIPPED))
 				);
@@ -314,6 +362,13 @@ public enum OrderStatusValue implements OrderStatus {
 							OrderStatusValue.COMPLETE))
 				);
 
+			nextState.put(OrderStatusValue.PARTIAL_REFUND, 
+					new HashSet<OrderStatusValue>(Arrays.asList(
+							OrderStatusValue.REFUND,
+							OrderStatusValue.ORDER_INVOICED,
+							OrderStatusValue.ORDER_SHIPPED))
+				);
+			
 			nextState.put(OrderStatusValue.REFUND, 
 					new HashSet<OrderStatusValue>(Arrays.asList(
 							OrderStatusValue.CLOSED))

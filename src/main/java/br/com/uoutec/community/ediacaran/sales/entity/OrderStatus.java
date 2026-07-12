@@ -37,6 +37,8 @@ public interface OrderStatus {
 	
 	public static final OrderStatus CANCELED = OrderStatusValue.CANCELED;
 
+	public static final OrderStatus PARTIAL_REFUND = OrderStatusValue.PARTIAL_REFUND;
+	
 	public static final OrderStatus REFUND = OrderStatusValue.REFUND;
 	
 	String getCode();

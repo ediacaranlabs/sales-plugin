@@ -24,7 +24,7 @@ public class OrderStatusUtil {
 
 	public static boolean isPaymentReceivedOrder(Order order, Payment payment) throws OrderRegistryException {
 		OrderStatus paymentStatus = OrderRegistryUtil.toOrderStatus(payment.getStatus());
-		return payment != null && (paymentStatus == OrderStatus.PAYMENT_RECEIVED || paymentStatus == OrderStatus.REFUND);
+		return payment != null && (paymentStatus == OrderStatus.PAYMENT_RECEIVED || paymentStatus == OrderStatus.REFUND || paymentStatus == OrderStatus.PARTIAL_REFUND);
 	}
 	
 	public static boolean isInvoicedOrder(Order order, Collection<Invoice> invoices, 

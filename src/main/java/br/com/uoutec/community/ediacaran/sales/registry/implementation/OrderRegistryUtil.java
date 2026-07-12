@@ -213,6 +213,8 @@ public class OrderRegistryUtil {
 			return OrderStatus.PAYMENT_RECEIVED;
 		case SUSPECTED_FRAUD:
 			return OrderStatus.PENDING_PAYMENT;
+		case PARTIAL_REFUND:
+			return OrderStatus.PARTIAL_REFUND;
 		case REFOUND:
 			return OrderStatus.REFUND;
 		default:
