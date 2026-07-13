@@ -33,7 +33,7 @@ public abstract class AbstractPaymentGateway implements PaymentGateway {
 			authorize(paymentRequest);
 		}
 		else
-		if(paymentRequest.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT_CONFIRMATION) {
+		if(paymentRequest.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT || paymentRequest.getPayment().getStatus() == PaymentStatus.PENDING_PAYMENT_CONFIRMATION) {
 			
 			capture(paymentRequest);
 			
