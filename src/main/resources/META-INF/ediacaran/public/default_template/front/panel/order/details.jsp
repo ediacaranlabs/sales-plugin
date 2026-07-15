@@ -3,7 +3,11 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" 				prefix="fn"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
-
+<style>
+html {
+  scroll-behavior: smooth;
+}
+</style>
 <ec:setBundle var="messages" locale="${locale}"/>
 <section class="inner-headline">
 	<ed:row>
@@ -207,16 +211,25 @@
 			</ed:col>
 		</ed:row>
 
-		<ed:row classStyle="full-mode">
-			<ed:col size="4">
+		<ed:row id="payment_due" classStyle="full-mode">
+			<ed:col size="12">
 				<p>
 					<fmt:message key="payment_due" bundle="${messages}"/>
 					${vars.order.toStringDate(locale)}
 				</p>
 			</ed:col>
-			<ed:col size="8">
+		</ed:row>
+		<ed:row classStyle="full-mode">
+			<ed:col size="12">
 				<ec:tabs>
-					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}" active="true">
+					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}" active="true">
+						<span id="payment_type_tab">
+					    <c:if test="${!empty vars['payment_view']}">
+					    	<ec:include uri="${vars['payment_view']}" resolved="true" />
+					    </c:if>
+						</span>
+					</ec:tabs-item>
+					<ec:tabs-item title="#{tabs.totals.title}" bundle="${messages}">
 					
 						<ec:description-list>
 							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
@@ -338,13 +351,6 @@
 								</c:forEach>
 							</ec:table-body>
 						</ec:table>
-					</ec:tabs-item>
-					<ec:tabs-item title="#{widgets.payment}" bundle="${messages}">
-						<span id="payment_type_tab">
-					    <c:if test="${!empty vars['payment_view']}">
-					    	<ec:include uri="${vars['payment_view']}" resolved="true" />
-					    </c:if>
-						</span>
 					</ec:tabs-item>
 					<c:forEach items="${vars.widgets}" var="widget">
 						<ec:tabs-item title="${widget.title}" >
