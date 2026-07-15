@@ -27,7 +27,7 @@ public enum TaxType {
 				return BigDecimal.ZERO;
 			}
 			
-			return value.multiply(tax.divide(PluginInstaller.ONE_HUMDRED, BigDecimal.ROUND_DOWN));
+			return value.multiply(tax.divide(PluginInstaller.ONE_HUNDRED, BigDecimal.ROUND_DOWN));
 		}
 		
 	};

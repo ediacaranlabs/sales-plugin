@@ -6,7 +6,7 @@ import br.com.uoutec.ediacaran.core.AbstractPlugin;
 
 public class PluginInstaller extends AbstractPlugin {
 
-	public static final BigDecimal ONE_HUMDRED = new BigDecimal(100);
+	public static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
 
 	private SecurityPluginInstaller securityPluginInstaller;
 	
