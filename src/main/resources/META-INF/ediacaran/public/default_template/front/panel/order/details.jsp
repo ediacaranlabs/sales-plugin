@@ -75,6 +75,7 @@ html {
 				</ed:row>
 			</ed:col>
 		</ed:row>
+		
 		<ed:row classStyle="simplified-mode">
 			<ed:col>
 				<ec:carousel>
@@ -109,17 +110,6 @@ html {
 													<span id="payment_type_tab">
 												    <c:if test="${!empty vars['payment_view']}">
 												    	<ec:include uri="${vars['payment_view']}" resolved="true" />
-												    <%--
-														<script type="text/javascript">
-															$.AppContext.onload(function(){			
-																$.AppContext.utils
-																	.updateContentByID(
-																			"#!${vars['payment_view']}", 
-																			"payment_type_tab"
-																	);
-															});	
-														</script>
-													--%>
 												    </c:if>
 													</span>
 												</ec:tabs-item>
@@ -182,6 +172,7 @@ html {
 				</ec:carousel>
 			</ed:col>
 		</ed:row>
+		
 		<ed:row classStyle="full-mode">
 			<ed:col>
 				<ec:table>
@@ -244,25 +235,6 @@ html {
 								${vars.order.displayTax}
 							</ec:description>
 						</ec:description-list>
-						
-						<%--
-						<ec:description-list>
-							<ec:description title="#{table_product.subtotal}" truncate="false" bundle="${messages}">
-								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.value}"/>
-							</ec:description>
-							<c:forEach items="${vars.order.taxes}" var="tax">
-							<ec:description title="${tax.name}" truncate="false">
-								<c:if test="${tax.type == 'UNIT'}">${vars.order.payment.currency}</c:if>
-								<c:if test="${tax.discount}">-</c:if>
-								 <fmt:formatNumber pattern="###,###,##0.00" value="${tax.value}"/>
-								<c:if test="${tax.type == 'PERCENTAGE'}"> %</c:if>
-							</ec:description>
-							</c:forEach>
-							<ec:description title="#{table_product.total}" truncate="false" bundle="${messages}">
-								${vars.order.payment.currency} <fmt:formatNumber pattern="###,###,##0.00" value="${vars.order.payment.total}"/>
-							</ec:description>
-						</ec:description-list>
-						--%>
 					</ec:tabs-item>
 					<ec:tabs-item title="#{tabs.invoices.title}" bundle="${messages}">
 					
@@ -352,6 +324,7 @@ html {
 							</ec:table-body>
 						</ec:table>
 					</ec:tabs-item>
+					<%--
 					<c:forEach items="${vars.widgets}" var="widget">
 						<ec:tabs-item title="${widget.title}" >
 							<span id="${widget.id}_tab">
@@ -367,6 +340,7 @@ html {
 							</span>
 						</ec:tabs-item>
 					</c:forEach>
+					--%>
 				</ec:tabs>
 			</ed:col>
 		</ed:row>
