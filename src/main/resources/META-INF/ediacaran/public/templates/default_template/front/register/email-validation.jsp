@@ -1,0 +1,2 @@
+<%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
+<ec:include resolved="true" uri="${plugins.ediacaran.front.web_path}:/templates/default_template/front/register/email-validation.jsp"/>

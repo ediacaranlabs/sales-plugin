@@ -109,8 +109,8 @@ header .fa:not([class*="fa-inverse"]){
 	}
 
 	.search-section.form-area {
-		flex: 0 0 75%;
-		max-width: 75%;
+		flex: 0 0 67%;
+		max-width: 67%;
 	}
 
 	.search-section.cart-area {
@@ -133,8 +133,8 @@ header .fa:not([class*="fa-inverse"]){
 			<ec:menu-toggler menuID="top_menu_body">
 				<ec:icon icon="bars"/>
 			</ec:menu-toggler>
-			<ec:right classStyle="menu-section cart-area"><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><ec:icon icon="cogs" style="default" /></a></ec:right>			
 			<ec:right classStyle="menu-section cart-area"><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>			
+			<ec:right classStyle="menu-section cart-area"><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><ec:icon icon="user" style="default" /></a></ec:right>			
 			<ec:menu-bar-brand>
 				<c:if test="${empty plugins.ediacaran.front.image_logo}">
 					<h1>${plugins.ediacaran.front.text_logo}</h1>
@@ -231,6 +231,9 @@ header .fa:not([class*="fa-inverse"]){
 										</ec:append-field>
 									</ec:field-group>					
 							</ec:center>
+						</ed:col>
+						<ed:col classStyle="search-section cart-area">
+							<ec:center><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><ec:icon icon="user" style="default" /></a></ec:center>
 						</ed:col>
 						<ed:col classStyle="search-section cart-area">
 							<ec:right><a href="${plugins.ediacaran.sales.web_path}/cart"><ec:icon icon="shopping-cart" style="default" /></a></ec:right>
