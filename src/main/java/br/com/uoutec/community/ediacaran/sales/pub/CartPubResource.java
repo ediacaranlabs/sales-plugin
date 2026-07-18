@@ -26,6 +26,8 @@ import org.brandao.brutos.annotation.web.RequestMethodTypes;
 import org.brandao.brutos.annotation.web.ResponseErrors;
 import org.brandao.brutos.web.HttpStatus;
 import org.brandao.brutos.web.WebFlowController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.uoutec.community.ediacaran.front.pub.widget.Widget;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistry;
@@ -62,6 +64,9 @@ import br.com.uoutec.pub.entity.InvalidRequestException;
 @ResponseErrors(code=HttpStatus.INTERNAL_SERVER_ERROR)
 public class CartPubResource {
 
+	@Transient
+	private Logger logger = LoggerFactory.getLogger(CartPubResource.class);
+	
 	@Transient
 	@Inject
 	private ErrorMappingProvider errorMappingProvider;
@@ -292,17 +297,21 @@ public class CartPubResource {
 			}
 		}
 		catch(InvalidRequestException ex){
-			
+
 			Throwable cause = ex.getCause();
 			
 			if(cause instanceof AuthenticationRequiredException) {
 				return varParser.getValue("${plugins.ediacaran.front.login_page}?redirectTo=${plugins.ediacaran.sales.web_path}/cart");
 			}
 			
+			logger.error("buildClient", ex);
+			
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
 		catch(Throwable ex){
+			logger.error("buildClient", ex);
+			
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadUserData", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -315,6 +324,8 @@ public class CartPubResource {
 			payment = paymentPubEntity.rebuild(false, true, true);
 		}
 		catch(Throwable ex){
+			logger.error("buildPayment", ex);
+			
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "loadPaymentData", locale,  ex);
 			throw new InvalidRequestException(error, ex);
 		}		
@@ -327,6 +338,7 @@ public class CartPubResource {
 			return paymentResource != null? paymentResource : varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.panel_context}/orders/show/" + checkoutResult.getOrder().getId());			
 		}
 		catch(EmptyOrderException ex){
+			logger.error("checkout", ex);
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "emptyCart", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
@@ -334,6 +346,7 @@ public class CartPubResource {
 			return varParser.getValue("${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}#!${plugins.ediacaran.front.perfil_page}");
 		}
 		catch(Throwable ex){
+			logger.error("checkout", ex);
 			String error = this.errorMappingProvider.getError(CartPubResource.class, "checkout", "checkout", locale, ex);
 			throw new InvalidRequestException(error, ex);
 		}
