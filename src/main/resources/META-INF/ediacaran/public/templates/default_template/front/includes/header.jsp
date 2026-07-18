@@ -27,6 +27,7 @@
 
 header .container {
 	padding-top: 1em;
+	padding-bottom: 1em;
 }
 
 header .fa:not([class*="fa-inverse"]){
@@ -38,10 +39,33 @@ header .fa:not([class*="fa-inverse"]){
 }
 
 
+@media screen and (max-width: 991px){
+	
+	header .container {
+		max-width: unset;
+		padding-left: 1em !important;
+	   	padding-right: 1em !important;
+   }
+    	
+	.search-section.form-area {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+    
+	.menu-section.login {
+		flex: 0 0 50%;
+		max-width: 50%;
+	}
 
+	.menu-section.cart {
+		flex: 0 0 50%;
+		max-width: 50%;
+	}
+    	
+}
 
+@media screen and (min-width: 992px){
 
-@media screen and (min-width: 1200px){
 
 	.menu-section.cart-area {
 		display: none;
@@ -109,7 +133,7 @@ header .fa:not([class*="fa-inverse"]){
 								Olá, <b><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}">${pageContext.request.userPrincipal.name}</a></b>
 							</c:if>						
 							<c:if test="${empty pageContext.request.userPrincipal}">
-								Olá, <p><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><b>faça seu login!</b></a></p>
+								Olá, <a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><b>faça seu login!</b></a>
 							</c:if>						
 						</ed:col>
 						<ed:col classStyle="menu-section cart">

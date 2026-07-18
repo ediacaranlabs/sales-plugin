@@ -165,6 +165,53 @@ section.body{
 
 @media screen and (min-width: 992px){
 
+	.product {
+		border: 1px solid #f5f5f5;
+		display: inline-grid;
+		border-radius: 4px;
+		padding: 1em 1em;
+	}
+	
+	.product-wrapper {
+		flex: 0 0 25%;
+		max-width: 25%;
+		padding-right: 15px;
+		padding-left: 15px;	
+	}
+	
+	.product .discount, .discount {
+		text-decoration: line-through;
+	}
+	
+	.product  a{
+		color: #000000;
+		text-decoration: none;
+	}
+	
+	.product  a:hover {
+		color: inherit;
+		text-decoration: none;
+	}
+	
+	.product .image img {
+		max-height: 220px;
+		aspect-ratio: 1/1;
+	}
+	
+	.product .title {
+		font-size: 16px;
+	    line-height: 24px;
+	}
+	
+	.product .price {
+		font-size: 28px;
+	}
+	
+	    
+	.navbar-brand{
+		display: none;
+	} 
+
 }
 
 @media screen and (min-width: 1200px){
