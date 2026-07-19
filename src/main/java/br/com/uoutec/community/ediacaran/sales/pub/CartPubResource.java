@@ -235,17 +235,18 @@ public class CartPubResource {
 			AuthenticatedSystemUserPubEntity authenticatedSystemUserPubEntity = new AuthenticatedSystemUserPubEntity();
 			SystemUser user = authenticatedSystemUserPubEntity.rebuild(true, false, false);
 			Client client = clientRegistry.findClientById(user.getId());
+			cart.setClient(client);
 			
 			Map<String,Object> result = new HashMap<String, Object>();
 			
-			result.put("completedRegister",			user.isComplete());
+			result.put("completedRegister",			cart.getClient().isComplete());
 			result.put("reloadAddress",				varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/client"));
 			result.put("supportShipping",			cartService.isSupportShipping(cart));
-			result.put("client",					client);
-			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, client));
+			result.put("client",					cart.getClient());
+			result.put("payment_gateway_list",		cartService.getPaymentGateways(cart, cart.getClient()));
 			result.put("payment_gateway_uri_base",	varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/payment-type"));
 			result.put("productTypes",				productTypeRegistry.getProductTypes());
-			result.put("client_data_view",			clientEntityTypes.getClientEntityView(client));
+			result.put("client_data_view",			clientEntityTypes.getClientEntityView(cart.getClient()));
 			result.put("countries",					countryRegistry.getAll(locale));
 			result.put("address_form", 				varParser.getValue("${plugins.ediacaran.sales.web_path}/cart/address"));
 			result.put("principal",					null);
