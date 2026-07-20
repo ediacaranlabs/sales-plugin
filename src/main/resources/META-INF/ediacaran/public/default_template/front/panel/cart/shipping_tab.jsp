@@ -14,7 +14,7 @@
 	</ed:row>
 	<ed:row>
 		<ed:col>
-			<ec:button label="#{next.label}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right">
+			<ec:button id="checkout_cart_next_button_shipping_form" label="#{next.label}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right">
 				<ec:event type="click">
 				var $form = $.AppContext.utils.getById('cart_shipping_form');
 				$form.submit(
@@ -34,7 +34,7 @@
 					);
 				</ec:event>
 			</ec:button>
-			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" bundle="${messages}" align="right" >
+			<ec:button id="checkout_cart_back_button_shipping_form" icon="chevron-left" label="#{back.label}" actionType="button" bundle="${messages}" align="right" >
 				<ec:event type="click">
 					$.AppContext.utils.updateContentByID(
 						'${plugins.ediacaran.sales.web_path}/cart/address/select', 
@@ -53,3 +53,9 @@
 		</ed:col>
 	</ed:row>
 </ec:form>
+<script type="text/javascript">
+$.AppContext.onload(function(){
+	var $addressForm = $.AppContext.utils.getById('cart_shipping_form');
+	$addressForm.updateMetadata();
+});
+</script>

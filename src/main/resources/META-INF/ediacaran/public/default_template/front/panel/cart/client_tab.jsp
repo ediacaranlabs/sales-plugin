@@ -16,7 +16,7 @@
 </ed:row>
 <ed:row>
 	<ed:col>
-		<ec:button label="#{next.label}" icon2="chevron-right" actionType="button"  align="right" form="form_user" bundle="${messages}">
+		<ec:button id="checkout_cart_next_button_user_form" label="#{next.label}" icon2="chevron-right" actionType="button"  align="right" form="form_user" bundle="${messages}">
 			<ec:event type="click">
 				var $userForm = $.AppContext.utils.getById('form_user');
 				$userForm.submit(

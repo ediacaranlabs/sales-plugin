@@ -106,7 +106,7 @@ public class CartAddressPubResource {
 	}
 
 	@Action("${plugins.ediacaran.front.admin_context}/cart/address")
-	@View("${plugins.ediacaran.sales.template}/front/panel/client/address")
+	@View("${plugins.ediacaran.sales.template}/front/panel/cart/address")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.MANAGER})
 	@RequiresPermissions(SalesUserPermissions.CLIENT.SHOW)

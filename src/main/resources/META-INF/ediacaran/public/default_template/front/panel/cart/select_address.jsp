@@ -74,3 +74,9 @@
 		<span id="new_shipping_address" formgroup="shippingAddress"></span>
 	</ed:col>
 </ed:row>
+<script type="text/javascript">
+$.AppContext.onload(function(){
+	var $addressForm = $.AppContext.utils.getById('address_user');
+	$addressForm.updateMetadata();
+});
+</script>

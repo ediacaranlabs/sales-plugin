@@ -3,7 +3,6 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" 				prefix="fn" %>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
 <%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/designer" 	prefix="ed"%>
-<%@page trimDirectiveWhitespaces="true" %>
 
 <ec:setTemplatePackage name="admin"/>
 <ec:setBundle var="messages" locale="${locale}"/>
@@ -14,9 +13,9 @@
 	</span>
 	<ed:row>
 		<ed:col>
-			<ec:button label="#{checkout.label}" icon="check-circle" actionType="submit" align="right" style="success" bundle="${messages}"/>
+			<ec:button id="checkout_cart_checkout_form" label="#{checkout.label}" icon="check-circle" actionType="submit" align="right" style="success" bundle="${messages}"/>
 			<c:if test="${vars.supportShipping || !vars.completedRegister}">
-			<ec:button icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
+			<ec:button id="checkout_cart_back_button_checkout_form" icon="chevron-left" label="#{back.label}" actionType="button" align="right" bundle="${messages}">
 				<ec:event type="click">
 
 					var $accordion = $.AppContext.utils.getById('cart_steps');
@@ -52,3 +51,9 @@
 		</ed:col>
 	</ed:row>
 </ec:form>
+<script type="text/javascript">
+$.AppContext.onload(function(){
+	var $addressForm = $.AppContext.utils.getById('cart_checkout');
+	$addressForm.updateMetadata();
+});
+</script>

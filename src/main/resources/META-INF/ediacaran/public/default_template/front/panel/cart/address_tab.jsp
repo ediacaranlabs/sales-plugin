@@ -13,7 +13,7 @@
 	<ed:row>
 		<ed:col>
 		
-			<ec:button label="#{next_button.title}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right" >
+			<ec:button id="checkout_cart_next_button_address_form" label="#{next_button.title}" icon2="chevron-right" actionType="button" bundle="${messages}"  align="right" >
 				<ec:event type="click">
 					var $userForm = $.AppContext.utils.getById('address_user');
 					$userForm.submit(
@@ -37,7 +37,7 @@
 				</ec:event>
 			</ec:button>
 			<c:if test="${!vars.completedRegister}">
-			<ec:button icon="chevron-left" label="#{back_button.title}" actionType="button" bundle="${messages}" align="right" >
+			<ec:button id="checkout_cart_back_button_address_form" icon="chevron-left" label="#{back_button.title}" actionType="button" bundle="${messages}" align="right" >
 				<ec:event type="click">
 					var $userForm = $.AppContext.utils.getById('form_user');
 					$userForm.submit(
