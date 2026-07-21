@@ -24,6 +24,10 @@ public class ClientBR extends Client{
 			SystemUserBR user = (SystemUserBR)userBR;
 			this.setDocument(user.getDocument());
 		}
+		else 
+		if(userBR.getAddData() != null){
+			this.document = userBR.getAddData().get("document");
+		}
 	}
 	
 	public String getDocument() {
