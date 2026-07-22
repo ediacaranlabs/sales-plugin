@@ -28,6 +28,7 @@
 	<ec:box>
 		<ec:box-body>
 			<span id="client_data_view" formgroup="client">
+				<input type="hidden" value="${vars.client.protectedID}" name="protectedID">
 				<ec:include uri="${vars.client_data_view}" resolved="true" />
 			</span>
 			<ed:row>
