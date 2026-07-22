@@ -28,14 +28,15 @@ import br.com.uoutec.community.ediacaran.sales.SalesUserPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Address;
 import br.com.uoutec.community.ediacaran.sales.entity.AdminCart;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressCartPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.AddressPubEntity;
 import br.com.uoutec.community.ediacaran.sales.registry.ClientRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
 import br.com.uoutec.community.ediacaran.sales.services.CartService;
 import br.com.uoutec.community.ediacaran.security.BasicRoles;
 import br.com.uoutec.community.ediacaran.security.Principal;
-import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.RequireAnyRole;
+import br.com.uoutec.community.ediacaran.security.RequiresPermissions;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.error.ErrorMappingProvider;
 import br.com.uoutec.community.ediacaran.system.i18n.I18nRegistry;
@@ -93,7 +94,7 @@ public class CartAddressPubResource {
 	/* show address form */
 	
 	@Action("/cart/address")
-	@View("${plugins.ediacaran.sales.template}/front/panel/client/address")
+	@View("${plugins.ediacaran.sales.template}/front/panel/cart/address")
 	@Result("vars")
 	@RequireAnyRole({BasicRoles.USER, BasicRoles.CLIENT, BasicRoles.MANAGER})
 	public Map<String,Object> showAddress(
@@ -212,11 +213,11 @@ public class CartAddressPubResource {
 			@Basic(bean = "client.selectedBillingAddress")
 			AddressPubEntity selectedBillingAddress, 
 			@Basic(bean = "billingAddress")
-			AddressPubEntity billingAddressPubEntity,
+			AddressCartPubEntity billingAddressPubEntity,
 			@Basic(bean = "client.selectedShippingAddress")
 			AddressPubEntity selectedShippingAddress, 
 			@Basic(bean = "shippingAddress")
-			AddressPubEntity shippingAddressPubEntity,
+			AddressCartPubEntity shippingAddressPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		
@@ -237,11 +238,11 @@ public class CartAddressPubResource {
 			@Basic(bean = "client.selectedBillingAddress")
 			AddressPubEntity selectedBillingAddress, 
 			@Basic(bean = "billingAddress")
-			AddressPubEntity billingAddressPubEntity,
+			AddressCartPubEntity billingAddressPubEntity,
 			@Basic(bean = "client.selectedShippingAddress")
 			AddressPubEntity selectedShippingAddress, 
 			@Basic(bean = "shippingAddress")
-			AddressPubEntity shippingAddressPubEntity,
+			AddressCartPubEntity shippingAddressPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale) throws InvalidRequestException {
 		

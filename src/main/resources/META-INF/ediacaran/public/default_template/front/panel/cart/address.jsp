@@ -1,5 +1,5 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<c:import url="/default_template/front/panel/client/address.jsp"/>
+<%@taglib uri="https://www.uoutec.com.br/ediacaran/tags/components" prefix="ec"%>
+<ec:include uri="/default_template/front/panel/client/address.jsp" resolved="true" />
 <script type="text/javascript">
 $.AppContext.onload(function(){
 	var $addressForm = $.AppContext.utils.getById('address_user');

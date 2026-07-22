@@ -11,6 +11,7 @@ import br.com.uoutec.community.ediacaran.persistence.entity.Country;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
+import javax.annotation.Generated;
 
 public class Address implements Serializable{
 
@@ -47,6 +48,19 @@ public class Address implements Serializable{
 	@NotNull(groups={DataValidation.class})
 	@Pattern(regexp=CommonValidation.ZIP)
 	protected String zip;
+
+	@Generated("SparkTools")
+	private Address(Builder builder) {
+		this.id = builder.id;
+		this.firstName = builder.firstName;
+		this.lastName = builder.lastName;
+		this.country = builder.country;
+		this.addressLine1 = builder.addressLine1;
+		this.addressLine2 = builder.addressLine2;
+		this.city = builder.city;
+		this.region = builder.region;
+		this.zip = builder.zip;
+	}
 	
 	public Address() {
 	}
@@ -164,6 +178,76 @@ public class Address implements Serializable{
 		}
 		
 		return builder.toString();
+	}
+
+	@Generated("SparkTools")
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	@Generated("SparkTools")
+	public static final class Builder {
+		private int id;
+		private String firstName;
+		private String lastName;
+		private Country country;
+		private String addressLine1;
+		private String addressLine2;
+		private String city;
+		private String region;
+		private String zip;
+
+		private Builder() {
+		}
+
+		public Builder withId(int id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withFirstName(String firstName) {
+			this.firstName = firstName;
+			return this;
+		}
+
+		public Builder withLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}
+
+		public Builder withCountry(Country country) {
+			this.country = country;
+			return this;
+		}
+
+		public Builder withAddressLine1(String addressLine1) {
+			this.addressLine1 = addressLine1;
+			return this;
+		}
+
+		public Builder withAddressLine2(String addressLine2) {
+			this.addressLine2 = addressLine2;
+			return this;
+		}
+
+		public Builder withCity(String city) {
+			this.city = city;
+			return this;
+		}
+
+		public Builder withRegion(String region) {
+			this.region = region;
+			return this;
+		}
+
+		public Builder withZip(String zip) {
+			this.zip = zip;
+			return this;
+		}
+
+		public Address build() {
+			return new Address(this);
+		}
 	}
 
 }
