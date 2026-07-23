@@ -14,10 +14,11 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryE
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 @Singleton
 public class SelectProductPortalExecutorService 
-	implements Runnable {
+	implements Runnable, PublicBean {
 
 	private volatile List<Product> products;
 	
@@ -77,6 +78,8 @@ public class SelectProductPortalExecutorService
 		
 		list: while(!(list = pr.getAll(index, itens)).isEmpty()) {
 
+			System.out.println("entity: " + list.toString());
+			
 			for(Product p: list) {
 
 				if(p.getOfferDiscount() != null) {

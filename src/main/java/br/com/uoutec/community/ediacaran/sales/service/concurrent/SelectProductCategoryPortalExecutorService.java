@@ -14,10 +14,11 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryE
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
+import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 @Singleton
 public class SelectProductCategoryPortalExecutorService 
-	implements Runnable {
+	implements Runnable, PublicBean {
 
 	private volatile List<ProductCategory> categories;
 	
@@ -78,6 +79,9 @@ public class SelectProductCategoryPortalExecutorService
 		
 		//list: while(!(list = pcr.getAll(index, itens)).isEmpty()) {
 		while(!(list = pcr.getAll(index, itens)).isEmpty()) {
+			
+			System.out.println("entity: " + list.toString());
+			
 			for(ProductCategory c: list) {
 
 				if(c.getParent1() != null || c.getParent2() != null) {

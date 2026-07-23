@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import br.com.uoutec.community.ediacaran.system.concurrent.ThreadGroupManager;
+import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.core.plugins.PluginType;
 
@@ -23,7 +23,7 @@ public class ProductExecutorServices
 	private SelectProductPortalExecutorService selectProductPortalExecutorService;
 	
 	@Inject
-	private ThreadGroupManager threadGroupManager;
+	private PluginThreadPoolExecutor pluginThreadPoolExecutor;
 	
 	private volatile boolean active;
 	
@@ -43,17 +43,17 @@ public class ProductExecutorServices
 					
 					if(!selectProductCategoryPortalExecutorService.isActive()) {
 						selectProductCategoryPortalExecutorService.setActive(true);
-						threadGroupManager.getThreadGroup("default").execute(selectProductCategoryPortalExecutorService);
+						pluginThreadPoolExecutor.execute(selectProductCategoryPortalExecutorService);
 					}
 
 					if(!selectProductOfferPortalExecutorService.isActive()) {
 						selectProductOfferPortalExecutorService.setActive(true);
-						threadGroupManager.getThreadGroup("default").execute(selectProductOfferPortalExecutorService);
+						pluginThreadPoolExecutor.execute(selectProductOfferPortalExecutorService);
 					}
 
 					if(!selectProductPortalExecutorService.isActive()) {
 						selectProductPortalExecutorService.setActive(true);
-						threadGroupManager.getThreadGroup("default").execute(selectProductPortalExecutorService);
+						pluginThreadPoolExecutor.execute(selectProductPortalExecutorService);
 					}
 					
 				}
