@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
+import javax.annotation.Generated;
 
 public class ProductMetadataAttributeOption {
 
@@ -29,6 +30,15 @@ public class ProductMetadataAttributeOption {
 	//@Pattern(regexp = CommonValidation.ADDRESS_FORMAT, groups = DataValidation.class)
 	@Size(max = 256, groups = DataValidation.class)
 	private String description;
+
+	@Generated("SparkTools")
+	private ProductMetadataAttributeOption(Builder builder) {
+		this.id = builder.id;
+		this.productMetadataAttribute = builder.productMetadataAttribute;
+		this.valueType = builder.valueType;
+		this.value = builder.value;
+		this.description = builder.description;
+	}
 
 	public ProductMetadataAttributeOption() {
 	}
@@ -98,6 +108,52 @@ public class ProductMetadataAttributeOption {
 			return false;
 		ProductMetadataAttributeOption other = (ProductMetadataAttributeOption) obj;
 		return id == other.id;
+	}
+
+	@Generated("SparkTools")
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	@Generated("SparkTools")
+	public static final class Builder {
+		private int id;
+		private int productMetadataAttribute;
+		private ProductAttributeValueType valueType;
+		private Object value;
+		private String description;
+
+		private Builder() {
+		}
+
+		public Builder withId(int id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withProductMetadataAttribute(int productMetadataAttribute) {
+			this.productMetadataAttribute = productMetadataAttribute;
+			return this;
+		}
+
+		public Builder withValueType(ProductAttributeValueType valueType) {
+			this.valueType = valueType;
+			return this;
+		}
+
+		public Builder withValue(Object value) {
+			this.value = value;
+			return this;
+		}
+
+		public Builder withDescription(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public ProductMetadataAttributeOption build() {
+			return new ProductMetadataAttributeOption(this);
+		}
 	}
 	
 }

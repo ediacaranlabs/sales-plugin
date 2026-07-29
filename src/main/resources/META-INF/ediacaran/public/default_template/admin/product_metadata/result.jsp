@@ -22,7 +22,7 @@
 		let $protectedID = $form.getField('product_metadata.protectedID');
 		
 		if($protectedID.getValue() != '' && $protectedID.getValue() != '${vars.entity.protectedID}'){
-			alert("invalid product metadata: " + "${vars.entity.protectedID}" + " != " + $protectedID.getValue() );
+			console.log("invalid product metadata: " + "${vars.entity.protectedID}" + " != " + $protectedID.getValue() );
 		}
 		
 		$protectedID.setValue('${vars.entity.protectedID}');
@@ -31,24 +31,25 @@
 		let $opt;
 		
 		// set attribute id
-		<c:forEach items="${vars.attributes}" var="attribute" varStatus="attributeStep">
+		<c:forEach items="${vars.attributes}" var="attribute">
 		
-		$attr = $form.getField('product_metadata.attributes[${attributeStep.index}].protectedID');
+		$attr = $form.getField('product_metadata.attributes[${attribute.index}].protectedID');
 		
 		if($attr.getValue() != '' && $attr.getValue() != '${attribute.protectedID}'){
-			alert("invalid attribute ID: product_metadata.attributes[${attributeStep.index}]: " + "${attribute.protectedID}" + " != " + $attr.getValue());
+			console.log("invalid attribute ID: product_metadata.attributes[${attribute.index}]: " + "${attribute.protectedID}" + " != " + $attr.getValue());
 		}
 		
 		$attr.setValue('${attribute.protectedID}');
 		
 			//set opt id
-			<c:forEach items="${attribute.options}" var="option" varStatus="optionStep">
+			<c:forEach items="${attribute.options}" var="option">
 			
-			$opt = $form.getField('product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}].protectedID');
+			$opt = $form.getField('product_metadata.attributes[${attribute.index}].options[${option.index}].protectedID');
 			
 			if($opt.getValue() != '' && $opt.getValue() != '${option.protectedID}'){
-				alert("invalid option ID: product_metadata.attributes[${attributeStep.index}].options[${optionStep.index}]: " + "${option.protectedID}" + " != " + $opt.getValue());
+				console.log("invalid option ID: product_metadata.attributes[${attribute.index}].options[${option.index}]: " + "${option.protectedID}" + " != " + $opt.getValue());
 			}
+			
 			$opt.setValue('${option.protectedID}');
 			
 			</c:forEach>
