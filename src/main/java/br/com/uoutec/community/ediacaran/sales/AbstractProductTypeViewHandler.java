@@ -75,6 +75,7 @@ public abstract class AbstractProductTypeViewHandler
 			if(productMetadata != null) {
 				listAttributeMetadata.addAll(productMetadata.getAttributeList());
 			}
+			
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 			
 			currencyList = Currency.getAvailableCurrencies().stream().collect(Collectors.toList());
@@ -152,11 +153,15 @@ public abstract class AbstractProductTypeViewHandler
 			ProductMetadata defaultProductMetadata = productMetadataRegistry.getDefaultProductMetadata();
 			
 			List<ProductMetadataAttribute> listAttributeMetadata = new ArrayList<>();
-			if(defaultProductMetadata != null && defaultProductMetadata.getId() != productMetadata.getId()) {
+
+			if(defaultProductMetadata != null && (productMetadata == null || defaultProductMetadata.getId() != productMetadata.getId())) {
 				listAttributeMetadata.addAll(defaultProductMetadata.getAttributeList());
 			}
 			
-			listAttributeMetadata.addAll(productMetadata.getAttributeList());
+			if(productMetadata != null) {
+				listAttributeMetadata.addAll(productMetadata.getAttributeList());
+			}
+			
 			attributesMetadata = listAttributeMetadata.stream().collect(Collectors.toMap((e)->e.getId(), (e)->e));
 		}
 		catch(Throwable ex) {
