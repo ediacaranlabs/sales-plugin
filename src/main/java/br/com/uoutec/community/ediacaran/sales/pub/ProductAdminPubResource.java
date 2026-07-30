@@ -143,6 +143,7 @@ public class ProductAdminPubResource {
 			productPubEntity.setLocale(locale);
 			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, false, true);
 			String type = productPubEntity.getProductType();
+			product.setProductType(type);
 			ProductType productType = productTypeRegistry.getProductType(type);
 			map.put("product_view", productType.getViewHandler().edit(product, locale));
 		}
@@ -174,7 +175,7 @@ public class ProductAdminPubResource {
 		
 		try {
 			productPubEntity.setLocale(locale);
-			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, true);
+			product = productPubEntity.rebuild(productPubEntity.getProtectedID() != null, true, false);
 		}
 		catch(Throwable ex){
 			String error = i18nRegistry
