@@ -19,6 +19,12 @@ implements PluginOptionsResolver {
 	
 	@Override
 	public List<PluginPropertyOption> getOptions() {
+		return ContextSystemSecurityCheck.doPrivileged(()->{
+			return getSafeOptions();
+		});
+	}
+	
+	public List<PluginPropertyOption> getSafeOptions() {
 		
 		List<PluginPropertyOption> result = new ArrayList<>();
 		try {
