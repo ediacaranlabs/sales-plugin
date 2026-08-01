@@ -280,10 +280,22 @@ public class Product implements Serializable {
 			Object[] values = val.getValues();
 			
 			if(values.length == 1) {
-				r.add(new ProductAttribute(pa.getName(), String.valueOf(values[0])));
+				r.add(
+						new ProductAttribute(
+								pa.getName(), 
+								String.valueOf(values[0]), 
+								pa.toValueDescription(values[0])
+						)
+				);
 			}
 			if(values.length > 1) {
-				r.add(new ProductAttribute(pa.getName(), Arrays.toString(values)));
+				r.add(
+						new ProductAttribute(
+								pa.getName(), 
+								Arrays.toString(values),
+								Arrays.toString(Arrays.stream(values).map((e)->pa.toValueDescription(e)).toArray(String[]::new))
+						)
+				);
 			}
 			
 		}

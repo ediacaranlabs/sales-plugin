@@ -162,6 +162,20 @@ public class ProductMetadataAttribute {
 		this.description = description;
 	}
 
+	public String toValueDescription(Object value) {
+		if(getOptions() == null || getOptions().isEmpty()) {
+			return String.valueOf(value);
+		}
+		
+		for(ProductMetadataAttributeOption opt: getOptions()) {
+			if(opt.getValue().equals(value)) {
+				return opt.getDescription();
+			}
+		}
+		
+		return String.valueOf(value);
+	}
+	
 	public List<ProductMetadataAttributeOption> getOptions() {
 		if(!optionsLoaded) {
 			loadOptions();

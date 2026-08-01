@@ -128,7 +128,7 @@
 												${prop.name}
 											</ec:table-col>
 											<ec:table-col>
-												${prop.value}
+												${prop.description}
 											</ec:table-col>
 										</ec:table-row>
 									</c:forEach>

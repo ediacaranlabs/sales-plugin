@@ -8,13 +8,16 @@ public class ProductAttribute {
 	
 	private String value;
 
+	private String description;
+	
 	public ProductAttribute() {
 	}
 	
-	public ProductAttribute(String name, String value) {
+	public ProductAttribute(String name, String value, String description) {
 		super();
 		this.name = name;
 		this.value = value;
+		this.description = description;
 	}
 
 	public String getName() {
@@ -33,11 +36,23 @@ public class ProductAttribute {
 		this.value = value;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(name);
 	}
 
+	public String toString() {
+		return description == null? value : description;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
