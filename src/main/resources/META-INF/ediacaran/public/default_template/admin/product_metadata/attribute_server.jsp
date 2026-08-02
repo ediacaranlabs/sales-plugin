@@ -29,7 +29,7 @@
 								name="regexp"
 								message="#{form.attribute.code.validation.regexp}"
 								bundle="${messages}">
-								<ec:field-validator-param name="regexp" raw="true">/[a-z0-9]+(_[a-z0-9]+)*/</ec:field-validator-param>
+								<ec:field-validator-param name="regexp" raw="true">/^[a-z0-9]+(_[a-z0-9]+)*$/</ec:field-validator-param>
 							</ec:field-validator-rule>
 							<ec:field-validator-rule 
 								name="stringLength" 
@@ -97,6 +97,9 @@
 								var $nameField = $form.getField($nameFieldPath + ".name");
 								var $codeField = $form.getField($nameFieldPath + ".code");
 								var $item = $accordion.getItens()[0];
+								
+								/*$codeField.setValue($nameField.getValue().normalize("NFD").toLowerCase().replaceAll(/ +/g, "_"));*/
+																
 								$item.setTitle($codeField.getValue() + " - " + $nameField.getValue());
 							}
 							

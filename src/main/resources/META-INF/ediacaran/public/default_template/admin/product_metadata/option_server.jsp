@@ -28,14 +28,12 @@
 									bundle="${messages}"/>
 									
 								<c:if test="${option.valueType == 'TEXT'}">
-									<%--
 									<ec:field-validator-rule 
 										name="regexp"
 										message="#{form.option.value.validation.regexp}"
 										bundle="${messages}">
-										<ec:field-validator-param name="regexp" raw="true">$.AppContext.regexUtil.patterns().ADDRESS_FORMAT</ec:field-validator-param>
+										<ec:field-validator-param name="regexp" raw="true">/^[a-z0-9]+(_[a-z0-9]+)*$/</ec:field-validator-param>
 									</ec:field-validator-rule>
-									--%>
 									<ec:field-validator-rule 
 										name="stringLength" 
 										message="#{form.option.value.validation.stringLength}" 
@@ -44,7 +42,6 @@
 											<ec:field-validator-param name="max">32</ec:field-validator-param>
 									</ec:field-validator-rule>
 								</c:if>
-								
 								<c:if test="${option.valueType == 'INTEGER' || option.valueType == 'DECIMAL'}">
 									<ec:field-validator-rule 
 										name="regexp"

@@ -8,11 +8,13 @@ import br.com.uoutec.community.ediacaran.sales.SalesPluginConstants;
 import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductImage;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductMetadata;
+import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 public class ProductUtil {
 
 	public static String getPublicID(Product product) {
-		return "/" + product.getName().trim().replaceAll("\\s+", "-") + "/" + product.getProtectedID() + "/";		
+		return "/" + StringUtil.normalize(product.getName(), "-") + "/" + product.getProtectedID() + "/";		
+		//return "/" + product.getName().trim().replaceAll("\\s+", "-") + "/" + product.getProtectedID() + "/";		
 	}
 
 	public static String getPublicThumbPath(ProductMetadata e) {
