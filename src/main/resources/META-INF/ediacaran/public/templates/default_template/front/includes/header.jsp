@@ -12,8 +12,6 @@
 }
 
 .inner-headline.top-header{
-	/*padding-top: 1em;
-	padding-bottom: 1em;*/
 	display: block;
 }
 
@@ -38,6 +36,11 @@ header .fa:not([class*="fa-inverse"]){
 	color: #ffffff;
 }
 
+.search-section.logo-area {
+	align-content: center;
+	font-weight: bold;
+	text-transform: uppercase; 
+}
 
 @media screen and (max-width: 991px){
 	
@@ -77,13 +80,13 @@ header .fa:not([class*="fa-inverse"]){
 	}
 
 	.search-section.form-area {
-		flex: 0 0 67%;
-		max-width: 67%;
+		flex: 0 0 64%;
+		max-width: 64%;
 	}
 
 	.menu-section.login {
-		flex: 0 0 11%;
-		max-width: 11%;
+		flex: 0 0 14%;
+		max-width: 14%;
 		display: block;
 	}
 
@@ -104,7 +107,7 @@ header .fa:not([class*="fa-inverse"]){
 					<ed:row style="form">
 						<ed:col classStyle="search-section logo-area">
 							<c:if test="${empty plugins.ediacaran.front.image_logo}">
-								<h3>${plugins.ediacaran.front.text_logo}</h3>
+								<ec:center>${plugins.ediacaran.front.text_logo}</ec:center>
 							</c:if>
 							<c:if test="${!empty plugins.ediacaran.front.image_logo}">
 								<ec:image src="${plugins.ediacaran.front.image_logo}"/>
@@ -130,10 +133,10 @@ header .fa:not([class*="fa-inverse"]){
 						</ed:col>
 						<ed:col classStyle="menu-section login">
 							<c:if test="${not empty pageContext.request.userPrincipal}">
-								Olá, <b><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}">${pageContext.request.userPrincipal.name}</a></b>
+								Olá,<br> <b><a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}">${pageContext.request.userPrincipal.name}</a></b>
 							</c:if>						
 							<c:if test="${empty pageContext.request.userPrincipal}">
-								Olá, <a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><b>faça seu login!</b></a>
+								Olá,<br> <a href="${plugins.ediacaran.front.web_path}${plugins.ediacaran.front.panel_context}"><b>faça seu login!</b></a>
 							</c:if>						
 						</ed:col>
 						<ed:col classStyle="menu-section cart">
