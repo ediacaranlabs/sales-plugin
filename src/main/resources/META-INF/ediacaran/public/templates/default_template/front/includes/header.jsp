@@ -110,7 +110,7 @@ header .fa:not([class*="fa-inverse"]){
 								<ec:center>${plugins.ediacaran.front.text_logo}</ec:center>
 							</c:if>
 							<c:if test="${!empty plugins.ediacaran.front.image_logo}">
-								<ec:image src="${plugins.ediacaran.front.image_logo}"/>
+								<ec:image style="fluid" src="${plugins.ediacaran.front.image_logo}"/>
 							</c:if>
 						</ed:col>
 						<ed:col classStyle="search-section form-area">

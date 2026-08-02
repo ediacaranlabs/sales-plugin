@@ -30,8 +30,10 @@ public class ProductPrice implements Serializable {
 	public ProductPrice(String currency, BigDecimal value) {
 		this.currency = currency;
 		this.symbol = CurrencyUtil.getSymbol(currency);
-		this.wholeNumber = value.setScale(0, BigDecimal.ROUND_UNNECESSARY);
-		this.fractionalPart = value.subtract(wholeNumber).multiply(BigDecimal.valueOf(100)).setScale(0, BigDecimal.ROUND_UNNECESSARY);
+		
+		String[] valurSTR = value.toPlainString().split("\\.");		
+		this.wholeNumber =  new BigDecimal(valurSTR[0]);
+		this.fractionalPart = valurSTR.length > 1? new BigDecimal(valurSTR[1]) : BigDecimal.ZERO;
 		this.value = value;
 	}
 	
