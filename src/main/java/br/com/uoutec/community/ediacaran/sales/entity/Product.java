@@ -271,7 +271,7 @@ public class Product implements Serializable {
 				continue;
 			}
 			
-			if(visible != null && (pa.isShow() && !visible)) {
+			if((visible != null && !visible) || !pa.isShow()) {
 				continue;
 			}
 			
