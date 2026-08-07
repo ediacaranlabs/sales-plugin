@@ -133,7 +133,7 @@ public class OrderReportRegistryUtil {
 
 	public static void registerNewOrderReportEvent(ActionRegistry actionRegistry, OrderReport orderReport) {
 		actionRegistry.executeAction(
-				ActionsPluginInstaller.NEW_ORDER_REPORT, 
+				ActionsPluginInstaller.NEW_ORDER_REPORT_REGISTERED, 
 				ActionExecutorRequestBuilder.builder()
 					.withParameter("orderReport", orderReport.getId())
 				.build()
@@ -251,7 +251,7 @@ public class OrderReportRegistryUtil {
 	
 	public static void registerNewOrderReport(ActionRegistry actionRegistry, OrderReport e) {
 		actionRegistry.executeAction(
-				ActionsPluginInstaller.NEW_ORDER_REPORT, 
+				ActionsPluginInstaller.NEW_ORDER_REPORT_REGISTERED, 
 				ActionExecutorRequestBuilder.builder()
 					.withParameter("orderReport", e.getId())
 				.build()

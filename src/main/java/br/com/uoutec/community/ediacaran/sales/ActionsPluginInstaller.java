@@ -19,9 +19,9 @@ public class ActionsPluginInstaller {
 
 	public static final String NEW_SHIPPING_REGISTERED 		= "new_shipping_registered";
 
+	public static final String NEW_ORDER_REPORT_REGISTERED	= "new_order_report_registered";
+	
 	public static final String CHANGE_ORDER_REPORT_STATUS	= "change_order_report_status";
-
-	public static final String NEW_ORDER_REPORT				= "new_order_report";
 	
 	public static final String REGISTER_PAYMENT_INFO 		= "register_payment_info";
 
@@ -51,7 +51,7 @@ public class ActionsPluginInstaller {
 			response.setParameter("shipping", shipping);
 		});
 
-		actionRegistry.registerAction(NEW_ORDER_REPORT, 3, 10, ChronoUnit.SECONDS, (request,response)->{
+		actionRegistry.registerAction(NEW_ORDER_REPORT_REGISTERED, 3, 10, ChronoUnit.SECONDS, (request,response)->{
 			String orderReport = (String)request.getParameter("orderReport");
 			response.setParameter("orderReport", orderReport);
 		});
@@ -73,7 +73,7 @@ public class ActionsPluginInstaller {
 		actionRegistry.removeAction(NEW_SHIPPING_REGISTERED);
 		actionRegistry.removeAction(REGISTER_PAYMENT_INFO);
 		actionRegistry.removeAction(REGISTER_REFUND_INFO);
-		actionRegistry.removeAction(NEW_ORDER_REPORT);
+		actionRegistry.removeAction(NEW_ORDER_REPORT_REGISTERED);
 		actionRegistry.removeAction(CREATE_INVOICE);
 	}
 	
