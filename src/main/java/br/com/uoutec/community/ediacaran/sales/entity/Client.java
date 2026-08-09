@@ -4,7 +4,7 @@ import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
-public class Client extends SystemUser{
+public class Client extends SystemUser {
 
 	private static final long serialVersionUID = 2658609156376778575L;
 

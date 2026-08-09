@@ -35,7 +35,7 @@ public class OrderResultSearchItemPubEntity extends AbstractPubEntity<OrderResul
 	}
 	public OrderResultSearchItemPubEntity(Order order, Locale locale, DateTimeFormatter dateTimeFormatter) {
 		this.id = order.getId();
-		this.owner = order.getClient().getFirstName() + " " + order.getClient().getLastName();
+		this.owner = order.getClient().getFullName();
 		//this.date = order.getDate() == null? null : DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale).format(order.getDate());
 		this.date = order.getDate() == null? null : dateTimeFormatter.format(order.getDate());
 		this.status = order.getStatus() == null? null : order.getStatus().getName(locale);
