@@ -19,6 +19,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusReq
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
@@ -53,6 +54,7 @@ public class InvoiceRegistryUtil {
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
+			.filter((e)->e.getStatus() != RefundStatus.DENIED)
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		invoices.stream()
@@ -165,6 +167,7 @@ public class InvoiceRegistryUtil {
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
+			.filter((e)->e.getStatus() != RefundStatus.DENIED)
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		invoices.stream()
@@ -411,6 +414,7 @@ public class InvoiceRegistryUtil {
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
+			.filter((e)->e.getStatus() != RefundStatus.DENIED)
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		if(invoices != null) {

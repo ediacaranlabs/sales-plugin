@@ -44,6 +44,7 @@
 				<b><fmt:message key="refund_code" bundle="${messages}"/>:</b> #${vars.refund.id}<br>
 				<b><fmt:message key="created_in" bundle="${messages}"/>:</b> ${vars.refund.toStringDate(locale)}<br>
 				<b><fmt:message key="refund_in" bundle="${messages}"/>:</b> ${vars.refund.toStringRefundDate(locale)}<br>
+				<b><fmt:message key="status" bundle="${messages}"/>:</b> ${vars.refund.status.getName(locale)}<br>
 				<b><fmt:message key="order_id" bundle="${messages}"/>:</b> #${vars.refund.order}<br>
 			</ed:col>
 		</ed:row>
@@ -187,7 +188,7 @@
 			<ec:button actionType="submit" label="#{save.label}" align="right"  style="success"
 				bundle="${messages}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/save" />
 		</c:if>
-		<c:if test="${!empty vars.refund.id && !vars.refund.completed}">
+		<c:if test="${!empty vars.refund.id && (!vars.refund.completed && !vars.refund.denied)}">
 			<ec:button actionType="submit" label="#{confirm.label}" align="right"  style="light"
 				bundle="${messages}" action="${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/confirm" />
 		</c:if>

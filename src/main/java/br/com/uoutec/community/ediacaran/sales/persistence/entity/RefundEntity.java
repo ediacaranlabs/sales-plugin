@@ -11,6 +11,8 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,6 +27,7 @@ import org.brandao.brutos.bean.BeanProperty;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundStatus;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
 import br.com.uoutec.community.ediacaran.system.util.DataUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -66,6 +69,10 @@ public class RefundEntity implements Serializable {
 	@Column(name="dat_created")
 	private LocalDateTime date;
 
+	@Column(name="set_status", length=32)
+	@Enumerated(EnumType.STRING)
+	private RefundStatus status;
+	
 	@Column(name="dat_refund")
 	private LocalDateTime refundDate;
 	
@@ -90,6 +97,7 @@ public class RefundEntity implements Serializable {
 		
 		this.id = e.getId();
 		this.date = e.getDate();
+		this.status = e.getStatus();
 		this.refundDate = e.getRefundDate();
 		this.client = e.getClient() == null? null : e.getClient().getId();
 		this.refundType = e.getRefundType();
@@ -208,6 +216,7 @@ public class RefundEntity implements Serializable {
 			e.setRefundType(this.refundType);
 			e.setDate(this.date);
 			e.setCurrency(this.currency);
+			e.setStatus(status);
 			
 			if(this.client != null) {
 				Client c = new Client();

@@ -83,6 +83,10 @@ public class RefundIndexEntityAccessImp
 		    if(value.getOrder() != null) {
 		    	and.add(builder.equal(from.get("order"), value.getOrder()));
 		    }
+
+		    if(value.getStatus() != null) {
+		    	and.add(builder.equal(from.get("status"), value.getStatus()));
+		    }
 		    
 		    if(value.getStartDate() != null || value.getEndDate() != null) {
 		    	

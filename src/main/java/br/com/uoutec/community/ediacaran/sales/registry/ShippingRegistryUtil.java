@@ -20,6 +20,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
@@ -48,6 +49,7 @@ public class ShippingRegistryUtil {
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
+			.filter((e)->e.getStatus() != RefundStatus.DENIED)
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
 		
 		shippings.stream()

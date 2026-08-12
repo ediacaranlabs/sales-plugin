@@ -6,10 +6,13 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundStatus;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
 
 @Entity
@@ -31,6 +34,10 @@ public class RefundIndexEntity implements Serializable{
 	
 	@Column(name="dsc_client_name", length=255)
 	private String clientName;
+
+	@Column(name="set_status", length=32)
+	@Enumerated(EnumType.STRING)
+	private RefundStatus status;
 	
 	@Column(name="cod_refund_type")
 	private String refundType;
@@ -48,6 +55,7 @@ public class RefundIndexEntity implements Serializable{
 		this.order = e.getOrder();
 		this.id = e.getId();
 		this.date = e.getDate();
+		this.status = e.getStatus();
 		this.refundDate = e.getRefundDate();
 		this.refundType = e.getRefundType();
 		
@@ -118,6 +126,14 @@ public class RefundIndexEntity implements Serializable{
 
 	public void setRefundDate(LocalDateTime refundDate) {
 		this.refundDate = refundDate;
+	}
+
+	public RefundStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RefundStatus status) {
+		this.status = status;
 	}
 
 	public Refund toEntity(){

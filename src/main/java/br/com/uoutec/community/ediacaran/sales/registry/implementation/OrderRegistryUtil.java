@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import br.com.uoutec.application.security.ContextSystemSecurityCheck;
@@ -26,6 +30,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.Tax;
+import br.com.uoutec.community.ediacaran.sales.payment.ExecutePaymentActionTask;
+import br.com.uoutec.community.ediacaran.sales.payment.ExecutePaymentActionTaskResult;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -62,6 +68,7 @@ import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
+import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -143,23 +150,32 @@ public class OrderRegistryUtil {
 	}
 	
 	public static void registerPayment(Order order, Client client, Payment payment, String message, 
-			PaymentGateway paymentGateway, OrderEntityAccess entityAccess) throws OrderRegistryException, PaymentGatewayException {
-		
-			//order.setStatus(OrderStatus.NEW);
-			
-			//save(order, entityAccess);
-			
-			paymentGateway.payment(new PaymentRequest(order));
-			checkPayment(payment, order);
-			order.getPayment().setStatus(payment.getStatus());
+			PaymentGateway paymentGateway, OrderEntityAccess entityAccess, PluginThreadPoolExecutor executorService) throws OrderRegistryException, PaymentGatewayException {
 
-			//OrderStatus newStatus = toOrderStatus(order.getPayment().getStatus());
-			//checkAcceptNewOrderStatus(order, newStatus, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
-			//order.setStatus(newStatus);
-			
-			//checkAndUpdateNewOrderStatus(order, toOrderStatus(order.getPayment().getStatus()));
-			
-			///update(order, entityAccess);
+		PaymentRequest paymentRequest = new PaymentRequest(order);
+		ExecutePaymentActionTask task = new ExecutePaymentActionTask(paymentRequest, paymentGateway); 
+		
+		Future<ExecutePaymentActionTaskResult> future = executorService.submit(task);
+
+		ExecutePaymentActionTaskResult result;
+		
+		try {
+			result = future.get(60, TimeUnit.MINUTES);
+		}
+		catch (InterruptedException | ExecutionException | TimeoutException e) {
+			throw new PaymentGatewayException(e);
+		}
+		
+		if(result.getError() != null) {
+			if(result.getError() instanceof PaymentGatewayException) {
+				throw (PaymentGatewayException)result.getError();
+			}
+			throw new PaymentGatewayException(result.getError());
+		}
+		
+		//paymentGateway.payment(new PaymentRequest(order));
+		checkPayment(payment, order);
+		order.getPayment().setStatus(payment.getStatus());
 		
 	}
 
@@ -169,7 +185,7 @@ public class OrderRegistryUtil {
 	
 	public static void cancelInvoices(List<Invoice> invoices, String justification, 
 			InvoiceRegistry invoiceRegistry) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, 
-	ShippingRegistryException, OrderReportRegistryException {
+			ShippingRegistryException, OrderReportRegistryException {
 		
 		for(Invoice i: invoices) {
 			invoiceRegistry.cancelInvoice(i, justification);

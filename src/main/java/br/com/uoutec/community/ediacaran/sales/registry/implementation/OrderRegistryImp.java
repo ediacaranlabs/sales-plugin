@@ -49,6 +49,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
+import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -72,6 +73,9 @@ public class OrderRegistryImp
 
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
+	
+	@Inject
+	private PluginThreadPoolExecutor executorService;
 	
 	@Inject
 	private ActionRegistry actionRegistry;
@@ -131,7 +135,7 @@ public class OrderRegistryImp
 		OrderRegistryUtil.updateStatus(entity, OrderStatus.NEW);
 		OrderRegistryUtil.save(entity, orderEntityAccess);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
-		OrderRegistryUtil.registerPayment(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess);
+		OrderRegistryUtil.registerPayment(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess, executorService);
 		OrderRegistryUtil.updateStatusByPaymentStatus(entity);
 		OrderRegistryUtil.checkAcceptNewOrderStatus(entity, entity.getStatus(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		OrderRegistryUtil.update(entity, orderEntityAccess);

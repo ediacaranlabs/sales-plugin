@@ -37,6 +37,9 @@ public class Refund implements Serializable {
 	@NotNull(groups = DataValidation.class)
 	private Client client;
 	
+	@NotNull(groups = DataValidation.class)
+	private RefundStatus status;
+	
 	private LocalDateTime date;
 
 	private String refundType;
@@ -52,6 +55,7 @@ public class Refund implements Serializable {
 	private String currency;
 	
 	public Refund(){
+		this.status = RefundStatus.ON_HOLD;
 	}
 
 	public String getId() {
@@ -60,6 +64,14 @@ public class Refund implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public RefundStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RefundStatus status) {
+		this.status = status;
 	}
 
 	public String getOrder() {
@@ -152,7 +164,11 @@ public class Refund implements Serializable {
 	}
 	
 	public boolean isCompleted() {
-		return refundDate != null;
+		return refundDate != null && status == RefundStatus.COMPLETED;
+	}
+
+	public boolean isDenied() {
+		return refundDate != null && status == RefundStatus.DENIED;
 	}
 	
 	public LocalDateTime getRefundDate() {

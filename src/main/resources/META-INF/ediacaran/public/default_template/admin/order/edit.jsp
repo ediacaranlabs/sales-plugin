@@ -293,14 +293,16 @@
 								<ec:table-col><center><small><fmt:message key="table_refund.id" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_refund.date" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_refund.refund_date" bundle="${messages}"/></small></center></ec:table-col>
+								<ec:table-col><center><small><fmt:message key="table_refund.status" bundle="${messages}"/></small></center></ec:table-col>
 								<ec:table-col><center><small><fmt:message key="table_shipping.actions" bundle="${messages}"/></small></center></ec:table-col>
 							</ec:table-header>
 							<ec:table-body>
 								<c:forEach items="${vars.refunds}" var="refund">
-								<ec:table-row>
+								<ec:table-row style="${refund.status == 'DENIED'? 'danger' : ''}">
 									<ec:table-col><center><small>${refund.id}</small></center></ec:table-col>
 									<ec:table-col><center><small>${refund.toStringDate(locale)}</small></center></ec:table-col>
 									<ec:table-col><center><small>${refund.toStringRefundDate(locale)}</small></center></ec:table-col>
+									<ec:table-col><center><small>${refund.status.getName(locale)}</small></center></ec:table-col>
 									<ec:table-col><center><small><a href="#!${plugins.ediacaran.sales.web_path}${plugins.ediacaran.front.admin_context}/refunds/edit/${refund.id}">
 										<fmt:message key="table_refund.actions.details" bundle="${messages}"/>
 									</a></small></center></ec:table-col>

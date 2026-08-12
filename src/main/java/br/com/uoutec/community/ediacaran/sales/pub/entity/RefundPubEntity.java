@@ -17,6 +17,7 @@ import br.com.uoutec.community.ediacaran.front.pub.GenericPubEntity;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.RefundStatus;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -41,6 +42,8 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 	
 	private LocalDateTime date;
 
+	private RefundStatus status;
+	
 	private LocalDateTime refundDate;
 	
 	@NotNull(groups = DataValidation.class)
@@ -57,6 +60,7 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.addData = e.getAddData();
 		this.date = e.getDate();
 		this.refundDate = e.getRefundDate();
+		this.status = e.getStatus();
 		this.id = e.getId() == null? null : SecretUtil.toProtectedID(e.getId());
 		this.refundType = e.getRefundType();
 		
@@ -108,6 +112,7 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		o.setRefundDate(this.refundDate);
 		o.setRefundType(id);
 		o.setOrder(this.order);
+		//o.setStatus(status);
 		
 		if(this.itens != null) {
 			
@@ -186,6 +191,14 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		return RefundPubEntity.class;
 	}
 
+	public RefundStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RefundStatus status) {
+		this.status = status;
+	}
+
 	@Override
 	protected void loadProperties(GenericPubEntity<Refund> entity) {
 		RefundPubEntity e = (RefundPubEntity)entity;
@@ -196,6 +209,7 @@ public class RefundPubEntity extends GenericPubEntity<Refund> {
 		this.itens = e.getItens();
 		this.refundDate = e.getRefundDate();
 		this.refundType = e.getRefundType();
+		this.status = e.getStatus();
 	}
 	
 }

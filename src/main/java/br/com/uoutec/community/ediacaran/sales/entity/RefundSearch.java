@@ -15,6 +15,8 @@ public class RefundSearch implements Serializable {
 	
 	private String order;
 	
+	private RefundStatus status;
+	
 	private LocalDateTime startDate;
 	
 	private LocalDateTime endDate;
@@ -61,6 +63,14 @@ public class RefundSearch implements Serializable {
 
 	public LocalDateTime getStartDate() {
 		return startDate;
+	}
+
+	public RefundStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(RefundStatus status) {
+		this.status = status;
 	}
 
 	public void setStartDate(LocalDateTime startDate) {

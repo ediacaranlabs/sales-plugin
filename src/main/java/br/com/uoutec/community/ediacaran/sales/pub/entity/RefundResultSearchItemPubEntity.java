@@ -20,12 +20,15 @@ public class RefundResultSearchItemPubEntity extends AbstractPubEntity<Refund>{
 
 	private String refundDate;
 	
+	private String status;
+	
 	@Constructor
 	public RefundResultSearchItemPubEntity() {
 	}
 	
 	public RefundResultSearchItemPubEntity(Refund refund, Locale locale, DateTimeFormatter dateTimeFormatter) {
 		this.id = refund.getId();
+		this.status = refund.getStatus() == null? null : refund.getStatus().getName(locale);
 		this.client = refund.getClient().getFirstName() + " " + refund.getClient().getLastName();
 		this.date = refund.getDate() == null? null : dateTimeFormatter.format(refund.getDate());
 		this.refundDate = refund.getRefundDate() == null? null : dateTimeFormatter.format(refund.getRefundDate());
@@ -41,6 +44,14 @@ public class RefundResultSearchItemPubEntity extends AbstractPubEntity<Refund>{
 
 	public String getClient() {
 		return client;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public void setClient(String client) {

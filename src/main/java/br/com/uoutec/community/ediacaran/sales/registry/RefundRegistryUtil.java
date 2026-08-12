@@ -9,6 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -24,6 +28,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.payment.ExecuteRefundActionTask;
+import br.com.uoutec.community.ediacaran.sales.payment.ExecuteRefundActionTaskResult;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -32,6 +38,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
+import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.entity.registry.ParentValidation;
@@ -46,6 +53,9 @@ public class RefundRegistryUtil {
 	private static final Class<?>[] updateValidations = 
 			new Class[] { IdValidation.class, DataValidation.class, ParentValidation.class};
 
+	@Inject
+	private PluginThreadPoolExecutor executorService;
+	
 	@Inject
 	private OrderRegistry orderRegistry;
 	
@@ -272,7 +282,7 @@ public class RefundRegistryUtil {
 	public void checkCanBeRefund(Refund entity, Order order, Collection<Refund> refunds, Collection<Invoice> invoices) throws RefundRegistryException, ItemNotFoundOrderRegistryException, InvalidUnitsOrderRegistryException {
 		
 		if(entity.getProducts().isEmpty()) {
-			throw new InvalidUnitsOrderRegistryException();
+			throw new InvalidUnitsOrderRegistryException("Quantity can not be zero!");
 		}
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
@@ -331,7 +341,29 @@ public class RefundRegistryUtil {
 	}
 
 	public void refundProducts(Order order, Refund refund, boolean partialRefund, boolean newRefund,  List<ProductRequest> itens, PaymentGateway paymentGateway) throws PaymentGatewayException {
-		paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, newRefund, itens));
+
+		RefundRequest refundRequest = new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, newRefund, itens);
+		ExecuteRefundActionTask task = new ExecuteRefundActionTask(refundRequest, paymentGateway); 
+		
+		Future<ExecuteRefundActionTaskResult> future = executorService.submit(task);
+
+		ExecuteRefundActionTaskResult result;
+		
+		try {
+			result = future.get(60, TimeUnit.MINUTES);
+		}
+		catch (InterruptedException | ExecutionException | TimeoutException e) {
+			throw new PaymentGatewayException(e);
+		}
+		
+		if(result.getError() != null) {
+			if(result.getError() instanceof PaymentGatewayException) {
+				throw (PaymentGatewayException)result.getError();
+			}
+			throw new PaymentGatewayException(result.getError());
+		}
+		
+		//paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, newRefund, itens));
 	}
 	
 	public void checkUnits(Order order, List<Refund> actualRefunds, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
