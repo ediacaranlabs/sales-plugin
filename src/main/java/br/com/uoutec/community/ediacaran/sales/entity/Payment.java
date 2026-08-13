@@ -45,6 +45,14 @@ public class Payment implements Serializable{
 	@NotNull(groups = DataValidation.class)
 	@Min(value = 0, groups = DataValidation.class)
 	private BigDecimal total;
+
+	@NotNull(groups = DataValidation.class)
+	@Min(value = 0, groups = DataValidation.class)
+	private BigDecimal paymentFee = BigDecimal.ZERO;
+
+	@NotNull(groups = DataValidation.class)
+	@Min(value = 0, groups = DataValidation.class)
+	private BigDecimal netAmount = BigDecimal.ZERO;
 	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.CURRENCY)
@@ -68,6 +76,22 @@ public class Payment implements Serializable{
 
 	public void setPaymentType(String paymentType) {
 		this.paymentType = paymentType;
+	}
+
+	public BigDecimal getPaymentFee() {
+		return paymentFee;
+	}
+
+	public void setPaymentFee(BigDecimal paymentFee) {
+		this.paymentFee = paymentFee;
+	}
+
+	public BigDecimal getNetAmount() {
+		return netAmount;
+	}
+
+	public void setNetAmount(BigDecimal netAmount) {
+		this.netAmount = netAmount;
 	}
 
 	public LocalDateTime getReceivedFrom() {

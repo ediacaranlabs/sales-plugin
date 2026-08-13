@@ -69,6 +69,12 @@ public class PaymentEntity implements Serializable{
 	@Column(name="vlr_total", scale=3, precision=12)
 	private BigDecimal total;
 	
+	@Column(name="payment_fee", scale=3, precision=12)
+	private BigDecimal paymentFee;
+
+	@Column(name="net_amount", scale=3, precision=12)
+	private BigDecimal netAmount;
+	
 	@Column(name="dat_received_from")
 	private LocalDateTime receivedFrom;
 	
@@ -101,6 +107,8 @@ public class PaymentEntity implements Serializable{
 		this.discount           = e.getDiscount();
 		this.total              = e.getTotal();
 		this.status             = e.getStatus();
+		this.paymentFee         = e.getPaymentFee();
+		this.netAmount          = e.getNetAmount();
 		
 		Map<String,String> actualData = e.getAddData();
 		Map<String,String> data = DataUtil.encode(e, excludeFields);
@@ -248,7 +256,9 @@ public class PaymentEntity implements Serializable{
 			e.setValue(this.value);
 			e.setDiscount(this.discount);
 			e.setTotal(this.total);
-			e.setStatus(this.status);;
+			e.setStatus(this.status);
+			e.setPaymentFee(paymentFee);
+			e.setNetAmount(netAmount);
 			
 			return e;
 		}

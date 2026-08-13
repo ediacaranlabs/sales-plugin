@@ -22,6 +22,7 @@ public class FreePaymentGateway extends  AbstractPaymentGateway{
 		else {
 			changePaymentStatus(payment, PaymentStatus.PENDING_PAYMENT);
 		}
+		
 	}
 
 	public void capture(Payment payment, PaymentLocation location) throws PaymentGatewayException{
