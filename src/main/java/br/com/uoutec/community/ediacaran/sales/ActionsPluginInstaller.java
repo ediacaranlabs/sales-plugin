@@ -13,6 +13,8 @@ public class ActionsPluginInstaller {
 
 	public static final String NEW_ORDER_REGISTERED 		= "new_order_registered";
 
+	public static final String UPDATE_ORDER_REGISTERED 		= "update_order_registered";
+	
 	public static final String NEW_REFUND_REGISTERED 		= "new_refund_registered";
 	
 	public static final String NEW_INVOICE_REGISTERED 		= "new_invoice_registered";
@@ -41,6 +43,11 @@ public class ActionsPluginInstaller {
 			response.setParameter("order", orderID);
 		});
 
+		actionRegistry.registerAction(UPDATE_ORDER_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String orderID = (String)request.getParameter("order");
+			response.setParameter("order", orderID);
+		});
+		
 		actionRegistry.registerAction(NEW_INVOICE_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
 			String invoice = (String)request.getParameter("invoice");
 			response.setParameter("invoice", invoice);

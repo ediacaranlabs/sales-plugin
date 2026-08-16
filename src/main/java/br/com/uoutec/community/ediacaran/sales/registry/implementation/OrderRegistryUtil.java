@@ -205,6 +205,15 @@ public class OrderRegistryUtil {
 				.build()
 		);
 	}
+
+	public static void registerUpdateOrderEvent(ActionRegistry actionRegistry, Order order) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.UPDATE_ORDER_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("order", order.getId())
+				.build()
+		);
+	}
 	
 	public static void registerEvent(String message, Order order, OrderEntityAccess entityAccess) throws OrderRegistryException {
 		try{

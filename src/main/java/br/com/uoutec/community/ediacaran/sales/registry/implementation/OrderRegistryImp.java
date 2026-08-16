@@ -167,6 +167,8 @@ public class OrderRegistryImp
 			OrderRegistryUtil.registerEvent("Pedido alterado #" + entity.getId(), entity, orderEntityAccess);
 			OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		}
+		
+		OrderRegistryUtil.registerUpdateOrderEvent(actionRegistry, actualOrder);
 	}
 
 	private void deleteOrder(Order entity) throws PersistenceOrderRegistryException, ValidationException {
