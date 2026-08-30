@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -24,6 +25,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ProductRequestUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
@@ -381,6 +383,35 @@ public class Order implements Serializable{
 		}
 		
 		return list;
+	}
+	
+	public List<ProductRequest> getCompletedItens() throws RefundRegistryException, ShippingRegistryException, OrderReportRegistryException{
+		
+		List<ProductRequest> itens = getItens();
+		
+		Map<String, ProductRequest> map = ProductRequestUtil.toMap(itens);
+		
+		getRefunds().stream().filter((e)->e.isCompleted()).forEach((e)->{
+			if(e.getProducts() != null) {
+				ProductRequestUtil.subUnits(map, e.getProducts());
+			}
+		});
+
+		getShippings().stream().filter((e)->!e.isCompleted()).forEach((e)->{
+			if(e.getProducts() != null) {
+				ProductRequestUtil.subUnits(map, e.getProducts());
+			}
+		});
+
+		getOrderReport().stream().filter((e)->!e.isClosed()).forEach((e)->{
+			if(e.getProducts() != null) {
+				ProductRequestUtil.subUnits(map, e.getProducts().stream().map((x)->(ProductRequest)x).collect(Collectors.toList()));
+			}
+		});
+		
+		ProductRequestUtil.removeEmptyUnits(map);
+		
+		return new ArrayList<>(map.values());
 	}
 	
 	public List<Tax> getTaxes() {
