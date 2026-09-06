@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -25,7 +24,6 @@ import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.ProductRequestUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
@@ -267,6 +265,10 @@ public class Order implements Serializable{
 		
 		return invoices;
 	}
+
+	public List<Invoice> getInvoiceList() {
+		return invoices;
+	}
 	
 	/* Shipping methods */
 	
@@ -300,6 +302,10 @@ public class Order implements Serializable{
 		return shippings;
 	}
 
+	public List<Shipping> getShippingList() {
+		return shippings;
+	}
+	
 	/* Refund methods */
 	
 	private volatile List<Refund> refunds;
@@ -332,6 +338,10 @@ public class Order implements Serializable{
 		return refunds;
 	}
 
+	public List<Refund> getRefundList() {
+		return refunds;
+	}
+	
 	/* Order Report methods */
 	
 	private volatile List<OrderReport> orderReports;
@@ -363,6 +373,10 @@ public class Order implements Serializable{
 		
 		return orderReports;
 	}
+
+	public List<OrderReport> getOrderReportList() {
+		return orderReports;
+	}
 	
 	public List<ProductResponse> getItensResponse() throws InvoiceRegistryException, ShippingRegistryException, RefundRegistryException, OrderReportRegistryException{
 		List<ProductResponse> list = new ArrayList<>();
@@ -385,35 +399,6 @@ public class Order implements Serializable{
 		return list;
 	}
 	
-	public List<ProductRequest> getCompletedItens() throws RefundRegistryException, ShippingRegistryException, OrderReportRegistryException{
-		
-		List<ProductRequest> itens = getItens();
-		
-		Map<String, ProductRequest> map = ProductRequestUtil.toMap(itens);
-		
-		getRefunds().stream().filter((e)->e.isCompleted()).forEach((e)->{
-			if(e.getProducts() != null) {
-				ProductRequestUtil.subUnits(map, e.getProducts());
-			}
-		});
-
-		getShippings().stream().filter((e)->!e.isCompleted()).forEach((e)->{
-			if(e.getProducts() != null) {
-				ProductRequestUtil.subUnits(map, e.getProducts());
-			}
-		});
-
-		getOrderReport().stream().filter((e)->!e.isClosed()).forEach((e)->{
-			if(e.getProducts() != null) {
-				ProductRequestUtil.subUnits(map, e.getProducts().stream().map((x)->(ProductRequest)x).collect(Collectors.toList()));
-			}
-		});
-		
-		ProductRequestUtil.removeEmptyUnits(map);
-		
-		return new ArrayList<>(map.values());
-	}
-	
 	public List<Tax> getTaxes() {
 		return taxes;
 	}
@@ -428,7 +413,7 @@ public class Order implements Serializable{
 	
 	public BigDecimal getSubtotal(){
 		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: itens) {
+		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getSubtotal());
 		}
 		return value;
@@ -443,7 +428,7 @@ public class Order implements Serializable{
 		BigDecimal value = getSubtotal();
 		BigDecimal discount = BigDecimal.ZERO;
 		
-		for(ProductRequest pr: this.itens){
+		for(ProductRequest pr: getItens()){
 			discount = discount.add(pr.getDiscount());
 		}
 		
@@ -475,7 +460,7 @@ public class Order implements Serializable{
 		BigDecimal value = getSubtotal();
 		BigDecimal tax = BigDecimal.ZERO;
 		
-		for(ProductRequest pr: this.itens){
+		for(ProductRequest pr: getItens()){
 			tax = tax.add(pr.getTax());
 		}
 		
@@ -506,7 +491,7 @@ public class Order implements Serializable{
 		
 		BigDecimal value = BigDecimal.ZERO;
 		
-		for(ProductRequest pr: itens) {
+		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getTotal());
 		}
 		
