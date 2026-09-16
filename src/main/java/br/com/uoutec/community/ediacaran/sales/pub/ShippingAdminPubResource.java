@@ -33,7 +33,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
-import br.com.uoutec.community.ediacaran.sales.pub.entity.CancelationShippingPubEntity;
+import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingCancelationPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.OrderPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingPubEntity;
 import br.com.uoutec.community.ediacaran.sales.pub.entity.ShippingSearchPubEntity;
@@ -324,7 +324,7 @@ public class ShippingAdminPubResource {
 	@RequiresPermissions(SalesUserPermissions.SHIPPING.CANCEL)
 	public Map<String,Object> cancel(
 			@DetachedName
-			CancelationShippingPubEntity shippingPubEntity,
+			ShippingCancelationPubEntity shippingPubEntity,
 			@Basic(bean=EdiacaranWebInvoker.LOCALE_VAR, scope=ScopeType.REQUEST, mappingType=MappingTypes.VALUE)
 			Locale locale
 	) throws InvalidRequestException{

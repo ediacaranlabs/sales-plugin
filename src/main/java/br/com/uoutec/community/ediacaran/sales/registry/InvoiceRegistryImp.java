@@ -237,8 +237,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	@EnableFilters(InvoiceRegistry.class)
 	public void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException, OrderReportRegistryException {
 
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
-		
 		List<Invoice> invoices;
 		
 		try {
@@ -248,9 +246,20 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 			throw new InvoiceRegistryException(e);
 		}
 
-		unsafeCancelInvoices(invoices, justification);
+		cancelInvoices(invoices, justification);
 	}
 
+	@Override
+	@Transactional(rollbackOn = Throwable.class)
+	@ActivateRequestContext
+	@EnableFilters(InvoiceRegistry.class)
+	public void cancelInvoices(List<Invoice> invoices, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException, OrderReportRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCancelPermission());
+		
+		unsafeCancelInvoices(invoices, justification);
+	}
+	
 	private void unsafeCancelInvoices(List<Invoice> invoices, String justification) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, ShippingRegistryException, OrderReportRegistryException {
 
 		Map<String,List<Invoice>> map = InvoiceRegistryUtil.groupByOrder(invoices);

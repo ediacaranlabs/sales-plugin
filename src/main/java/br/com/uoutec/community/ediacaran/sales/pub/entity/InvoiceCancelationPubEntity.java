@@ -8,14 +8,14 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
-import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 import br.com.uoutec.pub.entity.AbstractPubEntity;
 
-public class CancelationShippingPubEntity extends AbstractPubEntity<Shipping> {
+public class InvoiceCancelationPubEntity extends AbstractPubEntity<Invoice> {
 
 	private static final long serialVersionUID = 1647504574319126033L;
 	
@@ -32,12 +32,12 @@ public class CancelationShippingPubEntity extends AbstractPubEntity<Shipping> {
 	@Size(min = 5, max = 1024, groups = DataValidation.class)
 	private String cancelJustification;
 	
-	public CancelationShippingPubEntity() {
+	public InvoiceCancelationPubEntity() {
 		super();
 		this.cancelDate = LocalDateTime.now();
 	}
 	
-	public CancelationShippingPubEntity(Shipping e, Locale locale) {
+	public InvoiceCancelationPubEntity(Invoice e, Locale locale) {
 		this.cancelJustification = e.getCancelJustification();
 		this.cancelDate = e.getCancelDate();
 	}
@@ -67,19 +67,19 @@ public class CancelationShippingPubEntity extends AbstractPubEntity<Shipping> {
 	}
 
 	@Override
-	protected boolean isEqualId(Shipping instance) throws Throwable {
+	protected boolean isEqualId(Invoice instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected boolean hasId(Shipping instance) throws Throwable {
+	protected boolean hasId(Invoice instance) throws Throwable {
 		return false;
 	}
 
 	@Override
-	protected Shipping reloadEntity() throws Throwable {
-		ShippingRegistry shippingRegistry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-		return shippingRegistry.findById(id);
+	protected Invoice reloadEntity() throws Throwable {
+		InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+		return registry.findById(id);
 	}
 
 	@Override
@@ -88,11 +88,11 @@ public class CancelationShippingPubEntity extends AbstractPubEntity<Shipping> {
 	}
 
 	@Override
-	protected Shipping createNewInstance() throws Throwable {
+	protected Invoice createNewInstance() throws Throwable {
 		throw new UnsupportedOperationException();
 	}
 	
-	protected void copyTo(Shipping o, boolean reload, boolean override, boolean validate) throws Throwable {
+	protected void copyTo(Invoice o, boolean reload, boolean override, boolean validate) throws Throwable {
 		if(o.getCancelJustification() == null) {
 			o.setCancelJustification(this.cancelJustification);
 		}

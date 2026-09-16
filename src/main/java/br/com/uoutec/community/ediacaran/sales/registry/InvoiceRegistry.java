@@ -28,6 +28,8 @@ public interface InvoiceRegistry extends PublicBean{
 	
 	void cancelInvoices(Order order, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException, OrderReportRegistryException;
 
+	void cancelInvoices(List<Invoice> list, String justification) throws InvoiceRegistryException, RefundRegistryException, OrderRegistryException, ShippingRegistryException, OrderReportRegistryException;
+	
 	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException, ProductTypeHandlerException;
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
