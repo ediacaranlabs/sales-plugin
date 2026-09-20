@@ -62,6 +62,14 @@ public enum OrderStatusValue implements OrderStatus {
 			return false;
 		}
 		
+		public boolean isAllowedCreateInvoice() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeInvoice() {
+			return true;
+		}
+		
 	},
 	
 	PAYMENT_RECEIVED(){
@@ -76,6 +84,14 @@ public enum OrderStatusValue implements OrderStatus {
 			}
 		}
 		
+		public boolean isAllowedCreateShipping() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeShipping() {
+			return true;
+		}
+		
 		public boolean isAllowedCreateInvoice() {
 			return true;
 		}
@@ -85,11 +101,6 @@ public enum OrderStatusValue implements OrderStatus {
 		}
 
 		@Override
-		public boolean isClosed() {
-			return false;
-		}
-		
-		@Override
 		public boolean isAllowedCreateRefund() {
 			return true;
 		}
@@ -97,6 +108,11 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		public boolean isAllowedChangeRefund() {
 			return true;
+		}
+		
+		@Override
+		public boolean isClosed() {
+			return false;
 		}
 		
 	},
@@ -126,20 +142,15 @@ public enum OrderStatusValue implements OrderStatus {
 		public boolean isAllowedChangeShipping() {
 			return true;
 		}
+		
+		public boolean isAllowedCreateInvoice() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeInvoice() {
+			return true;
+		}
 
-		public boolean isAllowedCreateOrderReport() {
-			return true;
-		}
-		
-		public boolean isAllowedChangeOrderReport() {
-			return true;
-		}
-		
-		@Override
-		public boolean isClosed() {
-			return false;
-		}
-		
 		@Override
 		public boolean isAllowedCreateRefund() {
 			return true;
@@ -148,6 +159,11 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		public boolean isAllowedChangeRefund() {
 			return true;
+		}
+		
+		@Override
+		public boolean isClosed() {
+			return false;
 		}
 		
 	},
@@ -168,7 +184,7 @@ public enum OrderStatusValue implements OrderStatus {
 				return false;
 			}
 		}
-		
+
 		public boolean isAllowedCreateOrderReport() {
 			return true;
 		}
@@ -249,6 +265,14 @@ public enum OrderStatusValue implements OrderStatus {
 			return !map.isEmpty() && !activeRefunds.isEmpty();
 		}
 		
+		public boolean isAllowedCreateShipping() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeShipping() {
+			return true;
+		}
+		
 		public boolean isAllowedCreateInvoice() {
 			return true;
 		}
@@ -258,11 +282,6 @@ public enum OrderStatusValue implements OrderStatus {
 		}
 
 		@Override
-		public boolean isClosed() {
-			return false;
-		}
-		
-		@Override
 		public boolean isAllowedCreateRefund() {
 			return true;
 		}
@@ -270,6 +289,19 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		public boolean isAllowedChangeRefund() {
 			return true;
+		}
+		
+		public boolean isAllowedCreateOrderReport() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeOrderReport() {
+			return true;
+		}
+		
+		@Override
+		public boolean isClosed() {
+			return false;
 		}
 		
 	},
