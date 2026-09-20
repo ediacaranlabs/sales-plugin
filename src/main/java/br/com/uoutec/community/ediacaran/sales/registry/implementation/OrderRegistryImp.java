@@ -209,7 +209,7 @@ public class OrderRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getFindPermission());
 		
 		try{
-			return orderEntityAccess.findById(id);			
+			return OrderRegistryUtil.getOrder(id, orderEntityAccess, clientRegistry);			
 		}
 		catch(Throwable e){
 			throw new OrderRegistryException(e);

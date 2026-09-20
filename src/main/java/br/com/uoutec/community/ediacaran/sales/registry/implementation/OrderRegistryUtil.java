@@ -677,6 +677,19 @@ public class OrderRegistryUtil {
 		}
 		
 	}
+
+	public static Order getOrder(String id, OrderEntityAccess entityAccess, ClientRegistry clientRegistry) throws OrderNotFoundRegistryException {
+		try{
+			Order order = entityAccess.findById(id);
+			if(order != null) {
+				order.setClient(order.getClient() == null? null : clientRegistry.findClientById(order.getClient().getId()));
+			}
+			return order;
+		}
+		catch(Throwable e){
+			throw new OrderNotFoundRegistryException(id);
+		}
+	}
 	
 	public static Order getActualOrder(Order order, OrderEntityAccess entityAccess) throws OrderNotFoundRegistryException {
 		try{

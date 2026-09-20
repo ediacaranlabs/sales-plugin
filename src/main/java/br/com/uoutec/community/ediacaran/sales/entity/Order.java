@@ -42,9 +42,6 @@ public class Order implements Serializable{
 	private String id;
 
 	@NotNull(groups = DataValidation.class)
-	private Client client;
-	
-	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.UUID)
 	private String cartID;
 	
@@ -97,14 +94,6 @@ public class Order implements Serializable{
 		this.id = id;
 	}
 
-	public Client getClient() {
-		return client;
-	}
-
-	public void setClient(Client client) {
-		this.client = client;
-	}
-
 	public String toStringDate(Locale locale) {
 		if(date == null) {
 			return "";
@@ -122,6 +111,14 @@ public class Order implements Serializable{
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	public String getCartID() {
@@ -233,6 +230,45 @@ public class Order implements Serializable{
 				status == OrderStatus.CLOSED || 
 				status == OrderStatus.COMPLETE;
 	}
+	
+	/* Client methods */
+	
+	@NotNull(groups = DataValidation.class)
+	private Client client;
+	
+	/*
+	private volatile boolean clientLoaded = false;
+	
+	public void setClient(Client client) {
+		if(client == null) {
+			this.client = null;
+			this.clientLoaded = false;
+		}
+		else {
+			this.client = client;
+			this.clientLoaded = true;
+		}
+		
+	}
+	
+	public Client getClient() {
+		
+		try {
+			if(!clientLoaded) {
+				if(client != null && client.getId() != null) {
+					ClientRegistry registry = EntityContextPlugin.getEntity(ClientRegistry.class);
+					this.client = registry.findClientById(client.getId());
+					this.clientLoaded = true;
+				}
+			}
+			
+			return client;
+		}
+		catch(Throwable ex) {
+			throw new IllegalStateException(ex);
+		}
+	}
+	*/
 	
 	/* invoice methods */
 	
