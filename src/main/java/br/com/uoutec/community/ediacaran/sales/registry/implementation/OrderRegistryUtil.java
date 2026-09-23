@@ -637,6 +637,41 @@ public class OrderRegistryUtil {
 		}
 	}
 	*/
+
+	public static OrderStatus getNextStatus(Order order) throws OrderRegistryException {
+		
+		try {
+			Payment payment					= order.getPayment();
+			List<Refund> actualRefunds		= order.getRefunds();
+			List<Shipping> actualShiping	= order.getShippings();
+			List<Invoice> actualInvoice		= order.getInvoices();
+			List<OrderReport> reports		= order.getOrderReport();
+			
+			OrderStatusRequest osr = (name)->{
+				switch (name) {
+				case OrderStatus.PAYMENT:
+					return payment;
+				case OrderStatus.INVOICES:
+					return actualInvoice;
+				case OrderStatus.SHIPPINGS:
+					return actualShiping;
+				case OrderStatus.REFUNDS:
+					return actualRefunds;
+				case OrderStatus.REPORT:
+					return reports;
+				case OrderStatus.ORDER:
+					return order;
+				}
+				return null;
+			};
+			
+			return OrderStatus.NEW.getNextStatus(osr);
+		}
+		catch(Throwable ex) {
+			throw new OrderRegistryException(ex);
+		}
+		
+	}
 	
 	public static void checkAcceptNewOrderStatus(Order order, OrderStatus newStatus, List<Refund> actualRefunds, List<Shipping> actualShiping, 
 			List<Invoice> actualInvoice, List<OrderReport> reports) throws OrderRegistryException {
@@ -758,9 +793,9 @@ public class OrderRegistryUtil {
 	}
 	
 	public static void checkPayment(Order order) throws InvoiceRegistryException {
-		if(order.getPayment().getReceivedFrom() == null) {
-			throw new InvoiceRegistryException("payment has not yet been made");
-		}
+		//if(order.getPayment().getReceivedFrom() == null) {
+		//	throw new InvoiceRegistryException("payment has not yet been made");
+		//}
 	}
 	
 	public static boolean isCompletedOrder(Order order, Collection<Shipping> shippings, Collection<Refund> refunds, Collection<OrderReport> reports) {

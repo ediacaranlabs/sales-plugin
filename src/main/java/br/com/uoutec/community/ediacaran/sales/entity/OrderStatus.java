@@ -3,6 +3,11 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.util.Locale;
 import java.util.Set;
 
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
+
 public interface OrderStatus {
 
 	public static final String ORDER = "ORDER";
@@ -101,4 +106,56 @@ public interface OrderStatus {
 		Object getValue(String name);
 		
 	}
+
+	public class OrderStatusRequestOrder implements OrderStatusRequest{
+
+		private Order order;
+		
+		public OrderStatusRequestOrder(Order order) {
+			this.order = order;
+		}
+		
+		@Override
+		public Object getValue(String name) {
+			switch (name) {
+			case OrderStatus.PAYMENT:
+				return order.getPayment();
+			case OrderStatus.INVOICES:
+				try {
+					return order.getInvoices();
+				}
+				catch (InvoiceRegistryException e) {
+					throw new RuntimeException(e);
+				}
+			case OrderStatus.SHIPPINGS:
+				try {
+					return order.getShippings();
+				}
+				catch (ShippingRegistryException e) {
+					throw new RuntimeException(e);
+				}
+			case OrderStatus.REFUNDS:
+				try {
+					return order.getRefunds();
+				}
+				catch (RefundRegistryException e) {
+					throw new RuntimeException(e);
+				}
+			case OrderStatus.REPORT:
+				try {
+					return order.getOrderReport();
+				}
+				catch (OrderReportRegistryException e) {
+					throw new RuntimeException(e);
+				}
+			case OrderStatus.ORDER:
+				return order;
+			}
+			return null;
+
+		}
+		
+	}
+	
+	
 }
