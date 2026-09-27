@@ -14,7 +14,7 @@ import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorResponse;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 @Singleton
-public class RegisterRefundInfoAction implements ActionExecutor, PublicBean{
+public class AsyncConfirmRefundAction implements ActionExecutor, PublicBean{
 
 	@Inject
 	private RefundRegistry refundRegistry;

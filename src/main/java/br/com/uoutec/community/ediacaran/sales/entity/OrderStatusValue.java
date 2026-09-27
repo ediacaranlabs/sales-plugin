@@ -144,7 +144,7 @@ public enum OrderStatusValue implements OrderStatus {
 		}
 		
 		public boolean isAllowedCreateInvoice() {
-			return true;
+			return false;
 		}
 		
 		public boolean isAllowedChangeInvoice() {

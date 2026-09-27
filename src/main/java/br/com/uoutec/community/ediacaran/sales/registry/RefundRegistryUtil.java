@@ -332,9 +332,9 @@ public class RefundRegistryUtil {
 
 	public void scheduleRefund(Refund refund) {
 		actionRegistry.executeAction(
-				ActionsPluginInstaller.REGISTER_REFUND_INFO, 
+				ActionsPluginInstaller.ASYNC_CONFIRM_REFUND_ACTION, 
 				ActionExecutorRequestBuilder.builder()
-					.withId("EDIACARAN:REFUND_PAYMENT:REFUND:" + refund.getId())
+					.withId("EDIACARAN:SALES:" + ActionsPluginInstaller.ASYNC_CONFIRM_REFUND_ACTION + ":" + refund.getId())
 					.withParameter("refund", refund.getId())
 				.build()
 		);

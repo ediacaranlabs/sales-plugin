@@ -15,6 +15,7 @@ import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorResponse;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
 @Singleton
+@Deprecated
 public class RegisterPaymntInfoAction implements ActionExecutor, PublicBean{
 
 	@Inject
