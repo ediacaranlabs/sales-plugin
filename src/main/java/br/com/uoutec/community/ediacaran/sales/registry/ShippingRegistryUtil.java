@@ -274,7 +274,7 @@ public class ShippingRegistryUtil {
 				.build()
 		);
 	}
-	
+
 	public static Address getOrigin() throws CountryRegistryException {
 		
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);
@@ -350,7 +350,7 @@ public class ShippingRegistryUtil {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		
-		OrderRegistryUtil.checkAcceptNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED, refunds, shippings, invoices, reports);
+		//OrderRegistryUtil.checkAcceptNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED, refunds, shippings, invoices, reports);
 		//OrderRegistryUtil.checkNewOrderStatus(actualOrder, OrderStatus.ORDER_INVOICED);
 		
 		for(Shipping i: shippings) {

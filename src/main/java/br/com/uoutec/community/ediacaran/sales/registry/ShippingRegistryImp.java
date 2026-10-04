@@ -142,6 +142,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			ShippingRegistryUtil.confirmShipping(actualShipping, entityAccess);
 			ShippingRegistryUtil.update(actualShipping, actualOrder, entityAccess);
 			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
+			//ShippingRegistryUtil.confirmShippingEvent(actionRegistry, shipping);
 		}
 		
 		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, null, orderRegistry);
