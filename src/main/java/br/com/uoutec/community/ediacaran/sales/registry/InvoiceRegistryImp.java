@@ -284,8 +284,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 			List<OrderReport> reports = orderReportRegistry.findByOrder(entry.getKey());
 			
 			InvoiceRegistryUtil.cancelInvoices(order, refunds, invoices, shippings, reports, justification, 
-					cancelDate, orderRegistry, shippingRegistry, entityAccess);
-			
+					cancelDate, orderRegistry, shippingRegistry, entityAccess, actionRegistry);
+		
 		}
 		
 	}
@@ -363,6 +363,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		InvoiceRegistryUtil.update(entity, entityAccess);
 		InvoiceRegistryUtil.updateStatus(entity, actualOrder, refunds, shippings, actualInvoices, orderRegistry);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
+		InvoiceRegistryUtil.updateInvoiceEvent(actionRegistry, actualInvoice);
 
 	}
 	

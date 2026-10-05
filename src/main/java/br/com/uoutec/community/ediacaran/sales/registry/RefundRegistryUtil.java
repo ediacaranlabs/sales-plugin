@@ -685,6 +685,15 @@ public class RefundRegistryUtil {
 		);
 	}
 
+	public void updateRefundEvent(Refund refund) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.UPDATE_REFUND_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("refund", refund.getId())
+				.build()
+		);
+	}
+	
 	public void updateOrderStatus(Order actualOrder, Collection<Refund> refundList, Refund refund) throws ShippingRegistryException, OrderReportRegistryException, InvalidUnitsOrderRegistryException, OrderRegistryException {
 		
 		List<Shipping> shippingList			= shippingRegistry.findByOrder(actualOrder.getId());

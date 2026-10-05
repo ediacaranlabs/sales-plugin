@@ -273,6 +273,15 @@ public class ShippingRegistryUtil {
 		);
 	}
 
+	public static void updateShippingEvent(ActionRegistry actionRegistry, Shipping shipping) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.UPDATE_SHIPPING_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("shipping", shipping.getId())
+				.build()
+		);
+	}
+	
 	public static Address getOrigin() throws CountryRegistryException {
 		
 		VarParser varParser = EntityContextPlugin.getEntity(VarParser.class);

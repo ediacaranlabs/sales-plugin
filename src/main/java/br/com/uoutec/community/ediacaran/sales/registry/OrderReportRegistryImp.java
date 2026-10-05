@@ -97,7 +97,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
 		
 		for(OrderReport entity: orderReportList) {
-			OrderReportRegistryUtil.registerOrderReportRegisterEvent(actionRegistry, entity, true);
+			OrderReportRegistryUtil.registerNewOrderReportEvent(actionRegistry, entity);
 		}
 		
 	}
@@ -173,12 +173,18 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.reloadClient(entity, clientRegistry);
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
+		OrderReportRegistryUtil.updateOrderReportEvent(actionRegistry, entity);
 		OrderReportRegistryUtil.updateOrderStatus(entity, orderRegistry, clientRegistry, shippingRegistry, productTypeRegistry, entityAccess);
 	}
 	
 	private void confirmRegistration(OrderReport entity, boolean newEntity, OrderReportEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderReportRegistryException {
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
-		OrderReportRegistryUtil.registerOrderReportRegisterEvent(actionRegistry, entity, newEntity);
+		if(newEntity) {
+			OrderReportRegistryUtil.registerNewOrderReportEvent(actionRegistry, entity);
+		}
+		else {
+			OrderReportRegistryUtil.updateOrderReportEvent(actionRegistry, entity);
+		}
 	}
 	
 	@Override

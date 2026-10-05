@@ -228,6 +228,15 @@ public class InvoiceRegistryUtil {
 				.build()
 		);
 	}
+
+	public static void updateInvoiceEvent(ActionRegistry actionRegistry, Invoice invoice) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.UPDATE_INVOICE_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("invoice", invoice.getId())
+				.build()
+		);
+	}
 	
 	public static Client getActualUser(Order order, ClientRegistry clientRegistry) throws OrderRegistryException, InvoiceRegistryException {
 		Client actualClient;
@@ -473,7 +482,7 @@ public class InvoiceRegistryUtil {
 	
 	public static void cancelInvoices(Order order, List<Refund> refunds, List<Invoice> invoices, List<Shipping> shippings, List<OrderReport> reports,
 			String justification, LocalDateTime cancelDate, OrderRegistry orderRegistry, 
-			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
+			ShippingRegistry shippingRegistry, InvoiceEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderRegistryException, InvoiceRegistryException, ShippingRegistryException {
 
 		Order actualOrder = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		
@@ -487,6 +496,7 @@ public class InvoiceRegistryUtil {
 			i.setCancelJustification(justification);
 			
 			update(i, entityAccess);
+			updateInvoiceEvent(actionRegistry, i);
 			
 			orderRegistry.registryLog(actualOrder, "canceled invoice #" + i.getId() + ": " +  justification);
 			

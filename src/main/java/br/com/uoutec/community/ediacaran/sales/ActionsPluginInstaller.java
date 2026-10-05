@@ -13,14 +13,20 @@ public class ActionsPluginInstaller {
 	public static final String UPDATE_ORDER_REGISTERED 		= "update_order_registered";
 	
 	public static final String NEW_REFUND_REGISTERED 		= "new_refund_registered";
+
+	public static final String UPDATE_REFUND_REGISTERED 	= "update_refund_registered";
 	
 	public static final String NEW_INVOICE_REGISTERED 		= "new_invoice_registered";
 
+	public static final String UPDATE_INVOICE_REGISTERED 	= "update_invoice_registered";
+	
 	public static final String NEW_SHIPPING_REGISTERED 		= "new_shipping_registered";
 
-	public static final String NEW_ORDER_REPORT_REGISTERED	= "new_order_report_registered";
+	public static final String UPDATE_SHIPPING_REGISTERED 	= "update_shipping_registered";
 	
-	public static final String CHANGE_ORDER_REPORT_STATUS	= "change_order_report_status";
+	public static final String NEW_ORDER_REPORT_REGISTERED	= "new_order_report_registered";
+
+	public static final String UPDATE_ORDER_REPORT_REGISTERED = "update_order_report_registered";
 	
 	//public static final String REGISTER_PAYMENT_INFO 		= "register_payment_info";
 
@@ -50,12 +56,37 @@ public class ActionsPluginInstaller {
 			response.setParameter("invoice", invoice);
 		});
 
+		actionRegistry.registerAction(UPDATE_INVOICE_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String invoice = (String)request.getParameter("invoice");
+			response.setParameter("invoice", invoice);
+		});
+		
 		actionRegistry.registerAction(NEW_SHIPPING_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
 			String shipping = (String)request.getParameter("shipping");
 			response.setParameter("shipping", shipping);
 		});
 
+		actionRegistry.registerAction(UPDATE_SHIPPING_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String shipping = (String)request.getParameter("shipping");
+			response.setParameter("shipping", shipping);
+		});
+
+		actionRegistry.registerAction(NEW_REFUND_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String refund = (String)request.getParameter("refund");
+			response.setParameter("refund", refund);
+		});
+
+		actionRegistry.registerAction(UPDATE_REFUND_REGISTERED, 	3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String refund = (String)request.getParameter("refund");
+			response.setParameter("refund", refund);
+		});
+		
 		actionRegistry.registerAction(NEW_ORDER_REPORT_REGISTERED, 3, 10, ChronoUnit.SECONDS, (request,response)->{
+			String orderReport = (String)request.getParameter("orderReport");
+			response.setParameter("orderReport", orderReport);
+		});
+		
+		actionRegistry.registerAction(UPDATE_ORDER_REPORT_REGISTERED, 3, 10, ChronoUnit.SECONDS, (request,response)->{
 			String orderReport = (String)request.getParameter("orderReport");
 			response.setParameter("orderReport", orderReport);
 		});

@@ -139,6 +139,15 @@ public class OrderReportRegistryUtil {
 				.build()
 		);
 	}
+
+	public static void updateOrderReportEvent(ActionRegistry actionRegistry, OrderReport orderReport) {
+		actionRegistry.executeAction(
+				ActionsPluginInstaller.UPDATE_ORDER_REPORT_REGISTERED, 
+				ActionExecutorRequestBuilder.builder()
+					.withParameter("orderReport", orderReport.getId())
+				.build()
+		);
+	}
 	
 	public static void updateOrderStatus(OrderReport entity,OrderRegistry orderRegistry, 
 			ClientRegistry clientRegistry, ShippingRegistry shippingRegistry, ProductTypeRegistry productTypeRegistry, OrderReportEntityAccess entityAccess) throws OrderRegistryException, ShippingRegistryException, RefundRegistryException, OrderReportRegistryException {
@@ -238,35 +247,6 @@ public class OrderReportRegistryUtil {
 		}
 	}
 	
-	public static void registerOrderReportRegisterEvent(ActionRegistry actionRegistry, OrderReport e, boolean newOrderReport) {
-		
-		if(newOrderReport) {
-			registerNewOrderReport(actionRegistry, e);
-		}
-		else {
-			registerOrderReportStatusChange(actionRegistry, e);
-		}
-		
-	}
-	
-	public static void registerNewOrderReport(ActionRegistry actionRegistry, OrderReport e) {
-		actionRegistry.executeAction(
-				ActionsPluginInstaller.NEW_ORDER_REPORT_REGISTERED, 
-				ActionExecutorRequestBuilder.builder()
-					.withParameter("orderReport", e.getId())
-				.build()
-		);
-	}
-	
-	public static void registerOrderReportStatusChange(ActionRegistry actionRegistry, OrderReport e) {
-		actionRegistry.executeAction(
-				ActionsPluginInstaller.CHANGE_ORDER_REPORT_STATUS, 
-				ActionExecutorRequestBuilder.builder()
-					.withParameter("orderReport", e.getId())
-				.build()
-		);
-	}
-
 	public static ProductRequestReport getProductRequestReport(String id, OrderReport orderReport, ProductRequestReportEntityAccess productRequestReportEntityAccess) throws OrderReportRegistryException{
 		
 		try {

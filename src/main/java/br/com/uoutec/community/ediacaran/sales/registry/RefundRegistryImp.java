@@ -95,7 +95,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.update(actualRefund, actualOrder);
 		refundRegistryUtil.updateIndex(actualRefund, actualOrder);
 		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
-		
+		refundRegistryUtil.updateRefundEvent(actualRefund);
 	}
 	
 	@Override
@@ -168,6 +168,7 @@ public class RefundRegistryImp implements RefundRegistry {
 			entity.setRefundDate(actualRefund.getRefundDate());
 		}
 		
+		refundRegistryUtil.updateRefundEvent(actualRefund);
 		refundRegistryUtil.updateStatus(actualRefund, actualOrder, actualRefunds, actualShiping, actualInvoice);
 		
 	}

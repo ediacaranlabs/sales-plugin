@@ -142,9 +142,9 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			ShippingRegistryUtil.confirmShipping(actualShipping, entityAccess);
 			ShippingRegistryUtil.update(actualShipping, actualOrder, entityAccess);
 			ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
-			//ShippingRegistryUtil.confirmShippingEvent(actionRegistry, shipping);
 		}
 		
+		ShippingRegistryUtil.updateShippingEvent(actionRegistry, actualShipping);
 		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, null, orderRegistry);
 	}
 	
@@ -428,6 +428,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		ShippingRegistryUtil.update(actualShipping, order, entityAccess);
 		ShippingRegistryUtil.updateStatus(actualShipping, actualOrder, refunds, actualShippings, actualInvoices, null, orderRegistry);
 		ShippingRegistryUtil.saveOrUpdateIndex(shipping, indexEntityAccess);
+		ShippingRegistryUtil.updateShippingEvent(actionRegistry, actualShipping);
 		//ShippingRegistryUtil.markOrderAsComplete(shipping, actualOrder, refunds, actualShippings, actualReports, orderRegistry);
 		
 	}
