@@ -45,7 +45,6 @@ public class ShippingRegistryUtil {
 	
 	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
 		
-		List<Shipping> activeShippings  = new ArrayList<>();
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
@@ -55,13 +54,12 @@ public class ShippingRegistryUtil {
 		shippings.stream()
 			.filter((e)->!e.isCanceled())
 			.forEach((e)->{
-				activeShippings.add(e);
 				ProductRequestUtil.subUnits(map, e.getProducts());
 			});
 		
 		ProductRequestUtil.removeEmptyUnits(map);
 		
-		return map.isEmpty() && !activeShippings.isEmpty();
+		return map.isEmpty();
 	}
 
 	public static boolean isCompletedShippingAndReceived(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
