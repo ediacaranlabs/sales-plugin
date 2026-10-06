@@ -330,7 +330,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		InvoiceRegistryUtil.registerProducts(entity, actualClient, actualOrder, productTypeRegistry);
 		InvoiceRegistryUtil.save(entity, entityAccess);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
-		InvoiceRegistryUtil.updateStatus(entity, actualOrder, refunds, null, actualInvoices, orderRegistry);
+		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		OrderRegistryUtil.registerEvent("Criada a fatura #" + entity.getId(), actualOrder, orderRegistry);
 		InvoiceRegistryUtil.registerNewInvoiceEvent(actionRegistry, entity);
 		
@@ -344,7 +344,6 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		ClientRegistry clientRegistry      = EntityContextPlugin.getEntity(ClientRegistry.class);
 		OrderRegistry orderRegistry        = EntityContextPlugin.getEntity(OrderRegistry.class);
 		RefundRegistry refundRegistry      = EntityContextPlugin.getEntity(RefundRegistry.class);
-		ShippingRegistry shippingRegistry  = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		
 		Order actualOrder                  = InvoiceRegistryUtil.getActualOrder(order, orderRegistry);
 		Client actualClient                = InvoiceRegistryUtil.getActualUser(actualOrder, clientRegistry);		
@@ -352,16 +351,13 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		
 		List<Invoice> actualInvoices       = InvoiceRegistryUtil.getActualInvoices(order, actualClient, entityAccess);
 		List<Refund> refunds               = InvoiceRegistryUtil.getActualRefunds(actualOrder, refundRegistry);
-		List<Shipping> shippings           = InvoiceRegistryUtil.getActualShippings(actualOrder, shippingRegistry);
 		
-		//InvoiceRegistryUtil.checkAllowedUpdateInvoice(actualOrder);
-		//OrderRegistryUtil.checkNewOrderStatus(order, OrderStatus.ORDER_INVOICED);
 		InvoiceRegistryUtil.checkCanceledInvoiceDate(entity, actualInvoice);
 		InvoiceRegistryUtil.checkIsCompletedInvoice(order, refunds, actualInvoices);
 		InvoiceRegistryUtil.checkUnits(entity, order, refunds, actualInvoices);		
 		InvoiceRegistryUtil.preventChangeInvoiceSensitiveData(entity, actualInvoice);
 		InvoiceRegistryUtil.update(entity, entityAccess);
-		InvoiceRegistryUtil.updateStatus(entity, actualOrder, refunds, shippings, actualInvoices, orderRegistry);
+		InvoiceRegistryUtil.updateStatus(actualOrder, orderRegistry);
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		InvoiceRegistryUtil.updateInvoiceEvent(actionRegistry, actualInvoice);
 

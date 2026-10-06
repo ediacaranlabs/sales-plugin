@@ -15,7 +15,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequestOrder;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
@@ -254,34 +254,9 @@ public class InvoiceRegistryUtil {
 		return actualClient;
 	}
 
-	public static void updateStatus(Invoice entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice, OrderRegistry orderRegistry) throws OrderRegistryException {
+	public static void updateStatus(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		
-		OrderStatusRequest osr = (name)->{
-			switch (name) {
-			case OrderStatus.PAYMENT:
-				return order.getPayment();
-			case OrderStatus.INVOICES:
-				if(entity != null) {
-					int indexOf = actualInvoice.indexOf(entity);
-					if(indexOf < 0 ) {
-						actualInvoice.add(entity);
-					}
-					else {
-						actualInvoice.set(indexOf, entity);
-					}
-				}
-				return actualInvoice;
-			case OrderStatus.SHIPPINGS:
-				return actualShiping;
-			case OrderStatus.REFUNDS:
-				return actualRefunds;
-			case OrderStatus.ORDER:
-				return order;
-			}
-			return null;
-		};
-		
-		OrderStatus nextStatus = order.getStatus().getNextStatus(osr);
+		OrderStatus nextStatus = order.getStatus().getNextStatus(new OrderStatusRequestOrder(order));
 		
 		if(nextStatus != null) {
 			updateOrderStatus(order, nextStatus, orderRegistry);
@@ -292,41 +267,6 @@ public class InvoiceRegistryUtil {
 	public static void updateOrderStatus(Order actualOrder, OrderStatus nextStatus, OrderRegistry orderRegistry) throws OrderRegistryException {
 		orderRegistry.updateStatus(actualOrder, nextStatus);
 	}
-	
-	/*
-	public static void markAsComplete(Order order, Collection<Refund> refunds, List<Invoice> invoices, Invoice invoice, OrderRegistry orderRegistry
-			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
-		
-		List<Invoice> allInvoices = new ArrayList<>(invoices);
-		
-		int indexOf = allInvoices.indexOf(invoice);
-		if(indexOf == -1) {
-			allInvoices.add(invoice);
-		}
-		else {
-			allInvoices.set(indexOf, invoice);
-		}
-		
-		markAsComplete(order, refunds, allInvoices, orderRegistry); 
-	}
-	*/
-	
-	/*
-	public static void markAsComplete(Order order, Collection<Refund> refunds, Collection<Invoice> invoices, OrderRegistry orderRegistry
-			) throws CompletedInvoiceRegistryException, InvoiceRegistryException, OrderRegistryException{
-		
-		if(isCompletedInvoice(order, refunds, invoices)) {
-			OrderRegistryUtil.updateStatus(order, OrderStatus.ORDER_INVOICED, orderRegistry);
-			//order.setCompleteInvoice(LocalDateTime.now());
-		}
-		else {
-			OrderRegistryUtil.updateStatus(order,OrderRegistryUtil.toOrderStatus(order.getPayment().getStatus()), orderRegistry);
-			//order.setCompleteShipping(null);
-			//order.setCompleteInvoice(null);
-		}
-		
-	}
-   */
 	
 	public static void checkIfExistsShipping(Order order, ShippingRegistry shippingRegistry
 			) throws InvoiceRegistryException, ShippingRegistryException {
@@ -504,7 +444,7 @@ public class InvoiceRegistryUtil {
 
 		entityAccess.flush();
 			
-		updateStatus(null, actualOrder, refunds, shippings, invoices, orderRegistry);
+		updateStatus(actualOrder, orderRegistry);
 		
 	}
 

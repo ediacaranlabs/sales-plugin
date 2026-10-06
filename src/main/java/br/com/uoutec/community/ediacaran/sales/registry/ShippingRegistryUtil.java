@@ -17,12 +17,12 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequestOrder;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductType;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
@@ -200,36 +200,9 @@ public class ShippingRegistryUtil {
 	}
 
 	
-	public static void updateStatus(Shipping entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice, List<OrderReport> reports, OrderRegistry orderRegistry) throws OrderRegistryException {
+	public static void updateStatus(Order order, OrderRegistry orderRegistry) throws OrderRegistryException {
 		
-		OrderStatusRequest osr = (name)->{
-			switch (name) {
-			case OrderStatus.PAYMENT:
-				return order.getPayment();
-			case OrderStatus.INVOICES:
-				return actualInvoice;
-			case OrderStatus.SHIPPINGS:
-				if(entity != null) {
-					int indexOf = actualShiping.indexOf(entity);
-					if(indexOf < 0 ) {
-						actualShiping.add(entity);
-					}
-					else {
-						actualShiping.set(indexOf, entity);
-					}
-				}
-				return actualShiping;
-			case OrderStatus.REFUNDS:
-				return actualRefunds;
-			case OrderStatus.REPORT:
-				return reports;
-			case OrderStatus.ORDER:
-				return order;
-			}
-			return null;
-		};
-		
-		OrderStatus nextStatus = order.getStatus().getNextStatus(osr);
+		OrderStatus nextStatus = order.getStatus().getNextStatus(new OrderStatusRequestOrder(order));
 		
 		if(nextStatus != null) {
 			updateOrderStatus(order, nextStatus, orderRegistry);
@@ -372,9 +345,7 @@ public class ShippingRegistryUtil {
 
 		entityAccess.flush();
 			
-		List<Shipping> actualShippings = getActualShippings(actualOrder, entityAccess);
-		
-		updateStatus(null, actualOrder, refunds, actualShippings, invoices, reports, orderRegistry);
+		updateStatus(actualOrder, orderRegistry);
 		
 	}	
 	

@@ -22,7 +22,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus.OrderStatusRequestOrder;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
@@ -610,67 +610,15 @@ public class RefundRegistryUtil {
 		entity.setRefundType(order.getPaymentType());
 	}
 
-	public void updateStatus(Refund entity, Order order, List<Refund> actualRefunds, List<Shipping> actualShiping, List<Invoice> actualInvoice) throws OrderRegistryException {
+	public void updateStatus(Order order) throws OrderRegistryException {
 		
-		OrderStatusRequest osr = (name)->{
-			
-			switch (name) {
-			case OrderStatus.PAYMENT:
-				return order.getPayment();
-			case OrderStatus.INVOICES:
-				return actualInvoice;
-			case OrderStatus.SHIPPINGS:
-				return actualShiping;
-			case OrderStatus.REFUNDS:
-				int indexOf = actualRefunds.indexOf(entity);
-				if(indexOf < 0 ) {
-					actualRefunds.add(entity);
-				}
-				else {
-					actualRefunds.set(indexOf, entity);
-				}
-				return actualRefunds;
-			case OrderStatus.ORDER:
-				return order;
-			}
-			return null;
-		};
-		
-		OrderStatus nextStatus = order.getStatus().getNextStatus(osr);
+		OrderStatus nextStatus = order.getStatus().getNextStatus(new OrderStatusRequestOrder(order));
 		
 		if(nextStatus != null) {
 			updateOrderStatus(order, nextStatus);
 		}
 		
 	}
-	
-	/*
-	public void markAsComplete(Order order, Collection<Refund> refundList, Refund refund) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
-		
-		List<Refund> allRefund = new ArrayList<>(refundList);
-		
-		if(refund != null) {
-			if(allRefund.contains(refund)) {
-				allRefund.remove(refund);
-			}
-			allRefund.add(refund);
-		}
-		
-		markAsComplete(order, allRefund, orderRegistry); 
-	}
-    */
-	
-	/*
-	public void markAsComplete(Order order, Collection<Refund> refunds, 
-			OrderRegistry orderRegistry) throws InvalidUnitsOrderRegistryException, OrderRegistryException {
-		
-		if(isCompletedRefund(order, refunds) ) {
-			order.getPayment().setStatus(PaymentStatus.REFOUND);
-			OrderRegistryUtil.updateStatus(order, OrderStatus.REFUND, orderRegistry);
-		}
-		
-	}
-    */
 	
 	public void registerEvent(String message, Order order) throws OrderRegistryException {
 		orderRegistry.registryLog(order, message);

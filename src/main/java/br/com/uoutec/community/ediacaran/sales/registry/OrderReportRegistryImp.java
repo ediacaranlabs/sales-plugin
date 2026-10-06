@@ -154,7 +154,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
 		OrderReportRegistryUtil.registerNewOrderReportEvent(actionRegistry, entity);
-		OrderReportRegistryUtil.updateOrderStatus(entity, orderRegistry, clientRegistry, shippingRegistry, productTypeRegistry, entityAccess);
+		OrderReportRegistryUtil.updateOrderStatus(actualOrder, orderRegistry);
 	}
 
 	private void update(OrderReport entity, OrderReportEntityAccess entityAccess, OrderRegistry orderRegistry, 
@@ -174,7 +174,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(entityAccess);
 		OrderReportRegistryUtil.updateOrderReportEvent(actionRegistry, entity);
-		OrderReportRegistryUtil.updateOrderStatus(entity, orderRegistry, clientRegistry, shippingRegistry, productTypeRegistry, entityAccess);
+		OrderReportRegistryUtil.updateOrderStatus(actualOrder, orderRegistry);
 	}
 	
 	private void confirmRegistration(OrderReport entity, boolean newEntity, OrderReportEntityAccess entityAccess, ActionRegistry actionRegistry) throws OrderReportRegistryException {

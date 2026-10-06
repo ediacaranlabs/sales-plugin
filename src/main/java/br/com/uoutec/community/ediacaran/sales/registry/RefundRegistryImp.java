@@ -72,7 +72,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		refundRegistryUtil.save(entity, actualOrder);
 		refundRegistryUtil.updateIndex(entity, actualOrder);
 		
-		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
+		refundRegistryUtil.updateStatus(actualOrder);
 		refundRegistryUtil.registerEvent("Refund #" + entity.getId(), actualOrder);
 		refundRegistryUtil.scheduleRefund(entity);
 		refundRegistryUtil.registerNewRefundEvent(entity);
@@ -88,13 +88,12 @@ public class RefundRegistryImp implements RefundRegistry {
 		Refund actualRefund 			= refundRegistryUtil.getActualRefund(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
 		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
-		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
 		
 		refundRegistryUtil.preventChangeRefundSensitiveData(entity, actualRefund);
 		refundRegistryUtil.checkCanBeRefund(entity, actualOrder, actualRefunds, actualInvoice);
 		refundRegistryUtil.update(actualRefund, actualOrder);
 		refundRegistryUtil.updateIndex(actualRefund, actualOrder);
-		refundRegistryUtil.updateStatus(entity, actualOrder, actualRefunds, actualShiping, actualInvoice);
+		refundRegistryUtil.updateStatus(actualOrder);
 		refundRegistryUtil.updateRefundEvent(actualRefund);
 	}
 	
@@ -154,8 +153,6 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		Order actualOrder 				= refundRegistryUtil.getActualOrder(entity);
 		List<Refund> actualRefunds		= refundRegistryUtil.getActualRefunds(actualOrder);
-		List<Shipping> actualShiping	= refundRegistryUtil.getActualShipping(actualOrder);
-		List<Invoice> actualInvoice		= refundRegistryUtil.getActualInvoice(actualOrder);
 		PaymentGateway paymentGateway	= refundRegistryUtil.getPaymentGateway(entity);
 		boolean partialRefund			= refundRegistryUtil.isPartialRefund(entity, actualOrder, actualRefunds);
 		
@@ -169,7 +166,7 @@ public class RefundRegistryImp implements RefundRegistry {
 		}
 		
 		refundRegistryUtil.updateRefundEvent(actualRefund);
-		refundRegistryUtil.updateStatus(actualRefund, actualOrder, actualRefunds, actualShiping, actualInvoice);
+		refundRegistryUtil.updateStatus(actualOrder);
 		
 	}
 	
