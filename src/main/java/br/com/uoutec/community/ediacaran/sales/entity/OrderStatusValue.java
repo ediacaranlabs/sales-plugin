@@ -254,7 +254,7 @@ public enum OrderStatusValue implements OrderStatus {
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 			
 			refunds.stream()
-				.filter((e)->e.isCompleted())
+				.filter((e)->!e.isDenied())
 				.forEach((e)->{
 					activeRefunds.add(e);
 					ProductRequestUtil.subUnits(map, e.getProducts());
@@ -317,7 +317,7 @@ public enum OrderStatusValue implements OrderStatus {
 			Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 			
 			refunds.stream()
-				.filter((e)->e.isCompleted())
+				.filter((e)->!e.isDenied())
 				.forEach((e)->{
 					activeRefunds.add(e);
 					ProductRequestUtil.subUnits(map, e.getProducts());
@@ -349,75 +349,75 @@ public enum OrderStatusValue implements OrderStatus {
 	
 	private static class StatusCheck {
 		
-		private static final Map<OrderStatusValue, Set<OrderStatusValue>> nextState;
+		private static final Map<OrderStatusValue, List<OrderStatusValue>> nextState;
 		
 		static{
-			nextState = new HashMap<OrderStatusValue, Set<OrderStatusValue>>();
+			nextState = new HashMap<OrderStatusValue, List<OrderStatusValue>>();
 			
 			nextState.put(OrderStatusValue.NEW, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							OrderStatusValue.PENDING_PAYMENT,
 							OrderStatusValue.CANCELED,
-							OrderStatusValue.ON_HOLD))
+							OrderStatusValue.ON_HOLD)
 				);
 			
 			nextState.put(OrderStatusValue.ON_HOLD, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							OrderStatusValue.PENDING_PAYMENT,
-							OrderStatusValue.PAYMENT_RECEIVED))
+							OrderStatusValue.PAYMENT_RECEIVED)
 				);
 			
 			nextState.put(OrderStatusValue.PENDING_PAYMENT, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							OrderStatusValue.CANCELED,
-							OrderStatusValue.PAYMENT_RECEIVED))
+							OrderStatusValue.PAYMENT_RECEIVED)
 				);
 
 			nextState.put(OrderStatusValue.PAYMENT_RECEIVED, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							OrderStatusValue.REFUND,
 							OrderStatusValue.PARTIAL_REFUND,
 							OrderStatusValue.ORDER_INVOICED,
-							OrderStatusValue.ORDER_SHIPPED))
+							OrderStatusValue.ORDER_SHIPPED)
 				);
 
 			nextState.put(OrderStatusValue.ORDER_INVOICED, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							//OrderStatusValue.PAYMENT_RECEIVED,
 							OrderStatusValue.ORDER_SHIPPED,
-							OrderStatusValue.COMPLETE))
+							OrderStatusValue.COMPLETE)
 				);
 
 			nextState.put(OrderStatusValue.ORDER_SHIPPED, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							//OrderStatusValue.ORDER_INVOICED,
-							OrderStatusValue.COMPLETE))
+							OrderStatusValue.COMPLETE)
 				);
 
 			nextState.put(OrderStatusValue.PARTIAL_REFUND, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
+					Arrays.asList(
 							OrderStatusValue.REFUND,
 							OrderStatusValue.ORDER_INVOICED,
-							OrderStatusValue.ORDER_SHIPPED))
+							OrderStatusValue.ORDER_SHIPPED)
 				);
 			
 			nextState.put(OrderStatusValue.REFUND, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
-							OrderStatusValue.CLOSED))
+					Arrays.asList(
+							OrderStatusValue.CLOSED)
 				);
 			
 			nextState.put(OrderStatusValue.CLOSED, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
-							OrderStatusValue.ARCHIVED))
+					Arrays.asList(
+							OrderStatusValue.ARCHIVED)
 				);
 
 			nextState.put(OrderStatusValue.COMPLETE, 
-					new HashSet<OrderStatusValue>(Arrays.asList(
-							OrderStatusValue.ARCHIVED))
+					Arrays.asList(
+							OrderStatusValue.ARCHIVED)
 				);
 			
 			nextState.put(OrderStatusValue.CANCELED, 
-					new HashSet<OrderStatusValue>(Arrays.asList())
+					Arrays.asList()
 				);
 			
 		}
@@ -426,11 +426,11 @@ public enum OrderStatusValue implements OrderStatus {
 			if(currentStatus.equals(newStatus)) {
 				return true;
 			}
-			Set<OrderStatusValue> nextStatus = nextState.get(currentStatus);
+			Set<OrderStatusValue> nextStatus = new HashSet<>(nextState.get(currentStatus));
 			return nextStatus != null && nextStatus.contains(newStatus);
 		}
 
-		public static Set<OrderStatusValue> getNexStatus(OrderStatusValue currentStatus){
+		public static Collection<OrderStatusValue> getNexStatus(OrderStatusValue currentStatus){
 			return nextState.get(currentStatus);
 		}
 		
@@ -486,8 +486,8 @@ public enum OrderStatusValue implements OrderStatus {
 	}
 
 	@Override
-	public Set<OrderStatus> getNexStatus() {
-		Set<OrderStatusValue> set = StatusCheck.getNexStatus(this);
+	public Collection<OrderStatus> getNexStatus() {
+		Collection<OrderStatusValue> set = StatusCheck.getNexStatus(this);
 		return set == null? null : new HashSet<>(set);
 	}
 

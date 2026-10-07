@@ -1,7 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
+import java.util.Collection;
 import java.util.Locale;
-import java.util.Set;
 
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
@@ -70,7 +70,7 @@ public interface OrderStatus {
 
 	boolean isClosed();
 	
-	Set<OrderStatus> getNexStatus();
+	Collection<OrderStatus> getNexStatus();
 	
 	boolean isValidStatus(OrderStatusRequest request);
 
@@ -78,7 +78,7 @@ public interface OrderStatus {
 	
 	public static OrderStatus getNextStatus(OrderStatus actualStatus, OrderStatusRequest request) {
 		
-		Set<OrderStatus> set = actualStatus.getNexStatus();
+		Collection<OrderStatus> set = actualStatus.getNexStatus();
 		
 		if(set == null) {
 			return null;
