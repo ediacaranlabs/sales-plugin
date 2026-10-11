@@ -81,6 +81,8 @@ public interface OrderRegistry extends PublicBean {
 
 	/* product */
 	
+	List<ProductRequest> getProductRequest(String orderID) throws OrderRegistryException;
+	
 	ProductRequest getProductRequest(String orderID, String id) throws OrderRegistryException;
 
 	ProductRequest getProductRequestBySerial(String orderID, String serial) throws OrderRegistryException;

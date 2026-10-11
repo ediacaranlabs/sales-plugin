@@ -19,6 +19,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
+import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -73,10 +75,6 @@ public class Shipping implements Serializable{
 	@Min(value=0, groups = DataValidation.class )
 	private float depth;
 
-	@NotNull(groups = DataValidation.class )
-	@Valid
-	private List<ProductRequest> products;
-	
 	private Map<String, String> addData;
 	
 	private LocalDateTime receivedDate;
@@ -86,6 +84,27 @@ public class Shipping implements Serializable{
 	public Shipping(){
 	}
 
+	public Shipping(Shipping e) {
+		this.addData = e.addData;
+		this.cancelDate = e.cancelDate;
+		this.cancelJustification = e.cancelJustification;
+		this.client = e.client;
+		this.closed = e.closed;
+		this.date = e.date;
+		this.depth = e.depth;
+		this.dest = e.dest;
+		this.height = e.height;
+		this.id = e.id;
+		this.order = e.order;
+		this.origin = e.origin;
+		this.products = e.products;
+		this.productsLoaded = e.productsLoaded;
+		this.receivedDate = e.receivedDate;
+		this.shippingType = e.shippingType;
+		this.weight = e.weight;
+		this.width = e.width;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -174,14 +193,37 @@ public class Shipping implements Serializable{
 		this.depth = depth;
 	}
 
+	@Valid
+	@NotNull(groups = DataValidation.class )
+	private List<ProductRequest> products;
+	
+	private volatile boolean productsLoaded = false;
+	
 	public List<ProductRequest> getProducts() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!productsLoaded) {
+			try {
+				ShippingRegistry registry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+				this.products = registry.getProductRequest(id);
+				this.productsLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("products load fail", ex);
+			}
+		}
+		
 		return products;
 	}
 
 	public void setProducts(List<ProductRequest> products) {
 		this.products = products;
+		this.productsLoaded = products != null;
 	}
-
+	
 	public Map<String, String> getAddData() {
 		return addData;
 	}

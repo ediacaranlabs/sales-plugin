@@ -17,6 +17,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
+import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -46,10 +48,6 @@ public class Refund implements Serializable {
 	
 	private LocalDateTime refundDate;
 	
-	@NotNull(groups = DataValidation.class )
-	@Valid
-	private List<ProductRequest> products;
-	
 	private Map<String, String> addData;
 	
 	private String currency;
@@ -58,6 +56,20 @@ public class Refund implements Serializable {
 		this.status = RefundStatus.ON_HOLD;
 	}
 
+	public Refund(Refund e) {
+		this.addData = e.addData;
+		this.client = e.client;
+		this.currency = e.currency;
+		this.date = e.date;
+		this.id = e.id;
+		this.order = e.order;
+		this.products = e.products;
+		this.productsLoaded = e.productsLoaded;
+		this.refundDate = e.refundDate;
+		this.refundType = e.refundType;
+		this.status = e.status;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -114,12 +126,35 @@ public class Refund implements Serializable {
 		this.addData = addData;
 	}
 
+	@Valid
+	@NotNull(groups = DataValidation.class )
+	private List<ProductRequest> products;
+	
+	private volatile boolean productsLoaded = false;
+	
 	public List<ProductRequest> getProducts() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!productsLoaded) {
+			try {
+				RefundRegistry registry = EntityContextPlugin.getEntity(RefundRegistry.class);
+				this.products = registry.getProductRequest(id);
+				this.productsLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("products load fail", ex);
+			}
+		}
+		
 		return products;
 	}
 
 	public void setProducts(List<ProductRequest> products) {
 		this.products = products;
+		this.productsLoaded = products != null;
 	}
 
 	public String getCurrency() {

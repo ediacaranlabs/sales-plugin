@@ -6,6 +6,7 @@ import java.util.Map;
 import br.com.uoutec.community.ediacaran.persistence.registry.CountryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
@@ -39,5 +40,7 @@ public interface ShippingRegistry extends PublicBean{
 	List<Shipping> findByOrder(String id) throws ShippingRegistryException;
 	
 	List<Shipping> findByOrder(String id, SystemUserID userID) throws ShippingRegistryException;
+	
+	List<ProductRequest> getProductRequest(String id) throws ShippingRegistryException;
 	
 }

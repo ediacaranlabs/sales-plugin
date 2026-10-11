@@ -7,6 +7,8 @@ import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 import br.com.uoutec.entity.registry.RegistryException;
 import br.com.uoutec.i18n.ValidationException;
@@ -33,5 +35,9 @@ public interface InvoiceRegistry extends PublicBean{
 	Invoice createInvoice(Order orderID, Map<String, Integer> itens, String message) throws RegistryException, ProductTypeHandlerException;
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
+	
+	List<ProductRequest> getProductRequest(String id) throws OrderRegistryException;
+
+	List<Tax> getTaxes(String id) throws OrderRegistryException;
 	
 }

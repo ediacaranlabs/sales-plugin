@@ -17,6 +17,8 @@ import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
+import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -44,14 +46,26 @@ public class Invoice implements Serializable{
 	
 	private String cancelJustification;
 	
-	@Valid
-	private List<ProductRequest> itens;
-	
-	private List<Tax> taxes;
-	
 	@NotNull(groups = DataValidation.class)
 	@Pattern(regexp = CommonValidation.CURRENCY)
 	private String currency;
+	
+	public Invoice() {
+	}
+	
+	public Invoice(Invoice e) {
+		this.cancelDate = e.cancelDate;
+		this.cancelJustification = e.cancelJustification;
+		this.client = e.client;
+		this.currency = e.currency;
+		this.date = e.date;
+		this.id = e.id;
+		this.itens = e.itens;
+		this.itensLoaded = e.itensLoaded;
+		this.order = e.order;
+		this.taxes = e.taxes;
+		this.taxesLoaded = e.taxesLoaded;
+	}
 	
 	public String getId() {
 		return id;
@@ -113,14 +127,6 @@ public class Invoice implements Serializable{
 		this.cancelJustification = cancelJustification;
 	}
 
-	public List<Tax> getTaxes() {
-		return taxes;
-	}
-
-	public void setTaxes(List<Tax> taxes) {
-		this.taxes = taxes;
-	}
-
 	public String toStringDate(Locale locale) {
 		if(date == null) {
 			return "";
@@ -142,23 +148,76 @@ public class Invoice implements Serializable{
 				DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
 		return cancelDate.format(dateTimeFormatter);
 	}
+
+	@Valid
+	private List<Tax> taxes;
+	
+	private volatile boolean taxesLoaded = false;
+	
+	public List<Tax> getTaxes() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!taxesLoaded) {
+			try {
+				InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+				this.taxes = registry.getTaxes(id);
+				this.taxesLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("order load fail", ex);
+			}
+		}
+		
+		return taxes;
+	}
+	
+	public void setTaxes(List<Tax> taxes) {
+		this.taxes = taxes;
+		this.taxesLoaded = taxes != null;
+	}
+	
+	@Valid
+	@Size(min = 1, groups = DataValidation.class)
+	private List<ProductRequest> itens;
+	
+	private volatile boolean itensLoaded = false;
 	
 	public List<ProductRequest> getItens() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!itensLoaded) {
+			try {
+				InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+				this.itens = registry.getProductRequest(id);
+				this.itensLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("order load fail", ex);
+			}
+		}
+		
 		return itens;
 	}
 
 	public void setItens(List<ProductRequest> itens) {
 		this.itens = itens;
+		this.itensLoaded = itens != null;
 	}
-	
+
 	public BigDecimal getSubtotal(){
 		
-		if(itens.isEmpty()) {
+		if(getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: itens) {
+		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getSubtotal());
 		}
 		return value;
@@ -170,12 +229,12 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getDiscount() {
 
-		if(itens.isEmpty()) {
+		if(getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: itens) {
+		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getDiscount());
 		}
 		
@@ -184,16 +243,16 @@ public class Invoice implements Serializable{
 
 	private BigDecimal getDiscountBySubtotal() {
 		
-		if(itens.isEmpty()) {
+		if(getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = getSubtotal();
 		BigDecimal discount = BigDecimal.ZERO;
 		
-		if(taxes != null) {
+		if(getTaxes() != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = getTaxes();
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
@@ -216,12 +275,12 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getTax() {
 		
-		if(itens.isEmpty()) {
+		if(getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: itens) {
+		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getTax());
 		}
 		return value.add(getTaxBySubtotal());
@@ -233,16 +292,16 @@ public class Invoice implements Serializable{
 	
 	private BigDecimal getTaxBySubtotal() {
 		
-		if(itens.isEmpty()) {
+		if(getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = getSubtotal();
 		BigDecimal tax = BigDecimal.ZERO;
 		
-		if(taxes != null) {
+		if(getTaxes() != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = getTaxes();
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
@@ -261,19 +320,19 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getTotal(){
 		
-		if(itens.isEmpty()) {
+		if(getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
 		
-		for(ProductRequest pr: itens) {
+		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getTotal());
 		}
 		
-		if(taxes != null) {
+		if(getTaxes() != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = getTaxes();
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			

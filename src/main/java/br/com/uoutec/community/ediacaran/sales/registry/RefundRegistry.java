@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
@@ -37,5 +38,7 @@ public interface RefundRegistry extends PublicBean{
 	void confirmRefund(Refund entity) throws RefundRegistryException, ShippingRegistryException, InvoiceRegistryException, PaymentGatewayException, OrderRegistryException;
 	
 	List<Refund> findRefundByOrder(String id) throws RefundRegistryException;
+
+	List<ProductRequest> getProductRequest(String id) throws OrderRegistryException;
 	
 }

@@ -9,6 +9,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessageResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportSearch;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
@@ -39,5 +40,7 @@ public interface OrderReportRegistry extends PublicBean {
 	OrderReportMessage getMessageById(String id, OrderReport orderReport) throws OrderReportRegistryException;
 	
 	OrderReportMessageResultSearch getMessages(OrderReport orderReport, Integer page, Integer quantityPerPage) throws OrderReportRegistryException;
+	
+	List<ProductRequest> getProductRequest(String id) throws OrderReportRegistryException;
 	
 }

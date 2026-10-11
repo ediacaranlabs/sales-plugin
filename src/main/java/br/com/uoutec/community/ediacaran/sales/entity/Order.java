@@ -21,13 +21,10 @@ import javax.validation.constraints.Size;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
+import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
-import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -74,16 +71,38 @@ public class Order implements Serializable{
 
 	private LocalDateTime completeShipping;
 	
-	@Valid
-	@Size(min = 1, groups = DataValidation.class)
-	private List<ProductRequest> itens;
-
 	private List<Tax> taxes;
 	
 	private boolean removed;
 	
 	public Order() {
 		this.status = OrderStatus.NEW;
+	}
+
+	public Order(Order order) {
+		this.billingAddress = order.billingAddress;
+		this.cartID = order.cartID;
+		this.client = order.client;
+		this.completeInvoice = order.completeInvoice;
+		this.completeShipping = order.completeShipping;
+		this.currency = order.currency;
+		this.date = order.date;
+		this.id = order.id;
+		this.invoices = order.invoices;
+		this.invoiceLoaded = order.invoiceLoaded;
+		this.itens = order.itens;
+		this.orderReports = order.orderReports;
+		this.orderReportsLoaded = order.orderReportsLoaded;
+		this.payment = order.payment;
+		this.paymentType = order.paymentType;
+		this.refunds = order.refunds;
+		this.refundsLoaded = order.refundsLoaded;
+		this.removed = order.removed;
+		this.shippingAddress = order.shippingAddress;
+		this.shippings = order.shippings;
+		this.shippingsLoaded = order.orderReportsLoaded;
+		this.status = order.status;
+		this.taxes = order.taxes;
 	}
 	
 	public String getId() {
@@ -207,12 +226,35 @@ public class Order implements Serializable{
 		this.paymentType = paymentType;
 	}
 
+	@Valid
+	@Size(min = 1, groups = DataValidation.class)
+	private List<ProductRequest> itens;
+	
+	private volatile boolean itensLoaded = false;
+	
 	public List<ProductRequest> getItens() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!itensLoaded) {
+			try {
+				OrderRegistry registry = EntityContextPlugin.getEntity(OrderRegistry.class);
+				this.itens = registry.getProductRequest(id);
+				this.itensLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("order load fail", ex);
+			}
+		}
+		
 		return itens;
 	}
 
 	public void setItens(List<ProductRequest> itens) {
 		this.itens = itens;
+		this.itensLoaded = itens != null;
 	}
 
 	public boolean isRemoved() {
@@ -287,16 +329,21 @@ public class Order implements Serializable{
 		}
 	}
 	
-	public List<Invoice> getInvoices() throws InvoiceRegistryException {
+	public List<Invoice> getInvoices(){
 		
 		if(this.id == null) {
 			return null;
 		}
 		
 		if(!invoiceLoaded) {
-			InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
-			this.invoices = registry.findByOrder(this.id);
-			this.invoiceLoaded = true;
+			try {
+				InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+				this.invoices = registry.findByOrder(this.id);
+				this.invoiceLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("invoice load fail",ex);
+			}
 		}
 		
 		return invoices;
@@ -323,16 +370,22 @@ public class Order implements Serializable{
 		}
 	}
 	
-	public List<Shipping> getShippings() throws ShippingRegistryException {
+	public List<Shipping> getShippings() {
 		
 		if(this.id == null) {
 			return null;
 		}
 		
 		if(!shippingsLoaded) {
-			ShippingRegistry registry = EntityContextPlugin.getEntity(ShippingRegistry.class);
-			this.shippings = registry.findByOrder(this.id);
-			this.shippingsLoaded = true;
+			try {
+				ShippingRegistry registry = EntityContextPlugin.getEntity(ShippingRegistry.class);
+				this.shippings = registry.findByOrder(this.id);
+				this.shippingsLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("shipping load fail",ex);
+			}
+				
 		}
 		
 		return shippings;
@@ -359,16 +412,21 @@ public class Order implements Serializable{
 		}
 	}
 	
-	public List<Refund> getRefunds() throws RefundRegistryException {
+	public List<Refund> getRefunds() {
 		
 		if(this.id == null) {
 			return null;
 		}
 		
 		if(!refundsLoaded) {
-			RefundRegistry registry = EntityContextPlugin.getEntity(RefundRegistry.class);
-			this.refunds = registry.findRefundByOrder(this.id);
-			this.refundsLoaded = true;
+			try {
+				RefundRegistry registry = EntityContextPlugin.getEntity(RefundRegistry.class);
+				this.refunds = registry.findRefundByOrder(this.id);
+				this.refundsLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("refund load fail",ex);
+			}
 		}
 		
 		return refunds;
@@ -395,16 +453,22 @@ public class Order implements Serializable{
 		}
 	}
 	
-	public List<OrderReport> getOrderReport() throws OrderReportRegistryException {
+	public List<OrderReport> getOrderReport() {
 		
 		if(this.id == null) {
 			return null;
 		}
 		
 		if(!orderReportsLoaded) {
-			OrderReportRegistry registry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
-			this.orderReports = registry.findByOrder(this.id);
-			this.orderReportsLoaded = true;
+			try {
+				OrderReportRegistry registry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+				this.orderReports = registry.findByOrder(this.id);
+				this.orderReportsLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("report load fail",ex);
+			}
+				
 		}
 		
 		return orderReports;
@@ -414,7 +478,7 @@ public class Order implements Serializable{
 		return orderReports;
 	}
 	
-	public List<ProductResponse> getItensResponse() throws InvoiceRegistryException, ShippingRegistryException, RefundRegistryException, OrderReportRegistryException{
+	public List<ProductResponse> getItensResponse() {
 		List<ProductResponse> list = new ArrayList<>();
 		
 		if(itens != null) {

@@ -15,7 +15,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
+import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
 
@@ -40,15 +42,21 @@ public class OrderReport implements Serializable {
 	private LocalDateTime date;
 
 	@NotNull(groups = DataValidation.class )
-	@Valid
-	private List<ProductRequestReport> products;
-	
-	@NotNull(groups = DataValidation.class )
 	private OrderReportStatus status;
 	
 	public OrderReport(){
 	}
 
+	public OrderReport(OrderReport e) {
+		this.client = e.client;
+		this.date = e.date;
+		this.id = e.id;
+		this.order = e.order;
+		this.products = e.products;
+		this.status = e.status;
+		this.user = e.user;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -81,12 +89,35 @@ public class OrderReport implements Serializable {
 		this.user = user;
 	}
 
-	public List<ProductRequestReport> getProducts() {
+	@Valid
+	@NotNull(groups = DataValidation.class )
+	private List<ProductRequest> products;
+	
+	private volatile boolean productsLoaded = false;
+	
+	public List<ProductRequest> getProducts() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!productsLoaded) {
+			try {
+				OrderReportRegistry registry = EntityContextPlugin.getEntity(OrderReportRegistry.class);
+				this.products = registry.getProductRequest(id);
+				this.productsLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("products load fail", ex);
+			}
+		}
+		
 		return products;
 	}
 
-	public void setProducts(List<ProductRequestReport> products) {
+	public void setProducts(List<ProductRequest> products) {
 		this.products = products;
+		this.productsLoaded = products != null;
 	}
 
 	public OrderReportStatus getStatus() {
