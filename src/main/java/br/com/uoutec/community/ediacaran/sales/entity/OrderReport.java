@@ -91,11 +91,11 @@ public class OrderReport implements Serializable {
 
 	@Valid
 	@NotNull(groups = DataValidation.class )
-	private List<ProductRequest> products;
+	private List<ProductRequestReport> products;
 	
 	private volatile boolean productsLoaded = false;
 	
-	public List<ProductRequest> getProducts() {
+	public List<ProductRequestReport> getProducts() {
 		
 		if(this.id == null) {
 			return null;
@@ -115,7 +115,7 @@ public class OrderReport implements Serializable {
 		return products;
 	}
 
-	public void setProducts(List<ProductRequest> products) {
+	public void setProducts(List<ProductRequestReport> products) {
 		this.products = products;
 		this.productsLoaded = products != null;
 	}

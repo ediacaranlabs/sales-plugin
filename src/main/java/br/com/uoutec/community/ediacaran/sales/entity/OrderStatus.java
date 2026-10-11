@@ -3,11 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.util.Collection;
 import java.util.Locale;
 
-import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistryException;
-import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryException;
-
 public interface OrderStatus {
 
 	public static final String ORDER = "ORDER";
@@ -121,33 +116,13 @@ public interface OrderStatus {
 			case OrderStatus.PAYMENT:
 				return order.getPayment();
 			case OrderStatus.INVOICES:
-				try {
-					return order.getInvoices();
-				}
-				catch (InvoiceRegistryException e) {
-					throw new RuntimeException(e);
-				}
+				return order.getInvoices();
 			case OrderStatus.SHIPPINGS:
-				try {
-					return order.getShippings();
-				}
-				catch (ShippingRegistryException e) {
-					throw new RuntimeException(e);
-				}
+				return order.getShippings();
 			case OrderStatus.REFUNDS:
-				try {
-					return order.getRefunds();
-				}
-				catch (RefundRegistryException e) {
-					throw new RuntimeException(e);
-				}
+				return order.getRefunds();
 			case OrderStatus.REPORT:
-				try {
-					return order.getOrderReport();
-				}
-				catch (OrderReportRegistryException e) {
-					throw new RuntimeException(e);
-				}
+				return order.getOrderReport();
 			case OrderStatus.ORDER:
 				return order;
 			}
