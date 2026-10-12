@@ -161,6 +161,15 @@ public class OrderReportRegistryUtil {
 		orderRegistry.updateStatus(actualOrder, nextStatus);
 	}
 	
+	public static List<ProductRequestReport> getProductRequest(Order order, OrderReportEntityAccess entityAccess) throws OrderReportRegistryException {
+		try{
+			return entityAccess.getProductRequest(order.getId());
+		}
+		catch(Throwable e){
+			throw new OrderReportRegistryException(e);
+		}
+	}
+	
 	public static void sendToRepository(OrderReportMessageEntityAccess entityAccess) throws OrderReportRegistryException {
 		try {
 			entityAccess.flush();

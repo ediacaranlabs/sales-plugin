@@ -157,6 +157,7 @@ public class OrderReportEntity implements Serializable{
 			e.setOrder(this.order.toEntity());
 		}
 
+		/*
 		if(this.products != null) {
 			List<ProductRequestReport> list = new ArrayList<>();
 			for(ProductRequestReportEntity p: this.products) {
@@ -164,6 +165,7 @@ public class OrderReportEntity implements Serializable{
 			}
 			e.setProducts(list);
 		}
+		*/
 		
 		return e;
 	}

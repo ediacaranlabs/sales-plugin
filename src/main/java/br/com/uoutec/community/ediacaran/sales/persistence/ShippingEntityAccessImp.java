@@ -506,4 +506,42 @@ public class ShippingEntityAccessImp
 		return super.findById(id);
 	}
 
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestShippingEntity> criteria = builder.createQuery(ProductRequestShippingEntity.class);
+		    Root<ProductRequestShippingEntity> from = criteria.from(ProductRequestShippingEntity.class);
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(from.get("id").get("invoiceID"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestShippingEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<ProductRequestShippingEntity> list = (List<ProductRequestShippingEntity>)typed.getResultList();
+		    List<ProductRequest> result = new ArrayList<>();
+    
+		    for(ProductRequestShippingEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
 }

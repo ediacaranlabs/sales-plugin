@@ -236,4 +236,42 @@ public class OrderReportEntityAccessImp
 		return super.findById(id);
 	}
 
+	@Override
+	public List<ProductRequestReport> getProductRequest(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestReportEntity> criteria = builder.createQuery(ProductRequestReportEntity.class);
+		    Root<ProductRequestReportEntity> from = criteria.from(ProductRequestReportEntity.class);
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(from.get("id").get("orderReportID"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestReportEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<ProductRequestReportEntity> list = (List<ProductRequestReportEntity>)typed.getResultList();
+		    List<ProductRequestReport> result = new ArrayList<>();
+    
+		    for(ProductRequestReportEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
 }

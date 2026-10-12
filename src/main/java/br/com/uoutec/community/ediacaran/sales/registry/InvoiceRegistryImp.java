@@ -367,8 +367,8 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 
 	@Override
 	public List<ProductRequest> getProductRequest(String id) throws InvoiceRegistryException {
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
 		
 		Order o = new Order();
 		o.setId(id);
@@ -377,9 +377,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 
 	@Override
 	public List<Tax> getTaxes(String id) throws InvoiceRegistryException {
-
-		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
-
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getFindPermission());
+		
 		Order o = new Order();
 		o.setId(id);
 		return InvoiceRegistryUtil.getTaxes(o, entityAccess);

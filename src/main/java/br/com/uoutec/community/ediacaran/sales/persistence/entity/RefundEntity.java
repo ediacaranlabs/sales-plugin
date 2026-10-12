@@ -228,6 +228,7 @@ public class RefundEntity implements Serializable {
 				e.setOrder(this.order.getId());
 			}
 
+			/*
 			if(this.products != null) {
 				List<ProductRequest> list = new ArrayList<>();
 				for(ProductRequestRefundEntity p: this.products) {
@@ -235,6 +236,7 @@ public class RefundEntity implements Serializable {
 				}
 				e.setProducts(list);
 			}
+			*/
 			
 			return e;
 		}

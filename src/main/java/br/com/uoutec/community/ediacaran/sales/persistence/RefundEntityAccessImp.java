@@ -18,6 +18,7 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
@@ -340,4 +341,42 @@ public class RefundEntityAccessImp
 		return super.findById(id);
 	}
 
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestRefundEntity> criteria = builder.createQuery(ProductRequestRefundEntity.class);
+		    Root<ProductRequestRefundEntity> from = criteria.from(ProductRequestRefundEntity.class);
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(from.get("id").get("refoundID"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestRefundEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<ProductRequestRefundEntity> list = (List<ProductRequestRefundEntity>)typed.getResultList();
+		    List<ProductRequest> result = new ArrayList<>();
+    
+		    for(ProductRequestRefundEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+	
 }

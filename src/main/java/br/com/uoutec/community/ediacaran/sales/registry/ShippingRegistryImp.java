@@ -18,6 +18,7 @@ import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.entity.ShippingResultSearch;
@@ -418,6 +419,16 @@ public class ShippingRegistryImp implements ShippingRegistry {
 	
 	private void validateShipping(Shipping e, Class<?> ... groups) throws ValidationException{
 		ValidatorBean.validate(e, groups);
+	}
+
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws ShippingRegistryException {
+		
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getFindPermission());
+		
+		Order o = new Order();
+		o.setId(id);
+		return ShippingRegistryUtil.getProductRequest(o, entityAccess);
 	}
 	
 }

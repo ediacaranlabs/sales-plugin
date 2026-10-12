@@ -135,6 +135,15 @@ public class ShippingRegistryUtil {
 		
 	}
 
+	public static List<ProductRequest> getProductRequest(Order order, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
+		try{
+			return entityAccess.getProductRequest(order.getId());
+		}
+		catch(Throwable e){
+			throw new ShippingRegistryException(e);
+		}
+	}
+	
 	public static Shipping getActualShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException{
 		try {
 			return entityAccess.findById(shipping.getId());

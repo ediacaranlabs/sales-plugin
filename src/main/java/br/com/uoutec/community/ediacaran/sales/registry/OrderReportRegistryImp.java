@@ -289,5 +289,13 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 		OrderReportMessage e = OrderReportRegistryUtil.findById(id, orderReportMessageEntityAccess);
 		return e.getOrderReport().equals(orderReport.getId())? e : null;
 	}
+
+	@Override
+	public List<ProductRequestReport> getProductRequest(String id) throws OrderReportRegistryException {
+
+		Order o = new Order();
+		o.setId(id);
+		return OrderReportRegistryUtil.getProductRequest(o, entityAccess);
+	}
 	
 }

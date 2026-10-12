@@ -39,6 +39,6 @@ public interface RefundRegistry extends PublicBean{
 	
 	List<Refund> findRefundByOrder(String id) throws RefundRegistryException;
 
-	List<ProductRequest> getProductRequest(String id) throws OrderRegistryException;
+	List<ProductRequest> getProductRequest(String id) throws RefundRegistryException;
 	
 }

@@ -183,6 +183,15 @@ public class RefundRegistryUtil {
 		
 	}
 	
+	public List<ProductRequest> getProductRequest(Order order) throws RefundRegistryException {
+		try{
+			return entityAccess.getProductRequest(order.getId());
+		}
+		catch(Throwable e){
+			throw new RefundRegistryException(e);
+		}
+	}
+	
 	public Order getActualOrder(Refund entity) throws RefundRegistryException {
 		
 		Order order;

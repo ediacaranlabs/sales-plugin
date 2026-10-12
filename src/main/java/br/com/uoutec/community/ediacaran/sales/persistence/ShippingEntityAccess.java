@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -22,6 +23,8 @@ public interface ShippingEntityAccess {
 	List<Shipping> getList(Integer first, Integer max, Client client) throws EntityAccessException;
 	
 	List<Shipping> findByOrder(String order) throws EntityAccessException;
+	
+	List<ProductRequest> getProductRequest(String id) throws EntityAccessException;
 	
 	void flush();
 	

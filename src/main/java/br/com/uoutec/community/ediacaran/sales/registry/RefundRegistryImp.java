@@ -13,6 +13,7 @@ import br.com.uoutec.application.security.ContextSystemSecurityCheck;
 import br.com.uoutec.community.ediacaran.sales.SalesPluginPermissions;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.RefundSearch;
@@ -248,6 +249,16 @@ public class RefundRegistryImp implements RefundRegistry {
 		
 		return refundRegistryUtil.getActualRefunds(order);
 		
+	}
+
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws RefundRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
+		
+		Order o = new Order();
+		o.setId(id);
+		return refundRegistryUtil.getProductRequest(o);
 	}
 	
 }

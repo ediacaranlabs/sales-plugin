@@ -3,6 +3,7 @@ package br.com.uoutec.community.ediacaran.sales.persistence;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public interface OrderReportEntityAccess {
@@ -18,6 +19,8 @@ public interface OrderReportEntityAccess {
 	List<OrderReport> getOpenedSupportByClient(Integer id, Integer firstResult, Integer maxResults) throws EntityAccessException;
 	
 	List<OrderReport> findByOrder(String order) throws EntityAccessException;
+	
+	List<ProductRequestReport> getProductRequest(String id) throws EntityAccessException;
 	
 	void flush();
 	

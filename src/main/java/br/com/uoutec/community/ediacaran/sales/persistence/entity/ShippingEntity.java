@@ -349,6 +349,7 @@ public class ShippingEntity implements Serializable{
 			e.setWeight(this.weight == null? 0f : this.height.floatValue());
 			e.setWidth(this.width == null? 0f : this.width.floatValue());
 
+			/*
 			if(this.products != null) {
 				List<ProductRequest> list = new ArrayList<>();
 				for(ProductRequestShippingEntity p: this.products) {
@@ -356,6 +357,7 @@ public class ShippingEntity implements Serializable{
 				}
 				e.setProducts(list);
 			}
+			*/
 			
 			return e;
 		}
