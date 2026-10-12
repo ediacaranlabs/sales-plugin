@@ -237,12 +237,12 @@ public class Order implements Serializable{
 		
 		if(!taxesLoaded) {
 			try {
-				InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+				OrderRegistry registry = EntityContextPlugin.getEntity(OrderRegistry.class);
 				this.taxes = registry.getTaxes(id);
 				this.taxesLoaded = true;
 			}
 			catch(Throwable ex) {
-				throw new IllegalStateException("order load fail", ex);
+				throw new IllegalStateException("taxes load fail", ex);
 			}
 		}
 		
