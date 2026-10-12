@@ -36,8 +36,8 @@ public interface InvoiceRegistry extends PublicBean{
 
 	List<Invoice> findByOrder(String id) throws InvoiceRegistryException;
 	
-	List<ProductRequest> getProductRequest(String id) throws OrderRegistryException;
+	List<ProductRequest> getProductRequest(String id) throws InvoiceRegistryException;
 
-	List<Tax> getTaxes(String id) throws OrderRegistryException;
+	List<Tax> getTaxes(String id) throws InvoiceRegistryException;
 	
 }

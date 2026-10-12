@@ -20,8 +20,10 @@ import br.com.uoutec.community.ediacaran.sales.entity.InvoiceSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.InvoicesResultSearch;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
@@ -361,6 +363,26 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 		InvoiceRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		InvoiceRegistryUtil.updateInvoiceEvent(actionRegistry, actualInvoice);
 
+	}
+
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws InvoiceRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
+		
+		Order o = new Order();
+		o.setId(id);
+		return InvoiceRegistryUtil.getProductRequest(o, entityAccess);
+	}
+
+	@Override
+	public List<Tax> getTaxes(String id) throws InvoiceRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
+
+		Order o = new Order();
+		o.setId(id);
+		return InvoiceRegistryUtil.getTaxes(o, entityAccess);
 	}
 	
 }

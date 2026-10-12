@@ -182,6 +182,24 @@ public class OrderRegistryUtil {
 	public static PaymentStatus getRemotePaymentStatus(Order order, PaymentGateway paymentGateway) throws PaymentGatewayException {
 		return paymentGateway.getPaymentStatus(new PaymentRequest(order));
 	}
+
+	public static List<ProductRequest> getProductRequest(Order order, OrderEntityAccess entityAccess) throws OrderRegistryException {
+		try{
+			return entityAccess.getProductRequest(order.getId());
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException(e);
+		}
+	}
+
+	public static List<Tax> getTaxes(Order order, OrderEntityAccess entityAccess) throws OrderRegistryException {
+		try{
+			return entityAccess.getTaxes(order.getId());
+		}
+		catch(Throwable e){
+			throw new OrderRegistryException(e);
+		}
+	}
 	
 	public static void cancelInvoices(List<Invoice> invoices, String justification, 
 			InvoiceRegistry invoiceRegistry) throws RefundRegistryException, OrderRegistryException, InvoiceRegistryException, 

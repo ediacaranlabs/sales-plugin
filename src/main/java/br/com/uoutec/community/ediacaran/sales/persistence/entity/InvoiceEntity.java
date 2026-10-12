@@ -236,6 +236,7 @@ public class InvoiceEntity implements Serializable{
 			e.setClient(client);
 		}
 		
+		/*
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();
 			for(ProductRequestInvoiceEntity k: this.itens){
@@ -251,6 +252,7 @@ public class InvoiceEntity implements Serializable{
 				list.add(t.toEntity());
 			}
 		}
+		*/
 		
 		return e;
 	}

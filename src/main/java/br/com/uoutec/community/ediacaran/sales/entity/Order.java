@@ -71,8 +71,6 @@ public class Order implements Serializable{
 
 	private LocalDateTime completeShipping;
 	
-	private List<Tax> taxes;
-	
 	private boolean removed;
 	
 	public Order() {
@@ -226,6 +224,36 @@ public class Order implements Serializable{
 		this.paymentType = paymentType;
 	}
 
+	@Valid
+	private List<Tax> taxes;
+	
+	private volatile boolean taxesLoaded = false;
+	
+	public List<Tax> getTaxes() {
+		
+		if(this.id == null) {
+			return null;
+		}
+		
+		if(!taxesLoaded) {
+			try {
+				InvoiceRegistry registry = EntityContextPlugin.getEntity(InvoiceRegistry.class);
+				this.taxes = registry.getTaxes(id);
+				this.taxesLoaded = true;
+			}
+			catch(Throwable ex) {
+				throw new IllegalStateException("order load fail", ex);
+			}
+		}
+		
+		return taxes;
+	}
+	
+	public void setTaxes(List<Tax> taxes) {
+		this.taxes = taxes;
+		this.taxesLoaded = taxes != null;
+	}
+	
 	@Valid
 	@Size(min = 1, groups = DataValidation.class)
 	private List<ProductRequest> itens;
@@ -499,14 +527,6 @@ public class Order implements Serializable{
 		return list;
 	}
 	
-	public List<Tax> getTaxes() {
-		return taxes;
-	}
-
-	public void setTaxes(List<Tax> taxes) {
-		this.taxes = taxes;
-	}
-
 	public long getDaysAfterCreated() {
 		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
 	}
@@ -532,9 +552,9 @@ public class Order implements Serializable{
 			discount = discount.add(pr.getDiscount());
 		}
 		
-		if(taxes != null) {
+		if(getTaxes() != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = getTaxes();
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
@@ -564,9 +584,9 @@ public class Order implements Serializable{
 			tax = tax.add(pr.getTax());
 		}
 		
-		if(taxes != null) {
+		if(getTaxes() != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = getTaxes();
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			
@@ -595,9 +615,9 @@ public class Order implements Serializable{
 			value = value.add(pr.getTotal());
 		}
 		
-		if(taxes != null) {
+		if(getTaxes() != null) {
 			
-			List<Tax> tx = taxes;
+			List<Tax> tx = getTaxes();
 			
 			Collections.sort(tx, (a,b)->a.getOrder() - b.getOrder());
 			

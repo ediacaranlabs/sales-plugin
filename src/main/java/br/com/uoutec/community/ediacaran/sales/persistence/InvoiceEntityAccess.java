@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -20,6 +22,10 @@ public interface InvoiceEntityAccess {
 	List<Invoice> getList(Integer first, Integer max, SystemUser user) throws EntityAccessException;
 	
 	List<Invoice> findByOrder(String order) throws EntityAccessException;
+	
+	List<ProductRequest> getProductRequest(String id) throws EntityAccessException;
+	
+	List<Tax> getTaxes(String id) throws EntityAccessException;
 	
 	void flush();
 	

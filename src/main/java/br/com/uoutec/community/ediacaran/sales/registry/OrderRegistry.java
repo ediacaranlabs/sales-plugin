@@ -14,6 +14,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Payment;
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.Cart;
@@ -81,7 +82,9 @@ public interface OrderRegistry extends PublicBean {
 
 	/* product */
 	
-	List<ProductRequest> getProductRequest(String orderID) throws OrderRegistryException;
+	List<ProductRequest> getProductRequest(String id) throws OrderRegistryException;
+
+	List<Tax> getTaxes(String id) throws OrderRegistryException;
 	
 	ProductRequest getProductRequest(String orderID, String id) throws OrderRegistryException;
 

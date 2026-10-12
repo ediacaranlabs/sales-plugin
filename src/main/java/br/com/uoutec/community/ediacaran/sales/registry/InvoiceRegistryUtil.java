@@ -135,6 +135,24 @@ public class InvoiceRegistryUtil {
 		}
 	}
 	
+	public static List<ProductRequest> getProductRequest(Order order, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+		try{
+			return entityAccess.getProductRequest(order.getId());
+		}
+		catch(Throwable e){
+			throw new InvoiceRegistryException(e);
+		}
+	}
+
+	public static List<Tax> getTaxes(Order order, InvoiceEntityAccess entityAccess) throws InvoiceRegistryException {
+		try{
+			return entityAccess.getTaxes(order.getId());
+		}
+		catch(Throwable e){
+			throw new InvoiceRegistryException(e);
+		}
+	}
+	
 	public static void checkCanceledInvoice(Invoice invoice) throws CanceledInvoiceRegistryException {
 		if(isCanceledInvoice(invoice)) {
 			throw new CanceledInvoiceRegistryException(invoice.getId());

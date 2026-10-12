@@ -18,6 +18,8 @@ import javax.persistence.criteria.Root;
 import br.com.uoutec.application.SystemProperties;
 import br.com.uoutec.community.ediacaran.persistence.entityaccess.jpa.AbstractEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.entity.Invoice;
+import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.InvoiceTaxEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
@@ -308,4 +310,80 @@ public class InvoiceEntityAccessImp
 
 	}
 	
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestInvoiceEntity> criteria = builder.createQuery(ProductRequestInvoiceEntity.class);
+		    Root<ProductRequestInvoiceEntity> from = criteria.from(ProductRequestInvoiceEntity.class);
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(from.get("id").get("invoiceID"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestInvoiceEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<ProductRequestInvoiceEntity> list = (List<ProductRequestInvoiceEntity>)typed.getResultList();
+		    List<ProductRequest> result = new ArrayList<>();
+    
+		    for(ProductRequestInvoiceEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+
+	@Override
+	public List<Tax> getTaxes(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<InvoiceTaxEntity> criteria = builder.createQuery(InvoiceTaxEntity.class);
+		    Root<InvoiceTaxEntity> from = criteria.from(InvoiceTaxEntity.class);
+		    Join<InvoiceTaxEntity, InvoiceEntity> invoiceJoin = from.join("invoice");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(invoiceJoin.get("id"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<InvoiceTaxEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<InvoiceTaxEntity> list = (List<InvoiceTaxEntity>)typed.getResultList();
+		    List<Tax> result = new ArrayList<>();
+    
+		    for(InvoiceTaxEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}	
 }

@@ -23,6 +23,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderIndexEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderLogEntity;
@@ -374,6 +375,84 @@ public class OrderEntityAccessImp
 		    }
 		    
 			return new ArrayList<>(map.values());
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<ProductRequestEntity> criteria = builder.createQuery(ProductRequestEntity.class);
+		    Root<ProductRequestEntity> from = criteria.from(ProductRequestEntity.class);
+		    Join<ProductRequestEntity, OrderEntity> orderJoin = from.join("order");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(orderJoin.get("id"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<ProductRequestEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<ProductRequestEntity> list = (List<ProductRequestEntity>)typed.getResultList();
+		    List<ProductRequest> result = new ArrayList<>();
+    
+		    for(ProductRequestEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
+		}
+		catch (Throwable e) {
+			throw new EntityAccessException(e);
+		}
+
+	}
+
+	@Override
+	public List<Tax> getTaxes(String id) throws EntityAccessException {
+		
+		try {
+			CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		    CriteriaQuery<OrderTaxEntity> criteria = builder.createQuery(OrderTaxEntity.class);
+		    Root<OrderTaxEntity> from = criteria.from(OrderTaxEntity.class);
+		    Join<ProductRequestEntity, OrderEntity> orderJoin = from.join("orderEntity");
+		    
+		    criteria.select(from);
+
+		    List<Predicate> and = new ArrayList<Predicate>();
+	    	and.add(builder.equal(orderJoin.get("id"), id));
+		    
+		    if(!and.isEmpty()) {
+			    criteria.where(
+			    		builder.and(
+			    				and.stream().toArray(Predicate[]::new)
+    					)
+	    		);
+		    }
+		    
+		    TypedQuery<OrderTaxEntity> typed = entityManager.createQuery(criteria);
+		    
+		    List<OrderTaxEntity> list = (List<OrderTaxEntity>)typed.getResultList();
+		    List<Tax> result = new ArrayList<>();
+    
+		    for(OrderTaxEntity e: list) {
+		    	result.add(e.toEntity());
+		    }
+		    
+			return result;
 		}
 		catch (Throwable e) {
 			throw new EntityAccessException(e);

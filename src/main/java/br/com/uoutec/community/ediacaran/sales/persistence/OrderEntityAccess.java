@@ -8,6 +8,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderLog;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.persistence.EntityAccessException;
 
 public interface OrderEntityAccess {
@@ -45,6 +46,10 @@ public interface OrderEntityAccess {
 	void deleteLog(OrderLog log) throws EntityAccessException;
 	
 	List<OrderLog> getLogs(Order order, Integer first, Integer max) throws EntityAccessException;
+	
+	List<ProductRequest> getProductRequest(String id) throws EntityAccessException;
+	
+	List<Tax> getTaxes(String id) throws EntityAccessException;
 	
 	void flush();
 	

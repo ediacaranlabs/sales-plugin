@@ -316,6 +316,7 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		e.setShippingAddress(this.shippingAddress == null? null : this.shippingAddress.toEntity());
 		e.setCompleteShipping(this.completeShipping);
 		
+		/*
 		if(this.itens != null){
 			List<ProductRequest> l = new ArrayList<ProductRequest>();
 			for(ProductRequestEntity k: this.itens){
@@ -333,7 +334,8 @@ public class OrderEntity implements /*PublicType, */Serializable {
 			}
 			
 		}
-
+		*/
+		
 		return e;
 	}
 }

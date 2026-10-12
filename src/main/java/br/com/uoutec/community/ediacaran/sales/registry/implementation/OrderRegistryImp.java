@@ -27,6 +27,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequest;
 import br.com.uoutec.community.ediacaran.sales.entity.Refund;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
+import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
@@ -669,6 +670,26 @@ public class OrderRegistryImp
 		}
 		
 		return user;
+	}
+
+	@Override
+	public List<ProductRequest> getProductRequest(String id) throws OrderRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
+		
+		Order o = new Order();
+		o.setId(id);
+		return OrderRegistryUtil.getProductRequest(o, orderEntityAccess);
+	}
+
+	@Override
+	public List<Tax> getTaxes(String id) throws OrderRegistryException {
+
+		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getListPermission());
+
+		Order o = new Order();
+		o.setId(id);
+		return OrderRegistryUtil.getTaxes(o, orderEntityAccess);
 	}
 
 }
