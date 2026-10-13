@@ -216,19 +216,19 @@ public class Refund implements Serializable {
 
 	public BigDecimal getSubtotal(){
 		
-		if(products.isEmpty()) {
+		if(getProducts().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: products) {
+		for(ProductRequest pr: getProducts()) {
 			value = value.add(pr.getSubtotal());
 		}
 		return value;
 	}
 
 	public String getDisplaySubtotal() {
-		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getSubtotal());
+		return CurrencyUtil.toString(getProducts() == null || getProducts().isEmpty()? "" : getProducts().get(0).getCurrency(), getSubtotal());
 	}
 	
 	public BigDecimal getDiscount() {
@@ -246,17 +246,17 @@ public class Refund implements Serializable {
 	}
 
 	public String getDisplayDiscount() {
-		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getDiscount());
+		return CurrencyUtil.toString(getProducts() == null || getProducts().isEmpty()? "" : getProducts().get(0).getCurrency(), getDiscount());
 	}
 	
 	public BigDecimal getTax() {
 		
-		if(products.isEmpty()) {
+		if(getProducts().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
-		for(ProductRequest pr: products) {
+		for(ProductRequest pr: getProducts()) {
 			value = value.add(pr.getTax());
 		}
 		
@@ -264,18 +264,18 @@ public class Refund implements Serializable {
 	}
 
 	public String getDisplayTax() {
-		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getTax());
+		return CurrencyUtil.toString(getProducts() == null || getProducts().isEmpty()? "" : getProducts().get(0).getCurrency(), getTax());
 	}
 	
 	public BigDecimal getTotal(){
 		
-		if(products.isEmpty()) {
+		if(getProducts().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
 		BigDecimal value = BigDecimal.ZERO;
 		
-		for(ProductRequest pr: products) {
+		for(ProductRequest pr: getProducts()) {
 			value = value.add(pr.getTotal());
 		}
 		
@@ -283,7 +283,7 @@ public class Refund implements Serializable {
 	}
 
 	public String getDisplayTotal() {
-		return CurrencyUtil.toString(products == null || products.isEmpty()? "" : products.get(0).getCurrency(), getTotal());
+		return CurrencyUtil.toString(getProducts() == null || getProducts().isEmpty()? "" : getProducts().get(0).getCurrency(), getTotal());
 	}
 	
 	@Override

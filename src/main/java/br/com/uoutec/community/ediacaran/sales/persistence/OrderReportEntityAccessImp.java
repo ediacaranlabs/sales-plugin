@@ -100,7 +100,7 @@ public class OrderReportEntityAccessImp
 
 	@Override
 	protected OrderReport toEntity(OrderReportEntity entity) throws Throwable {
-		return entity.toEntity();
+		return entity.toEntity(false);
 	}
 
 	@Override

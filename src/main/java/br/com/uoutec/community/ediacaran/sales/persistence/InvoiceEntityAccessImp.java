@@ -184,7 +184,7 @@ public class InvoiceEntityAccessImp
 
 	@Override
 	protected Invoice toEntity(InvoiceEntity entity) throws Throwable {
-		return entity.toEntity();
+		return entity.toEntity(false);
 	}
 
 	@Override

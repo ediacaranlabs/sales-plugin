@@ -110,7 +110,7 @@ public class RefundEntityAccessImp
 
 	@Override
 	protected Refund toEntity(RefundEntity entity) throws Throwable {
-		return entity.toEntity();
+		return entity.toEntity(false);
 	}
 
 	@Override

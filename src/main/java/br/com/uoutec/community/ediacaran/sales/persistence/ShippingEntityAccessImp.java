@@ -193,7 +193,7 @@ public class ShippingEntityAccessImp
 
 	@Override
 	protected Shipping toEntity(ShippingEntity entity) throws Throwable {
-		return entity.toEntity();
+		return entity.toEntity(false);
 	}
 
 	@Override

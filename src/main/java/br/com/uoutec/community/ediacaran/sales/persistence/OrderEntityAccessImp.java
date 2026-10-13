@@ -274,7 +274,7 @@ public class OrderEntityAccessImp
 
 	@Override
 	protected Order toEntity(OrderEntity entity) throws Throwable {
-		return entity.toEntity();
+		return entity.toEntity(false);
 	}
 
 	@Override
@@ -882,7 +882,7 @@ public class OrderEntityAccessImp
 
 		    OrderEntity e = typed.getSingleResult();
 		    
-		    return e == null? null : e.toEntity();
+		    return e == null? null : e.toEntity(false);
 		}
 		catch(NoResultException e) {
 			return null;
