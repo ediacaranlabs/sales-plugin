@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.util.Collection;
 
-import br.com.uoutec.community.ediacaran.sales.registry.CompletedInvoiceRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
@@ -18,21 +17,21 @@ public class OrderStatusUtil {
 		return order.getId() != null && payment != null;
 	}
 
-	public static boolean isPendingPaymentOrder(Order order, Payment payment) throws OrderRegistryException {
+	public static boolean isPendingPaymentOrder(Order order, Payment payment) {
 		return payment != null && OrderRegistryUtil.toOrderStatus(payment.getStatus()) == OrderStatus.PENDING_PAYMENT;
 	}
 
-	public static boolean isPaymentReceivedOrder(Order order, Payment payment) throws OrderRegistryException {
+	public static boolean isPaymentReceivedOrder(Order order, Payment payment) {
 		OrderStatus paymentStatus = OrderRegistryUtil.toOrderStatus(payment.getStatus());
 		return payment != null && (paymentStatus == OrderStatus.PAYMENT_RECEIVED || paymentStatus == OrderStatus.REFUND || paymentStatus == OrderStatus.PARTIAL_REFUND);
 	}
 	
 	public static boolean isInvoicedOrder(Order order, Collection<Invoice> invoices, 
-			Collection<Refund> refunds, Collection<Shipping> shippings) throws OrderRegistryException, CompletedInvoiceRegistryException {
+			Collection<Refund> refunds, Collection<Shipping> shippings) {
 		return InvoiceRegistryUtil.isCompletedInvoice(order, refunds, invoices);
 	}
 
-	public static boolean isShippedOrder(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws OrderRegistryException {
+	public static boolean isShippedOrder(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) {
 		return ShippingRegistryUtil.isCompletedShipping(order, refunds, shippings);
 	}
 

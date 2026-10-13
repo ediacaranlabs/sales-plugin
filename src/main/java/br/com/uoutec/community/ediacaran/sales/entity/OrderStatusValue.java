@@ -49,12 +49,7 @@ public enum OrderStatusValue implements OrderStatus {
 
 		@Override
 		public boolean isValidStatus(OrderStatusRequest request) {
-			try {
-				return OrderStatusUtil.isPendingPaymentOrder((Order)request.getValue(OrderStatus.ORDER), (Payment)request.getValue(OrderStatus.PAYMENT));
-			}
-			catch(Throwable ex) {
-				return false;
-			}
+			return OrderStatusUtil.isPendingPaymentOrder((Order)request.getValue(OrderStatus.ORDER), (Payment)request.getValue(OrderStatus.PAYMENT));
 		}
 		
 		@Override
@@ -76,12 +71,7 @@ public enum OrderStatusValue implements OrderStatus {
 
 		@Override
 		public boolean isValidStatus(OrderStatusRequest request) {
-			try {
-				return OrderStatusUtil.isPaymentReceivedOrder((Order)request.getValue(OrderStatus.ORDER), (Payment)request.getValue(OrderStatus.PAYMENT));
-			}
-			catch(Throwable ex) {
-				return false;
-			}
+			return OrderStatusUtil.isPaymentReceivedOrder((Order)request.getValue(OrderStatus.ORDER), (Payment)request.getValue(OrderStatus.PAYMENT));
 		}
 		
 		public boolean isAllowedCreateShipping() {
@@ -122,17 +112,12 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
-			try {
-				return OrderStatusUtil.isInvoicedOrder(
-						(Order)request.getValue(OrderStatus.ORDER), 
-						(Collection<Invoice>)request.getValue(OrderStatus.INVOICES), 
-						(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
-						(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS)
-				);
-			}
-			catch(Throwable ex) {
-				return false;
-			}
+			return OrderStatusUtil.isInvoicedOrder(
+					(Order)request.getValue(OrderStatus.ORDER), 
+					(Collection<Invoice>)request.getValue(OrderStatus.INVOICES), 
+					(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
+					(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS)
+			);
 		}
 		
 		public boolean isAllowedCreateShipping() {
@@ -173,16 +158,11 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
-			try {
-				return OrderStatusUtil.isShippedOrder(
-						(Order)request.getValue(OrderStatus.ORDER), 
-						(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
-						(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS)
-				);
-			}
-			catch(Throwable ex) {
-				return false;
-			}
+			return OrderStatusUtil.isShippedOrder(
+					(Order)request.getValue(OrderStatus.ORDER), 
+					(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
+					(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS)
+			);
 		}
 
 		public boolean isAllowedCreateOrderReport() {

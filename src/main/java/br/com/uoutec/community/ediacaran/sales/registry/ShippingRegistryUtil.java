@@ -43,7 +43,7 @@ public class ShippingRegistryUtil {
 		}
 	}
 	
-	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) throws InvalidUnitsOrderRegistryException {
+	public static boolean isCompletedShipping(Order order, Collection<Refund> refunds, Collection<Shipping> shippings) {
 		
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		

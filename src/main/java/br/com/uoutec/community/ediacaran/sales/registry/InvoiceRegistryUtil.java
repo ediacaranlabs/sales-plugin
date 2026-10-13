@@ -48,7 +48,7 @@ public class InvoiceRegistryUtil {
 	}
 	
 	public static boolean isCompletedInvoice(Order order, Collection<Refund> refunds, Collection<Invoice> invoices
-			) throws CompletedInvoiceRegistryException, InvalidUnitsOrderRegistryException {
+			) {
 		
 		List<Invoice> activeInvoices    = new ArrayList<>();
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());

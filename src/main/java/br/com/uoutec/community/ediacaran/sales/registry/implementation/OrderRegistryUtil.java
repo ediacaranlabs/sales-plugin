@@ -242,7 +242,7 @@ public class OrderRegistryUtil {
 		}
 	}
 	
-	public static OrderStatus toOrderStatus(PaymentStatus paymentStatus) throws OrderRegistryException {
+	public static OrderStatus toOrderStatus(PaymentStatus paymentStatus) {
 		
 		switch (paymentStatus) {
 		case NEW:
@@ -261,7 +261,7 @@ public class OrderRegistryUtil {
 		case REFOUND:
 			return OrderStatus.REFUND;
 		default:
-			throw new OrderRegistryException("invalid payment status: " + paymentStatus);
+			throw new IllegalStateException("invalid payment status: " + paymentStatus);
 		}
 		
 	}
