@@ -167,7 +167,7 @@ public class RefundEntityAccessImp
 		    List<Refund> result = new ArrayList<Refund>();
     
 		    for(RefundEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;
@@ -224,7 +224,7 @@ public class RefundEntityAccessImp
 		    List<Refund> result = new ArrayList<Refund>();
     
 		    for(RefundEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;

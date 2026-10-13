@@ -202,7 +202,7 @@ public class Shipping implements Serializable{
 	public List<ProductRequest> getProducts() {
 		
 		if(this.id == null) {
-			return null;
+			return products;
 		}
 		
 		if(!productsLoaded) {

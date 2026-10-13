@@ -366,7 +366,7 @@ public class OrderEntityAccessImp
 		    	
 		    	if(order == null) {
 		    		e.getOrder().setItens(new ArrayList<>());
-		    		order = e.getOrder().toEntity();
+		    		order = e.getOrder().toEntity(false);
 		    		order.setItens(new ArrayList<>());
 		    		map.put(e.getOrder().getId(), order);
 		    	}
@@ -522,7 +522,7 @@ public class OrderEntityAccessImp
     
 		    
 		    for(OrderEntity e: list) {
-	    		Order order = e.toEntity();
+	    		Order order = e.toEntity(false);
 	    		itens.add(order);
 		    }
 		    
@@ -595,7 +595,7 @@ public class OrderEntityAccessImp
     
 		    
 		    for(OrderEntity e: list) {
-	    		Order order = e.toEntity();
+	    		Order order = e.toEntity(false);
 	    		itens.add(order);
 		    }
 		    
@@ -651,7 +651,7 @@ public class OrderEntityAccessImp
 		    List<Order> result = new ArrayList<Order>();
     
 		    for(OrderEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;
@@ -711,7 +711,7 @@ public class OrderEntityAccessImp
 		    List<Order> result = new ArrayList<Order>();
     
 		    for(OrderEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;
@@ -767,7 +767,7 @@ public class OrderEntityAccessImp
 		    List<Order> result = new ArrayList<Order>();
     
 		    for(OrderEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;

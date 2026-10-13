@@ -181,10 +181,18 @@ public class RefundEntity implements Serializable {
 	}
 
 	public Refund toEntity(){
-		return this.toEntity(null);
+		return this.toEntity(null, true);
+	}
+
+	public Refund toEntity(boolean cascade){
+		return this.toEntity(null, cascade);
 	}
 	
 	public Refund toEntity(Refund e){
+		return this.toEntity(e, true);
+	}
+	
+	public Refund toEntity(Refund e, boolean cascade){
 		
 		try{
 			
@@ -228,15 +236,15 @@ public class RefundEntity implements Serializable {
 				e.setOrder(this.order.getId());
 			}
 
-			/*
-			if(this.products != null) {
-				List<ProductRequest> list = new ArrayList<>();
-				for(ProductRequestRefundEntity p: this.products) {
-					list.add(p.toEntity());
+			if(cascade) {
+				if(this.products != null) {
+					List<ProductRequest> list = new ArrayList<>();
+					for(ProductRequestRefundEntity p: this.products) {
+						list.add(p.toEntity());
+					}
+					e.setProducts(list);
 				}
-				e.setProducts(list);
 			}
-			*/
 			
 			return e;
 		}

@@ -241,7 +241,7 @@ public class InvoiceEntityAccessImp
 		    List<Invoice> result = new ArrayList<Invoice>();
     
 		    for(InvoiceEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;
@@ -299,7 +299,7 @@ public class InvoiceEntityAccessImp
 		    List<Invoice> result = new ArrayList<Invoice>();
     
 		    for(InvoiceEntity e: list) {
-		    	result.add(e.toEntity());
+		    	result.add(e.toEntity(false));
 		    }
 		    
 			return result;

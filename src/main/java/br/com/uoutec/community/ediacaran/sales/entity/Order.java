@@ -232,7 +232,7 @@ public class Order implements Serializable{
 	public List<Tax> getTaxes() {
 		
 		if(this.id == null) {
-			return null;
+			return taxes;
 		}
 		
 		if(!taxesLoaded) {
@@ -263,7 +263,7 @@ public class Order implements Serializable{
 	public List<ProductRequest> getItens() {
 		
 		if(this.id == null) {
-			return null;
+			return itens;
 		}
 		
 		if(!itensLoaded) {
@@ -360,7 +360,7 @@ public class Order implements Serializable{
 	public List<Invoice> getInvoices(){
 		
 		if(this.id == null) {
-			return null;
+			return invoices;
 		}
 		
 		if(!invoiceLoaded) {
@@ -443,7 +443,7 @@ public class Order implements Serializable{
 	public List<Refund> getRefunds() {
 		
 		if(this.id == null) {
-			return null;
+			return refunds;
 		}
 		
 		if(!refundsLoaded) {
@@ -484,7 +484,7 @@ public class Order implements Serializable{
 	public List<OrderReport> getOrderReport() {
 		
 		if(this.id == null) {
-			return null;
+			return orderReports;
 		}
 		
 		if(!orderReportsLoaded) {
@@ -532,10 +532,17 @@ public class Order implements Serializable{
 	}
 	
 	public BigDecimal getSubtotal(){
+		
+		if(getItens() == null || getItens().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = BigDecimal.ZERO;
+		
 		for(ProductRequest pr: getItens()) {
 			value = value.add(pr.getSubtotal());
 		}
+		
 		return value;
 	}
 
@@ -544,6 +551,10 @@ public class Order implements Serializable{
 	}
 	
 	public BigDecimal getDiscount() {
+		
+		if(getItens() == null || getItens().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = getSubtotal();
 		BigDecimal discount = BigDecimal.ZERO;
@@ -577,6 +588,10 @@ public class Order implements Serializable{
 	
 	public BigDecimal getTax() {
 		
+		if(getItens() == null || getItens().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
+		
 		BigDecimal value = getSubtotal();
 		BigDecimal tax = BigDecimal.ZERO;
 		
@@ -608,6 +623,10 @@ public class Order implements Serializable{
 	}
 	
 	public BigDecimal getTotal(){
+		
+		if(getItens() == null || getItens().isEmpty()) {
+			return BigDecimal.ZERO;
+		}
 		
 		BigDecimal value = BigDecimal.ZERO;
 		

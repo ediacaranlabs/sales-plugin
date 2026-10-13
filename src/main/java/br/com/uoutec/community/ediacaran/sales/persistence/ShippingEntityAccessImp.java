@@ -517,7 +517,7 @@ public class ShippingEntityAccessImp
 		    criteria.select(from);
 
 		    List<Predicate> and = new ArrayList<Predicate>();
-	    	and.add(builder.equal(from.get("id").get("invoiceID"), id));
+	    	and.add(builder.equal(from.get("id").get("shippingID"), id));
 		    
 		    if(!and.isEmpty()) {
 			    criteria.where(

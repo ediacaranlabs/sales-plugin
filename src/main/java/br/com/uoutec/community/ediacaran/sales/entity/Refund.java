@@ -135,7 +135,7 @@ public class Refund implements Serializable {
 	public List<ProductRequest> getProducts() {
 		
 		if(this.id == null) {
-			return null;
+			return products;
 		}
 		
 		if(!productsLoaded) {

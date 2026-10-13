@@ -116,7 +116,7 @@ public class OrderRegistryImp
 			}
 		}
 		catch(ValidationException e){
-			throw new OrderRegistryException(e.getMessage());
+			throw new OrderRegistryException(e.getMessage(), e);
 		}
 		catch(Throwable e){
 			e.printStackTrace();
@@ -137,6 +137,7 @@ public class OrderRegistryImp
 		OrderRegistryUtil.save(entity, orderEntityAccess);
 		OrderRegistryUtil.saveOrUpdateIndex(entity, indexEntityAccess);
 		OrderRegistryUtil.registerPayment(entity, entity.getClient(), entity.getPayment(), "Predido criado", paymentGateway, orderEntityAccess, executorService);
+		
 		OrderRegistryUtil.updateStatusByPaymentStatus(entity);
 		OrderRegistryUtil.checkAcceptNewOrderStatus(entity, entity.getStatus(), Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		OrderRegistryUtil.update(entity, orderEntityAccess);

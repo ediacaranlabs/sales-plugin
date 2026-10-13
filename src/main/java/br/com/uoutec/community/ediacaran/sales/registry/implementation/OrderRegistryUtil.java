@@ -740,7 +740,7 @@ public class OrderRegistryUtil {
 			return order;
 		}
 		catch(Throwable e){
-			throw new OrderNotFoundRegistryException(id);
+			throw new OrderNotFoundRegistryException(id, e);
 		}
 	}
 	
@@ -749,7 +749,7 @@ public class OrderRegistryUtil {
 			return entityAccess.findById(order.getId());
 		}
 		catch(Throwable e){
-			throw new OrderNotFoundRegistryException(order.getId());
+			throw new OrderNotFoundRegistryException(order.getId(), e);
 		}
 	}
 

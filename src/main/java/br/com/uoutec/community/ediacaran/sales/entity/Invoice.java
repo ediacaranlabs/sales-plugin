@@ -157,7 +157,7 @@ public class Invoice implements Serializable{
 	public List<Tax> getTaxes() {
 		
 		if(this.id == null) {
-			return null;
+			return taxes;
 		}
 		
 		if(!taxesLoaded) {
@@ -188,7 +188,7 @@ public class Invoice implements Serializable{
 	public List<ProductRequest> getItens() {
 		
 		if(this.id == null) {
-			return null;
+			return itens;
 		}
 		
 		if(!itensLoaded) {
@@ -212,7 +212,7 @@ public class Invoice implements Serializable{
 
 	public BigDecimal getSubtotal(){
 		
-		if(getItens().isEmpty()) {
+		if(getItens() == null || getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
@@ -229,7 +229,7 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getDiscount() {
 
-		if(getItens().isEmpty()) {
+		if(getItens() == null || getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
@@ -243,7 +243,7 @@ public class Invoice implements Serializable{
 
 	private BigDecimal getDiscountBySubtotal() {
 		
-		if(getItens().isEmpty()) {
+		if(getItens() == null || getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
@@ -275,7 +275,7 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getTax() {
 		
-		if(getItens().isEmpty()) {
+		if(getItens() == null || getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
@@ -292,7 +292,7 @@ public class Invoice implements Serializable{
 	
 	private BigDecimal getTaxBySubtotal() {
 		
-		if(getItens().isEmpty()) {
+		if(getItens() == null || getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		
@@ -320,7 +320,7 @@ public class Invoice implements Serializable{
 	
 	public BigDecimal getTotal(){
 		
-		if(getItens().isEmpty()) {
+		if(getItens() == null || getItens().isEmpty()) {
 			return BigDecimal.ZERO;
 		}
 		

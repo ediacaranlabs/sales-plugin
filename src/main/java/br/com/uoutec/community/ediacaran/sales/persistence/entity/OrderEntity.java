@@ -287,10 +287,18 @@ public class OrderEntity implements /*PublicType, */Serializable {
 	}
 
 	public Order toEntity(){
-		return this.toEntity(null);
+		return this.toEntity(null, true);
+	}
+
+	public Order toEntity(boolean cascade){
+		return this.toEntity(null, cascade);
 	}
 	
 	public Order toEntity(Order e){
+		return toEntity(e, true);
+	}
+	
+	public Order toEntity(Order e, boolean cascade){
 		
 		if(e == null){
 			e = new Order();
@@ -316,25 +324,27 @@ public class OrderEntity implements /*PublicType, */Serializable {
 		e.setShippingAddress(this.shippingAddress == null? null : this.shippingAddress.toEntity());
 		e.setCompleteShipping(this.completeShipping);
 		
-		/*
-		if(this.itens != null){
-			List<ProductRequest> l = new ArrayList<ProductRequest>();
-			for(ProductRequestEntity k: this.itens){
-				l.add(k.toEntity());
+
+		if(cascade) {
+			if(this.itens != null){
+				List<ProductRequest> l = new ArrayList<ProductRequest>();
+				for(ProductRequestEntity k: this.itens){
+					l.add(k.toEntity());
+				}
+				e.setItens(l);
 			}
-			e.setItens(l);
+	
+			if(this.taxes != null){
+				List<Tax> tax = new ArrayList<Tax>();
+				e.setTaxes(tax);
+				
+				for(OrderTaxEntity prd: this.taxes){
+					tax.add(prd.toEntity());
+				}
+				
+			}
 		}
 
-		if(this.taxes != null){
-			List<Tax> tax = new ArrayList<Tax>();
-			e.setTaxes(tax);
-			
-			for(OrderTaxEntity prd: this.taxes){
-				tax.add(prd.toEntity());
-			}
-			
-		}
-		*/
 		
 		return e;
 	}

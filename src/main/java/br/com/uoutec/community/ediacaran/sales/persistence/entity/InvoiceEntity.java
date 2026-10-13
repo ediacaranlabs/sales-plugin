@@ -214,10 +214,18 @@ public class InvoiceEntity implements Serializable{
 	}
 
 	public Invoice toEntity(){
-		return this.toEntity(null);
+		return this.toEntity(null, true);
+	}
+
+	public Invoice toEntity(boolean cascade){
+		return this.toEntity(null, cascade);
 	}
 	
 	public Invoice toEntity(Invoice e){
+		return this.toEntity(e, true);
+	}
+	
+	public Invoice toEntity(Invoice e, boolean cascade){
 		
 		if(e == null){
 			e = new Invoice();
@@ -236,23 +244,23 @@ public class InvoiceEntity implements Serializable{
 			e.setClient(client);
 		}
 		
-		/*
-		if(this.itens != null){
-			List<ProductRequest> l = new ArrayList<ProductRequest>();
-			for(ProductRequestInvoiceEntity k: this.itens){
-				l.add(k.toEntity());
+		if(cascade) {
+			if(this.itens != null){
+				List<ProductRequest> l = new ArrayList<ProductRequest>();
+				for(ProductRequestInvoiceEntity k: this.itens){
+					l.add(k.toEntity());
+				}
+				e.setItens(l);
 			}
-			e.setItens(l);
-		}
-		
-		if(this.taxes != null) {
-			List<Tax> list = new ArrayList<>();
-			e.setTaxes(list);
-			for(InvoiceTaxEntity t: this.taxes) {
-				list.add(t.toEntity());
+			
+			if(this.taxes != null) {
+				List<Tax> list = new ArrayList<>();
+				e.setTaxes(list);
+				for(InvoiceTaxEntity t: this.taxes) {
+					list.add(t.toEntity());
+				}
 			}
 		}
-		*/
 		
 		return e;
 	}

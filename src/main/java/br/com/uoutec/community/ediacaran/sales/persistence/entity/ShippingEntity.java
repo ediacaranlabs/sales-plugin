@@ -291,10 +291,18 @@ public class ShippingEntity implements Serializable{
 	}
 
 	public Shipping toEntity(){
-		return this.toEntity(null);
+		return this.toEntity(null, true);
+	}
+
+	public Shipping toEntity(boolean cascade){
+		return this.toEntity(null, cascade);
 	}
 	
 	public Shipping toEntity(Shipping e){
+		return this.toEntity(e, true);
+	}
+	
+	public Shipping toEntity(Shipping e, boolean cascade){
 		
 		try{
 			
@@ -349,15 +357,15 @@ public class ShippingEntity implements Serializable{
 			e.setWeight(this.weight == null? 0f : this.height.floatValue());
 			e.setWidth(this.width == null? 0f : this.width.floatValue());
 
-			/*
-			if(this.products != null) {
-				List<ProductRequest> list = new ArrayList<>();
-				for(ProductRequestShippingEntity p: this.products) {
-					list.add(p.toEntity());
+			if(cascade) {
+				if(this.products != null) {
+					List<ProductRequest> list = new ArrayList<>();
+					for(ProductRequestShippingEntity p: this.products) {
+						list.add(p.toEntity());
+					}
+					e.setProducts(list);
 				}
-				e.setProducts(list);
 			}
-			*/
 			
 			return e;
 		}

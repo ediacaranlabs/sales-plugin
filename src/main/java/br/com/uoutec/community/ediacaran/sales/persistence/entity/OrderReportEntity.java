@@ -19,9 +19,9 @@ import javax.persistence.Table;
 
 import br.com.uoutec.community.ediacaran.sales.entity.Client;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReport;
+import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 import br.com.uoutec.community.ediacaran.sales.entity.ProductRequestReport;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
-import br.com.uoutec.community.ediacaran.sales.entity.OrderReportStatus;
 
 @Entity
 @Table(name="rw_order_report")
@@ -129,10 +129,19 @@ public class OrderReportEntity implements Serializable{
 	}
 
 	public OrderReport toEntity(){
-		return this.toEntity(null);
+		return this.toEntity(null, true);
+	}
+
+	public OrderReport toEntity(boolean cascade){
+		return this.toEntity(null, cascade);
 	}
 	
 	public OrderReport toEntity(OrderReport e){
+		return this.toEntity(e, true);
+	}
+	
+	public OrderReport toEntity(OrderReport e, boolean cascade){
+		
 		if(e == null) {
 			e =  new OrderReport();
 		}
@@ -153,19 +162,22 @@ public class OrderReportEntity implements Serializable{
 			e.setClient(c);
 		}
 		
+
 		if(this.order != null) {
 			e.setOrder(this.order.toEntity());
 		}
-
-		/*
-		if(this.products != null) {
-			List<ProductRequestReport> list = new ArrayList<>();
-			for(ProductRequestReportEntity p: this.products) {
-				list.add(p.toEntity());
+		
+		if(cascade) {
+			
+			if(this.products != null) {
+				List<ProductRequestReport> list = new ArrayList<>();
+				for(ProductRequestReportEntity p: this.products) {
+					list.add(p.toEntity());
+				}
+				e.setProducts(list);
 			}
-			e.setProducts(list);
+			
 		}
-		*/
 		
 		return e;
 	}

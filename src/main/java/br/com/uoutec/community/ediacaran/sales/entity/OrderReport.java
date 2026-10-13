@@ -98,7 +98,7 @@ public class OrderReport implements Serializable {
 	public List<ProductRequestReport> getProducts() {
 		
 		if(this.id == null) {
-			return null;
+			return products;
 		}
 		
 		if(!productsLoaded) {
