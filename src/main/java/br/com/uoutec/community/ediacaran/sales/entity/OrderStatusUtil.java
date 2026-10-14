@@ -3,7 +3,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 import java.util.Collection;
 
 import br.com.uoutec.community.ediacaran.sales.registry.InvoiceRegistryUtil;
-import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
 
@@ -35,7 +34,7 @@ public class OrderStatusUtil {
 		return ShippingRegistryUtil.isCompletedShipping(order, refunds, shippings);
 	}
 
-	public static boolean isCompletedOrder(Order order, Collection<Refund> refunds, Collection<Shipping> shippings, Collection<OrderReport> reports) throws OrderRegistryException {
+	public static boolean isCompletedOrder(Order order, Collection<Refund> refunds, Collection<Shipping> shippings, Collection<OrderReport> reports) {
 		return OrderRegistryUtil.isCompletedOrder(order, shippings, refunds, reports);
 	}
 	

@@ -185,17 +185,12 @@ public enum OrderStatusValue implements OrderStatus {
 		@Override
 		@SuppressWarnings("unchecked")
 		public boolean isValidStatus(OrderStatusRequest request) {
-			try {
-				return OrderStatusUtil.isCompletedOrder(
-						(Order)request.getValue(OrderStatus.ORDER), 
-						(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
-						(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS), 
-						(Collection<OrderReport>)request.getValue(OrderStatus.REPORT)
-				);
-			}
-			catch(Throwable ex) {
-				return false;
-			}
+			return OrderStatusUtil.isCompletedOrder(
+					(Order)request.getValue(OrderStatus.ORDER), 
+					(Collection<Refund>)request.getValue(OrderStatus.REFUNDS), 
+					(Collection<Shipping>)request.getValue(OrderStatus.SHIPPINGS), 
+					(Collection<OrderReport>)request.getValue(OrderStatus.REPORT)
+			);
 		}
 		
 	},
@@ -467,8 +462,8 @@ public enum OrderStatusValue implements OrderStatus {
 
 	@Override
 	public Collection<OrderStatus> getNexStatus() {
-		Collection<OrderStatusValue> set = StatusCheck.getNexStatus(this);
-		return set == null? null : new HashSet<>(set);
+		Collection<OrderStatusValue> c = StatusCheck.getNexStatus(this);
+		return c == null? null : new ArrayList<>(c);
 	}
 
 	@Override
