@@ -297,12 +297,8 @@ public class RefundRegistryUtil {
 		Map<String, ProductRequest> map = ProductRequestUtil.toMap(order.getItens());
 		
 		refunds.stream()
-			.filter((e)->!entity.equals(e))
+			.filter((e)->!entity.equals(e) && !e.isDenied())
 			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getProducts());});
-		
-		invoices.stream()
-			.filter((e)->e.getCancelDate() == null)
-			.forEach((e)->{ProductRequestUtil.subUnits(map, e.getItens());});
 		
 		for(ProductRequest pr: entity.getProducts()) {
 			
