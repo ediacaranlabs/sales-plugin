@@ -331,7 +331,7 @@ public class RefundRegistryUtil {
 	public void checkRefund(Order order, List<Refund> actualResund, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException, CompletedShippingRegistryException {
 
 		checkIsCompletedRefund(order, actualResund);
-		checkUnits(order, actualResund, refund, shippingList);		
+		//checkUnits(order, actualResund, refund, shippingList);		
 		
 	}
 
@@ -370,7 +370,8 @@ public class RefundRegistryUtil {
 		
 		//paymentGateway.refund(new RefundRequest(order, order.getClient(), order.getPayment(), refund, partialRefund, newRefund, itens));
 	}
-	
+
+	/*
 	public void checkUnits(Order order, List<Refund> actualRefunds, Refund refund, Collection<Shipping> shippingList) throws InvalidUnitsOrderRegistryException, ItemNotFoundOrderRegistryException {
 
 		Map<String, ProductRequest> map = toMap(order.getItens());
@@ -397,6 +398,7 @@ public class RefundRegistryUtil {
 		}
 		
 	}
+	*/
 	
 	public void checkIsCompletedRefund(Order order, Collection<Refund> refundList) throws CompletedShippingRegistryException, InvalidUnitsOrderRegistryException {
 		
@@ -590,7 +592,7 @@ public class RefundRegistryUtil {
 				continue;
 			}
 			
-			if(actualRefund != null && i.getId().equals(actualRefund.getId())) {
+			if(actualRefund != null && (i.getId().equals(actualRefund.getId()) || i.isDenied()) ) {
 				continue;
 			}
 			
