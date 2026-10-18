@@ -100,6 +100,14 @@ public enum OrderStatusValue implements OrderStatus {
 			return true;
 		}
 		
+		public boolean isAllowedCreateOrderReport() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeOrderReport() {
+			return true;
+		}
+		
 		@Override
 		public boolean isClosed() {
 			return false;
@@ -143,6 +151,14 @@ public enum OrderStatusValue implements OrderStatus {
 
 		@Override
 		public boolean isAllowedChangeRefund() {
+			return true;
+		}
+		
+		public boolean isAllowedCreateOrderReport() {
+			return true;
+		}
+		
+		public boolean isAllowedChangeOrderReport() {
 			return true;
 		}
 		
