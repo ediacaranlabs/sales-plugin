@@ -185,7 +185,7 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 	@ActivateRequestContext
 	@EnableFilters(InvoiceRegistry.class)
 	public Invoice createInvoice(Order order, Map<String, Integer> itens, String message) 
-		throws RegistryException, ProductTypeHandlerException{
+		throws RegistryException, ProductTypeHandlerException, ValidationException {
 		
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.INVOICE_REGISTRY.getCreatePermission());
 		
@@ -202,6 +202,9 @@ public class InvoiceRegistryImp implements InvoiceRegistry {
 			throw e;
 		}
 		catch(OrderRegistryException e){
+			throw e;
+		}
+		catch(ValidationException e){
 			throw e;
 		}
 		catch(Throwable e){
