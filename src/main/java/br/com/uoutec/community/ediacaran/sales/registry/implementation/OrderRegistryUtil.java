@@ -811,9 +811,11 @@ public class OrderRegistryUtil {
 	}
 	
 	public static void checkPayment(Order order) throws InvoiceRegistryException {
+		/*
 		if(order.getPayment().getReceivedFrom() == null) {
 			throw new InvoiceRegistryException("payment has not yet been made");
 		}
+		*/
 	}
 	
 	public static boolean isCompletedOrder(Order order, Collection<Shipping> shippings, Collection<Refund> refunds, Collection<OrderReport> reports) {
