@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +35,7 @@ import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayRegistry;
 import br.com.uoutec.community.ediacaran.sales.payment.RefundRequest;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.RefundIndexEntityAccess;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
@@ -163,7 +163,7 @@ public class RefundRegistryUtil {
 	}
 	
 	public void setSaveProperties(Refund entity) throws ValidationException {
-		entity.setDate(LocalDateTime.now());
+		entity.setDate(SystemDate.getSystemDateTime());
 		entity.setRefundDate(null);
 	}
 	
@@ -611,7 +611,7 @@ public class RefundRegistryUtil {
 	}
 	
 	public void preventChangeRefundSaveSensitiveData(Refund entity, Order order) {
-		entity.setDate(LocalDateTime.now());
+		entity.setDate(SystemDate.getSystemDateTime());
 		entity.setRefundDate(null);
 		entity.setId(null);
 		entity.setRefundType(order.getPaymentType());
@@ -691,7 +691,7 @@ public class RefundRegistryUtil {
 	}
 
 	public void confirmRefund(Refund refund) throws ShippingRegistryException {
-		refund.setRefundDate(LocalDateTime.now());
+		refund.setRefundDate(SystemDate.getSystemDateTime());
 	}
 
 	public Refund toRefund(Order order, List<Invoice> invoices, List<Refund> refunds) throws ItemNotFoundOrderRegistryException {
@@ -709,7 +709,7 @@ public class RefundRegistryUtil {
 		
 		i.setRefundDate(null);
 		i.setAddData(new HashMap<>());
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setClient(order.getClient());
 		i.setProducts(new ArrayList<ProductRequest>(map.values()));
 		i.setRefundType(null);
@@ -728,7 +728,7 @@ public class RefundRegistryUtil {
 		
 		i.setRefundDate(null);
 		i.setAddData(new HashMap<>());
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setClient(order.getClient());
 		i.setProducts(new ArrayList<ProductRequest>(list));
 		i.setRefundType(null);
@@ -774,7 +774,7 @@ public class RefundRegistryUtil {
 		
 		i.setRefundDate(null);
 		i.setAddData(new HashMap<>());
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setClient(order.getClient());
 		i.setProducts(new ArrayList<ProductRequest>(map.values()));
 		i.setRefundType(null);

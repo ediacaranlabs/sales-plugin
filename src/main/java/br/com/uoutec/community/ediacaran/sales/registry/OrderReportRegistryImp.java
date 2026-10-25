@@ -1,6 +1,5 @@
 package br.com.uoutec.community.ediacaran.sales.registry;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +24,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAcce
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
@@ -142,7 +142,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 			InvoiceRegistry invoiceRegistry, ProductTypeRegistry productTypeRegistry) throws Throwable {
 		
 		entity.setStatus(OrderReportStatus.NEW_REQUEST);
-		entity.setDate(LocalDateTime.now());
+		entity.setDate(SystemDate.getSystemDateTime());
 		
 		OrderReportRegistryUtil.validate(entity, saveValidations);
 		
@@ -270,7 +270,7 @@ public class OrderReportRegistryImp implements OrderReportRegistry {
 	@Transactional(rollbackOn = Throwable.class)
 	@ActivateRequestContext
 	public void sendMessage(OrderReport orderReport, String message, SystemUser user) throws OrderReportRegistryException {
-		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(orderReport, message, LocalDateTime.now(), user);
+		OrderReportMessage e = OrderReportRegistryUtil.toOrderReportMessage(orderReport, message, SystemDate.getSystemDateTime(), user);
 		OrderReportRegistryUtil.registerMessage(e, orderReportMessageEntityAccess);
 		OrderReportRegistryUtil.sendToRepository(orderReportMessageEntityAccess);
 	}

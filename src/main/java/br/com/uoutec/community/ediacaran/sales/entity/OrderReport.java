@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -16,6 +15,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
@@ -151,7 +151,7 @@ public class OrderReport implements Serializable {
 	}
 	
 	public long getDaysAfterCreated() {
-		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
+		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), SystemDate.getSystemDate());
 	}
 	
 	@Override

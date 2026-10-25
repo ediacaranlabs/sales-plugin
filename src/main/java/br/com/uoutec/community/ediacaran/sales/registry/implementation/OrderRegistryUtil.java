@@ -66,6 +66,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.UnavailableProductExcept
 import br.com.uoutec.community.ediacaran.security.Principal;
 import br.com.uoutec.community.ediacaran.security.Subject;
 import br.com.uoutec.community.ediacaran.security.SubjectProvider;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
@@ -97,7 +98,7 @@ public class OrderRegistryUtil {
 		Address defaultAddress = getDefaultAddress(client);
 		
 		Order order = new Order();
-		order.setDate(LocalDateTime.now());
+		order.setDate(SystemDate.getSystemDateTime());
 		order.setCartID(cart.getId());
 		order.setStatus(OrderStatus.NEW);
 		order.setId(null);
@@ -605,7 +606,7 @@ public class OrderRegistryUtil {
 		
 		if(payment.getStatus() == PaymentStatus.PAYMENT_RECEIVED) {
 			checkAndSetNewOrderStatus(order, OrderStatus.PAYMENT_RECEIVED);
-			payment.setReceivedFrom(LocalDateTime.now());
+			payment.setReceivedFrom(SystemDate.getSystemDateTime());
 		}
 		else{
 			payment.setReceivedFrom(null);
@@ -627,7 +628,7 @@ public class OrderRegistryUtil {
 		//checkAndSetNewOrderStatus(order, newOrderStatus);
 		
 		if(paymentStatus == PaymentStatus.PAYMENT_RECEIVED) {
-			payment.setReceivedFrom(LocalDateTime.now());
+			payment.setReceivedFrom(SystemDate.getSystemDateTime());
 		}
 		else{
 			payment.setReceivedFrom(null);
@@ -864,7 +865,7 @@ public class OrderRegistryUtil {
 				order.setStatus(OrderStatus.COMPLETE);
 			}
 			
-			LocalDateTime now = LocalDateTime.now();
+			LocalDateTime now = SystemDate.getSystemDateTime();
 			
 			if(order.getCompleteInvoice() == null) {
 				order.setCompleteInvoice(now);

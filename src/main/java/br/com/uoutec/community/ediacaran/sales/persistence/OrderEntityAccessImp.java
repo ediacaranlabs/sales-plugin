@@ -31,6 +31,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.entity.OrderTaxEntity
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.PaymentEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestEntity;
 import br.com.uoutec.community.ediacaran.sales.persistence.entity.ProductRequestTaxEntity;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.util.IDGenerator;
 import br.com.uoutec.persistence.EntityAccessException;
 
@@ -897,7 +898,7 @@ public class OrderEntityAccessImp
 			throws EntityAccessException {
 		try{
 			OrderLog log = new OrderLog();
-			log.setDate(LocalDateTime.now());
+			log.setDate(SystemDate.getSystemDateTime());
 			log.setMessage(message);
 			log.setOrderId(order.getId());
 			log.setOwner(order.getClient().getId());

@@ -1,7 +1,6 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +9,7 @@ import org.brandao.brutos.annotation.Transient;
 import br.com.uoutec.community.ediacaran.sales.entity.Order;
 import br.com.uoutec.community.ediacaran.sales.entity.OrderStatus;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 
@@ -22,7 +22,7 @@ public class OrderPanelPubEntity
 	public OrderPanelPubEntity() {
 		//Ignore validation
 		//the copyTo must be empty
-		super.setDate(LocalDateTime.now());
+		super.setDate(SystemDate.getSystemDateTime());
 		super.setItens(new ArrayList<>());
 		super.setPayment(new PaymentPubEntity());
 		super.setStatus(OrderStatus.NEW.toString());

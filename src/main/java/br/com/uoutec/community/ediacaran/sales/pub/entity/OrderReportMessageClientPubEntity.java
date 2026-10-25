@@ -1,8 +1,7 @@
 package br.com.uoutec.community.ediacaran.sales.pub.entity;
 
-import java.time.LocalDateTime;
-
 import br.com.uoutec.community.ediacaran.sales.entity.OrderReportMessage;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.user.SystemUserIDProvider;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserRegistryException;
@@ -16,7 +15,7 @@ public class OrderReportMessageClientPubEntity extends OrderReportMessagePubEnti
 	protected void preRebuild(OrderReportMessage instance, boolean reload, boolean override, boolean validate) {
 		try {
 			super.setId(null);
-			super.setDate(LocalDateTime.now());
+			super.setDate(SystemDate.getSystemDateTime());
 			super.setUser(getCurrentUserID());
 		}
 		catch(Throwable ex) {

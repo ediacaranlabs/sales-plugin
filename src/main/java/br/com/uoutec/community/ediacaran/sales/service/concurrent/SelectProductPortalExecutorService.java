@@ -1,6 +1,5 @@
 package br.com.uoutec.community.ediacaran.sales.service.concurrent;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +12,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
@@ -86,7 +86,7 @@ public class SelectProductPortalExecutorService
 					continue;
 				}
 
-				if(p.getOfferDate() != null && !p.getOfferDate().isAfter(LocalDate.now())) {
+				if(p.getOfferDate() != null && !p.getOfferDate().isAfter(SystemDate.getSystemDate())) {
 					continue;
 				}
 				

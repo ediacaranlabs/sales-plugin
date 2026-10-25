@@ -29,6 +29,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductUtil;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.ProductRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.repository.ObjectsTemplateManager;
 import br.com.uoutec.community.ediacaran.system.util.SecretUtil;
 import br.com.uoutec.community.ediacaran.system.util.StringUtil;
@@ -388,7 +389,7 @@ public class Product implements Serializable {
 	}
 
 	public boolean hasDiscount() {
-		return offerDate != null && offerDiscount.doubleValue() > 0  && offerDate.isAfter(LocalDate.now());
+		return offerDate != null && offerDiscount.doubleValue() > 0  && offerDate.isAfter(SystemDate.getSystemDate());
 	}
 	
 	public ProductCategory getCategory() {

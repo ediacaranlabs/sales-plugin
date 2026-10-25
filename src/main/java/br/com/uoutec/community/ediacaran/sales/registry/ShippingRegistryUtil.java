@@ -26,6 +26,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.system.entity.EntityInheritanceManager;
@@ -188,7 +189,7 @@ public class ShippingRegistryUtil {
 	}
 	
 	public static void confirmShipping(Shipping shipping, ShippingEntityAccess entityAccess) throws ShippingRegistryException {
-		shipping.setReceivedDate(LocalDateTime.now());
+		shipping.setReceivedDate(SystemDate.getSystemDateTime());
 		shipping.setClosed(true);
 	}
 	
@@ -376,7 +377,7 @@ public class ShippingRegistryUtil {
 		
 		Shipping i = createNewInstance(shippingType, data);
 		
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
 		i.getDest().setId(0);
@@ -394,7 +395,7 @@ public class ShippingRegistryUtil {
 		
 		Shipping i = createNewInstance(shippingType, data);
 		
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setOrigin(ShippingRegistryUtil.getOrigin());
 		i.setDest(new Address(order.getShippingAddress()));
 		i.getDest().setId(0);
@@ -470,7 +471,7 @@ public class ShippingRegistryUtil {
 	}
 
 	public static void preventChangeShippingSaveSensitiveData(Shipping shipping) {
-		shipping.setDate(LocalDateTime.now());
+		shipping.setDate(SystemDate.getSystemDateTime());
 		shipping.setCancelDate(null);
 		shipping.setCancelJustification(null);
 	}

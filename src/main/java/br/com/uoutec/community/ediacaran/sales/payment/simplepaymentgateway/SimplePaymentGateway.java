@@ -1,13 +1,13 @@
 package br.com.uoutec.community.ediacaran.sales.payment.simplepaymentgateway;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import br.com.uoutec.community.ediacaran.sales.entity.PaymentStatus;
 import br.com.uoutec.community.ediacaran.sales.payment.AbstractPaymentGateway;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentGatewayException;
 import br.com.uoutec.community.ediacaran.sales.payment.PaymentRequest;
 import br.com.uoutec.community.ediacaran.sales.payment.RefundRequest;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 
 public class SimplePaymentGateway extends AbstractPaymentGateway {
 
@@ -52,7 +52,7 @@ public class SimplePaymentGateway extends AbstractPaymentGateway {
 	
 	@Override
 	public void confirmRefund(RefundRequest refundRequest) throws PaymentGatewayException {
-		refundRequest.getRefund().setRefundDate(LocalDateTime.now());
+		refundRequest.getRefund().setRefundDate(SystemDate.getSystemDateTime());
 	}
 
 	@Override

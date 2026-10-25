@@ -29,6 +29,7 @@ import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportEntityAcce
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.OrderReportMessageEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ProductRequestReportEntityAccess;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -294,7 +295,7 @@ public class OrderReportRegistryUtil {
 		OrderReport or = new OrderReport();
 		
 		or.setClient(order.getClient());
-		or.setDate(LocalDateTime.now());
+		or.setDate(SystemDate.getSystemDateTime());
 		or.setId(null);
 		or.setProducts(products);
 		or.setStatus(OrderReportStatus.NEW_REQUEST);

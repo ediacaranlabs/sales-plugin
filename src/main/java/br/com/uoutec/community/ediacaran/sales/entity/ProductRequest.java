@@ -18,6 +18,7 @@ import javax.validation.constraints.Size;
 
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.CurrencyUtil;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.entity.registry.IdValidation;
 
 public class ProductRequest implements Serializable {
@@ -403,7 +404,7 @@ public class ProductRequest implements Serializable {
 	
 	public BigDecimal getRemainingValue(LocalDate validate){
 		BigDecimal subTotal = this.getSubtotal();
-		LocalDate now       = LocalDate.now();
+		LocalDate now       = SystemDate.getSystemDate();
 
 		if(subTotal.compareTo(BigDecimal.ZERO)  <= 0 || this.measurementUnit == null || now.isAfter(validate)){
 			return BigDecimal.ZERO;

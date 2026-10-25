@@ -49,6 +49,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.ProductTypeRegistryExcep
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.system.concurrent.PluginThreadPoolExecutor;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -269,7 +270,7 @@ public class OrderRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
 		try{
-			LocalDateTime endDate =  LocalDateTime.now();
+			LocalDateTime endDate =  SystemDate.getSystemDateTime();
 			LocalDateTime startDate = endDate.minusDays(6);
 			page = page == null? 1 : page;
 			int maxItens = resultPerPage == null? 4 : resultPerPage;
@@ -292,7 +293,7 @@ public class OrderRegistryImp
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.ORDER_REGISTRY.getSearchPermission());
 		
 		try{
-			LocalDateTime endDate =  LocalDateTime.now();
+			LocalDateTime endDate =  SystemDate.getSystemDateTime();
 			LocalDateTime startDate = endDate.minusDays(30);
 			page = page == null? 1 : page;
 			int maxItens = resultPerPage == null? 4 : resultPerPage;

@@ -2,7 +2,6 @@ package br.com.uoutec.community.ediacaran.sales.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -25,6 +24,7 @@ import br.com.uoutec.community.ediacaran.sales.registry.OrderRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.OrderReportRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.RefundRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -528,7 +528,7 @@ public class Order implements Serializable{
 	}
 	
 	public long getDaysAfterCreated() {
-		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), LocalDate.now());
+		return date == null? 0 : ChronoUnit.DAYS.between(date.toLocalDate(), SystemDate.getSystemDate());
 	}
 	
 	public BigDecimal getSubtotal(){

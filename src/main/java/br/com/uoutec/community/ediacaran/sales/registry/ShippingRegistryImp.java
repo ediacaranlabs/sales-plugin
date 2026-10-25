@@ -26,6 +26,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.ShippingSearch;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.ShippingIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.registry.SystemUserID;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
@@ -207,7 +208,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 		ContextSystemSecurityCheck.checkPermission(SalesPluginPermissions.SHIPPING_REGISTRY.getSearchPermission());
 		
 		try{
-			LocalDateTime endDate =  LocalDateTime.now();
+			LocalDateTime endDate =  SystemDate.getSystemDateTime();
 			LocalDateTime startDate = endDate.minusDays(60);
 			page = page == null? 1 : page;
 			int maxItens = resultPerPage == null? 4 : resultPerPage;
@@ -340,7 +341,7 @@ public class ShippingRegistryImp implements ShippingRegistry {
 			return;
 		}
 		
-		LocalDateTime cancelDate                = LocalDateTime.now();
+		LocalDateTime cancelDate                = SystemDate.getSystemDateTime();
 		OrderRegistry orderRegistry             = EntityContextPlugin.getEntity(OrderRegistry.class);
 		ShippingRegistry shippingRegistry       = EntityContextPlugin.getEntity(ShippingRegistry.class);
 		InvoiceRegistry invoiceRegistry         = EntityContextPlugin.getEntity(InvoiceRegistry.class);

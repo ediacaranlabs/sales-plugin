@@ -25,6 +25,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Tax;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.persistence.InvoiceIndexEntityAccess;
 import br.com.uoutec.community.ediacaran.sales.registry.implementation.OrderRegistryUtil;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.community.ediacaran.system.actions.ActionExecutorRequestBuilder;
 import br.com.uoutec.community.ediacaran.system.actions.ActionRegistry;
 import br.com.uoutec.community.ediacaran.user.entity.SystemUser;
@@ -395,7 +396,7 @@ public class InvoiceRegistryUtil {
 		Invoice i = new Invoice();
 		i.setId(null);
 		i.setClient(order.getClient());
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setOrder(order.getId());
 		i.setItens(new ArrayList<>(map.values()));
 		i.setCurrency(order.getCurrency());
@@ -420,7 +421,7 @@ public class InvoiceRegistryUtil {
 		Invoice i = new Invoice();
 		i.setId(null);
 		i.setClient(order.getClient());
-		i.setDate(LocalDateTime.now());
+		i.setDate(SystemDate.getSystemDateTime());
 		i.setOrder(order.getId());
 		i.setItens(new ArrayList<>(list));
 		i.setCurrency(order.getCurrency());
@@ -467,7 +468,7 @@ public class InvoiceRegistryUtil {
 	}
 
 	public static void preventChangeInvoiceSaveSensitiveData(Invoice invoice) {
-		invoice.setDate(LocalDateTime.now());
+		invoice.setDate(SystemDate.getSystemDateTime());
 		invoice.setCancelDate(null);
 		invoice.setCancelJustification(null);
 	}

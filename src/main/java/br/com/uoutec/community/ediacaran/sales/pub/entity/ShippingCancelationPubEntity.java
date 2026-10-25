@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import br.com.uoutec.application.validation.CommonValidation;
 import br.com.uoutec.community.ediacaran.sales.entity.Shipping;
 import br.com.uoutec.community.ediacaran.sales.registry.ShippingRegistry;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.entity.registry.DataValidation;
 import br.com.uoutec.entity.registry.IdValidation;
@@ -34,7 +35,7 @@ public class ShippingCancelationPubEntity extends AbstractPubEntity<Shipping> {
 	
 	public ShippingCancelationPubEntity() {
 		super();
-		this.cancelDate = LocalDateTime.now();
+		this.cancelDate = SystemDate.getSystemDateTime();
 	}
 	
 	public ShippingCancelationPubEntity(Shipping e, Locale locale) {

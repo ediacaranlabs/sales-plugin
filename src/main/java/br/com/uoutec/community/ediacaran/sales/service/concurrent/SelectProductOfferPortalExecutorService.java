@@ -13,6 +13,7 @@ import br.com.uoutec.community.ediacaran.sales.entity.Product;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductCategoryRegistryException;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistry;
 import br.com.uoutec.community.ediacaran.sales.registry.ProductRegistryException;
+import br.com.uoutec.community.ediacaran.system.SystemDate;
 import br.com.uoutec.ediacaran.core.plugins.EntityContextPlugin;
 import br.com.uoutec.ediacaran.core.plugins.PublicBean;
 
@@ -89,7 +90,7 @@ public class SelectProductOfferPortalExecutorService
 					continue;
 				}
 				
-				if(LocalDate.now().isAfter(offerDate)) {
+				if(SystemDate.getSystemDate().isAfter(offerDate)) {
 					continue;
 				}
 				
